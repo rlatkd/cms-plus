@@ -24,7 +24,7 @@ public class ContractController {
 	@GetMapping
 	public List<ContractListItem> findAllContracts(ContractSearch contractSearch, PageDto.Req pageable) {
 		// TODO security
-		return contractService.findContracts("academy1", contractSearch, pageable);
+		return contractService.findContracts("vendor1", contractSearch, pageable);
 	}
 
 	@GetMapping("/{contractId}")

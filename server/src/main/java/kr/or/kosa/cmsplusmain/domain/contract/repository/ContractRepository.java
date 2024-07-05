@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -42,40 +44,34 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 	*  */
 	public List<ContractListItem> findContractsWithCondition(String vendorUsername, ContractSearch search, PageDto.Req pageable) {
 		return jpaQueryFactory
-			.select(new QContractListItem(
-				contract.id,
-				member.name, member.phone,
-				contract.contractDay,
-				contract.contractProducts,
-				contract.contractPrice,
-				contract.status,
-				payment.consentStatus
-			))
 			.from(contract)
-
-			// 조인. 삭제 여부 판단 필수
-			.join(contract.vendor, vendor).on(vendor.username.eq(vendorUsername), vendor.deleted.eq(false))
-			.join(contract.member, member).on(member.deleted.eq(false))
-			.join(contract.contractProducts, contractProduct).on(contractProduct.deleted.eq(false))
-			.join(contract.payment, payment).on(payment.deleted.eq(false))
-
-			// 검색 조건
+			.join(contract.vendor, vendor)
+			.join(contract.member, member)
+			.leftJoin(contract.contractProducts, contractProduct).on(contractProduct.deleted.eq(false))
+			.join(contract.payment, payment)
 			.where(
-				contract.deleted.eq(false),				// 삭제여부
-				memberNameContains(search.getMemberName()),		// 회원 이름 포함
-				memberPhoneContains(search.getMemberPhone()),	// 회원 휴대전화 포함
-				contractDayEq(search.getContractDay()),			// 약정일 일치
-				productNameContains(search.getProductName()),	// 상품 이름 포함
-				contractPriceLoe(search.getContractPrice()),	// 계약금액 이하
-				consentStatusEq(search.getConsentStatus())		// 동의상태
+				member.deleted.eq(false),
+				contract.deleted.eq(false),
+				vendor.username.eq(vendorUsername),
+				memberNameContains(search.getMemberName()),
+				memberPhoneContains(search.getMemberPhone()),
+				contractDayEq(search.getContractDay()),
+				productNameContains(search.getProductName()),
+				contractPriceLoe(search.getContractPrice()),
+				consentStatusEq(search.getConsentStatus())
 			)
-
-			// 정렬
 			.orderBy(orderMethod(pageable))
-
 			.offset(pageable.getPage())
 			.limit(pageable.getSize())
-			.fetch();
+			.transform(GroupBy.groupBy(contract.id).list(Projections.constructor(ContractListItem.class,
+				contract.id,
+				member.name,
+				member.phone,
+				contract.contractDay,
+				GroupBy.list(contractProduct),
+				contract.contractPrice,
+				contract.status,
+				payment.consentStatus)));
 	}
 
 	/*
@@ -98,20 +94,17 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 	/*
 	* 상세 계약 정보 - 청구정보 - 회원 청구정보
 	*
-	* 항상 readonly transaction 안에서만 써야한다.
 	* */
 	public Contract findContractById(Long contractId) {
 		return jpaQueryFactory
 			.selectFrom(contract)
 			.join(contract.member, member).fetchJoin()
-			.join(contract.contractProducts, contractProduct).fetchJoin()
+			.leftJoin(contract.contractProducts, contractProduct).fetchJoin()
 			.join(contract.payment, payment).fetchJoin()
 			.where(
-				contract.deleted.eq(false),
 				contract.id.eq(contractId),
-				member.deleted.eq(false),
-				contractProduct.deleted.eq(false),
-				payment.deleted.eq(false)
+				contract.deleted.eq(false),
+				contractProduct.deleted.eq(false)
 			)
 			.fetchOne();
 	}
