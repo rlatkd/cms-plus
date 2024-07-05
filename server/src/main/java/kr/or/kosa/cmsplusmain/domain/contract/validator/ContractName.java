@@ -11,7 +11,7 @@ import jakarta.validation.Payload;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonNameValidator;
 
 @Documented
-@Constraint(validatedBy = PersonNameValidator.class)
+@Constraint(validatedBy = ContractNameValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ContractName {

@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class BaseRepository<T extends BaseEntity, ID extends Serializable> {
 
-	private final EntityManager em;
+	protected final EntityManager em;
 	protected final JPAQueryFactory jpaQueryFactory;
 
 	/*

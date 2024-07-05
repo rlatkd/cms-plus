@@ -31,7 +31,7 @@ public class ContractDetail {
 	private final LocalDateTime modifiedDateTime;
 
 	// 계약 상품
-	private final List<ContractProductDto> contractProducts;
+	private final List<ContractProductDto.Res> contractProducts;
 
 	// 결제 정보
 	private final String paymentType;
@@ -55,8 +55,8 @@ public class ContractDetail {
 		if (contract == null) {
 			return null;
 		}
-		List<ContractProductDto> productDtos = contract.getContractProducts().stream()
-			.map(contractProduct -> ContractProductDto.builder()
+		List<ContractProductDto.Res> productDtos = contract.getContractProducts().stream()
+			.map(contractProduct -> ContractProductDto.Res.builder()
 				.contractProductId(contractProduct.getId())
 				.name(contractProduct.getName())
 				.price(contractProduct.getPrice())

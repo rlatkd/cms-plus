@@ -3,25 +3,23 @@ package kr.or.kosa.cmsplusmain.domain.contract.repository;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
+import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductDto;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.QContractListItem;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.QContractProductDto;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 
@@ -41,6 +39,7 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 
 	/*
 	* 계약 목록 조회
+	*
 	*  */
 	public List<ContractListItem> findContractsWithCondition(String vendorUsername, ContractSearch search, PageDto.Req pageable) {
 		return jpaQueryFactory
@@ -75,27 +74,12 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 	}
 
 	/*
-		상세 계약 정보 - 계약정보 - 계약 상품 목록
-	*/
-	public List<ContractProductDto> findContractProducts(Long contractId) {
-		return jpaQueryFactory
-			.select(new QContractProductDto(
-				contractProduct.id,
-				contractProduct.name,
-				contractProduct.price,
-				contractProduct.quantity))
-			.from(contractProduct)
-			.where(
-				contractProduct.deleted.eq(false),
-				contractProduct.contract.id.eq(contractId))
-			.fetch();
-	}
-
-	/*
-	* 상세 계약 정보 - 청구정보 - 회원 청구정보
+	* 상세 계약 정보 (청구 목록 제외)
 	*
+	* 동일 트랜잭션 내에서 수정 금지
 	* */
-	public Contract findContractById(Long contractId) {
+	@Transactional(readOnly = true)
+	public Contract findContractDetailById(Long contractId) {
 		return jpaQueryFactory
 			.selectFrom(contract)
 			.join(contract.member, member).fetchJoin()
@@ -107,6 +91,32 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 				contractProduct.deleted.eq(false)
 			)
 			.fetchOne();
+	}
+
+
+
+	/*
+	* 계약 정보 수정
+	* */
+	@Transactional
+	public void updateContract(Long contractId, String contractName, List<ContractProduct> contractProducts) {
+
+		// 기존 계약 상품 삭제
+		jpaQueryFactory
+			.update(contractProduct)
+			.where(contractProduct.contract.id.eq(contractId))
+			.set(contractProduct.deleted, true)
+			.execute();
+
+		// 새로운 계약 상품 추가
+		contractProducts.forEach(em::persist);
+
+		// 계약 이름 변경
+		jpaQueryFactory
+			.update(contract)
+			.where(contract.id.eq(contractId))
+			.set(contract.name, contractName)
+			.execute();
 	}
 
 	/*

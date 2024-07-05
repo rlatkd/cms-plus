@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.annotations.Comment;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -111,5 +112,11 @@ public class Contract extends BaseEntity {
 	@PreUpdate
 	public void preSave() {
 		contractPrice = getContractPrice();
+	}
+
+	public static Contract of(Long contractId) {
+		Contract contract = new Contract();
+		contract.id = contractId;
+		return contract;
 	}
 }
