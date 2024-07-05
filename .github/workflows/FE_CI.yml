@@ -1,0 +1,71 @@
+name: FE CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types: [ opened ]
+    paths:
+      - 'client/**'
+
+permissions: #github actions bot에게 권한 열기
+  contents: write
+  pages: write
+  id-token: write
+
+env:
+  AWS_REGION: ap-northeast-2
+
+jobs:
+  fe-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 캐시 액션 설치
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('client/package-lock.json') }}
+      
+      # 캐시 여부 출력
+      - name: Print cache status
+        run: |
+          if [ -e ~/.npm ]; then
+            echo "npm cache hit!"
+          else
+            echo "npm cache missed!"
+          fi
+
+      # 캐시가 없거나 다른 경우에만 모듈 설치 -> 배포 시간 단축
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+        working-directory: client
+
+      - name: Npm Build
+        run: npm run build
+        working-directory: client
+
+      - name: Copy
+        run: |
+          mkdir -p DEPLOY_FILE/client
+          cp -r client/dist/* DEPLOY_FILE/client/
+
+      - name: Git Config
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Git Operations
+        run: |
+          timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+          cp -r DEPLOY_FILE/client/* .
+          git fetch origin
+          git checkout prod || git checkout -b prod
+          git add DEPLOY_FILE/client
+          git commit -m "release: $timestamp FE 배포 완료"
+          git push origin prod --force

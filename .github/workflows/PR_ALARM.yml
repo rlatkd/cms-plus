@@ -1,0 +1,31 @@
+name: PR Alarm
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types: [ opened, closed ]
+
+jobs:
+  pr-alarm:
+    name: PR Alarm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Status
+        id: status
+        run: | #PR opened 상태: open 메시지 / closed 상태: close 메시지
+          echo "::set-output name=footer::customed by 김상훈"
+          if [ "${{ github.event.action }}" == "opened" ]; then
+            echo "::set-output name=message::[OPEN] https://github.com/Try-AngIe/cms-plus/pulls"
+          elif [ "${{ github.event.action }}" == "closed" ]; then
+            echo "::set-output name=message::[CLOSE] https://github.com/Try-AngIe/cms-plus/pulls"
+          fi
+          
+      - name: Push Alarm
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_USERNAME: 'GitHub Actions'
+          SLACK_ICON_EMOJI: ':github:'
+          SLACK_FOOTER: ${{ steps.status.outputs.footer }}
+          SLACK_MESSAGE: ${{ steps.status.outputs.message }}

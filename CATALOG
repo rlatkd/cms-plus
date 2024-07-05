@@ -1,0 +1,27 @@
+1. git clone https://github.com/Try-AngIe/cms-plus.git
+
+2. cd cms-plus
+
+3. git fetch
+
+4. git checkout -b dev origin/dev
+
+5. git branch feat/도메인1
+
+6. git checkout feat/도메인1
+
+7. 작업시작
+
+8. git commit -m "[Jira 이슈 ID] 브랜치명(수정 도메인): 구현내용"
+
+9. 작업끝(모든 커밋 끝)
+
+10. git push origin feat/도메인1
+
+11. git checkout dev
+
+12. git branch feat/도메인2
+
+...이하동일
+
+PR 다른 팀원이 승인 완료되면 dev에서 git pull origin dev

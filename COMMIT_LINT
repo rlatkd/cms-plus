@@ -1,0 +1,29 @@
+아래의 코드를 현재 워크스페이스의 .git/hooks/commit-msg 파일(새로 생성)에 입력해주세요.
+----------------------------------------------------------------------------------
+
+#!/bin/sh
+
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+pattern="^\[.*\] (feat|fix|style|test|refactor|perf|docs|build|cicd|release)\(.*\): .{0,50}$"
+
+if ! echo "$commit_msg" | grep -qE "$pattern"; then
+    echo "--------------------------------------------------------------------------------------------------"
+    echo "-안녕하세요? 김상훈입니다."
+    echo "-아래의 양식을 지켜주세요."
+    echo ""
+    echo "[Jira 이슈 ID] 브랜치명(수정 도메인): 구현내용"
+    echo ""
+    echo "       (브랜치 목록: feat / fix / style / test / refactor / perf / docs / build / cicd / release)"
+    echo ""
+    echo "-예시는 다음과 같습니다."
+    echo ""
+    echo "[VEDG-1] feat(payment): 청구서 취소 기능 구현"
+    echo "[EEFG-38] fix(member): 로그인 요청시 발생한 AuthenticationPrincipal NPE 수정"
+    echo "[EEFG-38] style(member): LoginService 내 코드 줄바꿈 변경"
+    echo "[QEFO-1] test(payment): 청구서 취소시 청구서 상태 변경 확인 테스트 구현"
+    echo "--------------------------------------------------------------------------------------------------"
+    exit 1
+fi
+
+exit 0

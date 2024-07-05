@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: cmsplus-mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+# version: '3.8'
+
+# services:
+#   db:
+
+#     image: mysql:5.7
+#     container_name: cmsplus-mysql
+#     restart: always
+#     environment:
+#       MYSQL_ROOT_PASSWORD: 1004
+#       MYSQL_DATABASE: cmsplusmain
+#       MYSQL_USER: user
+#       MYSQL_PASSWORD: 1004
+#     ports:
+#       - "3306:3306"
+#     volumes:
+#       - ./config/initsql:/docker-entrypoint-initdb.d
+#       - mysql_data:/var/lib/mysql
+#     command:
+#       - --character-set-server=utf8mb4
+#       - --collation-server=utf8mb4_unicode_ci
+#       - --skip-character-set-client-handshake
+
+# volumes:
+#   mysql_data:

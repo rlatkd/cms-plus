@@ -1,0 +1,31 @@
+name: Feat Trigger
+
+on:
+  push:
+    branches:
+      - feat/** #feat브랜치만
+
+jobs:
+  feat-trigger:
+    name: Transition Issue
+    runs-on: ubuntu-latest
+    steps:
+    - name: Login
+      uses: atlassian/gajira-login@master
+      env:
+        JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+    - name: Find Issue Key
+      uses: atlassian/gajira-find-issue-key@master
+      id: issue-key
+      with:
+        from: commits
+        
+    - name: Issue Transitioned
+      if: steps.issue-key.outputs.issue != ''
+      uses: atlassian/gajira-transition@master
+      with:
+        issue: ${{ steps.issue-key.outputs.issue }}
+        transition: "검토 중" #Jira 보드의 워크플로 관리에 있는 이름을 적어야함
