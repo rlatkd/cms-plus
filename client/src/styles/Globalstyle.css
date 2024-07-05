@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+}
+
+#root {
+  height: 100dvh;
+  width: 100vw;
+}
+
+@layer utilities {
+  .border-gradient {
+    border: 1px solid transparent;
+    border-image: linear-gradient(to right, #e0e1e2 0%, #e0e1e2 50%, #e0e1e2 100%);
+    border-image-slice: 1;
+  }
+}
