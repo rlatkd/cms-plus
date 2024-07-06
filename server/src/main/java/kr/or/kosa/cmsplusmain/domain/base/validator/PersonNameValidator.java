@@ -5,14 +5,14 @@ import java.util.regex.Pattern;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PersonNameValidator implements ConstraintValidator<Phone, String> {
+public class PersonNameValidator implements ConstraintValidator<PersonName, String> {
 
 	private static final Pattern NAME_PATTERN = Pattern.compile(
 		"^[가-힣a-zA-Z]{1,40}$"
 	);
 
 	@Override
-	public void initialize(Phone constraintAnnotation) {
+	public void initialize(PersonName constraintAnnotation) {
 	}
 
 	@Override

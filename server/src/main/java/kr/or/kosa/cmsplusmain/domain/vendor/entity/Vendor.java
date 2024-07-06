@@ -1,17 +1,9 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.entity;
 
+import jakarta.persistence.*;
+import kr.or.kosa.cmsplusmain.domain.vendor.validator.Password;
 import org.hibernate.annotations.Comment;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -86,6 +78,12 @@ public class Vendor extends BaseEntity {
 	@Column(name = "vendor_dept", nullable = false, length = 40)
 	@NotBlank
 	private String department;
+
+	@Comment("사용자 역할")
+	@Enumerated(EnumType.STRING)
+	@Column(name = "user_role",  nullable = false)
+	@NotNull
+	private UserRole role;
 
 	/* 간편동의 설정 */
 	// TODO: 고객 아이디 만들기 시 최초 설정 값 지녀야함
