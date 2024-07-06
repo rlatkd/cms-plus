@@ -61,18 +61,22 @@ asciidoctor {
     inputs.dir snippetsDir
     configurations 'asciidoctorExtensions'
     dependsOn test
-}
-
-bootJar {
-    dependsOn asciidoctor
-
-    // build 경로 안에 있는 index.html을 밖으로 꺼내준다.
-    copy {
-        from "${asciidoctor.outputDir}"
-        into "src/main/resources/static/docs"   // src/main/resources/static/docs로 복사
+    sources {
+        include("**/*.adoc")
     }
-
+    baseDirFollowsSourceFile()
 }
+
+task copyDocs(type: Copy) {
+    dependsOn asciidoctor
+    from "${asciidoctor.outputDir}"
+    into "src/main/resources/static/docs"   // src/main/resources/static/docs로 복사
+}
+
+build {
+    dependsOn copyDocs
+}
+
 /**
  * QueryDSL Build Options
  */

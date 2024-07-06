@@ -1,0 +1,4 @@
+[[POST-API]]
+== 상품
+
+include::{docdir}/products/products-get.adoc[]

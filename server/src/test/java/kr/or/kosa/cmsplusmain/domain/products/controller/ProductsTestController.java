@@ -1,7 +1,6 @@
-package kr.or.kosa.cmsplusmain.controller;
+package kr.or.kosa.cmsplusmain.domain.products.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.or.kosa.cmsplusmain.test.dto.PostRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.headers.HeaderDocumentation;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,15 +29,16 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 @ExtendWith({RestDocumentationExtension.class})
 @AutoConfigureMockMvc
 @SpringBootTest
-class PostControllerTest {
+class ProductsTestController {
 
     @Autowired
     MockMvc mockMvc;
+
     @Autowired
     ObjectMapper objectMapper;
 
     @BeforeEach
-    void setup(WebApplicationContext webApplicationContext,
+    void setUp(WebApplicationContext webApplicationContext,
                RestDocumentationContextProvider restDocumentationContextProvider) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
@@ -51,53 +50,32 @@ class PostControllerTest {
     }
 
     @Test
-    void getPost() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/post").accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print())
-                .andDo(document("getPost",
-                        HeaderDocumentation.requestHeaders(
-                                HeaderDocumentation.headerWithName(HttpHeaders.ACCEPT).description("accept header")
-                        ),
-                        HeaderDocumentation.responseHeaders(
-                                HeaderDocumentation.headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
-                        ),
-                        PayloadDocumentation.responseFields(
-                                PayloadDocumentation.fieldWithPath("name").type(JsonFieldType.STRING).description("name of post"),
-                                PayloadDocumentation.fieldWithPath("content").type(JsonFieldType.STRING).description("content of post")
-                        )
-                ));
-    }
-
-    @Test
-    void createPost() throws Exception{
-        PostRequestDto requestDto = new PostRequestDto("rlatkdtest1", "rlatkdgnstestt1");
-
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/post")
-                        .content(objectMapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON)
+    void getProducts() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/vendor/products")
+                        .param("page", "1")
+                        .param("size", "2")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())
-                .andDo(document("create Post",
+                .andDo(document("getProducts",
                         HeaderDocumentation.requestHeaders(
                                 HeaderDocumentation.headerWithName(HttpHeaders.ACCEPT).description("accept header")
-                        ),
-                        PayloadDocumentation.requestFields(
-                                PayloadDocumentation.fieldWithPath("name").type(JsonFieldType.STRING).description("name of post"),
-                                PayloadDocumentation.fieldWithPath("content").type(JsonFieldType.STRING).description("content of post")
-
                         ),
                         HeaderDocumentation.responseHeaders(
                                 HeaderDocumentation.headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
                         ),
                         PayloadDocumentation.responseFields(
-                                PayloadDocumentation.fieldWithPath("name").type(JsonFieldType.STRING).description("name of post"),
-                                PayloadDocumentation.fieldWithPath("content").type(JsonFieldType.STRING).description("content of post")
+                                PayloadDocumentation.fieldWithPath("page").description("current page number"),
+                                PayloadDocumentation.fieldWithPath("size").description("number of items per page"),
+                                PayloadDocumentation.fieldWithPath("totalPage").description("total number of pages"),
+                                PayloadDocumentation.fieldWithPath("totalCount").description("total number of products"),
+                                PayloadDocumentation.fieldWithPath("data[].name").description("name of product"),
+                                PayloadDocumentation.fieldWithPath("data[].price").description("price of product"),
+                                PayloadDocumentation.fieldWithPath("data[].contractCount").description("contract count of product"),
+                                PayloadDocumentation.fieldWithPath("data[].createdAt").description("creation date of product"),
+                                PayloadDocumentation.fieldWithPath("data[].notes").description("notes of product")
                         )
                 ));
-
-
     }
 
 }
