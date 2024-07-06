@@ -18,7 +18,7 @@ public class VendorController {
     @PostMapping("/join")
     public ResponseEntity<String> join(@RequestBody @Valid SignupDto signupDto) {
         try {
-            vendorService.join(signupDto);
+            vendorService. join(signupDto);
             return ResponseEntity.status(HttpStatus.CREATED).body("Signup successful.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

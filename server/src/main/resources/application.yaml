@@ -1,6 +1,8 @@
 spring:
   application:
     name: cmsplus-main
+  jwt:
+    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdba
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,3 +23,4 @@ spring:
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
+

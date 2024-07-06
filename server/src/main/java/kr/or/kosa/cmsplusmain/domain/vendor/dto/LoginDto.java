@@ -1,5 +1,9 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.dto;
 
-public class LoginDto {
+import lombok.Getter;
 
+@Getter
+public class LoginDto {
+    private String username;
+    private String password;
 }

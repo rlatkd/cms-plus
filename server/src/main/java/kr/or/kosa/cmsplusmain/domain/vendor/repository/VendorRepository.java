@@ -27,4 +27,11 @@ public class VendorRepository extends BaseRepository<Vendor, Long> {
 
         return count != null;
     }
+
+    public Vendor findByUsername(String username) {
+        return jpaQueryFactory
+                .selectFrom(vendor)
+                .where(vendor.username.eq(username), vendor.deleted.eq(false))
+                .fetchOne();
+    }
 }
