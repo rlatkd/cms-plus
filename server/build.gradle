@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
     id 'checkstyle'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2' //1
 }
 
 group = 'kr.or.kosa'
@@ -18,10 +19,15 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExtensions //2
 }
 
 repositories {
     mavenCentral()
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets")) //3
 }
 
 dependencies {
@@ -40,12 +46,33 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    //4
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+    outputs.dir snippetsDir
 }
 
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExtensions'
+    dependsOn test
+}
+
+bootJar {
+    dependsOn asciidoctor
+
+    // build 경로 안에 있는 index.html을 밖으로 꺼내준다.
+    copy {
+        from "${asciidoctor.outputDir}"
+        into "src/main/resources/static/docs"   // src/main/resources/static/docs로 복사
+    }
+
+}
 /**
  * QueryDSL Build Options
  */

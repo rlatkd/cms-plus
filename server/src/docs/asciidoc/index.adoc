@@ -1,0 +1,21 @@
+= REST DOC EXAMPLE
+Rest Documentation 실습
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+:operation-http-request-title: Example request
+:operation-http-response-title: Example response
+
+[[POST-API]]
+== POST
+
+[[GET-POST]]
+=== GET POST
+operation::getPost[snippets='http-request,http-response']
+
+[[POST-POST]]
+=== CREATE POST
+operation::create Post[snippets='http-request,http-response']
