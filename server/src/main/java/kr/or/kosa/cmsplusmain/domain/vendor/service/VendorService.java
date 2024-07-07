@@ -26,11 +26,10 @@ public class VendorService {
             throw new RuntimeException("Username already exists.");
         }
 
-        vendorRepository.save(signupDto.toEntity(password, role));
+        vendorRepository.save(signupDto.toEntity(username, password, role));
     }
 
     public boolean isExistUsername(String username) {
-        boolean isExist = vendorRepository.isExistUsername(username);
         return vendorRepository.isExistUsername(username);
     }
 }

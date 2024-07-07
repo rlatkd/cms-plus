@@ -1,6 +1,8 @@
 package kr.or.kosa.cmsplusmain.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTFilter;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.LoginFilter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -54,7 +60,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/vendor/auth/username-check").permitAll()
 //                        .requestMatchers("/","/api/v1/**").permitAll()
                         .requestMatchers("/vendor").hasRole("VENDOR")
+                        .requestMatchers("/member").hasRole("MEMBER")
                         .anyRequest().authenticated());
+
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);

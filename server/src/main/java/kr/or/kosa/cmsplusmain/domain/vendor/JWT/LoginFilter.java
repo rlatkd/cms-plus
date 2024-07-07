@@ -72,7 +72,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // JSON 응답 보문 작성
         TokenRes tokenRes = TokenRes.builder()
                 .accessToken(token)
-                .role(role)
+                .role(role.replace("ROLE_",""))
                 .build();
 
         ObjectMapper objectMapper = new ObjectMapper();

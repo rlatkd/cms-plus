@@ -37,7 +37,7 @@ public class SignupDto {
     @NotBlank
     private String department;
 
-    public Vendor toEntity(String password, UserRole role) {
+    public Vendor toEntity(String username,String password, UserRole role) {
         return Vendor.builder()
                 .username(username)
                 .password(password)
