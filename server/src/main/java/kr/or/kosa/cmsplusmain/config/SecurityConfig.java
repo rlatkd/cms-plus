@@ -1,13 +1,12 @@
 package kr.or.kosa.cmsplusmain.config;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTFilter;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -24,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -57,10 +57,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/v1/vendor/auth/login").permitAll()
                         .requestMatchers("/api/v1/vendor/auth/join").permitAll()
+                        .requestMatchers("/api/v1/vendor/auth/refresh").permitAll()
                         .requestMatchers("/api/v1/vendor/auth/username-check").permitAll()
-                        .requestMatchers("/vendor").permitAll()
-//                        .requestMatchers("/","/api/v1/**").permitAll()
-//                        .requestMatchers("/vendor").hasRole("VENDOR")
+                        .requestMatchers("/","/api/v1/**").permitAll()
+                        .requestMatchers("/vendor").hasRole("VENDOR")
                         .requestMatchers("/member").hasRole("MEMBER")
                         .anyRequest().authenticated());
 
@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, redisTemplate), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http

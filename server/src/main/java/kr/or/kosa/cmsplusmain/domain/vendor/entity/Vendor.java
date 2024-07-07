@@ -1,7 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.entity;
 
 import jakarta.persistence.*;
-import kr.or.kosa.cmsplusmain.domain.vendor.validator.Password;
 import org.hibernate.annotations.Comment;
 
 import jakarta.validation.constraints.Email;

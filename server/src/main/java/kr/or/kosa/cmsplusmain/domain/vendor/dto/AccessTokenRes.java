@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class TokenRes {
+public class AccessTokenRes {
     private final String accessToken;
+    private final String refreshToken;
     private final String role;
 }
