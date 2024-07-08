@@ -1,18 +1,30 @@
 package kr.or.kosa.cmsplusmain.domain.payment.entity;
 
-import org.hibernate.annotations.Comment;
+import java.time.LocalDateTime;
 
+import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
+import kr.or.kosa.cmsplusmain.domain.base.validator.HttpUrl;
+import kr.or.kosa.cmsplusmain.domain.payment.converter.PaymentTypeConverter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +32,7 @@ import lombok.NoArgsConstructor;
 @Comment("결제정보")
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "payment_type")    // 결제방식
+@DiscriminatorColumn(name = "payment_type")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class Payment extends BaseEntity {
@@ -33,20 +45,33 @@ public abstract class Payment extends BaseEntity {
 	@Comment("결제정보 상태")
 	@Column(name = "payment_status", nullable = false)
 	@Enumerated(EnumType.STRING)
-	private PaymentStatus status;
+	@NotNull
+	private PaymentStatus status = PaymentStatus.ENABLED;
 
-	@Comment("동의상태")
-	@Enumerated(EnumType.STRING)
-	@Column(name = "payment_consent_status", nullable = false)
-	private ConsentStatus consentStatus;
-
+	/* DiscriminatorColumn */
 	@Comment("결제방식")
+	@Convert(converter = PaymentTypeConverter.class)
 	@Column(name = "payment_type", insertable = false, updatable = false)
-	private String paymentType;
+	private PaymentType paymentType;
 
-	@Comment("결제수단")
+	/*
+	 * 자동결제 외에는 동의가 사용되지 않으므로 동의상태 NOT_USED
+	 * */
+	@Comment("동의상태")
+	@Column(name = "payment_consent_status", nullable = false)
 	@Enumerated(EnumType.STRING)
-	@Column(name = "payment_method")
-	private PaymentMethod paymentMethod;
+	@NotNull
+	private ConsentStatus consentStatus = ConsentStatus.NOT_USED;
 
+
+	/*
+	* 결제정보 상태
+	*
+	* 결제방식 별 사용가능 여부 판단 기준이 다를 수 있다.
+	*
+	* TODO: 저장되는 값과 일치해야함
+	* */
+	public PaymentStatus getPaymentStatus() {
+		return this.status;
+	}
 }

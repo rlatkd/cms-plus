@@ -25,15 +25,19 @@ public enum PaymentType {
 
 	/* DiscriminatorValue(PaymentType.Values...)에 사용됨 */
 	public static class Values {
-		public static final String AUTO = "AUTO_PAYMENT";
-		public static final String VIRTUAL_ACCOUNT = "VIRTUAL_ACCOUNT_PAYMENT";
-		public static final String BUYER = "BUYER_PAYMENT";
+		public static final String AUTO = "AUTO";
+		public static final String VIRTUAL_ACCOUNT = "VIRTUAL_ACCOUNT";
+		public static final String BUYER = "BUYER";
 	}
 
-	public static PaymentType of(String name) {
-		if (name == null || name.isEmpty()) return null;
+	public static PaymentType fromName(String name) {
+		if (name == null || name.isEmpty()) {
+			return null;
+		}
+
 		return Arrays.stream(PaymentType.values())
-					.filter(p -> name.contains(p.name))
-			.findAny().orElseThrow();
+					.filter(p -> name.equals(p.name))
+					.findAny()
+					.orElseThrow();
 	}
 }
