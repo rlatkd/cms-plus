@@ -65,7 +65,7 @@ public class VendorService {
         try {
             jwtUtil.isExpired(refreshToken);
         } catch (ExpiredJwtException e) {
-            throw new IllegalArgumentException("invaild refresh token");
+            throw new IllegalArgumentException("Invaild refresh token");
         }
 
         String category = jwtUtil.getCategory(refreshToken);

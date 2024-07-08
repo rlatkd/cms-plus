@@ -32,7 +32,7 @@ public class VendorController {
         }
     }
 
-    @GetMapping("/username-check")
+    @GetMapping("/check-username")
     public ResponseEntity<Boolean> isExistUsername(@RequestParam String username) {
         boolean isExist = vendorService.isExistUsername(username);
         return ResponseEntity.ok(isExist);
