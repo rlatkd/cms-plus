@@ -2,7 +2,6 @@ package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +48,7 @@ public class ContractDetail {
 		this.createdDateTime = createdDateTime;
 		this.modifiedDateTime = modifiedDateTime;
 		this.contractProducts = (contractProducts != null) ?
-				contractProducts.stream().map(ContractProductDto.Res::fromEntity).toList() : Collections.emptyList();
+			contractProducts.stream().map(ContractProductDto.Res::fromEntity).toList() : Collections.emptyList();
 		this.contractDay = contractDay;
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;

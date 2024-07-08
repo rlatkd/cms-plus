@@ -3,13 +3,9 @@ package kr.or.kosa.cmsplusmain.domain.contract.dto;
 import java.util.Collections;
 import java.util.List;
 
-import com.querydsl.core.annotations.QueryProjection;
-
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -29,8 +25,7 @@ public class ContractListItem {
 		Long contractId,
 		String memberName, String memberPhone,
 		Integer contractDay, List<ContractProduct> contractProducts,
-		Long contractPrice, ContractStatus contractStatus, ConsentStatus consentStatus)
-	{
+		Long contractPrice, ContractStatus contractStatus, ConsentStatus consentStatus) {
 		this.contractId = contractId;
 		this.memberName = memberName;
 		this.memberPhone = memberPhone;

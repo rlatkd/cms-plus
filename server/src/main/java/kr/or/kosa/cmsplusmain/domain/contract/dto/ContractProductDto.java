@@ -4,9 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
-import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -56,6 +54,5 @@ public class ContractProductDto {
 				.build();
 		}
 	}
-
 
 }

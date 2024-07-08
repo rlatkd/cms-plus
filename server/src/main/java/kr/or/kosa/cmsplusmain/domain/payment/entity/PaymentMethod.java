@@ -19,13 +19,6 @@ public enum PaymentMethod {
 		this.name = name;
 	}
 
-	/* DiscriminatorValue(PaymentType.Values...)에 사용됨 */
-	public static class Values {
-		public static final String CARD = "CARD";
-		public static final String CMS = "CMS";
-		public static final String ACCOUNT = "ACCOUNT";
-	}
-
 	public static PaymentMethod fromName(String name) {
 		if (name == null || name.isBlank()) {
 			return null;
@@ -34,5 +27,12 @@ public enum PaymentMethod {
 			.filter(p -> name.equals(p.name))
 			.findAny()
 			.orElseThrow();
+	}
+
+	/* DiscriminatorValue(PaymentType.Values...)에 사용됨 */
+	public static class Values {
+		public static final String CARD = "CARD";
+		public static final String CMS = "CMS";
+		public static final String ACCOUNT = "ACCOUNT";
 	}
 }

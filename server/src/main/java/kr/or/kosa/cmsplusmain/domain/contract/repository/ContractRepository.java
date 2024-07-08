@@ -1,8 +1,13 @@
 package kr.or.kosa.cmsplusmain.domain.contract.repository;
 
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
+import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
+import static org.springframework.util.StringUtils.*;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,39 +15,24 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductDto;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.QContractProductDto_Res;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
-import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethodInfo;
 import lombok.extern.slf4j.Slf4j;
-
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
-import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
-import static org.springframework.util.StringUtils.*;
 
 @Slf4j
 @Repository
@@ -53,12 +43,13 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 	}
 
 	/*
-	* 계약 목록 조회
-	*
-	* TODO: 쿼리 횟수 감소시키기 (inheritance 쿼리 한 번더 나가는거 방지)
-	* TODO: 검색 최적화를 위한 캐싱하기
-	*  */
-	public List<ContractListItem> findContractListWithCondition(String vendorUsername, ContractSearch search, PageDto.Req pageable) {
+	 * 계약 목록 조회
+	 *
+	 * TODO: 쿼리 횟수 감소시키기 (inheritance 쿼리 한 번더 나가는거 방지)
+	 * TODO: 검색 최적화를 위한 캐싱하기
+	 *  */
+	public List<ContractListItem> findContractListWithCondition(String vendorUsername, ContractSearch search,
+		PageDto.Req pageable) {
 
 		// 회원명, 회원 휴대전화, 약정일, 계약상태, 동의상태
 		List<Long> contractIds = jpaQueryFactory
@@ -72,14 +63,14 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 				contract.deleted.eq(false),
 				member.deleted.eq(false),
 
-				contract.vendor.username.eq(vendorUsername),	// 해당 고객의 계약
+				contract.vendor.username.eq(vendorUsername),    // 해당 고객의 계약
 
 				// 검색조건
-				memberNameContains(search.getMemberName()),		// 회원명
-				memberPhoneContains(search.getMemberPhone()),	// 휴대전화
-				contractDayEq(search.getContractDay()),			// 약정일
-				contractStatusEq(search.getContractStatus()),	// 계약상태
-				consentStatusEq(search.getConsentStatus())		// 동의상태
+				memberNameContains(search.getMemberName()),        // 회원명
+				memberPhoneContains(search.getMemberPhone()),    // 휴대전화
+				contractDayEq(search.getContractDay()),            // 약정일
+				contractStatusEq(search.getContractStatus()),    // 계약상태
+				consentStatusEq(search.getConsentStatus())        // 동의상태
 			).fetch();
 
 		// 상품 목록
@@ -93,7 +84,6 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 			.fetch()
 			.stream()
 			.collect(Collectors.groupingBy(cp -> cp.getContract().getId()));
-
 
 		// 검색 상품명이 포함된 상품이 하나라도 존재하는 계약
 		// 계약 금액이 검색 금액이하인 계약
@@ -165,10 +155,10 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 	}
 
 	/*
-	* 계약 상세 조회
-	*
-	* 동일 트랜잭션 내에서 수정금지
-	* */
+	 * 계약 상세 조회
+	 *
+	 * 동일 트랜잭션 내에서 수정금지
+	 * */
 	@Transactional(readOnly = true)
 	public Contract findContractDetailById(Long id) {
 		return jpaQueryFactory
@@ -183,10 +173,9 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 			.fetchOne();
 	}
 
-
 	/*
-	* 계약 정보 수정
-	* */
+	 * 계약 정보 수정
+	 * */
 	@Transactional
 	public void updateContract(Long contractId, String contractName, List<ContractProduct> contractProducts) {
 
@@ -209,8 +198,8 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 	}
 
 	/*
-	* 존재 여부
-	* */
+	 * 존재 여부
+	 * */
 	public boolean isExistById(Long contractId) {
 		Integer fetchOne = jpaQueryFactory
 			.selectOne()
@@ -220,13 +209,12 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 		return fetchOne != null;
 	}
 
-
 	/*
-	* 정렬 조건 생성
-	*
-	* 기본 조건: 생성일 내림차순
-	* */
-	private OrderSpecifier<?> orderMethod(PageDto.Req pageable){
+	 * 정렬 조건 생성
+	 *
+	 * 기본 조건: 생성일 내림차순
+	 * */
+	private OrderSpecifier<?> orderMethod(PageDto.Req pageable) {
 		if (pageable.getOrderBy() == null) {
 			return new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
 		}

@@ -24,10 +24,11 @@ public class BillingListItem {
 	private final LocalDate contractDate;
 
 	@QueryProjection
-	public BillingListItem(Long billingId, String memberName, LocalDate billingDate, List<BillingProduct> billingProducts,
+	public BillingListItem(Long billingId, String memberName, LocalDate billingDate,
+		List<BillingProduct> billingProducts,
 		BillingStatus billingStatus, String paymentType, LocalDate contractDate) {
 
-		PaymentType mPaymentType = PaymentType.of(paymentType);
+		PaymentType mPaymentType = PaymentType.fromName(paymentType);
 
 		this.billingId = billingId;
 		this.memberName = memberName;
@@ -37,7 +38,8 @@ public class BillingListItem {
 		this.billingPrice = billingProducts.stream()
 			.mapToLong(BillingProduct::getTotalPrice)
 			.sum();
-		this.billingStatus = (billingStatus != null) ? billingStatus.getTitle() : null; ;
+		this.billingStatus = (billingStatus != null) ? billingStatus.getTitle() : null;
+		;
 		this.paymentType = (mPaymentType != null) ? mPaymentType.getTitle() : null;
 		this.contractDate = contractDate;
 	}

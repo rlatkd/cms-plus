@@ -26,10 +26,10 @@ public class ContractController {
 	private final ContractService contractService;
 
 	/*
-	* 계약 목록 조회
-	*
-	* 검색, 정렬, 페이징
-	* */
+	 * 계약 목록 조회
+	 *
+	 * 검색, 정렬, 페이징
+	 * */
 	@GetMapping
 	public List<ContractListItem> getContractList(ContractSearch contractSearch, PageDto.Req pageRequest) {
 		// TODO security
@@ -38,23 +38,23 @@ public class ContractController {
 	}
 
 	/*
-	* 계약 상세 조회
-	*
-	* 계약 상세 페이지에서 청구목록을 뺀 나머지 정보 제공
-	* (청구정보에서 청구서 발송 수단, 자동 청구서 발송, 자동 청구 생성은 포함되어서 보내진다.)
-	* */
+	 * 계약 상세 조회
+	 *
+	 * 계약 상세 페이지에서 청구목록을 뺀 나머지 정보 제공
+	 * (청구정보에서 청구서 발송 수단, 자동 청구서 발송, 자동 청구 생성은 포함되어서 보내진다.)
+	 * */
 	@GetMapping("/{contractId}")
 	public ContractDetail getContractDetail(@PathVariable Long contractId) {
 		return contractService.findContractDetail(contractId);
 	}
 
 	/*
-	* 계약 및 결제 수정
-	*
-	* 계약 상세 페이지에서 상품 수정 버튼 및 결제 수정 버튼 클릭 후
-	* 나오는 수정 화면에서 호출해서 정보를 수정한다.
-	* 즉, 계약과 결제 수정에 사용된다.
-	* */
+	 * 계약 및 결제 수정
+	 *
+	 * 계약 상세 페이지에서 상품 수정 버튼 및 결제 수정 버튼 클릭 후
+	 * 나오는 수정 화면에서 호출해서 정보를 수정한다.
+	 * 즉, 계약과 결제 수정에 사용된다.
+	 * */
 	@PutMapping("/{contractId}")
 	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractUpdateReq contractUpdateReq) {
 		contractService.updateContract(contractId, contractUpdateReq);

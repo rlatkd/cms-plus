@@ -13,14 +13,12 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingListItem;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 
 @Repository
@@ -31,8 +29,8 @@ public class BillingRepository extends BaseRepository<Billing, Long> {
 	}
 
 	/*
-	* 계약 상세 - 청구목록
-	* */
+	 * 계약 상세 - 청구목록
+	 * */
 	public List<BillingListItem> findBillingsByContractId(Long contractId, PageDto.Req pageable) {
 		return jpaQueryFactory
 			.from(billing)

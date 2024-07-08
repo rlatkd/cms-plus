@@ -23,12 +23,14 @@ public class CardPayment extends PaymentMethodInfo {
 
 	@Comment("카드 번호")
 	@Column(name = "card_info_number", nullable = false)
-	@CardNumber @NotNull
+	@CardNumber
+	@NotNull
 	private String cardNumber;
 
 	@Comment("카드 소유주명")
 	@Column(name = "card_info_owner", nullable = false)
-	@PersonName @NotNull
+	@PersonName
+	@NotNull
 	private String cardOwner;
 
 	@Comment("카드 소유주 생년월일")

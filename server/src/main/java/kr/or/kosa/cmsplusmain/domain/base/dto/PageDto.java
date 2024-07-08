@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.base.dto;
 
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,7 +18,8 @@ public class PageDto {
 		private String orderBy;
 
 		public boolean isAsc() {
-			if (sort == null) return false;
+			if (sort == null)
+				return false;
 			return sort.equalsIgnoreCase("asc");
 		}
 	}

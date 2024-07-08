@@ -54,6 +54,6 @@ public class ContractProduct extends BaseEntity {
 	private int quantity;
 
 	public long getTotalPrice() {
-		return (long) price * quantity;
+		return (long)price * quantity;
 	}
 }

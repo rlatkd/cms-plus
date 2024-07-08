@@ -20,7 +20,8 @@ public class BillingController {
 	private final BillingService billingService;
 
 	@GetMapping
-	public List<BillingListItem> getBillingListByContract(@RequestParam(name = "contract") Long contractId, PageDto.Req pageable) {
+	public List<BillingListItem> getBillingListByContract(@RequestParam(name = "contract") Long contractId,
+		PageDto.Req pageable) {
 		return billingService.findBillingsByContract(contractId, pageable);
 	}
 }

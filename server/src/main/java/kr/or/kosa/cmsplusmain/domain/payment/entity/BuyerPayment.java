@@ -33,8 +33,8 @@ public class BuyerPayment extends Payment {
 	private Set<PaymentMethod> availableMethods = new HashSet<>();
 
 	/*
-	* 납부자결제 수단은 카드와 계좌만 가능하다.
-	* */
+	 * 납부자결제 수단은 카드와 계좌만 가능하다.
+	 * */
 	public void setAvailableMethods(Set<PaymentMethod> availableMethods) {
 		List<PaymentMethod> paymentMethods = PaymentType.BUYER.getAvailablePaymentMethods();
 		if (availableMethods.stream().anyMatch(paymentMethods::contains)) {

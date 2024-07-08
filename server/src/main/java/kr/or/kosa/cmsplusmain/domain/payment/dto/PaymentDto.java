@@ -10,7 +10,6 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.VirtualAccountPayment;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Builder
@@ -38,13 +37,13 @@ public class PaymentDto {
 
 		switch (paymentType) {
 			case AUTO -> {
-				AutoPayment autoPayment = (AutoPayment) payment;
+				AutoPayment autoPayment = (AutoPayment)payment;
 				PaymentMethodInfo paymentMethodInfo = autoPayment.getPaymentMethodInfo();
 
 				PaymentMethod paymentMethod = paymentMethodInfo.getPaymentMethod();
 				switch (paymentMethod) {
 					case CMS -> {
-						CmsPayment cmsPayment = (CmsPayment) paymentMethodInfo;
+						CmsPayment cmsPayment = (CmsPayment)paymentMethodInfo;
 						CMSInfo cmsInfo = CMSInfo.builder()
 							.bank(cmsPayment.getBank())
 							.accountNumber(cmsPayment.getAccountNumber())
@@ -54,7 +53,7 @@ public class PaymentDto {
 						paymentDtoBuilder = paymentDtoBuilder.cmsInfo(cmsInfo);
 					}
 					case CARD -> {
-						CardPayment cardPayment = (CardPayment) paymentMethodInfo;
+						CardPayment cardPayment = (CardPayment)paymentMethodInfo;
 						CardInfo cardInfo = CardInfo.builder()
 							.cardNumber(cardPayment.getCardNumber())
 							.cardOwner(cardPayment.getCardOwner())
@@ -65,7 +64,7 @@ public class PaymentDto {
 				}
 			}
 			case VIRTUAL -> {
-				VirtualAccountPayment virtualAccountPayment = (VirtualAccountPayment) payment;
+				VirtualAccountPayment virtualAccountPayment = (VirtualAccountPayment)payment;
 				VirtualAccountInfo virtualAccountInfo = VirtualAccountInfo.builder()
 					.bank(virtualAccountPayment.getBank())
 					.accountOwner(virtualAccountPayment.getAccountOwner())

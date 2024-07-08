@@ -1,22 +1,15 @@
 package kr.or.kosa.cmsplusmain.domain.payment.entity;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import io.micrometer.common.util.StringUtils;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -56,14 +49,14 @@ public class AutoPayment extends Payment {
 	private LocalDateTime simpleConsentReqDateTime;
 
 	/*
-	* 결제정보 상태
-	*
-	* 동의가 필요하다.
-	* */
+	 * 결제정보 상태
+	 *
+	 * 동의가 필요하다.
+	 * */
 	@Override
 	public PaymentStatus getPaymentStatus() {
 		return (getConsentStatus().equals(ConsentStatus.ACCEPT)) ?
-				PaymentStatus.ENABLED : PaymentStatus.DISABLED;
+			PaymentStatus.ENABLED : PaymentStatus.DISABLED;
 	}
 
 	/*

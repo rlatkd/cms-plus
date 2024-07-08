@@ -30,12 +30,14 @@ public class CmsPayment extends PaymentMethodInfo {
 
 	@Comment("CMS 계좌번호")
 	@Column(name = "cms_account_number", nullable = false, length = 15)
-	@AccountNumber @NotNull
+	@AccountNumber
+	@NotNull
 	private String accountNumber;
 
 	@Comment("CMS 계좌 소유주명")
 	@Column(name = "cms_account_owner", nullable = false, length = 40)
-	@PersonName @NotNull
+	@PersonName
+	@NotNull
 	private String accountOwner;
 
 	@Comment("CMS 계좌 소유주 생년월일")

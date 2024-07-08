@@ -19,8 +19,8 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Serializab
 	protected final JPAQueryFactory jpaQueryFactory;
 
 	/*
-	* 새로생성 혹은 수정완료시 (비영속 상태 객체 수정 완료 후 호출)
-	* */
+	 * 새로생성 혹은 수정완료시 (비영속 상태 객체 수정 완료 후 호출)
+	 * */
 	@Transactional
 	public T save(T entity) {
 		return em.merge(entity);

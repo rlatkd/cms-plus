@@ -6,7 +6,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.payment.converter.BankConverter;
@@ -30,11 +29,13 @@ public class VirtualAccountPayment extends Payment {
 
 	@Comment("가상계좌 계좌번호")
 	@Column(name = "virtual_payment_account_number", nullable = false, length = 14)
-	@AccountNumber @NotNull
+	@AccountNumber
+	@NotNull
 	private String accountNumber;
 
 	@Comment("가상계좌 예금주명")
 	@Column(name = "virtual_payment_account_owner", nullable = false, length = 40)
-	@PersonName @NotNull
+	@PersonName
+	@NotNull
 	private String accountOwner;
 }

@@ -23,21 +23,21 @@ public enum PaymentType {
 		this.availablePaymentMethods = availablePaymentMethods;
 	}
 
-	/* DiscriminatorValue(PaymentType.Values...)에 사용됨 */
-	public static class Values {
-		public static final String AUTO = "AUTO";
-		public static final String VIRTUAL_ACCOUNT = "VIRTUAL_ACCOUNT";
-		public static final String BUYER = "BUYER";
-	}
-
 	public static PaymentType fromName(String name) {
 		if (name == null || name.isEmpty()) {
 			return null;
 		}
 
 		return Arrays.stream(PaymentType.values())
-					.filter(p -> name.equals(p.name))
-					.findAny()
-					.orElseThrow();
+			.filter(p -> name.equals(p.name))
+			.findAny()
+			.orElseThrow();
+	}
+
+	/* DiscriminatorValue(PaymentType.Values...)에 사용됨 */
+	public static class Values {
+		public static final String AUTO = "AUTO";
+		public static final String VIRTUAL_ACCOUNT = "VIRTUAL_ACCOUNT";
+		public static final String BUYER = "BUYER";
 	}
 }
