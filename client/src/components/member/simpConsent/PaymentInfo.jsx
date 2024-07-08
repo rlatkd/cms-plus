@@ -1,15 +1,21 @@
+import React from 'react';
 import RadioGroup from '@/components/common/RadioGroup';
 import PaymentCard from '@/components/member/simpConsent/PaymentCard';
 import PaymentCMS from '@/components/member/simpConsent/PaymentCMS';
-import { useState } from 'react';
+import { useUserDataStore } from '@/stores/useUserDataStore';
 
 const PaymentInfo = () => {
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  const { userData, setUserData, clearPaymentInfo } = useUserDataStore();
 
   const paymentOptions = [
     { label: '카드', value: 'card' },
     { label: '실시간 CMS', value: 'cms' },
   ];
+
+  const handlePaymentMethodChange = value => {
+    clearPaymentInfo(); // 결제 방법이 변경될 때 기존 결제 정보 초기화
+    setUserData({ paymentMethod: value });
+  };
 
   return (
     <>
@@ -24,11 +30,11 @@ const PaymentInfo = () => {
         label='결제수단'
         name='paymentMethod'
         options={paymentOptions}
-        selectedOption={paymentMethod}
-        onChange={setPaymentMethod}
+        selectedOption={userData.paymentMethod}
+        onChange={handlePaymentMethodChange}
         required={true}
       />
-      {paymentMethod === 'card' ? <PaymentCard /> : <PaymentCMS />}
+      {userData.paymentMethod === 'card' ? <PaymentCard /> : <PaymentCMS />}
     </>
   );
 };

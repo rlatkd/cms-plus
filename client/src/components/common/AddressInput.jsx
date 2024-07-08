@@ -1,9 +1,7 @@
-import React, { useEffect } from 'react';
-import { useAddressStore } from '@/stores/useAddressStore';
+import React, { useEffect, useState } from 'react';
 
-const AddressInput = () => {
-  const { zipcode, address, addressDetail, setZipcode, setAddress, setAddressDetail } =
-    useAddressStore();
+const AddressInput = ({ zipcode, address, addressDetail, onAddressChange }) => {
+  const [localAddressDetail, setLocalAddressDetail] = useState(addressDetail);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -16,18 +14,29 @@ const AddressInput = () => {
     };
   }, []);
 
+  useEffect(() => {
+    setLocalAddressDetail(addressDetail);
+  }, [addressDetail]);
+
   const handleAddressSearch = () => {
     new window.daum.Postcode({
       oncomplete: function (data) {
         console.log('Selected address:', data);
-        setZipcode(data.zonecode);
-        setAddress(data.address);
-        // 상세주소 입력 필드로 포커스 이동
+        onAddressChange('zipcode', data.zonecode);
+        onAddressChange('address', data.address);
         document.querySelector('input[name=address_detail]').focus();
       },
       width: '100%',
       height: '100%',
     }).open();
+  };
+
+  const handleAddressDetailChange = e => {
+    setLocalAddressDetail(e.target.value);
+  };
+
+  const handleAddressDetailBlur = () => {
+    onAddressChange('addressDetail', localAddressDetail);
   };
 
   return (
@@ -62,8 +71,9 @@ const AddressInput = () => {
       <input
         type='text'
         name='address_detail'
-        value={addressDetail}
-        onChange={e => setAddressDetail(e.target.value)}
+        value={localAddressDetail}
+        onChange={handleAddressDetailChange}
+        onBlur={handleAddressDetailBlur}
         className='w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
         placeholder='상세 주소'
         autoComplete='address-line2'

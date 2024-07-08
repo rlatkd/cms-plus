@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
 import InfoRow from '@/components/common/InfoRow';
 import SignatureCanvas from 'react-signature-canvas';
+import { useUserDataStore } from '@/stores/useUserDataStore';
 
 const Signature = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [signature, setSignature] = useState(null);
   const signatureRef = useRef();
+  const { userData, setUserData } = useUserDataStore();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -13,7 +14,7 @@ const Signature = () => {
   const saveSignature = () => {
     if (signatureRef.current) {
       const dataUrl = signatureRef.current.toDataURL();
-      setSignature(dataUrl);
+      setUserData({ signatureUrl: dataUrl });
       closeModal();
     }
   };
@@ -24,9 +25,45 @@ const Signature = () => {
     }
   };
 
+  // 상품 이름 생성
+  const productNames =
+    userData.items.length > 1
+      ? `${userData.items[0].name} 외 ${userData.items.length - 1}`
+      : userData.items[0].name;
+
+  // 날짜 형식 변경 함수
+  const formatDate = dateString => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}.${month}.${day}`;
+  };
+
+  // 은행 이름 매핑
+  const bankNameMap = {
+    shinhan: '신한은행',
+    kb: '국민은행',
+    woori: '우리은행',
+    ibk: '기업은행',
+    suhyup: '수협은행',
+    nh: 'NH농협은행',
+    busan: '부산은행',
+    hana: '하나은행',
+    gwangju: '광주은행',
+    post: '우체국',
+    im: 'iM뱅크',
+    knb: '경남은행',
+  };
+
+  // 결제 수단 정보 생성
+  const paymentInfo =
+    userData.paymentMethod === 'card'
+      ? `카드 ${userData.cardNumber.slice(-4).padStart(16, '*')}`
+      : `${bankNameMap[userData.bank] || userData.bank} ${userData.accountNumber.slice(-4).padStart(userData.accountNumber.length, '*')}`;
+
   return (
     <div className='relative bg-white p-1'>
-      {' '}
       <div className='w-full text-left'>
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
           회원님의
@@ -35,24 +72,28 @@ const Signature = () => {
         </h3>
       </div>
       <div className='mb-4 space-y-2 border-b border-t py-3'>
-        <InfoRow label='상품' value='상품명1 외 1' />
-        <InfoRow label='합계금액' value='11,000원' />
-        <InfoRow label='기간' value='2024.06.31~2024.07.31' />
-        <InfoRow label='약정일' value='31일' />
-        <InfoRow label='결제수단' value='신한카드 111*****1111' />
+        <InfoRow label='상품' value={productNames} />
+        <InfoRow label='합계금액' value={`${userData.totalPrice.toLocaleString()}원`} />
+        <InfoRow
+          label='기간'
+          value={`${formatDate(userData.startDate)}~${formatDate(userData.endDate)}`}
+        />
+        <InfoRow label='약정일' value={`${userData.paymentDay}일`} />
+        <InfoRow label='결제수단' value={paymentInfo} />
       </div>
       <div className='mb-4 mt-8'>
         <label className='mb-1 block text-sm font-medium text-gray-700'>서명</label>
         <button
           onClick={openModal}
           className='flex h-32 w-full items-center justify-center rounded-md border border-mint text-gray-400'>
-          {signature ? (
-            <img src={signature} alt='서명' className='h-full w-full object-contain' />
+          {userData.signatureUrl ? (
+            <img src={userData.signatureUrl} alt='서명' className='h-full w-full object-contain' />
           ) : (
             '서명하기'
           )}
         </button>
       </div>
+
       {isModalOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
           {' '}

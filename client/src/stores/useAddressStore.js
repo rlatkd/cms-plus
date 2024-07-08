@@ -17,10 +17,10 @@ export const useAddressStore = create(
         set({ addressDetail });
       },
       reset: () => set({ zipcode: '', address: '', addressDetail: '' }),
-    }),
-    {
-      name: 'address-storage',
-      storage: createJSONStorage(() => localStorage),
-    }
+    })
+    // {
+    //   name: 'address-storage',
+    //   storage: createJSONStorage(() => localStorage),
+    // }
   )
 );

@@ -1,50 +1,50 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Input from '@/components/common/Input';
 import SelectField from '@/components/common/SelectField';
 import ProductItem from '@/components/common/ProductItem';
+import { useUserDataStore } from '@/stores/useUserDataStore';
 
 const ContractInfo = () => {
-  const [selectedProduct, setSelectedProduct] = useState('상품명1(3,000원)');
-  const [items, setItems] = useState([{ name: '상품명1(3,000원)', quantity: 1, price: 3000 }]);
-  const [startDate, setStartDate] = useState('2024-06-31');
-  const [endDate, setEndDate] = useState('2024-07-01');
+  const { userData, setUserData } = useUserDataStore();
 
   const handleProductChange = e => {
     const newProduct = e.target.value;
-    setSelectedProduct(newProduct);
-    if (!items.some(item => item.name === newProduct)) {
-      setItems([
-        ...items,
-        { name: newProduct, quantity: 1, price: newProduct.includes('3,000') ? 3000 : 4000 },
-      ]);
+    setUserData({ selectedProduct: newProduct });
+    if (!userData.items.some(item => item.name === newProduct)) {
+      setUserData({
+        items: [
+          ...userData.items,
+          { name: newProduct, quantity: 1, price: newProduct.includes('3,000') ? 3000 : 4000 },
+        ],
+      });
     }
   };
 
   const updateQuantity = (index, change) => {
-    const newItems = [...items];
+    const newItems = [...userData.items];
     newItems[index].quantity = Math.max(1, newItems[index].quantity + change);
-    setItems(newItems);
+    setUserData({ items: newItems });
   };
 
   const removeItem = index => {
-    setItems(items.filter((_, i) => i !== index));
+    setUserData({ items: userData.items.filter((_, i) => i !== index) });
   };
 
-  const totalPrice = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  // const totalPrice = userData.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   const handleStartDateChange = e => {
     const newStartDate = e.target.value;
-    setStartDate(newStartDate);
-    if (new Date(newStartDate) > new Date(endDate)) {
-      setEndDate(newStartDate);
+    setUserData({ startDate: newStartDate });
+    if (new Date(newStartDate) > new Date(userData.endDate)) {
+      setUserData({ endDate: newStartDate });
     }
   };
 
   const handleEndDateChange = e => {
     const newEndDate = e.target.value;
-    setEndDate(newEndDate);
-    if (new Date(newEndDate) < new Date(startDate)) {
-      setStartDate(newEndDate);
+    setUserData({ endDate: newEndDate });
+    if (new Date(newEndDate) < new Date(userData.startDate)) {
+      setUserData({ startDate: newEndDate });
     }
   };
 
@@ -65,11 +65,11 @@ const ContractInfo = () => {
           { value: '상품명1(3,000원)', label: '상품명1(3,000원)' },
           { value: '상품명2(4,000원)', label: '상품명2(4,000원)' },
         ]}
-        value={selectedProduct}
+        value={userData.selectedProduct}
         onChange={handleProductChange}
       />
 
-      {items.map((item, index) => (
+      {userData.items.map((item, index) => (
         <ProductItem
           key={index}
           item={item}
@@ -78,7 +78,7 @@ const ContractInfo = () => {
         />
       ))}
 
-      <div className='mb-4 text-right text-sm font-semibold'>합계: {totalPrice}원</div>
+      <div className='mb-4 text-right text-sm font-semibold'>합계: {userData.totalPrice}원</div>
 
       <div className='mb-4'>
         <label className='mb-1 block text-sm font-medium text-gray-700'>
@@ -90,7 +90,7 @@ const ContractInfo = () => {
         <div className='flex w-full items-center'>
           <Input
             type='date'
-            value={startDate}
+            value={userData.startDate}
             onChange={handleStartDateChange}
             min='2024-01-01'
             max='2024-12-31'
@@ -99,9 +99,9 @@ const ContractInfo = () => {
           <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
           <Input
             type='date'
-            value={endDate}
+            value={userData.endDate}
             onChange={handleEndDateChange}
-            min={startDate}
+            min={userData.startDate}
             max='2024-12-31'
             className='flex-1'
           />
@@ -112,6 +112,8 @@ const ContractInfo = () => {
         label='약정일'
         required
         options={[...Array(31)].map((_, i) => ({ value: i + 1, label: `${i + 1}일` }))}
+        value={userData.paymentDay}
+        onChange={e => setUserData({ paymentDay: parseInt(e.target.value) })}
       />
     </div>
   );
