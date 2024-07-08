@@ -34,6 +34,9 @@ public class BillingProduct extends BaseEntity {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
+	@Column(name = "billing_product_name")
+	private String productName;
+
 	@Column(name = "billing_product_extra_price")
 	private int extraPrice;
 
