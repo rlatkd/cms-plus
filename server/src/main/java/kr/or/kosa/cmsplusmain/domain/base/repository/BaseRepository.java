@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -25,14 +24,5 @@ public abstract class BaseRepository<T extends BaseEntity, ID extends Serializab
 	@Transactional
 	public T save(T entity) {
 		return em.merge(entity);
-	}
-
-	/*
-	* 소프트 삭제
-	* */
-	@Transactional
-	public void delete(T entity) {
-		entity.delete();
-		em.merge(entity);
 	}
 }

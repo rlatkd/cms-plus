@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.base.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,8 +11,10 @@ public class PageDto {
 	@Setter
 	@ToString
 	public static class Req {
+
 		private int page = 0;
 		private int size = 10;
+
 		private String sort;
 		private String orderBy;
 
