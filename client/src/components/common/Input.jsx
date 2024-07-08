@@ -1,11 +1,11 @@
-const Input = ({ label, required, ...props }) => (
-  <label className='block'>
+const Input = ({ label, required, className, ...props }) => (
+  <label className={`block ${className}`}>
     <span
-      className={`block text-sm font-medium text-slate-700 ${required ? "after:content-['*'] after:ml-0.5 after:text-red-500" : ''}`}>
+      className={`block text-sm font-medium text-slate-700 ${required ? "after:ml-0.5 after:text-red-500 after:content-['*']" : ''}`}>
       {label}
     </span>
     <input
-      className='text-sm mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-mint focus:ring-mint block w-full rounded-md sm:text-sm focus:ring-1 placeholder:text-sm'
+      className='mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
       {...props}
     />
   </label>

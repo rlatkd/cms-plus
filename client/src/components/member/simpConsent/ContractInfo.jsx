@@ -49,9 +49,9 @@ const ContractInfo = () => {
   };
 
   return (
-    <div className='flex flex-col p-3 bg-white'>
-      <div className='text-left w-full'>
-        <h3 className='font-semibold text-gray-700 text-base mb-8'>
+    <div className='flex flex-col bg-white p-1'>
+      <div className='w-full text-left'>
+        <h3 className='mb-8 text-base font-semibold text-gray-700'>
           회원님의
           <br />
           계약정보를 확인해주세요.
@@ -78,27 +78,32 @@ const ContractInfo = () => {
         />
       ))}
 
-      <div className='text-right font-semibold mb-4 text-sm'>합계: {totalPrice}원</div>
+      <div className='mb-4 text-right text-sm font-semibold'>합계: {totalPrice}원</div>
 
       <div className='mb-4'>
-        <label className='block text-sm font-medium text-gray-700 mb-1'>
-          <span className='text-red-500'>*</span> 기간
+        <label className='mb-1 block text-sm font-medium text-gray-700'>
+          <span
+            className={`block text-sm font-medium text-slate-700 after:ml-0.5 after:text-red-500 after:content-['*']`}>
+            기간
+          </span>
         </label>
-        <div className='flex items-center'>
+        <div className='flex w-full items-center'>
           <Input
             type='date'
             value={startDate}
             onChange={handleStartDateChange}
             min='2024-01-01'
             max='2024-12-31'
+            className='flex-1'
           />
-          <span className='mx-2 text-gray-500'>~</span>
+          <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
           <Input
             type='date'
             value={endDate}
             onChange={handleEndDateChange}
             min={startDate}
             max='2024-12-31'
+            className='flex-1'
           />
         </div>
       </div>

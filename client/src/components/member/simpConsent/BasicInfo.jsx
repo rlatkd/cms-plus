@@ -4,9 +4,9 @@ import AddressInput from '@/components/common/AddressInput';
 
 const BasicInfo = () => {
   return (
-    <div className='flex flex-col p-3 bg-white'>
-      <div className='text-left w-full'>
-        <h3 className='font-semibold text-gray-700 text-base mb-8'>
+    <div className='flex flex-col bg-white p-1'>
+      <div className='w-full text-left'>
+        <h3 className='mb-8 text-base font-semibold text-gray-700'>
           회원님의
           <br />
           기본정보를 확인해주세요.

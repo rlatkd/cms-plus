@@ -1,15 +1,15 @@
 import React from 'react';
 
 const ProductItem = ({ item, onUpdateQuantity, onRemove }) => (
-  <div className='flex items-center justify-between mb-2 text-sm border-b pb-2'>
+  <div className='mb-2 flex items-center justify-between border-b pb-2 text-sm'>
     <span>{item.name}</span>
     <div className='flex items-center'>
-      <div className='flex items-center border rounded-md mr-2'>
-        <button onClick={() => onUpdateQuantity(-1)} className='px-2 py-1 bg-gray-100'>
+      <div className='mr-2 flex items-center rounded-md border'>
+        <button onClick={() => onUpdateQuantity(-1)} className='bg-gray-100 px-2 py-1'>
           -
         </button>
         <span className='px-4 py-1'>{item.quantity}</span>
-        <button onClick={() => onUpdateQuantity(1)} className='px-2 py-1 bg-gray-100'>
+        <button onClick={() => onUpdateQuantity(1)} className='bg-gray-100 px-2 py-1'>
           +
         </button>
       </div>

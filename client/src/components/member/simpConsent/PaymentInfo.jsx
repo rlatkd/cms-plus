@@ -13,12 +13,20 @@ const PaymentInfo = () => {
 
   return (
     <>
+      <div className='w-full text-left'>
+        <h3 className='mb-8 text-base font-semibold text-gray-700'>
+          회원님의
+          <br />
+          결제정보를 확인해주세요.
+        </h3>
+      </div>
       <RadioGroup
         label='결제수단'
         name='paymentMethod'
         options={paymentOptions}
         selectedOption={paymentMethod}
         onChange={setPaymentMethod}
+        required={true}
       />
       {paymentMethod === 'card' ? <PaymentCard /> : <PaymentCMS />}
     </>
