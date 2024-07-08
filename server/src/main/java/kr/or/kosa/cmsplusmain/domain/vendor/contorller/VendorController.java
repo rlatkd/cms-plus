@@ -1,9 +1,11 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.contorller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTUtil;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.service.VendorService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,7 @@ public class VendorController {
         try {
             vendorService.join(signupDto);
             return ResponseEntity.status(HttpStatus.CREATED).body("Signup successful.");
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
@@ -37,9 +39,20 @@ public class VendorController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) {
         try {
-            return vendorService.refresh(request, response);
+            RefreshTokenRes refreshTokenRes = vendorService.refresh(request,response);
+
+            // 응답 본문 작성
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(response.getWriter(), refreshTokenRes);
+
+            return ResponseEntity.ok(refreshTokenRes);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while refreshing token");
         }

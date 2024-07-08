@@ -34,76 +34,69 @@ public class VendorService {
         String password = bCryptPasswordEncoder.encode(signupDto.getPassword());
         UserRole role = UserRole.ROLE_VENDOR;
 
+        // 중복된 아이디가 입력된 경우 예외처리
+        // Custom exception도 좋고
+        //
+
         boolean isExist = vendorRepository.isExistUsername(username);
         if(isExist){
-            throw new RuntimeException("Username already exists.");
+            throw new IllegalArgumentException("Username already exists.");
         }
 
+        // TODO
+        // 상품 하나 추가
+        // 상품을 토대로 기본 설정 추가
         vendorRepository.save(signupDto.toEntity(username, password, role));
     }
 
     @Transactional
-    public ResponseEntity<?> refresh (HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public RefreshTokenRes refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String authorizationRefresh = request.getHeader("Authorization-refresh");
 
         // authorizationRefresh 헤더 검증
-        if(authorizationRefresh == null || !authorizationRefresh.startsWith("Bearer ")){
-            return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
+        if (authorizationRefresh == null || !authorizationRefresh.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("refresh token null");
         }
-
 
         String refreshToken = authorizationRefresh.split(" ")[1];
 
         // 토큰 만료 여부 확인
-        try{
+        try {
             jwtUtil.isExpired(refreshToken);
-        }catch(ExpiredJwtException e){
-
-            // response status code
-            return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
+        } catch (ExpiredJwtException e) {
+            throw new IllegalArgumentException("invaild refresh token");
         }
 
         String category = jwtUtil.getCategory(refreshToken);
 
         // 토큰이 refresh인지 확인
-        if (!category.equals("refresh")){
-            // response status code
-            return new ResponseEntity<>("invaild refresh token", HttpStatus.BAD_REQUEST);
+        if (!category.equals("refresh")) {
+            throw new IllegalArgumentException("Invalid refresh token");
         }
 
         // 토큰이 Redis에 저장되어 있는지 확인
-
         String storedRefreshToken = redisTemplate.opsForValue().get(jwtUtil.getUsername(refreshToken));
-        if(storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)){
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            throw new IllegalArgumentException("Invalid refresh token");
         }
 
         String username = jwtUtil.getUsername(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
         // JWT 토큰 생성
-        String newAccessToken = jwtUtil.createJwt("access",username,role,10 * 60 * 1000L);
-        String newRefreshToken = jwtUtil.createJwt("refresh",username, role, 24 * 60 * 60 * 1000L);
+        String newAccessToken = jwtUtil.createJwt("access", username, role, 10 * 60 * 1000L);
+        String newRefreshToken = jwtUtil.createJwt("refresh", username, role, 24 * 60 * 60 * 1000L);
 
         // 기존 토큰을 Redis에서 제거 후 새로운 토큰 저장
         redisTemplate.delete(username);
         redisTemplate.opsForValue().set(username, newRefreshToken, 14, TimeUnit.DAYS);
 
-        // 응답 본문 작성
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
         // Json 응답 본문 작성
-        RefreshTokenRes refreshTokenRes = RefreshTokenRes.builder()
+        return RefreshTokenRes.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(response.getWriter(), refreshTokenRes);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
