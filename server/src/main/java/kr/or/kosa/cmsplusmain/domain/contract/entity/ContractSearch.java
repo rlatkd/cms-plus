@@ -14,5 +14,6 @@ public class ContractSearch {
 	private Integer contractDay;
 	private Long contractPrice;
 	private String productName;
+	private ContractStatus contractStatus;
 	private ConsentStatus consentStatus;
 }

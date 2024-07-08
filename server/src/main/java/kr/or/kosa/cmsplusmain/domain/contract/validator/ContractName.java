@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import kr.or.kosa.cmsplusmain.domain.base.validator.PersonNameValidator;
 
 @Documented
 @Constraint(validatedBy = ContractNameValidator.class)

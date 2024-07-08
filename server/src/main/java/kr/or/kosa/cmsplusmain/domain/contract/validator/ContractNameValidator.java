@@ -4,7 +4,6 @@ import java.util.regex.Pattern;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 
 public class ContractNameValidator implements ConstraintValidator<ContractName, String> {
 

@@ -6,6 +6,7 @@ import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,8 +16,8 @@ public class ContractProductDto {
 	public static class Res {
 		private final Long contractProductId;
 		private final String name;
-		private final int price;
-		private final int quantity;
+		private final Integer price;
+		private final Integer quantity;
 
 		@QueryProjection
 		@Builder
@@ -25,6 +26,15 @@ public class ContractProductDto {
 			this.name = name;
 			this.price = price;
 			this.quantity = quantity;
+		}
+
+		public static Res fromEntity(ContractProduct contractProduct) {
+			return Res.builder()
+				.contractProductId(contractProduct.getId())
+				.name(contractProduct.getName())
+				.price(contractProduct.getPrice())
+				.quantity(contractProduct.getQuantity())
+				.build();
 		}
 	}
 

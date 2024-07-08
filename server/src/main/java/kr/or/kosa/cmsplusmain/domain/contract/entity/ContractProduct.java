@@ -52,4 +52,8 @@ public class ContractProduct extends BaseEntity {
 	@Comment("계약_상품 수량")
 	@Column(name = "contract_product_quantity", nullable = false)
 	private int quantity;
+
+	public long getTotalPrice() {
+		return (long) price * quantity;
+	}
 }
