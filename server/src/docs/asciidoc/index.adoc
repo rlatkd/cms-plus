@@ -1,0 +1,119 @@
+ifndef::snippets[]
+:snippets:build/generated-snippets
+endif::[]
+
+= CMS+ Application API Document
+made by Sanghun.Kim
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+:operation-http-request-title: REQUEST
+:operation-http-response-title: RESPONSE
+
+[[POST-API]]
+== 1. 상품
+
+=== 1.1. 상품 목록 조회
+
+.Request Header Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|Authorization |String |필수   |ACCESS_TOKEN
+|X-CSRF |String |필수   |CSRF_TOKEN
+|===
+
+.Request Query Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|page      |Integer|필수     |페이지 번호
+|offset      |Integer|필수     |페이지당 오프셋
+|sort      |String|선택     |정렬 기준
+|name      |String|선택     |상품명으로 검색
+|price      |double|선택     |금액으로 검색
+|contractCount      |Integer|선택     |계약수로 검색
+|createdAt      |String|선택     |생성시기로 검색
+|memo      |String|선택     |비고로 검색
+|===
+
+operation::findAllProductByCondition[snippets='http-request,http-response']
+
+=== 1.2. 상품 등록
+
+.Request Header Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|Authorization |String |필수   |ACCESS_TOKEN
+|X-CSRF |String |필수   |CSRF_TOKEN
+|===
+
+.Request Body Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|name      |String|필수     |상품명
+|price      |double|필수     |금액
+|memo      |Stirng|필수     |비고
+|===
+
+operation::saveProduct[snippets='http-request,http-response']
+
+=== 1.3. 상품 상세 조회
+
+.Request Header Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|Authorization |String |필수   |ACCESS_TOKEN
+|X-CSRF |String |필수   |CSRF_TOKEN
+|===
+
+.Request Path Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|PRODUCT_ID      |Long|필수     |상품번호
+|===
+
+operation::findProductById[snippets='http-request,http-response']
+
+=== 1.4. 상품 수정
+
+.Request Header Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|Authorization |String |필수   |ACCESS_TOKEN
+|X-CSRF |String |필수   |CSRF_TOKEN
+|===
+
+.Request Path Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|PRODUCT_ID      |Long|필수     |상품번호
+|===
+
+.Request Body Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|name      |String|선택     |상품명
+|price      |double|선택     |금액
+|notes      |Stirng|선택     |비고
+|===
+
+operation::updateProduct[snippets='http-request,http-response']
+
+=== 1.5. 상품 삭제
+
+.Request Header
+|===
+|파라미터 |타입   |필수여부 |설명
+|Authorization |String |필수   |인증 키
+|===
+
+.Request Path Parameter
+|===
+|파라미터 |타입   |필수여부 |설명
+|PRODUCT_ID      |Long|필수     |상품번호
+|===
+
+
+operation::deleteProduct[snippets='http-request,http-response']
