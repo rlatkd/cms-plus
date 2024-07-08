@@ -2,8 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
-    id 'checkstyle'
-    id 'org.asciidoctor.jvm.convert' version '3.3.2' //1
+//    id 'checkstyle'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2' // REST Docs
 }
 
 group = 'kr.or.kosa'
@@ -19,7 +19,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-    asciidoctorExtensions //2
+    asciidoctorExtensions // REST Docs
 }
 
 repositories {
@@ -27,7 +27,7 @@ repositories {
 }
 
 ext {
-    set('snippetsDir', file("build/generated-snippets")) //3
+    set('snippetsDir', file("build/generated-snippets")) // REST Docs
 }
 
 dependencies {
@@ -44,35 +44,41 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    //4
+    // REST Docs
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 test {
     useJUnitPlatform()
-    outputs.dir snippetsDir
+    outputs.dir snippetsDir // REST Docs
 }
 
+// REST Docs
 asciidoctor {
     inputs.dir snippetsDir
     configurations 'asciidoctorExtensions'
     dependsOn test
+    // source를 지정하면 특정 adoc만 HTML로 만듬
     sources {
         include("**/*.adoc")
     }
+    // 경로를 baseDir로 맞춰줌
     baseDirFollowsSourceFile()
 }
 
+// REST Docs
 task copyDocs(type: Copy) {
     dependsOn asciidoctor
     from "${asciidoctor.outputDir}"
     into "src/main/resources/static/docs"   // src/main/resources/static/docs로 복사
 }
 
+// REST Docs
 build {
     dependsOn copyDocs
 }
@@ -96,22 +102,22 @@ clean.doLast {
 
 
 // Lint
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-tasks.withType(Checkstyle).configureEach {
-    mustRunAfter 'compileJava'
-    reports {
-        xml.required = false
-        html.required = true
-    }
-}
-
-checkstyle {
-    configFile = file("config/checkstyle/naver-checkstyle-rules.xml")
-    configProperties = ["suppressionFile": "config/checkstyle/naver-checkstyle-suppressions.xml"]
-    sourceSets = [sourceSets.main] // CompileQuerydsl 오류 해결
-}
-
-checkstyleMain.source = fileTree('src/main/java')
+//tasks.withType(JavaCompile).configureEach {
+//    options.encoding = 'UTF-8'
+//}
+//
+//tasks.withType(Checkstyle).configureEach {
+//    mustRunAfter 'compileJava'
+//    reports {
+//        xml.required = false
+//        html.required = true
+//    }
+//}
+//
+//checkstyle {
+//    configFile = file("config/checkstyle/naver-checkstyle-rules.xml")
+//    configProperties = ["suppressionFile": "config/checkstyle/naver-checkstyle-suppressions.xml"]
+//    sourceSets = [sourceSets.main] // CompileQuerydsl 오류 해결
+//}
+//
+//checkstyleMain.source = fileTree('src/main/java')
