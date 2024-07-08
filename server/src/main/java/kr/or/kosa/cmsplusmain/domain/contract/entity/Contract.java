@@ -18,6 +18,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.OnlyNonSoftDeleted;
@@ -110,9 +112,15 @@ public class Contract extends BaseEntity {
 		return contract;
 	}
 
-	private Long getContractPrice() {
+	public Long getContractPrice() {
 		return contractProducts.stream()
 			.mapToLong(ContractProduct::getPrice)
 			.sum();
+	}
+
+	@PreUpdate
+	@PrePersist
+	private void preModified() {
+		this.contractPrice = getContractPrice();
 	}
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractUpdateReq;
@@ -45,6 +46,9 @@ public class ContractService {
 	//
 	// }
 
+	/*
+	* 계약 이름 및 상품 수정
+	* */
 	@Transactional
 	public void updateContract(Long contractId, ContractUpdateReq contractUpdateReq) {
 		List<ContractProduct> contractProducts = contractUpdateReq.getContractProducts().stream()

@@ -1,13 +1,17 @@
 package kr.or.kosa.cmsplusmain.domain.payment.dto;
 
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.AutoPayment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.CardPayment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.CmsPayment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethodInfo;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.VirtualAccountPayment;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.Builder;
 import lombok.Getter;
 

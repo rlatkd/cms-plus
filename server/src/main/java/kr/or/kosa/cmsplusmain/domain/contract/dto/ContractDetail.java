@@ -17,36 +17,38 @@ import lombok.Getter;
 @Getter
 public class ContractDetail {
 
-	private Long contractId;
-	private String contractName;
+	private final Long contractId;
+	private final String contractName;
 
-	private LocalDateTime createdDateTime;
-	private LocalDateTime modifiedDateTime;
+	private final LocalDateTime createdDateTime;
+	private final LocalDateTime modifiedDateTime;
 
-	private List<ContractProductDto.Res> contractProducts;
+	private final List<ContractProductDto.Res> contractProducts;
+	private final Long contractPrice;
 
-	private int contractDay;
+	private final int contractDay;
 
-	private LocalDate contractStartDate;
-	private LocalDate contractEndDate;
+	private final LocalDate contractStartDate;
+	private final LocalDate contractEndDate;
 
 	// 결제정보
-	private PaymentDto payment;
+	private final PaymentDto payment;
 
 	// 회원 청구정보
-	private boolean autoBilling;
-	private boolean autoInvoiceSend;
-	private String invoiceSendMethod;
+	private final boolean autoBilling;
+	private final boolean autoInvoiceSend;
+	private final String invoiceSendMethod;
 
 	@Builder
 	public ContractDetail(Long contractId, String contractName, LocalDateTime createdDateTime,
-		LocalDateTime modifiedDateTime, List<ContractProduct> contractProducts, int contractDay,
+		LocalDateTime modifiedDateTime, Long contractPrice, List<ContractProduct> contractProducts, int contractDay,
 		LocalDate contractStartDate, LocalDate contractEndDate, Payment payment, boolean autoBilling,
 		boolean autoInvoiceSend, MessageSendMethod invoiceSendMethod) {
 		this.contractId = contractId;
 		this.contractName = contractName;
 		this.createdDateTime = createdDateTime;
 		this.modifiedDateTime = modifiedDateTime;
+		this.contractPrice = contractPrice;
 		this.contractProducts = (contractProducts != null) ?
 			contractProducts.stream().map(ContractProductDto.Res::fromEntity).toList() : Collections.emptyList();
 		this.contractDay = contractDay;
@@ -68,6 +70,7 @@ public class ContractDetail {
 			.contractName(contract.getName())
 			.createdDateTime(contract.getCreatedDateTime())
 			.modifiedDateTime(contract.getModifiedDateTime())
+			.contractPrice(contract.getContractPrice())
 			.contractProducts(contract.getContractProducts())
 			.contractDay(contract.getContractDay())
 			.contractStartDate(contract.getContractStartDate())

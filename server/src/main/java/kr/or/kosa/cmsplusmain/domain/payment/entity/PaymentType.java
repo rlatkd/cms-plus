@@ -34,6 +34,20 @@ public enum PaymentType {
 			.orElseThrow();
 	}
 
+	public static PaymentType fromTitle(String title) {
+		if (title == null || title.isEmpty()) {
+			return null;
+		}
+
+		for (PaymentType paymentType : PaymentType.values()) {
+			if (title.equals(paymentType.name)) {
+				return paymentType;
+			}
+		}
+
+		return null;
+	}
+
 	/* DiscriminatorValue(PaymentType.Values...)에 사용됨 */
 	public static class Values {
 		public static final String AUTO = "AUTO";
