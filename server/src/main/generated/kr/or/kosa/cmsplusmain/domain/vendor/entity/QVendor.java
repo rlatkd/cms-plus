@@ -47,6 +47,8 @@ public class QVendor extends EntityPathBase<Vendor> {
 
     public final StringPath phone = createString("phone");
 
+    public final EnumPath<UserRole> role = createEnum("role", UserRole.class);
+
     public final kr.or.kosa.cmsplusmain.domain.settings.QSimpConsentSetting simpConsentSetting;
 
     //inherited
