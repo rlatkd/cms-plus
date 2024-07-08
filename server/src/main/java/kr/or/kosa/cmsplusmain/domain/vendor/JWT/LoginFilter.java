@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.CustomUserDetailsDto;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.LoginDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.AccessTokenRes;
 import lombok.RequiredArgsConstructor;
@@ -56,8 +56,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException{
-        CustomUserDetailsDto customUserDetails = (CustomUserDetailsDto) authentication.getPrincipal();
-        String username = customUserDetails.getUsername();
+        VendorUserDetailsDto vendorUserDetails = (VendorUserDetailsDto) authentication.getPrincipal();
+        String username = vendorUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();

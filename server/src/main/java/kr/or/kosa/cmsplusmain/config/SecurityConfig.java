@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.config;
 
+import kr.or.kosa.cmsplusmain.domain.vendor.JWT.CustomLogoutFilter;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTFilter;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.JWT.LoginFilter;
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -39,41 +41,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .cors(Customizer.withDefaults());
+        http.cors(Customizer.withDefaults());
 
         //csrf disable
-        http
-                .csrf((auth) -> auth.disable());
+        http.csrf((auth) -> auth.disable());
 
         //From 로그인 방식 disable
-        http
-                .formLogin((auth) -> auth.disable());
+        http.formLogin((auth) -> auth.disable());
 
         //http basic 인증 방식 disable
-        http
-                .httpBasic((auth) -> auth.disable());
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/v1/vendor/auth/login").permitAll()
-                        .requestMatchers("/api/v1/vendor/auth/join").permitAll()
-                        .requestMatchers("/api/v1/vendor/auth/refresh").permitAll()
-                        .requestMatchers("/api/v1/vendor/auth/username-check").permitAll()
-                        .requestMatchers("/","/api/v1/**").permitAll()
-                        .requestMatchers("/vendor").hasRole("VENDOR")
-                        .requestMatchers("/member").hasRole("MEMBER")
-                        .anyRequest().authenticated());
+        http.httpBasic((auth) -> auth.disable());
 
-        http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+        http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/api/v1/vendor/auth/login").permitAll()
+                .requestMatchers("/api/v1/vendor/auth/join").permitAll()
+                .requestMatchers("/api/v1/vendor/auth/logout").permitAll()
+                .requestMatchers("/api/v1/vendor/auth/refresh").permitAll()
+                .requestMatchers("/api/v1/vendor/auth/username-check").permitAll()
+                .requestMatchers("/","/api/v1/**").permitAll()
+                .requestMatchers("/vendor").hasRole("VENDOR")
+                .requestMatchers("/member").hasRole("MEMBER")
+                .anyRequest().authenticated());
 
-        http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, redisTemplate), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, redisTemplate), UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTemplate), LogoutFilter.class);
 
         //세션 설정
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }

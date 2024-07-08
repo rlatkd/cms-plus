@@ -1,6 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.service;
 
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.CustomUserDetailsDto;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class VendorUserDetailsService implements UserDetailsService {
 
     private final VendorRepository vendorRepository;
 
@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Vendor userData = vendorRepository.findByUsername(username);
 
         if(userData != null) {
-            return new CustomUserDetailsDto(userData);
+            return new VendorUserDetailsDto(userData);
         }
 
         return null;

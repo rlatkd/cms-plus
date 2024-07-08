@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class CustomUserDetailsDto implements UserDetails {
+public class VendorUserDetailsDto implements UserDetails {
 
     private final Vendor vendor;
 

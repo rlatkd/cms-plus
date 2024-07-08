@@ -5,8 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.CustomUserDetailsDto;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupDto;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
@@ -73,9 +72,9 @@ public class JWTFilter extends OncePerRequestFilter {
                 .role(UserRole.valueOf(role))
                 .build();
 
-        CustomUserDetailsDto customUserDetailsDto = new CustomUserDetailsDto(vendor);
+        VendorUserDetailsDto vendorUserDetailsDto = new VendorUserDetailsDto(vendor);
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetailsDto, null, customUserDetailsDto.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(vendorUserDetailsDto, null, vendorUserDetailsDto.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
