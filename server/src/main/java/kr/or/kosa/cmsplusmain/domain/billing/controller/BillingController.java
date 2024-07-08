@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,8 @@ public class BillingController {
 	private final BillingService billingService;
 
 	@GetMapping
-	public List<BillingListItem> findBillingsByContract(@RequestParam(name = "contract") Long contractId) {
-		return billingService.findBillingsByContract(contractId);
+	public List<BillingListItem> getBillingListByContract(@RequestParam(name = "contract") Long contractId,
+		PageDto.Req pageable) {
+		return billingService.findBillingsByContract(contractId, pageable);
 	}
 }

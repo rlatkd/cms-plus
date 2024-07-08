@@ -23,17 +23,35 @@ public enum PaymentType {
 		this.availablePaymentMethods = availablePaymentMethods;
 	}
 
-	/* DiscriminatorValue(PaymentType.Values...)에 사용됨 */
-	public static class Values {
-		public static final String AUTO = "AUTO_PAYMENT";
-		public static final String VIRTUAL_ACCOUNT = "VIRTUAL_ACCOUNT_PAYMENT";
-		public static final String BUYER = "BUYER_PAYMENT";
+	public static PaymentType fromName(String name) {
+		if (name == null || name.isEmpty()) {
+			return null;
+		}
+
+		return Arrays.stream(PaymentType.values())
+			.filter(p -> name.equals(p.name))
+			.findAny()
+			.orElseThrow();
 	}
 
-	public static PaymentType of(String name) {
-		if (name == null || name.isEmpty()) return null;
-		return Arrays.stream(PaymentType.values())
-					.filter(p -> name.contains(p.name))
-			.findAny().orElseThrow();
+	public static PaymentType fromTitle(String title) {
+		if (title == null || title.isEmpty()) {
+			return null;
+		}
+
+		for (PaymentType paymentType : PaymentType.values()) {
+			if (title.equals(paymentType.name)) {
+				return paymentType;
+			}
+		}
+
+		return null;
+	}
+
+	/* DiscriminatorValue(PaymentType.Values...)에 사용됨 */
+	public static class Values {
+		public static final String AUTO = "AUTO";
+		public static final String VIRTUAL_ACCOUNT = "VIRTUAL_ACCOUNT";
+		public static final String BUYER = "BUYER";
 	}
 }

@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.contract.validator;
+package kr.or.kosa.cmsplusmain.domain.payment.validator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,11 +10,11 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = ContractNameValidator.class)
+@Constraint(validatedBy = CardNumberValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ContractName {
-	String message() default "Invalid contract name";
+public @interface AccountNumber {
+	String message() default "Invalid account number";
 
 	Class<?>[] groups() default {};
 

@@ -4,7 +4,8 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public class ContractSearch {
 
 	/****** 검색 가능 항목 *******/
@@ -14,5 +15,6 @@ public class ContractSearch {
 	private Integer contractDay;
 	private Long contractPrice;
 	private String productName;
+	private ContractStatus contractStatus;
 	private ConsentStatus consentStatus;
 }

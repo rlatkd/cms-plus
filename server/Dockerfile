@@ -11,7 +11,7 @@ RUN        gradle build -x test --no-daemon || return 0
 COPY       . .
 RUN        gradle build -x test --no-daemon
 FROM       openjdk:17-jdk-slim
-WORKDIR    /demo
+WORKDIR    /server
 COPY       --from=build /home/gradle/project/build/libs/*.jar app.jar
 ENTRYPOINT [ "java", "-jar", "app.jar" ]
 # VOLUME     /tmp

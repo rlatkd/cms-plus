@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.contract.validator;
+package kr.or.kosa.cmsplusmain.domain.base.validator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,11 +10,11 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = ContractNameValidator.class)
+@Constraint(validatedBy = HttpUrlValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ContractName {
-	String message() default "Invalid contract name";
+public @interface HttpUrl {
+	String message() default "Invalid url";
 
 	Class<?>[] groups() default {};
 
