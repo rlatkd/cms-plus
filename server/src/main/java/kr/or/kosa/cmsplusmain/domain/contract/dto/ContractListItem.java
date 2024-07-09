@@ -1,41 +1,51 @@
 package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
-import java.util.Collections;
 import java.util.List;
 
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class ContractListItem {
-	private final Long contractId;
-	private final String memberName;
-	private final String memberPhone;
-	private final Integer contractDay;
-	private final List<ContractProductDto.Res> contractProducts;
-	private final Long contractPrice;
-	private final String contractStatus;
-	private final String consentStatus;
 
-	@Builder
-	public ContractListItem(
-		Long contractId,
-		String memberName, String memberPhone,
-		Integer contractDay, List<ContractProduct> contractProducts,
-		Long contractPrice, ContractStatus contractStatus, ConsentStatus consentStatus) {
-		this.contractId = contractId;
-		this.memberName = memberName;
-		this.memberPhone = memberPhone;
-		this.contractDay = contractDay;
-		this.contractProducts = (contractProducts != null) ?
-			contractProducts.stream()
-				.map(ContractProductDto.Res::fromEntity)
-				.toList() : Collections.emptyList();
-		this.contractPrice = contractPrice;
-		this.contractStatus = (contractStatus != null) ? contractStatus.getTitle() : null;
-		this.consentStatus = (consentStatus != null) ? consentStatus.getTitle() : null;
+	private final Long contractId;                                    // 계약 ID
+	private final String memberName;                                // 회원 이름
+	private final String memberPhone;                                // 회원 휴대번호
+	private final Integer contractDay;                                // 약정일
+	private final List<ContractProductRes> contractProducts;        // 계약 상품 목록
+	private final Long contractPrice;                                // 계약금액
+	private final ContractStatus contractStatus;                    // 계약상태
+	private final ConsentStatus consentStatus;                        // 동의상태
+
+	public static ContractListItem fromEntity(Contract contract) {
+
+		// NOT NULL
+		final Member member = contract.getMember();
+
+		final List<ContractProductRes> contractProductResList = contract.getContractProducts()
+			.stream()
+			.map(ContractProductRes::fromEntity)
+			.toList();
+
+		final Payment payment = contract.getPayment();
+		final ConsentStatus consentStatus = payment.getConsentStatus();
+		//
+
+		return ContractListItem.builder()
+			.contractId(contract.getId())
+			.memberName(member.getName())
+			.memberPhone(member.getPhone())
+			.contractDay(contract.getContractDay())
+			.contractProducts(contractProductResList)
+			.contractPrice(contract.getContractPrice())
+			.contractStatus(contract.getStatus())
+			.consentStatus(consentStatus)
+			.build();
 	}
 }

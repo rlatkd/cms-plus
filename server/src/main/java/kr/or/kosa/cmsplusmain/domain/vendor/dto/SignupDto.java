@@ -16,38 +16,38 @@ import lombok.Getter;
 @Getter
 public class SignupDto {
 
-    @Username
-    private String username;
+	@Username
+	private String username;
 
-    @Password
-    private String password;
+	@Password
+	private String password;
 
-    @PersonName
-    private String name;
+	@PersonName
+	private String name;
 
-    @Email
-    private String email;
+	@Email
+	private String email;
 
-    @Phone
-    private String phone;
+	@Phone
+	private String phone;
 
-    @HomePhone
-    private String homePhone;
+	@HomePhone
+	private String homePhone;
 
-    @NotBlank
-    private String department;
+	@NotBlank
+	private String department;
 
-    public Vendor toEntity(String username,String password, UserRole role) {
-        return Vendor.builder()
-                .username(username)
-                .password(password)
-                .name(name)
-                .email(email)
-                .phone(phone)
-                .homePhone(homePhone)
-                .department(department)
-                .role(role)
-                .build();
-    }
+	public Vendor toEntity(String username, String password, UserRole role) {
+		return Vendor.builder()
+			.username(username)
+			.password(password)
+			.name(name)
+			.email(email)
+			.phone(phone)
+			.homePhone(homePhone)
+			.department(department)
+			.role(role)
+			.build();
+	}
 
 }

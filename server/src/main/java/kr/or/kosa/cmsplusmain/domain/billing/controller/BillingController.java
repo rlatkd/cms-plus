@@ -20,12 +20,18 @@ public class BillingController {
 
 	private final BillingService billingService;
 
+	/*
+	 * 계약 상세 - 청구 목록
+	 * */
 	@GetMapping("/contract")
 	public List<BillingListItem> getBillingListByContract(@RequestParam(name = "id") Long contractId,
 		SortPageDto.Req pageable) {
 		return billingService.findBillingsByContract(contractId, pageable);
 	}
 
+	/*
+	 * 청구목록 조회
+	 * */
 	@GetMapping
 	public List<BillingListItem> getBillingListWithCondition(BillingSearch search, SortPageDto.Req pageable) {
 		return billingService.findBillings(search, pageable);

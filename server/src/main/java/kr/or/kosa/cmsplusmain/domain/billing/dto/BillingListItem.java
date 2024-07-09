@@ -17,14 +17,14 @@ import lombok.Getter;
 @Builder
 public class BillingListItem {
 
-	private final Long billingId;							// 청구 ID
-	private final String memberName;						// 회원명
-	private final String memberPhone;						// 회원 휴대번호
-	private final List<BillingProductRes> billingProducts;	// 청구 상품 목록
-	private final Long billingPrice;						// 청구금액
-	private final BillingStatus billingStatus;				// 청구상태
-	private final PaymentType paymentType;					// 결제방식
-	private final LocalDate billingDate;					// 청구의 결제일
+	private final Long billingId;                            // 청구 ID
+	private final String memberName;                        // 회원명
+	private final String memberPhone;                        // 회원 휴대번호
+	private final List<BillingProductRes> billingProducts;    // 청구 상품 목록
+	private final Long billingPrice;                        // 청구금액
+	private final BillingStatus billingStatus;                // 청구상태
+	private final PaymentType paymentType;                    // 결제방식
+	private final LocalDate billingDate;                    // 청구의 결제일
 
 	public static BillingListItem fromEntity(Billing billing) {
 
@@ -38,9 +38,6 @@ public class BillingListItem {
 			.map(BillingProductRes::fromEntity)
 			.toList();
 
-		// NULLABLE
-		// 계약의 결제는 회원설정으로 등록시 비어있을 수 있다.
-		// 하지만 비어있으면 청구 생성이 안된다.
 		final Payment payment = contract.getPayment();
 
 		return BillingListItem.builder()

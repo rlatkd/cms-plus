@@ -1,14 +1,14 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.validator;
 
+import java.util.regex.Pattern;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
-import java.util.regex.Pattern;
 
 public class PasswordValidator implements ConstraintValidator<Password, String> {
 
 	private static final Pattern PASSWORD_PATTERN = Pattern.compile(
-"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{8,16}$"
+		"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{8,16}$"
 	);
 
 	@Override

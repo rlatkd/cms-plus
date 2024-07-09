@@ -3,7 +3,6 @@ package kr.or.kosa.cmsplusmain.domain.billing.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -59,7 +58,6 @@ public class BillingStandard extends BaseEntity {
 	private int contractDay;
 
 	/* 청구 상품 목록 */
-	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "billingStandard")
 	@OnlyNonSoftDeleted
 	private List<BillingProduct> billingProducts = new ArrayList<>();

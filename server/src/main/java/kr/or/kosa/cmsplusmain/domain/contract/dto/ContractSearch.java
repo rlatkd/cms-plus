@@ -18,4 +18,9 @@ public class ContractSearch {
 	private String productName;
 	private ContractStatus contractStatus;
 	private ConsentStatus consentStatus;
+
+	/****** 정렬 가능 항목 *******/
+	// memberName
+	// contractDay
+	// contractPrice
 }
