@@ -85,7 +85,7 @@ asciidoctor {
     dependsOn test
     // source를 지정하면 특정 adoc만 HTML로 만듬
     sources {
-        include("**/*.adoc")
+        include("**/index.adoc")
     }
     // 경로를 baseDir로 맞춰줌
     baseDirFollowsSourceFile()
