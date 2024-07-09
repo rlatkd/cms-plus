@@ -28,3 +28,11 @@ export const UploadFileAxios = axios.create({
     Authorization: `Bearer ${localStorage.getItem('access_token')}`,
   },
 });
+
+export const publicUploadFileAxios = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Access-Control-Allow-Origin': `${BASE_URL}`,
+    'Content-Type': 'multipart/form-data',
+  },
+});

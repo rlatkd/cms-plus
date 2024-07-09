@@ -19,7 +19,7 @@ import kr.or.kosa.cmsplusmain.test.domain.product.dto.TProductSaveReq;
 import kr.or.kosa.cmsplusmain.test.domain.product.dto.TProductUpdateReq;
 
 @RestController
-@RequestMapping("/api/v1/vendor/product")
+@RequestMapping("/api/v1/vendor/producttest")
 public class TProductController {
 
 	// 초기화
