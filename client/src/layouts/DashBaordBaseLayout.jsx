@@ -3,7 +3,7 @@ import SideBar from './SideBar';
 
 const DashBaordBaseLayout = ({ children }) => {
   return (
-    <div className='flex h-full w-full max-w-2400'>
+    <div className='flex h-full w-full max-w-2400 bg-background'>
       <SideBar />
       <div className='flex h-full w-full flex-col'>
         <Header />
