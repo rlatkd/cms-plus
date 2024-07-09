@@ -3,7 +3,7 @@ import { RouterProvider } from 'react-router-dom';
 
 const App = () => {
   return (
-    <div className='flex h-full w-full justify-center bg-background'>
+    <div className='flex h-full w-full justify-center'>
       <RouterProvider router={root} />
     </div>
   );

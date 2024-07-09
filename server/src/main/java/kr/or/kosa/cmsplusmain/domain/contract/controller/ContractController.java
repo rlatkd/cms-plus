@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
+import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractUpdateReq;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractSearch;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +31,7 @@ public class ContractController {
 	 * 검색, 정렬, 페이징
 	 * */
 	@GetMapping
-	public List<ContractListItem> getContractList(ContractSearch contractSearch, PageDto.Req pageRequest) {
+	public List<ContractListItem> getContractList(ContractSearch contractSearch, SortPageDto.Req pageRequest) {
 		// TODO security
 		String vendorUsername = "vendor1";
 		return contractService.findContractListWithConditions(vendorUsername, contractSearch, pageRequest);

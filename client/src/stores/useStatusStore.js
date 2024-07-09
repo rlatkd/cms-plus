@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export const useStatusStore = create(
   persist(
@@ -10,8 +10,8 @@ export const useStatusStore = create(
       reset: () => set({ status: 0 }),
     }),
     {
-      name: 'status-storage', // 이름을 지정하여 localStorage에 저장
-      getStorage: () => localStorage, // (선택 사항) 기본적으로 localStorage를 사용
+      name: 'status-storage',
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

@@ -1,5 +1,6 @@
-package kr.or.kosa.cmsplusmain.domain.contract.entity;
+package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import lombok.Getter;
 import lombok.Setter;
