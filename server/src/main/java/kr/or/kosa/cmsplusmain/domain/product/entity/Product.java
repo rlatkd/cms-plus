@@ -1,7 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.product.entity;
 
 import org.hibernate.annotations.Comment;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductMemo;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
+import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -55,6 +55,7 @@ public class Product extends BaseEntity {
 
 	@Comment("상품 금액")
 	@Column(name = "product_price", nullable = false)
+	@ProductPrice
 	@Setter
 	private int price;
 

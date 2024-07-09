@@ -37,7 +37,11 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="cmsplus-main" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+<<<<<<< HEAD
                 <item name="other" type="c8890929:TasksNode$1" />
+=======
+                <item name="build" type="c8890929:TasksNode$1" />
+>>>>>>> da74803181b8bdf9470d4fc8d226ef999df2ee07
               </path>
             </expand>
             <select />
@@ -49,6 +53,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+<<<<<<< HEAD
+=======
+        <option value="Interface" />
+>>>>>>> da74803181b8bdf9470d4fc8d226ef999df2ee07
         <option value="Class" />
       </list>
     </option>
@@ -66,7 +74,13 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2iiLzf0ZUZMkLHMgfFJxuHwp8HG" />
+<<<<<<< HEAD
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+=======
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+>>>>>>> da74803181b8bdf9470d4fc8d226ef999df2ee07
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -81,7 +95,11 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.CmsplusMainApplication.executor": "Run",
+<<<<<<< HEAD
     "git-widget-placeholder": "feat/billing",
+=======
+    "git-widget-placeholder": "Merging feat/product",
+>>>>>>> da74803181b8bdf9470d4fc8d226ef999df2ee07
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/eunaahn/iCloud Drive(아카이브)/Documents/GitHub/cms-plus",
     "node.js.detected.package.eslint": "true",
