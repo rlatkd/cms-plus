@@ -20,4 +20,9 @@ public class BillingSearch {
 	private BillingStatus billingStatus;
 	private PaymentType paymentType;
 	private LocalDate billingDate;
+
+	/****** 정렬 가능 항목 *******/
+	// memberName
+	// billingPrice
+	// billingDate
 }

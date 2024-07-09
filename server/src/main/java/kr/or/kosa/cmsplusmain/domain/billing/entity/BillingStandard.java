@@ -59,7 +59,6 @@ public class BillingStandard extends BaseEntity {
 	private int contractDay;
 
 	/* 청구 상품 목록 */
-	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "billingStandard")
 	@OnlyNonSoftDeleted
 	private List<BillingProduct> billingProducts = new ArrayList<>();

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -29,6 +30,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.product.entity.QProduct;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -50,6 +52,8 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	 * 정렬 조건 생성
 	 *
 	 * 기본 조건: 생성일 내림차순
+	 *
+	 * TODO
 	 * */
 	protected OrderSpecifier<?> orderMethod(SortPageDto.Req pageable) {
 		if (pageable.getOrderBy() == null) {
@@ -62,6 +66,8 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 			case "memberName" -> new OrderSpecifier<>(order, member.name);
 			case "contractDay" -> new OrderSpecifier<>(order, contract.contractDay);
 			case "contractPrice" -> new OrderSpecifier<>(order, contract.contractPrice);
+			case "billingPrice" -> new OrderSpecifier<>(order, billingProduct.price.multiply(billingProduct.quantity).sum());
+			case "billingDate" -> new OrderSpecifier<>(order, billing.billingDate);
 			default -> new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
 		};
 	}
@@ -92,7 +98,15 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return hasText(productName) ? product.name.containsIgnoreCase(productName) : null;
 	}
 
-	protected BooleanExpression billingPriceLoe(Long billingPrice) {
+	protected BooleanExpression productNameContainsInGroup(String productName) {
+		if (productName == null) return null;
+		return Expressions.booleanTemplate(
+			"MAX(CASE WHEN {0} LIKE {1} THEN 1 ELSE 0 END) = 1",
+			QProduct.product.name, "%" + productName + "%"
+		);
+	}
+
+	protected BooleanExpression billingPriceLoeInGroup(Long billingPrice) {
 		if (billingPrice == null) return null;
 		return billingProduct.price.multiply(billingProduct.quantity).sum().loe(billingPrice);
 	}

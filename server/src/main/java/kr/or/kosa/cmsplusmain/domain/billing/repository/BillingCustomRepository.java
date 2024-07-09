@@ -9,11 +9,14 @@ import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.micrometer.common.util.StringUtils;
@@ -23,7 +26,9 @@ import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearch;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Repository
 public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 
@@ -33,48 +38,40 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 
 	/*
 	 * 청구목록 조회
+	 *
+	 * 총 2번의 쿼리
+	 * 1. billing
+	 * 2. billingProduct <- batchsize 100
 	 * */
-	public List<BillingListItem> findBillingListWithCondition(String vendorUsername, BillingSearch search, SortPageDto.Req pageable) {
+	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearch search, SortPageDto.Req pageable) {
+		return jpaQueryFactory
+			.selectFrom(billing)
 
-		List<Tuple> res = jpaQueryFactory
-			.select(
-				billing.id,
-				member.name, member.phone,
-				billingProduct.id, billingProduct.billingStandard.id,
-				billingProduct.product, billingProduct.price, billingProduct.quantity,
-				billingProduct.price.multiply(billingProduct.quantity).sum().as("billingPrice"),
-				billing.billingStatus,
-				payment.paymentType,
-				billing.billingDate
-			)
-			.from(billing)
-
-			.join(billing.billingStandard, billingStandard)
-			.join(billingStandard.billingProducts, billingProduct)
+			.join(billing.billingStandard, billingStandard).fetchJoin()
+			.leftJoin(billingStandard.billingProducts, billingProduct)	// left join
 			.join(billingProduct.product, product)
-			.join(billingStandard.contract, contract)
+			.join(billingStandard.contract, contract).fetchJoin()
 			.join(contract.vendor, vendor)
-			.join(contract.member, member)
-			.join(contract.payment, payment)
+			.join(contract.member, member).fetchJoin()
+			.join(contract.payment, payment).fetchJoin()
 
 			.where(
-				billingNotDel(),
-				billingProductNotDel(),
+				billingNotDel(),								// 청구 소프트 삭제
+				billingProductNotDel(),							// 청구 상품 소프트 삭제
 
-				vendorUsernameEq(vendorUsername),
+				vendorUsernameEq(vendorUsername),				// 고객 아이디 일치
 
-				memberNameContains(search.getMemberName()),
-				memberPhoneContains(search.getMemberPhone()),
-				billingPriceLoe(search.getBillingPrice()),
-				billingStatusEq(search.getBillingStatus()),
-				paymentTypeEq(search.getPaymentType()),
-				billingDateEq(search.getBillingDate())
+				memberNameContains(search.getMemberName()),		// 회원 이름 포함
+				memberPhoneContains(search.getMemberPhone()),	// 회원 휴대전화 포함
+				billingStatusEq(search.getBillingStatus()),		// 청구상태 일치
+				paymentTypeEq(search.getPaymentType()),			// 결제방식 일치
+				billingDateEq(search.getBillingDate())			// 결제일 일치
 			)
 
-			.groupBy(
-				billing.id, billing.billingDate, billing.billingStatus, member.name, member.phone,
-				payment.paymentType, billingStandard.id, billingStandard.type,
-				billingProduct.id, billingProduct.product, billingProduct.price, billingProduct.quantity
+			.groupBy(billing.id)
+			.having(
+				productNameContainsInGroup(search.getProductName()),	// 청구상품 이름 포함
+				billingPriceLoeInGroup(search.getBillingPrice())		// 청구금액 이하
 			)
 
 			.orderBy(orderMethod(pageable))
@@ -82,9 +79,6 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.offset(pageable.getPage())
 			.limit(pageable.getSize())
 			.fetch();
-
-
-		return null;
 	}
 
 	/*
