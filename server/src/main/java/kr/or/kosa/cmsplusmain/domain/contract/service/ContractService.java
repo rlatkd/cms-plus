@@ -9,8 +9,10 @@ import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,24 +46,21 @@ public class ContractService {
 		);
 		return ContractDetail.fromEntity(contract);
 	}
-	//
-	// // @Transactional
-	// // public Contract createContract(String vendorUsername, Long memberId, ContractCreateReq contractCreateReq) {
-	// //
-	// // }
-	//
-	// /*
-	// * 계약 이름 및 상품 수정
-	// * */
-	// @Transactional
-	// public void updateContract(Long contractId, ContractUpdateReq contractUpdateReq) {
-	// 	List<ContractProduct> contractProducts = contractUpdateReq.getContractProducts().stream()
-	// 		.map(dto -> dto.toEntity(contractId))
-	// 		.toList();
-	//
-	// 	contractRepository.updateContract(
-	// 		contractId,
-	// 		contractUpdateReq.getContractName(),
-	// 		contractProducts);
-	// }
+
+
+	/*
+	* 계약 이름 및 상품 목록 수정
+	* */
+	@Transactional
+	public void updateContract(Long contractId, ContractReq contractReq) {
+		List<ContractProduct> contractProducts = contractReq.getContractProducts()
+			.stream()
+			.map(dto -> dto.toEntity(contractId))
+			.toList();
+
+		contractRepository.updateContract(
+			contractId,
+			contractReq.getContractName(),
+			contractProducts);
+	}
 }

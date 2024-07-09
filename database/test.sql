@@ -73,6 +73,13 @@ VALUES
     (80000, 2, 0, 5, NOW(), 3),   -- 온라인 강좌 (2개)
     (120000, 1, 0, 5, NOW(), 5);  -- 그룹 스터디
 
+-- payment_method_info 데이터 삽입
+INSERT INTO cmsplusmain.payment_method_info (deleted, created_datetime, payment_method_info_id, payment_method_info_method)
+VALUES
+    (0, NOW(), 1, 'CARD'),
+    (0, NOW(), 2, 'CMS'),
+    (0, NOW(), 3, 'CMS');
+
 -- auto_payment 데이터 삽입
 INSERT INTO cmsplusmain.auto_payment (payment_id, payment_method_info_id, payment_simpconsent_request_date, payment_consent_img_url, payment_sign_img_url)
 VALUES
@@ -90,12 +97,7 @@ VALUES
     (4, 'CARD'),
     (4, 'ACCOUNT');
 
--- payment_method_info 데이터 삽입
-INSERT INTO cmsplusmain.payment_method_info (deleted, created_datetime, payment_method_info_id, payment_method_info_method)
-VALUES
-    (0, NOW(), 1, 'CARD'),
-    (0, NOW(), 2, 'CMS'),
-    (0, NOW(), 3, 'CMS');
+
 
 -- card_payment 데이터 삽입
 INSERT INTO cmsplusmain.card_payment (card_info_owner_birth, payment_method_info_id, card_info_number, card_info_owner)

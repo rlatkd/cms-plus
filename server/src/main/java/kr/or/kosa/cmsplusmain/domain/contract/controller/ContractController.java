@@ -4,12 +4,16 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import lombok.RequiredArgsConstructor;
@@ -43,16 +47,16 @@ public class ContractController {
 	public ContractDetail getContractDetail(@PathVariable Long contractId) {
 		return contractService.findContractDetailById(contractId);
 	}
-	//
-	// /*
-	//  * 계약 및 결제 수정
-	//  *
-	//  * 계약 상세 페이지에서 상품 수정 버튼 및 결제 수정 버튼 클릭 후
-	//  * 나오는 수정 화면에서 호출해서 정보를 수정한다.
-	//  * 즉, 계약과 결제 수정에 사용된다.
-	//  * */
-	// @PutMapping("/{contractId}")
-	// public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractUpdateReq contractUpdateReq) {
-	// 	contractService.updateContract(contractId, contractUpdateReq);
-	// }
+
+	/*
+	 * 계약 및 결제 수정
+	 *
+	 * 계약 상세 페이지에서 상품 수정 버튼 및 결제 수정 버튼 클릭 후
+	 * 나오는 수정 화면에서 호출해서 정보를 수정한다.
+	 * 즉, 계약과 결제 수정에 사용된다.
+	 * */
+	@PutMapping("/{contractId}")
+	public void updateContract(@PathVariable Long contractId, @RequestBody ContractReq contractReq) {
+		contractService.updateContract(contractId, contractReq);
+	}
 }

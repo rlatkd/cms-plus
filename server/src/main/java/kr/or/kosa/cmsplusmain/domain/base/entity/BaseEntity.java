@@ -16,6 +16,8 @@ import lombok.Getter;
 @Getter
 public abstract class BaseEntity {
 
+	public static final String NON_DELETED_QUERY = "deleted = 0";
+
 	@CreatedDate
 	@Column(name = "created_datetime")
 	private LocalDateTime createdDateTime;
