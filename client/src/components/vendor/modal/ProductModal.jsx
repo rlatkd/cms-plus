@@ -1,11 +1,16 @@
 import BaseModal from '@/components/common/BaseModal';
 
 const ProductModal = ({ isShowModal, setIsShowModal, modalTitle, productDetailData }) => {
-  if (!productDetailData) {
-    return <div />; // 로딩 상태 표시
+  /*
+  모달이 열리기 전에 데이터가 안들어오면 모달이 열리고
+  아무 데이터도 안 됨 (데이터 조회 시간과 렌더링 시점의 차이)
+  따라서 데이터 조회를 보장받고 이후에 렌더링 되게 함
+  또한 위의 로직을 붙힐 시 상품 등록 모달은 최초에 렌더링이 안되므로
+  상품 상세 정보만 위의 로직을 타게 만듬
+  */
+  if (modalTitle === '상품 상세 정보' && !productDetailData) {
+    return <div />;
   }
-
-  console.log('현재 클릭한 버튼', modalTitle);
 
   return (
     <BaseModal
@@ -59,7 +64,9 @@ const ProductModal = ({ isShowModal, setIsShowModal, modalTitle, productDetailDa
         <div className='flex justify-end gap-2 h-10'>
           {modalTitle === '상품 등록' ? (
             <>
-              <button className='bg-white text-mint border border-mint px-7 py-2 rounded-md hover:bg-mint_hover hover:text-white h-10 w-50'>
+              <button
+                className='bg-white text-mint border border-mint px-7 py-2 rounded-md hover:bg-mint_hover hover:text-white h-10 w-50'
+                onClick={() => setIsShowModal(false)}>
                 <span>취소</span>
               </button>
               <button className='bg-mint text-white px-10 py-2 rounded-md hover:bg-mint_hover  flex flex-row items-center w-36 justify-center'>
@@ -69,7 +76,9 @@ const ProductModal = ({ isShowModal, setIsShowModal, modalTitle, productDetailDa
             </>
           ) : (
             <>
-              <button className='bg-white text-mint border border-mint px-7 py-2 rounded-md hover:bg-mint_hover hover:text-white h-10 w-50'>
+              <button
+                className='bg-white text-mint border border-mint px-7 py-2 rounded-md hover:bg-mint_hover hover:text-white h-10 w-50'
+                onClick={() => setIsShowModal(false)}>
                 <span>취소</span>
               </button>
               <button className='bg-mint text-white  px-7 py-2 rounded-md hover:bg-mint_hover h-10 w-32'>

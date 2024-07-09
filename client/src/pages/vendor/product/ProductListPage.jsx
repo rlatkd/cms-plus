@@ -62,21 +62,16 @@ const ProductListPage = () => {
 
   // 상품 등록 모달 열기용 이벤트핸들러
   const openRegisterModalHandle = () => {
-    console.log('클릭');
     setModalTitle('상품 등록');
     setIsShowModal(true);
   };
 
-  console.log(isShowModal);
-
   // 상품 상세조회 모달 열기용 이벤트핸들러
   const openDetailModalHandle = async () => {
     setModalTitle('상품 상세 정보');
-    // console.log('[1] ', productId);
     try {
       const res = await getProductDetail(productId);
       setProductDetailData(res.data);
-      // console.log('상품 상세 조회 성공', res.data);
       setIsShowModal(true);
     } catch (err) {
       console.error('axiosProductDetail => ', err.response.data);
@@ -97,6 +92,7 @@ const ProductListPage = () => {
         onClick={openDetailModalHandle}>
         임시 상품 상세 모달
       </button>
+
       <ProductModal
         isShowModal={isShowModal}
         setIsShowModal={setIsShowModal}
