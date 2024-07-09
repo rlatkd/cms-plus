@@ -1,7 +1,5 @@
 const MemDetailDisplay = () => {
-  return (
-    <div className='shadow-dash-sub mb-5 h-40 w-full rounded-lg bg-white p-6'>DetailDisplay</div>
-  );
+  return <div className='sub-dashboard mb-5 h-40 w-full'>DetailDisplay</div>;
 };
 
 export default MemDetailDisplay;

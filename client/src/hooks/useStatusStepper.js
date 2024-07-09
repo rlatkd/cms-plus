@@ -1,6 +1,14 @@
 import { useStatusStore } from '@/stores/useStatusStore';
 import { useNavigate } from 'react-router-dom';
 
+const CASES = {
+  PAYMENT: 'payment', // 납부자 청구서조회 페이지
+  CARD: 'card', // 납부자 카드 결제 페이지
+  ACCOUNT: 'account', // 납부자 계좌 결제 페이지
+  VIRTUAL: 'virtual', // 납부자 가상계좌 페이지
+  MEMBERREGISTER: 'memberRegister', // 회원 등록 페이지
+};
+
 const useStatusStepper = (type, start, end) => {
   const status = useStatusStore(state => state.status);
   const increment = useStatusStore(state => state.increment);
@@ -12,10 +20,14 @@ const useStatusStepper = (type, start, end) => {
     if (status > start) {
       decrement();
     }
-    if (type === 'virtual' && status === 2) {
+
+    // 가상계좌 2p -> 1p
+    if (type === CASES.VIRTUAL && status === 2) {
       navigate(-1);
       return;
-    } else if ((type === 'card' || type === 'account') && (status === 2 || status === 3)) {
+    }
+    // 카드, 계좌 3p -> 2p, 2p -> 1p
+    if ((type === CASES.CARD || type === CASES.ACCOUNT) && (status === 2 || status === 3)) {
       navigate(-1);
       return;
     }
@@ -24,7 +36,8 @@ const useStatusStepper = (type, start, end) => {
   const handleClickNext = () => {
     if (status < end) {
       increment();
-    } else if (status === end) {
+    }
+    if (status === end) {
       reset();
       // 삭제 예정
       if (type !== 'simpconsent') {
@@ -32,19 +45,19 @@ const useStatusStepper = (type, start, end) => {
       }
     }
     switch (type) {
-      case 'payment':
+      case CASES.PAYMENT:
         if (status === 1) navigate('/member/invoice/payment');
         break;
-      case 'virtual':
+      case CASES.VIRTUAL:
         if (status === 1) navigate('/member/invoice/payment/virtual');
         break;
-      case 'card':
+      case CASES.CARD:
         if (status === 2) navigate('/member/invoice/payment/card');
         break;
-      case 'account':
+      case CASES.ACCOUNT:
         if (status === 2) navigate('/member/invoice/payment/account');
         break;
-      case 'memberregister':
+      case CASES.MEMBERREGISTER:
         if (status === 3) {
           reset();
           navigate('/vendor/members');
