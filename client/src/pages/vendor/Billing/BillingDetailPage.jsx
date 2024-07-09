@@ -1,6 +1,6 @@
 const BillingDetailPage = () => {
   return (
-    <div className='w-full rounded-xl p-6 shadow-dash-board'>
+    <div className='primary-dashboard w-full'>
       BillingDetailPage
       <br />
       BillingDetailPage

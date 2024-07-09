@@ -2,20 +2,20 @@ const DashBoardPage = () => {
   return (
     <>
       <div className='mb-10 flex justify-between'>
-        <div className='h-36 w-1/5 rounded-xl bg-white p-6 shadow-dash-board'>
+        <div className='primary-dashboard h-36 w-1/5'>
           <p>DashBoard</p>
         </div>
-        <div className='h-36 w-1/5 rounded-xl bg-white p-6 shadow-dash-board'>
+        <div className='primary-dashboard h-36 w-1/5'>
           <p>DashBoard</p>
         </div>
-        <div className='h-36 w-1/5 rounded-xl bg-white p-6 shadow-dash-board'>
+        <div className='primary-dashboard h-36 w-1/5'>
           <p>DashBoard</p>
         </div>{' '}
-        <div className='h-36 w-1/5 rounded-xl bg-white p-6 shadow-dash-board'>
+        <div className='primary-dashboard h-36 w-1/5'>
           <p>DashBoard</p>
         </div>
       </div>
-      <div className='flex-1 rounded-xl bg-white p-6 shadow-dash-board'>
+      <div className='primary-dashboard flex-1'>
         <p>DashBoard</p>
       </div>
     </>

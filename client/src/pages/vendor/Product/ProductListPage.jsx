@@ -4,7 +4,7 @@ import { useState } from 'react';
 const ProductListPage = () => {
   const [isShowModal, setIsShowModal] = useState(false);
   return (
-    <div className='h-full w-full rounded-xl p-6 shadow-dash-board'>
+    <div className='primary-dashboard h-full w-full'>
       <button
         className='rounded-lg bg-mint p-3 font-bold text-white'
         onClick={() => setIsShowModal(true)}>
