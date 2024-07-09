@@ -40,7 +40,7 @@ public class ContractService {
 	 * */
 	public ContractDetail findContractDetailById(Long contractId) {
 		Contract contract = contractRepository.findContractDetailById(contractId).orElseThrow(
-			() -> new EntityNotFoundException(String.valueOf(contractId))
+			() -> new EntityNotFoundException("계약 ID 없음(" + contractId + ")")
 		);
 		return ContractDetail.fromEntity(contract);
 	}

@@ -3,10 +3,12 @@ package kr.or.kosa.cmsplusmain.domain.contract.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
@@ -30,17 +32,17 @@ public class ContractController {
 		String vendorUsername = "vendor1";
 		return contractService.findContractListWithConditions(vendorUsername, contractSearch, pageRequest);
 	}
-	//
-	// /*
-	//  * 계약 상세 조회
-	//  *
-	//  * 계약 상세 페이지에서 청구목록을 뺀 나머지 정보 제공
-	//  * (청구정보에서 청구서 발송 수단, 자동 청구서 발송, 자동 청구 생성은 포함되어서 보내진다.)
-	//  * */
-	// @GetMapping("/{contractId}")
-	// public ContractDetail getContractDetail(@PathVariable Long contractId) {
-	// 	return contractService.findContractDetail(contractId);
-	// }
+
+	/*
+	 * 계약 상세 조회
+	 *
+	 * 계약 상세 페이지에서 청구목록을 뺀 나머지 정보 제공
+	 * (청구정보에서 청구서 발송 수단, 자동 청구서 발송, 자동 청구 생성은 포함되어서 보내진다.)
+	 * */
+	@GetMapping("/{contractId}")
+	public ContractDetail getContractDetail(@PathVariable Long contractId) {
+		return contractService.findContractDetailById(contractId);
+	}
 	//
 	// /*
 	//  * 계약 및 결제 수정
