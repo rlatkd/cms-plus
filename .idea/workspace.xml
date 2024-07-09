@@ -4,7 +4,71 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ca37ba-4efd-49ca-8593-c58b05476edb" name="Changes" comment="[KAN-154] fix(-): resolve conflict" />
+    <list default="true" id="24ca37ba-4efd-49ca-8593-c58b05476edb" name="Changes" comment="[KAN-154] fix(-): resolve conflict">
+      <change afterPath="$PROJECT_DIR$/client/src/apis/auth.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/apis/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/BottomArrow.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/Card.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/Close.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/File.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/Home.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/Item.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/Setting.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/TmpLogo.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/UpArrow.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/assets/User.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/components/common/BreadCrumb.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/components/common/Table.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/components/common/TableCol.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/components/common/TableRow.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/components/common/TableSearch.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/vendor/Billing/BillingIndexPage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/vendor/Contract/BillingInfoUpdatePage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/vendor/Contract/ContractIndexPage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/vendor/Contract/PaymentInfoUpdatePage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/vendor/Contract/ProductInfoUpdatePage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/vendor/Member/MemberIndexPage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/vendor/Member/MemberInfoUpdatePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/PULL_REQUEST_TEMPLATE" beforeDir="false" afterPath="$PROJECT_DIR$/.github/PULL_REQUEST_TEMPLATE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2024_07_03_11_58_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2024_07_03_11_58_AM__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2024_07_03_1_56_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2024_07_03_1_56_PM__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/.prettierrc.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/.prettierrc.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/assets/item.svg" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/assets/item.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/common/BaseModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/common/BaseModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/common/StatusNextButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/common/StatusNextButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/common/StatusPreButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/common/StatusPreButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/vendor/contract/ConDetailBilling.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/vendor/contract/ConDetailBilling.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/vendor/contract/ConDetailContract.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/vendor/contract/ConDetailContract.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/vendor/contract/ConDetailHeader.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/vendor/contract/ConDetailHeader.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/vendor/contract/ConDetailPayment.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/vendor/contract/ConDetailPayment.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/vendor/member/MemDetailBasicInfo.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/vendor/member/MemDetailBasicInfo.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/vendor/member/MemDetailContractList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/vendor/member/MemDetailContractList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/vendor/member/MemDetailDisplay.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/vendor/member/MemDetailDisplay.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/vendor/member/MemDetailHeader.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/vendor/member/MemDetailHeader.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/hooks/useStatusStepper.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/useStatusStepper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/layouts/DashBaordBaseLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/layouts/DashBaordBaseLayout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/layouts/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/layouts/Header.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/layouts/SideBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/layouts/SideBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Billing/BillingDetailPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/vendor/Billing/BillingDetailPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Billing/BillingListPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/vendor/Billing/BillingListPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Contract/ContractListPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/vendor/Contract/ContractListPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Contract/ContractUpdatePage.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/DashBoardPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/vendor/DashBoardPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Member/MemberListPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/vendor/Member/MemberListPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Member/MemberRegisterPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/vendor/Member/MemberRegisterPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Member/MemberUpdatePage.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Product/ProductListPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/vendor/Product/ProductListPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/vendor/Setting/SettingSimpConsentPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/vendor/Setting/SettingSimpConsentPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/routes/vendorRoute.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/routes/vendorRoute.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/styles/Globalstyle.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/styles/Globalstyle.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/vite.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/kr/or/kosa/cmsplusmain/domain/product/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/kr/or/kosa/cmsplusmain/domain/product/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/resources/static/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/resources/static/docs/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,7 +101,7 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="cmsplus-main" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="other" type="c8890929:TasksNode$1" />
+                <item name="build" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -49,6 +113,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -66,7 +131,9 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2iiLzf0ZUZMkLHMgfFJxuHwp8HG" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -81,7 +148,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.CmsplusMainApplication.executor": "Run",
-    "git-widget-placeholder": "feat/billing",
+    "git-widget-placeholder": "Merging feat/product",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/eunaahn/iCloud Drive(아카이브)/Documents/GitHub/cms-plus",
     "node.js.detected.package.eslint": "true",

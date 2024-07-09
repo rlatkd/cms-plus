@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   db:
+    container_name: mysql
     build:
       context: ./database
       dockerfile: Dockerfile
-    container_name: cmsplus-mysql
     ports:
       - "3306:3306"
     volumes:
@@ -13,8 +13,8 @@ services:
     restart: unless-stopped
 
   redis:
-    image: redis:latest
     container_name: redis
+    image: redis:latest
     ports:
       - "6379:6379"
     volumes:

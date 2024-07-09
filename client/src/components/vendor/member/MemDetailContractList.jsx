@@ -1,7 +1,5 @@
 const MemDetailContractList = () => {
-  return (
-    <div className='shadow-dash-sub h-640 w-full rounded-lg bg-white p-6'>DetailContractList</div>
-  );
+  return <div className='sub-dashboard h-640 w-full'>DetailContractList</div>;
 };
 
 export default MemDetailContractList;
