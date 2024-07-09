@@ -10,7 +10,7 @@ public class BillingProductRes {
 	private Long id;
 	private Long billingStandardId;
 	private String name;
-	private	Integer price;
+	private Integer price;
 	private Integer quantity;
 
 	public static BillingProductRes fromEntity(BillingProduct billingProduct) {
@@ -19,7 +19,7 @@ public class BillingProductRes {
 			.billingStandardId(billingProduct.getBillingStandard().getId())
 
 			// 주의
-			// fetch join 필요
+			// 청구상품 과 청구 join 조회 필요
 			.name(billingProduct.getProduct().getName())
 
 			.price(billingProduct.getPrice())

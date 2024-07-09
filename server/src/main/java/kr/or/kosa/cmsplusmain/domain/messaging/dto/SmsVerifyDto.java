@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class SmsVerifyDto {
 
-    private String phone;
-    private String smsVerifyCode;
+	private String phone;
+	private String smsVerifyCode;
 
 }
