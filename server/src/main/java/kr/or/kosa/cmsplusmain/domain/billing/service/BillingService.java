@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearch;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -19,5 +20,10 @@ public class BillingService {
 
 	public List<BillingListItem> findBillingsByContract(Long contractId, PageDto.Req pageable) {
 		return billingRepository.findBillingsByContractId(contractId, pageable);
+	}
+
+	public List<BillingListItem> findBillings(BillingSearch search, PageDto.Req pageable) {
+		String vendorUsername = "vendor1";
+		return billingRepository.findBillingListWithCondition(vendorUsername, search, pageable);
 	}
 }

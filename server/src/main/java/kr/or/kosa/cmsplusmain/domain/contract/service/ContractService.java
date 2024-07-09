@@ -6,13 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractSearch;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

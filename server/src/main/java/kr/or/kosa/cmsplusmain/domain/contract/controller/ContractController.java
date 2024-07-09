@@ -14,7 +14,7 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractUpdateReq;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractSearch;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import lombok.RequiredArgsConstructor;
 

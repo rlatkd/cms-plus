@@ -19,7 +19,7 @@ public class BillingListItem {
 
 	private final Long billingId;
 	private final String memberName;
-	private final LocalDate billingDate;
+	private final String memberPhone;
 	private final List<BillingProductDto.Res> billingProducts;
 	private final Long billingPrice;
 	private final String billingStatus;
@@ -27,19 +27,17 @@ public class BillingListItem {
 	private final LocalDate contractDate;
 
 	@Builder
-	public BillingListItem(Long billingId, String memberName, LocalDate billingDate,
-		List<BillingProduct> billingProducts,
+	public BillingListItem(Long billingId, String memberName, String memberPhone,
+		List<BillingProduct> billingProducts, Long billingPrice,
 		BillingStatus billingStatus, PaymentType paymentType, LocalDate contractDate) {
 
 		this.billingId = billingId;
 		this.memberName = memberName;
-		this.billingDate = billingDate;
+		this.memberPhone = memberPhone;
 		this.billingProducts = (billingProducts == null) ? Collections.emptyList() :
 			billingProducts.stream().map(BillingProductDto.Res::fromEntity)
 				.toList();
-		this.billingPrice = (billingProducts != null) ? billingProducts.stream()
-			.mapToLong(BillingProduct::getTotalPrice)
-			.sum() : null;
+		this.billingPrice = billingPrice;
 		this.billingStatus = (billingStatus != null) ? billingStatus.getTitle() : null;
 		;
 		this.paymentType = (paymentType != null) ? paymentType.getTitle() : null;

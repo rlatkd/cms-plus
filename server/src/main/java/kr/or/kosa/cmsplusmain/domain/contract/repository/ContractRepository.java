@@ -28,7 +28,7 @@ import kr.or.kosa.cmsplusmain.domain.base.repository.BaseRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractSearch;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -209,43 +209,6 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 		return fetchOne != null;
 	}
 
-	/*
-	 * 정렬 조건 생성
-	 *
-	 * 기본 조건: 생성일 내림차순
-	 * */
-	private OrderSpecifier<?> orderMethod(PageDto.Req pageable) {
-		if (pageable.getOrderBy() == null) {
-			return new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
-		}
 
-		Order order = pageable.isAsc() ? Order.ASC : Order.DESC;
 
-		return switch (pageable.getOrderBy()) {
-			case "memberName" -> new OrderSpecifier<>(order, member.name);
-			case "contractDay" -> new OrderSpecifier<>(order, contract.contractDay);
-			case "contractPrice" -> new OrderSpecifier<>(order, contract.contractPrice);
-			default -> new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
-		};
-	}
-
-	private BooleanExpression memberNameContains(String memberName) {
-		return hasText(memberName) ? member.name.containsIgnoreCase(memberName) : null;
-	}
-
-	private BooleanExpression memberPhoneContains(String memberPhone) {
-		return hasText(memberPhone) ? member.phone.containsIgnoreCase(memberPhone) : null;
-	}
-
-	private BooleanExpression contractDayEq(Integer contractDay) {
-		return (contractDay != null) ? contract.contractDay.eq(contractDay) : null;
-	}
-
-	private BooleanExpression contractStatusEq(ContractStatus contractStatus) {
-		return (contractStatus != null) ? contract.status.eq(contractStatus) : null;
-	}
-
-	private BooleanExpression consentStatusEq(ConsentStatus consentStatus) {
-		return (consentStatus != null) ? payment.consentStatus.eq(consentStatus) : null;
-	}
 }
