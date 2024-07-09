@@ -3,6 +3,21 @@ import Input from '@/components/common/Input';
 import SelectField from '@/components/common/SelectField';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 
+const bankOptions = [
+  { value: 'shinhan', label: '신한은행' },
+  { value: 'kb', label: '국민은행' },
+  { value: 'woori', label: '우리은행' },
+  { value: 'ibk', label: '기업은행' },
+  { value: 'suhyup', label: '수협은행' },
+  { value: 'nh', label: 'NH농협은행' },
+  { value: 'busan', label: '부산은행' },
+  { value: 'hana', label: '하나은행' },
+  { value: 'gwangju', label: '광주은행' },
+  { value: 'post', label: '우체국' },
+  { value: 'im', label: 'iM뱅크' },
+  { value: 'knb', label: '경남은행' },
+];
+
 const PaymentCMS = () => {
   const { userData, setUserData } = useUserDataStore();
   const [localData, setLocalData] = useState({
@@ -30,21 +45,6 @@ const PaymentCMS = () => {
     const { name, value } = e.target;
     setUserData({ [name]: value });
   };
-
-  const bankOptions = [
-    { value: 'shinhan', label: '신한은행' },
-    { value: 'kb', label: '국민은행' },
-    { value: 'woori', label: '우리은행' },
-    { value: 'ibk', label: '기업은행' },
-    { value: 'suhyup', label: '수협은행' },
-    { value: 'nh', label: 'NH농협은행' },
-    { value: 'busan', label: '부산은행' },
-    { value: 'hana', label: '하나은행' },
-    { value: 'gwangju', label: '광주은행' },
-    { value: 'post', label: '우체국' },
-    { value: 'im', label: 'iM뱅크' },
-    { value: 'knb', label: '경남은행' },
-  ];
 
   return (
     <div className='flex flex-col bg-white p-1'>
