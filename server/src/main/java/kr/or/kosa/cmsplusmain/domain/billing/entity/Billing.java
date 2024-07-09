@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.Comment;
@@ -38,12 +39,12 @@ public class Billing extends BaseEntity {
 	private Long id;
 
 	@Comment("청구 기준 정보")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_standard_id", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "billing_standard_id")
 	@NotNull
 	private BillingStandard billingStandard;
 
-	@Comment("청구날짜 (매출에 잡히는 월)")
+	@Comment("결제일 (= 약정일, 납부 시작 및 종료 기간[납부기간은 하루이다.])")
 	@Column(name = "billing_date", nullable = false)
 	@NotNull
 	private LocalDate billingDate;
@@ -52,25 +53,10 @@ public class Billing extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "billing_status", nullable = false)
 	@NotNull
-	private BillingStatus status;
+	private BillingStatus billingStatus;
 
 	@Comment("청구서 메시지")
 	@Column(name = "billing_memo", length = 2000)
 	@Setter
 	private String memo;
-
-	@Comment("납부 기간 - 시작일")
-	@Column(name = "billing_start_date", nullable = false)
-	@NotNull
-	private LocalDate billingStartDate;
-
-	@Comment("납부 기간 - 종료일")
-	@Column(name = "billing_end_date", nullable = false)
-	@NotNull
-	private LocalDate billingEndDate;
-
-	/* 청구 상품 목록 */
-	@OneToMany(mappedBy = "billing")
-	@OnlyNonSoftDeleted
-	private List<BillingProduct> billingProducts;
 }

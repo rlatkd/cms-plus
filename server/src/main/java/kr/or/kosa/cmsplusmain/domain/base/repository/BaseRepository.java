@@ -1,90 +1,48 @@
 package kr.or.kosa.cmsplusmain.domain.base.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
-import static org.springframework.util.StringUtils.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.NoRepositoryBean;
 
-import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+@NoRepositoryBean
+public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
 
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+	@Override
+	@Query("SELECT e FROM #{#entityName} e WHERE e.deleted = false")
+	List<T> findAll();
 
-import jakarta.persistence.EntityManager;
-import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
-import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
-import lombok.RequiredArgsConstructor;
+	@Override
+	@Query("SELECT e FROM #{#entityName} e WHERE e.id IN ?1 AND e.deleted = false")
+	List<T> findAllById(Iterable<ID> ids);
 
-@Repository
-@RequiredArgsConstructor
-public abstract class BaseRepository<T extends BaseEntity, ID extends Serializable> {
+	@Override
+	@Query("SELECT e FROM #{#entityName} e WHERE e.id = ?1 AND e.deleted = false")
+	Optional<T> findById(ID id);
 
-	protected final EntityManager em;
-	protected final JPAQueryFactory jpaQueryFactory;
+	@Override
+	@Query("SELECT COUNT(e) FROM #{#entityName} e WHERE e.deleted = false")
+	long count();
 
-	/*
-	 * 새로생성 혹은 수정완료시 (비영속 상태 객체 수정 완료 후 호출)
-	 * */
-	@Transactional
-	public T save(T entity) {
-		return em.merge(entity);
-	}
+	@Override
+	@Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM #{#entityName} e WHERE e.id = ?1 AND e.deleted = false")
+	boolean existsById(ID id);
 
-	/*
-	 * 정렬 조건 생성
-	 *
-	 * 기본 조건: 생성일 내림차순
-	 * */
-	protected OrderSpecifier<?> orderMethod(PageDto.Req pageable) {
-		if (pageable.getOrderBy() == null) {
-			return new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
-		}
+	@Modifying
+	@Query("UPDATE #{#entityName} e SET e.deleted = true WHERE e.id = ?1")
+	void softDelete(ID id);
 
-		Order order = pageable.isAsc() ? Order.ASC : Order.DESC;
+	@Modifying
+	@Query("UPDATE #{#entityName} e SET e.deleted = true WHERE e.id IN ?1")
+	void softDeleteAllById(Iterable<? extends ID> ids);
 
-		return switch (pageable.getOrderBy()) {
-			case "memberName" -> new OrderSpecifier<>(order, member.name);
-			case "contractDay" -> new OrderSpecifier<>(order, contract.contractDay);
-			case "contractPrice" -> new OrderSpecifier<>(order, contract.contractPrice);
-			default -> new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
-		};
-	}
+	@Query("SELECT e FROM #{#entityName} e WHERE e.deleted = true")
+	List<T> findAllDeleted();
 
-	protected BooleanExpression memberNameContains(String memberName) {
-		return hasText(memberName) ? member.name.containsIgnoreCase(memberName) : null;
-	}
-
-	protected BooleanExpression memberPhoneContains(String memberPhone) {
-		return hasText(memberPhone) ? member.phone.containsIgnoreCase(memberPhone) : null;
-	}
-
-	protected BooleanExpression paymentTypeEq(PaymentType paymentType) {
-		return (paymentType != null) ? payment.paymentType.eq(paymentType) : null;
-	}
-
-	protected BooleanExpression contractDayEq(Integer contractDay) {
-		return (contractDay != null) ? contract.contractDay.eq(contractDay) : null;
-	}
-
-	protected BooleanExpression billingStatusEq(BillingStatus billingStatus) {
-		return (billingStatus != null) ? billing.status.eq(billingStatus) : null;
-	}
-
-	protected BooleanExpression contractStatusEq(ContractStatus contractStatus) {
-		return (contractStatus != null) ? contract.status.eq(contractStatus) : null;
-	}
-
-	protected BooleanExpression consentStatusEq(ConsentStatus consentStatus) {
-		return (consentStatus != null) ? payment.consentStatus.eq(consentStatus) : null;
-	}
+	@Modifying
+	@Query("UPDATE #{#entityName} e SET e.deleted = false WHERE e.id = ?1")
+	void restore(ID id);
 }

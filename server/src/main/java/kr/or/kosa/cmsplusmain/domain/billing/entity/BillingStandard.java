@@ -1,7 +1,9 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -14,18 +16,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+import kr.or.kosa.cmsplusmain.domain.base.OnlyNonSoftDeleted;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Comment("청구 생성 정보 (정기적으로 혹은 추가 청구를 만들기 위한 정보)")
+@Comment("청구기준 = 청구 생성 정보 (정기적으로 혹은 추가 청구를 만들기 위한 정보)")
 @Entity
-@Table(name = "billing_standard")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BillingStandard extends BaseEntity {
@@ -35,32 +36,40 @@ public class BillingStandard extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Comment("청구한 회원")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", nullable = false, updatable = false)
+	@Comment("청구 기준 기반이된 계약")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "contract_id")
 	@NotNull
-	private Member member;
+	private Contract contract;
 
-	@Comment("청구 설정 상태")
+	@Comment("청구 기준 상태")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "billing_standard_status", nullable = false)
 	@NotNull
 	private BillingStandardStatus status;
 
-	@Comment("청구 타입 [정기 | 추가]")
+	@Comment("청구 타입 [정기 or 추가]")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "billing_standard_type", nullable = false)
 	@NotNull
 	private BillingType type;
 
-	@Comment("청구 생성 기반이된 계약")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "contract_id", nullable = false, updatable = false)
-	@NotNull
-	private Contract contract;
+	@Comment("청구의 약정일 (청구 생성시 설정한 결제일 != 계약의 약정일과 다를 수 있다.)")
+	@Column(name = "billing_standard_contract_day")
+	private int contractDay;
 
-	@Comment("청구의 약정일")
-	@Column(name = "billing_standard_contract_date", nullable = false)
-	private LocalDate contractDate;
+	/* 청구 상품 목록 */
+	@BatchSize(size = 100)
+	@OneToMany(mappedBy = "billingStandard")
+	@OnlyNonSoftDeleted
+	private List<BillingProduct> billingProducts = new ArrayList<>();
 
+	/*
+	 * 청구금액
+	 * */
+	public long getBillingPrice() {
+		return billingProducts.stream()
+			.mapToLong(BillingProduct::getTotalPrice)
+			.sum();
+	}
 }

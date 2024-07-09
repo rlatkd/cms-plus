@@ -3,8 +3,6 @@ package kr.or.kosa.cmsplusmain.domain.billing.dto;
 import java.time.LocalDate;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,9 +15,9 @@ public class BillingSearch {
 
 	private String memberName;
 	private String memberPhone;
-	private Long billingPrice;
-	private String productName;
+	private Long billingPrice;	// 청구금액 이하
+	private String productName;	// 상품 목록 중 포함
 	private BillingStatus billingStatus;
 	private PaymentType paymentType;
-	private Integer contractDay;
+	private LocalDate billingDate;
 }

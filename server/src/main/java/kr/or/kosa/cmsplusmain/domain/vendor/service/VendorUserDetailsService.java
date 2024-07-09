@@ -2,7 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.vendor.service;
 
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
-import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
+import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VendorUserDetailsService implements UserDetailsService {
 
-    private final VendorRepository vendorRepository;
+    private final VendorCustomRepository vendorRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

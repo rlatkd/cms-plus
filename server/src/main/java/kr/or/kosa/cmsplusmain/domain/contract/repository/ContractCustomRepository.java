@@ -5,7 +5,6 @@ import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
-import static org.springframework.util.StringUtils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,28 +16,24 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
-import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
-import kr.or.kosa.cmsplusmain.domain.base.repository.BaseRepository;
+import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
-public class ContractRepository extends BaseRepository<Contract, Long> {
+public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 
-	public ContractRepository(EntityManager em, JPAQueryFactory jpaQueryFactory) {
+	public ContractCustomRepository(EntityManager em, JPAQueryFactory jpaQueryFactory) {
 		super(em, jpaQueryFactory);
 	}
 
@@ -49,7 +44,7 @@ public class ContractRepository extends BaseRepository<Contract, Long> {
 	 * TODO: 검색 최적화를 위한 캐싱하기
 	 *  */
 	public List<ContractListItem> findContractListWithCondition(String vendorUsername, ContractSearch search,
-		PageDto.Req pageable) {
+		SortPageDto.Req pageable) {
 
 		// 회원명, 회원 휴대전화, 약정일, 계약상태, 동의상태
 		List<Long> contractIds = jpaQueryFactory
