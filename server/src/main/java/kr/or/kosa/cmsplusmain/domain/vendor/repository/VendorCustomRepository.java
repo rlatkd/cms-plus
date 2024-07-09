@@ -2,16 +2,16 @@ package kr.or.kosa.cmsplusmain.domain.vendor.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import kr.or.kosa.cmsplusmain.domain.base.repository.BaseRepository;
+import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import org.springframework.stereotype.Repository;
 
 import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.vendor;
 
 @Repository
-public class VendorRepository extends BaseRepository<Vendor, Long> {
+public class VendorCustomRepository extends BaseCustomRepository<Vendor> {
 
-    public VendorRepository(EntityManager em, JPAQueryFactory jpaQueryFactory) {
+    public VendorCustomRepository(EntityManager em, JPAQueryFactory jpaQueryFactory) {
         super(em, jpaQueryFactory);
     }
 
