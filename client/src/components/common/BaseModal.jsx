@@ -17,7 +17,7 @@ const BaseModal = ({ isShowModal, setIsShowModal, modalTitle, height, width, chi
                 <img src={closeIcon} alt='close' className='h-4 w-4' />
               </button>
             </div>
-            <div className='h-full border-2 border-red-500'>{children}</div>
+            <div>{children}</div>
           </div>
         </div>
       ) : null}
