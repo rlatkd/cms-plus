@@ -20,10 +20,5 @@
         <module name="cmsplus-main.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="cmsplus-main" target="17" />
-      <module name="cmsplus-main.main" target="17" />
-      <module name="cmsplus-main.test" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
