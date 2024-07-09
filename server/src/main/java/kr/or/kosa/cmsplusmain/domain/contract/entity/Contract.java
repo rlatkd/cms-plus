@@ -29,14 +29,20 @@ import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Comment("회원과 고객간의 계약 (학원 - 학생 간 계약)")
 @Table(name = "contract")
 @Entity
 @Getter
+@Builder
+@ToString(exclude = {"vendor"})
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Contract extends BaseEntity {
 
@@ -61,7 +67,7 @@ public class Contract extends BaseEntity {
 	@Column(name = "contract_status", nullable = false)
 	@Enumerated(EnumType.STRING)
 	@NotNull
-	private ContractStatus status;
+	private ContractStatus status = ContractStatus.ENABLED;
 
 	@Comment("계약 이름")
 	@Column(name = "contract_name", nullable = false, length = 40)
@@ -100,16 +106,21 @@ public class Contract extends BaseEntity {
 	@OnlyNonSoftDeleted
 	private List<ContractProduct> contractProducts = new ArrayList<>();
 
-	private Long getContractPrice() {
+	public static Contract of(Long contractId) {
+		Contract contract = new Contract();
+		contract.id = contractId;
+		return contract;
+	}
+
+	public Long getContractPrice() {
 		return contractProducts.stream()
 			.mapToLong(ContractProduct::getPrice)
 			.sum();
 	}
 
-	/* 계약 금액 계산 후 업데이트 */
-	@PrePersist
 	@PreUpdate
-	public void preSave() {
-		contractPrice = getContractPrice();
+	@PrePersist
+	private void preModified() {
+		this.contractPrice = getContractPrice();
 	}
 }

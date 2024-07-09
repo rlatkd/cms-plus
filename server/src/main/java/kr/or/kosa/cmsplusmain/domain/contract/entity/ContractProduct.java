@@ -14,6 +14,8 @@ import jakarta.persistence.Table;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +23,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "contract_product")
 @Getter
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContractProduct extends BaseEntity {
 
@@ -48,4 +52,8 @@ public class ContractProduct extends BaseEntity {
 	@Comment("계약_상품 수량")
 	@Column(name = "contract_product_quantity", nullable = false)
 	private int quantity;
+
+	public long getTotalPrice() {
+		return (long)price * quantity;
+	}
 }

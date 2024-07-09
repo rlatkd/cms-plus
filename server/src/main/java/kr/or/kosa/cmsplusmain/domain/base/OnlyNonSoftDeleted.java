@@ -9,6 +9,6 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@SQLRestriction("deleted_date IS NULL")
+@SQLRestriction("deleted = false")
 public @interface OnlyNonSoftDeleted {
 }

@@ -3,42 +3,55 @@ package kr.or.kosa.cmsplusmain.domain.billing.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.querydsl.core.annotations.QueryProjection;
-
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class BillingListItem {
 
-	private final Long billingId;
-	private final String memberName;
-	private final LocalDate billingDate;
-	private final String firstProductName;
-	private final Integer productCnt;
-	private final Long billingPrice;
-	private final String billingStatus;
-	private final String paymentType;
-	private final LocalDate contractDate;
+	private final Long billingId;							// 청구 ID
+	private final String memberName;						// 회원명
+	private final String memberPhone;						// 회원 휴대번호
+	private final List<BillingProductRes> billingProducts;	// 청구 상품 목록
+	private final Long billingPrice;						// 청구금액
+	private final BillingStatus billingStatus;				// 청구상태
+	private final PaymentType paymentType;					// 결제방식
+	private final LocalDate billingDate;					// 청구의 결제일
 
-	@QueryProjection
-	public BillingListItem(Long billingId, String memberName, LocalDate billingDate, List<BillingProduct> billingProducts,
-		BillingStatus billingStatus, String paymentType, LocalDate contractDate) {
+	public static BillingListItem fromEntity(Billing billing) {
 
-		PaymentType mPaymentType = PaymentType.of(paymentType);
+		// NOT NULL
+		final BillingStandard billingStandard = billing.getBillingStandard();
+		final Contract contract = billingStandard.getContract();
+		final Member member = contract.getMember();
 
-		this.billingId = billingId;
-		this.memberName = memberName;
-		this.billingDate = billingDate;
-		this.firstProductName = billingProducts.isEmpty() ? null : billingProducts.get(0).getProduct().getName();
-		this.productCnt = billingProducts.size();
-		this.billingPrice = billingProducts.stream()
-			.mapToLong(BillingProduct::getTotalPrice)
-			.sum();
-		this.billingStatus = (billingStatus != null) ? billingStatus.getTitle() : null; ;
-		this.paymentType = (mPaymentType != null) ? mPaymentType.getTitle() : null;
-		this.contractDate = contractDate;
+		final List<BillingProductRes> billingProductResList = billingStandard.getBillingProducts()
+			.stream()
+			.map(BillingProductRes::fromEntity)
+			.toList();
+
+		// NULLABLE
+		// 계약의 결제는 회원설정으로 등록시 비어있을 수 있다.
+		// 하지만 비어있으면 청구 생성이 안된다.
+		final Payment payment = contract.getPayment();
+
+		return BillingListItem.builder()
+			.billingId(billing.getId())
+			.memberName(member.getName())
+			.memberPhone(member.getPhone())
+			.billingProducts(billingProductResList)
+			.billingPrice(billingStandard.getBillingPrice())
+			.billingStatus(billing.getBillingStatus())
+			.paymentType(payment.getPaymentType())
+			.billingDate(billing.getBillingDate())
+			.build();
 	}
 }

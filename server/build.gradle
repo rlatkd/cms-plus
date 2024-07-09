@@ -59,6 +59,18 @@ dependencies {
     // REST Docs
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+
+    // SMS
+    implementation 'net.nurigo:sdk:4.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Email
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis'
 }
 
 test {
@@ -73,7 +85,7 @@ asciidoctor {
     dependsOn test
     // source를 지정하면 특정 adoc만 HTML로 만듬
     sources {
-        include("**/*.adoc")
+        include("**/index.adoc")
     }
     // 경로를 baseDir로 맞춰줌
     baseDirFollowsSourceFile()
