@@ -40,113 +40,39 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	/*
 	 * 계약 목록 조회
 	 *
-	 * TODO: 쿼리 횟수 감소시키기 (inheritance 쿼리 한 번더 나가는거 방지)
-	 * TODO: 검색 최적화를 위한 캐싱하기
 	 *  */
-	public List<ContractListItem> findContractListWithCondition(String vendorUsername, ContractSearch search,
-		SortPageDto.Req pageable) {
+	public List<Contract> findContractListWithCondition(String vendorUsername, ContractSearch search, SortPageDto.Req pageable) {
+		return jpaQueryFactory
+			.selectFrom(contract)
 
-		// 회원명, 회원 휴대전화, 약정일, 계약상태, 동의상태
-		List<Long> contractIds = jpaQueryFactory
-			.select(contract.id)
-			.from(contract)
 			.join(contract.vendor, vendor)
-			.join(contract.member, member)
-			.join(contract.payment, payment)
+			.join(contract.member, member).fetchJoin()
+			.leftJoin(contract.contractProducts, contractProduct).on(contractProductNotDel())	// left join
+			.join(contract.payment, payment).fetchJoin()
+
 			.where(
-				// 삭제여부
-				contract.deleted.eq(false),
-				member.deleted.eq(false),
+				contractNotDel(),								// 계약 소프트 삭제
 
-				contract.vendor.username.eq(vendorUsername),    // 해당 고객의 계약
+				vendorUsernameEq(vendorUsername),				// 고객 일치
 
-				// 검색조건
-				memberNameContains(search.getMemberName()),        // 회원명
-				memberPhoneContains(search.getMemberPhone()),    // 휴대전화
-				contractDayEq(search.getContractDay()),            // 약정일
-				contractStatusEq(search.getContractStatus()),    // 계약상태
-				consentStatusEq(search.getConsentStatus())        // 동의상태
-			).fetch();
-
-		// 상품 목록
-		Map<Long, List<ContractProduct>> contractIdToProducts = jpaQueryFactory
-			.select(contractProduct)
-			.from(contractProduct)
-			.where(
-				contractProduct.contract.id.in(contractIds),
-				contractProduct.deleted.eq(false)
+				memberNameContains(search.getMemberName()),		// 회원 이름 포함
+				memberPhoneContains(search.getMemberPhone()),	// 회원 휴대번호 포함
+				contractDayEq(search.getContractDay()),			// 약정일 일치
+				contractStatusEq(search.getContractStatus()),	// 계약상태 일치
+				consentStatusEq(search.getConsentStatus())		// 동의상태 일치
 			)
-			.fetch()
-			.stream()
-			.collect(Collectors.groupingBy(cp -> cp.getContract().getId()));
 
-		// 검색 상품명이 포함된 상품이 하나라도 존재하는 계약
-		// 계약 금액이 검색 금액이하인 계약
-		contractIdToProducts.entrySet().removeIf(entry -> {
-			List<ContractProduct> products = entry.getValue();
+			.groupBy(contract.id)
+			.having(
+				productNameContainsInGroup(search.getProductName()),
+				contractPriceLoeInGroup(search.getContractPrice())
+			)
 
-			// 검색 상품명 포함
-			boolean containsProductName = products.stream()
-				.map(ContractProduct::getName)
-				.anyMatch(name -> search.getProductName() == null || name.contains(search.getProductName()));
-
-			// 계약 금액 이하
-			boolean loeContractPrice = products.stream()
-				.mapToLong(ContractProduct::getTotalPrice)
-				.sum() <= (search.getContractPrice() == null ? Long.MAX_VALUE : search.getContractPrice());
-
-			return !(containsProductName && loeContractPrice);
-		});
-
-		// 검색 결과 계약 ID 목록
-		// 페이징 적용을 위해 분리
-		Set<Long> searchedContractIds = contractIdToProducts.keySet();
-		List<Tuple> results = jpaQueryFactory
-			.select(
-				contract.id,
-				member.name,
-				member.phone,
-				contract.contractDay,
-				contract.status,
-				contract.payment)
-			.from(contract)
-			.join(contract.member, member)
-			.join(contract.payment, payment)
-			.where(contract.id.in(searchedContractIds))
 			.orderBy(orderMethod(pageable))
+
 			.offset(pageable.getPage())
 			.limit(pageable.getSize())
 			.fetch();
-
-		// DTO 변환
-		List<ContractListItem> items = new ArrayList<>();
-		for (Tuple result : results) {
-			Long contractId = result.get(contract.id);
-
-			List<ContractProduct> products = contractIdToProducts.get(contractId);
-			Long contractPrice = products.stream()
-				.mapToLong(ContractProduct::getTotalPrice)
-				.sum();
-
-			Payment mPayment = result.get(contract.payment);
-			ConsentStatus consentStatus = (mPayment != null) ?
-				mPayment.getConsentStatus() : null;
-
-			ContractListItem item = ContractListItem.builder()
-				.contractId(contractId)
-				.memberName(result.get(member.name))
-				.memberPhone(result.get(member.phone))
-				.contractDay(result.get(contract.contractDay))
-				.contractProducts(products)
-				.contractPrice(contractPrice)
-				.contractStatus(result.get(contract.status))
-				.consentStatus(consentStatus)
-				.build();
-
-			items.add(item);
-		}
-
-		return items;
 	}
 
 	/*

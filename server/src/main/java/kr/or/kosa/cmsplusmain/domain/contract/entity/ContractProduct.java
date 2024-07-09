@@ -37,13 +37,9 @@ public class ContractProduct extends BaseEntity {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "product_id")
 	private Product product;
-
-	@Comment("계약_상품 이름")
-	@Column(name = "contract_product_name", nullable = false)
-	private String name;
 
 	@Comment("계약_상품 가격")
 	@Column(name = "contract_product_price", nullable = false)
@@ -54,6 +50,6 @@ public class ContractProduct extends BaseEntity {
 	private int quantity;
 
 	public long getTotalPrice() {
-		return (long)price * quantity;
+		return (long) price * quantity;
 	}
 }

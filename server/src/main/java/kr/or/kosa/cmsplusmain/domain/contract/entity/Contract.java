@@ -97,30 +97,26 @@ public class Contract extends BaseEntity {
 	@NotNull
 	private LocalDate contractEndDate;
 
-	@Comment("계약 금액")
-	@Column(name = "contract_total_price", nullable = false)
-	private Long contractPrice;
-
 	/* 계약한 상품 목록 */
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)
 	@OnlyNonSoftDeleted
 	private List<ContractProduct> contractProducts = new ArrayList<>();
 
+	/*
+	* 계약금액
+	* */
+	public Long getContractPrice() {
+		return contractProducts.stream()
+			.mapToLong(ContractProduct::getTotalPrice)
+			.sum();
+	}
+
+	/*
+	* id만 들고있는 빈 객체
+	* */
 	public static Contract of(Long contractId) {
 		Contract contract = new Contract();
 		contract.id = contractId;
 		return contract;
-	}
-
-	public Long getContractPrice() {
-		return contractProducts.stream()
-			.mapToLong(ContractProduct::getPrice)
-			.sum();
-	}
-
-	@PreUpdate
-	@PrePersist
-	private void preModified() {
-		this.contractPrice = getContractPrice();
 	}
 }

@@ -19,7 +19,7 @@ public class BillingProductRes {
 			.billingStandardId(billingProduct.getBillingStandard().getId())
 
 			// 주의
-			// fetch join 필요
+			// 청구상품 과 청구 join 조회 필요
 			.name(billingProduct.getProduct().getName())
 
 			.price(billingProduct.getPrice())

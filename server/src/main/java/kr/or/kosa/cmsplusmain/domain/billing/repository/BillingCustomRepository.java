@@ -48,7 +48,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.selectFrom(billing)
 
 			.join(billing.billingStandard, billingStandard).fetchJoin()
-			.leftJoin(billingStandard.billingProducts, billingProduct)	// left join
+			.leftJoin(billingStandard.billingProducts, billingProduct).on(billingProductNotDel())	// left join
 			.join(billingProduct.product, product)
 			.join(billingStandard.contract, contract).fetchJoin()
 			.join(contract.vendor, vendor)
@@ -57,7 +57,6 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 
 			.where(
 				billingNotDel(),								// 청구 소프트 삭제
-				billingProductNotDel(),							// 청구 상품 소프트 삭제
 
 				vendorUsernameEq(vendorUsername),				// 고객 아이디 일치
 

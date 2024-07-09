@@ -24,13 +24,13 @@ VALUES
     (0, NOW(), 'AUTO', 'ACCEPT', 'ENABLED');
 
 -- Contract 데이터 삽입
-INSERT INTO cmsplusmain.contract (contract_day, contract_end_date, contract_start_date, deleted, contract_total_price, created_datetime, member_id, payment_id, vendor_id, contract_name, contract_status)
+INSERT INTO cmsplusmain.contract (contract_day, contract_end_date, contract_start_date, deleted, created_datetime, member_id, payment_id, vendor_id, contract_name, contract_status)
 VALUES
-    (1, '2024-12-31', '2024-01-01', 0, 1000000, NOW(), 1, 1, 1, '1년 정기 계약', 'ENABLED'),
-    (15, '2024-12-31', '2024-01-15', 0, 800000, NOW(), 2, 2, 1, '11개월 계약', 'ENABLED'),
-    (1, '2024-06-30', '2024-01-01', 0, 500000, NOW(), 3, 3, 2, '6개월 계약', 'ENABLED'),
-    (1, '2024-12-31', '2024-01-01', 0, 1200000, NOW(), 4, 4, 2, '1년 특별 계약', 'ENABLED'),
-    (1, '2024-12-31', '2024-01-01', 0, 900000, NOW(), 5, 5, 3, '1년 표준 계약', 'ENABLED');
+    (1, '2024-12-31', '2024-01-01', 0, NOW(), 1, 1, 1, '1년 정기 계약', 'ENABLED'),
+    (15, '2024-12-31', '2024-01-15', 0, NOW(), 2, 2, 1, '11개월 계약', 'ENABLED'),
+    (1, '2024-06-30', '2024-01-01', 0, NOW(), 3, 3, 2, '6개월 계약', 'ENABLED'),
+    (1, '2024-12-31', '2024-01-01', 0, NOW(), 4, 4, 2, '1년 특별 계약', 'ENABLED'),
+    (1, '2024-12-31', '2024-01-01', 0, NOW(), 5, 5, 3, '1년 표준 계약', 'ENABLED');
 
 -- Product 데이터 삽입
 INSERT INTO cmsplusmain.product (deleted, product_price, created_datetime, vendor_id, product_name, product_status)

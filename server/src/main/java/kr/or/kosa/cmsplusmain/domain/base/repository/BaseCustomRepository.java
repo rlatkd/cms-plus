@@ -5,6 +5,7 @@ import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingStandard.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
@@ -53,7 +54,6 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	 *
 	 * 기본 조건: 생성일 내림차순
 	 *
-	 * TODO
 	 * */
 	protected OrderSpecifier<?> orderMethod(SortPageDto.Req pageable) {
 		if (pageable.getOrderBy() == null) {
@@ -65,7 +65,7 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return switch (pageable.getOrderBy()) {
 			case "memberName" -> new OrderSpecifier<>(order, member.name);
 			case "contractDay" -> new OrderSpecifier<>(order, contract.contractDay);
-			case "contractPrice" -> new OrderSpecifier<>(order, contract.contractPrice);
+			case "contractPrice" -> new OrderSpecifier<>(order, contractProduct.price.multiply(contractProduct.quantity).sum());
 			case "billingPrice" -> new OrderSpecifier<>(order, billingProduct.price.multiply(billingProduct.quantity).sum());
 			case "billingDate" -> new OrderSpecifier<>(order, billing.billingDate);
 			default -> new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
@@ -79,11 +79,18 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	protected BooleanExpression billingNotDel() {
 		return billing.deleted.isFalse();
 	}
+
 	protected BooleanExpression billingStandardNotDel() {
 		return billingStandard.deleted.isFalse();
 	}
 	protected BooleanExpression billingProductNotDel() {
 		return billingProduct.deleted.isFalse();
+	}
+	protected BooleanExpression contractNotDel() {
+		return contract.deleted.isFalse();
+	}
+	protected BooleanExpression contractProductNotDel() {
+		return contractProduct.deleted.isFalse();
 	}
 
 	protected BooleanExpression memberNameContains(String memberName) {
@@ -109,6 +116,11 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	protected BooleanExpression billingPriceLoeInGroup(Long billingPrice) {
 		if (billingPrice == null) return null;
 		return billingProduct.price.multiply(billingProduct.quantity).sum().loe(billingPrice);
+	}
+
+	protected BooleanExpression contractPriceLoeInGroup(Long contractPrice) {
+		if (contractPrice == null) return null;
+		return contractProduct.price.multiply(contractProduct.quantity).sum().loe(contractPrice);
 	}
 
 	protected BooleanExpression paymentTypeEq(PaymentType paymentType) {

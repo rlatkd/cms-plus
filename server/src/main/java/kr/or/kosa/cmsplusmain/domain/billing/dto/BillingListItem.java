@@ -38,9 +38,6 @@ public class BillingListItem {
 			.map(BillingProductRes::fromEntity)
 			.toList();
 
-		// NULLABLE
-		// 계약의 결제는 회원설정으로 등록시 비어있을 수 있다.
-		// 하지만 비어있으면 청구 생성이 안된다.
 		final Payment payment = contract.getPayment();
 
 		return BillingListItem.builder()
