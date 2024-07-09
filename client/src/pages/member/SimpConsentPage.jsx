@@ -1,3 +1,4 @@
+import React from 'react';
 import Main from '@/components/member/simpConsent/Main';
 import BasicInfo from '@/components/member/simpConsent/BasicInfo';
 import ContractInfo from '@/components/member/simpConsent/ContractInfo';
@@ -10,6 +11,7 @@ import NextButton from '@/components/common/StatusNextButton';
 import PreviousButton from '@/components/common/StatusPreButton';
 
 import { useStatusStore } from '@/stores/useStatusStore';
+import { useUserDataStore } from '@/stores/useUserDataStore';
 import useStatusStepper from '@/hooks/useStatusStepper';
 
 const SimpConsentPage = () => {
@@ -18,14 +20,17 @@ const SimpConsentPage = () => {
   const status = useStatusStore(state => state.status);
   const { handleClickPrevious, handleClickNext } = useStatusStepper('simpconsent', start, end);
 
+  const userData = useUserDataStore(state => state.userData);
+  const setUserData = useUserDataStore(state => state.setUserData);
+
   const componentMap = {
-    0: Main, // 시작화면
-    1: BasicInfo, // 기본정보
-    2: ContractInfo, // 계약정보
-    3: PaymentInfo, // 결제정보
-    4: Signature, // 전자서명
-    5: () => <Loading content={'등록중...'} />, // 결제로딩
-    6: Success, // 등록완료
+    0: Main,
+    1: () => <BasicInfo userData={userData} setUserData={setUserData} />,
+    2: () => <ContractInfo userData={userData} setUserData={setUserData} />,
+    3: () => <PaymentInfo userData={userData} setUserData={setUserData} />,
+    4: () => <Signature userData={userData} setUserData={setUserData} />,
+    5: () => <Loading content={'등록중...'} />,
+    6: () => <Success userData={userData} />,
   };
 
   const Content = componentMap[status] || (() => 'error');
