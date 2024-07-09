@@ -16,4 +16,12 @@
     border-image: linear-gradient(to right, #e0e1e2 0%, #e0e1e2 50%, #e0e1e2 100%);
     border-image-slice: 1;
   }
+
+  .primary-dashboard {
+    @apply rounded-xl bg-white p-6 shadow-dash-board;
+  }
+
+  .sub-dashboard {
+    @apply rounded-lg bg-white p-6 shadow-dash-sub;
+  }
 }

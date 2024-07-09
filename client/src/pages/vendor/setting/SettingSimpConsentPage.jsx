@@ -5,7 +5,7 @@ const SettingSimpConsentPage = () => {
   const [isShowModal, setIsShowModal] = useState(false);
 
   return (
-    <div className='h-full w-full rounded-xl p-6 shadow-dash-board'>
+    <div className='primary-dashboard h-full w-full'>
       SettingSimpConsent
       <button
         className='mr-4 rounded-lg bg-mint p-3 font-bold text-white'
