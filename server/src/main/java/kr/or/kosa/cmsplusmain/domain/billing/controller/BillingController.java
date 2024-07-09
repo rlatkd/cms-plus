@@ -30,8 +30,8 @@ public class BillingController {
 	}
 
 	/*
-	* 청구목록 조회
-	* */
+	 * 청구목록 조회
+	 * */
 	@GetMapping
 	public List<BillingListItem> getBillingListWithCondition(BillingSearch search, SortPageDto.Req pageable) {
 		return billingService.findBillings(search, pageable);

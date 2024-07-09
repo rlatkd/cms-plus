@@ -9,21 +9,15 @@ import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearch;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +37,13 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 1. billing
 	 * 2. billingProduct <- batchsize 100
 	 * */
-	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearch search, SortPageDto.Req pageable) {
+	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearch search,
+		SortPageDto.Req pageable) {
 		return jpaQueryFactory
 			.selectFrom(billing)
 
 			.join(billing.billingStandard, billingStandard).fetchJoin()
-			.leftJoin(billingStandard.billingProducts, billingProduct).on(billingProductNotDel())	// left join
+			.leftJoin(billingStandard.billingProducts, billingProduct).on(billingProductNotDel())    // left join
 			.join(billingProduct.product, product)
 			.join(billingStandard.contract, contract).fetchJoin()
 			.join(contract.vendor, vendor)
@@ -56,21 +51,21 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.join(contract.payment, payment).fetchJoin()
 
 			.where(
-				billingNotDel(),								// 청구 소프트 삭제
+				billingNotDel(),                                // 청구 소프트 삭제
 
-				vendorUsernameEq(vendorUsername),				// 고객 아이디 일치
+				vendorUsernameEq(vendorUsername),                // 고객 아이디 일치
 
-				memberNameContains(search.getMemberName()),		// 회원 이름 포함
-				memberPhoneContains(search.getMemberPhone()),	// 회원 휴대전화 포함
-				billingStatusEq(search.getBillingStatus()),		// 청구상태 일치
-				paymentTypeEq(search.getPaymentType()),			// 결제방식 일치
-				billingDateEq(search.getBillingDate())			// 결제일 일치
+				memberNameContains(search.getMemberName()),        // 회원 이름 포함
+				memberPhoneContains(search.getMemberPhone()),    // 회원 휴대전화 포함
+				billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
+				paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
+				billingDateEq(search.getBillingDate())            // 결제일 일치
 			)
 
 			.groupBy(billing.id)
 			.having(
-				productNameContainsInGroup(search.getProductName()),	// 청구상품 이름 포함
-				billingPriceLoeInGroup(search.getBillingPrice())		// 청구금액 이하
+				productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
+				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
 			)
 
 			.orderBy(orderMethod(pageable))
@@ -101,6 +96,5 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.limit(pageable.getSize())
 			.fetch();
 	}
-
 
 }

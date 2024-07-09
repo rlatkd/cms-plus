@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -35,9 +34,9 @@ public class BillingProduct extends BaseEntity {
 	private BillingStandard billingStandard;
 
 	/*
-	* 청구 상품이 사용될 때 상품의 이름이 항상 같이 사용된다.
-	* fetch eager -> 쿼리 횟수 감소
-	* */
+	 * 청구 상품이 사용될 때 상품의 이름이 항상 같이 사용된다.
+	 * fetch eager -> 쿼리 횟수 감소
+	 * */
 	@Comment("청구상품의 상품")
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "product_id")
@@ -53,6 +52,6 @@ public class BillingProduct extends BaseEntity {
 	private int quantity;
 
 	public long getTotalPrice() {
-		return (long) price * quantity;
+		return (long)price * quantity;
 	}
 }

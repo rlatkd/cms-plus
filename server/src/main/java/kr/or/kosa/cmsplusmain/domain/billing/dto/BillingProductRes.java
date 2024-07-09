@@ -10,7 +10,7 @@ public class BillingProductRes {
 	private Long id;
 	private Long billingStandardId;
 	private String name;
-	private	Integer price;
+	private Integer price;
 	private Integer quantity;
 
 	public static BillingProductRes fromEntity(BillingProduct billingProduct) {

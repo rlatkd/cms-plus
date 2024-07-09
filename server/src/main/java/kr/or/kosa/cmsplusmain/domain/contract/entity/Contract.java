@@ -18,8 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.OnlyNonSoftDeleted;
@@ -103,8 +101,8 @@ public class Contract extends BaseEntity {
 	private List<ContractProduct> contractProducts = new ArrayList<>();
 
 	/*
-	* 계약금액
-	* */
+	 * 계약금액
+	 * */
 	public Long getContractPrice() {
 		return contractProducts.stream()
 			.mapToLong(ContractProduct::getTotalPrice)
@@ -112,8 +110,8 @@ public class Contract extends BaseEntity {
 	}
 
 	/*
-	* id만 들고있는 빈 객체
-	* */
+	 * id만 들고있는 빈 객체
+	 * */
 	public static Contract of(Long contractId) {
 		Contract contract = new Contract();
 		contract.id = contractId;

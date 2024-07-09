@@ -15,8 +15,8 @@ public class BillingSearch {
 
 	private String memberName;
 	private String memberPhone;
-	private Long billingPrice;	// 청구금액 이하
-	private String productName;	// 상품 목록 중 포함
+	private Long billingPrice;    // 청구금액 이하
+	private String productName;    // 상품 목록 중 포함
 	private BillingStatus billingStatus;
 	private PaymentType paymentType;
 	private LocalDate billingDate;

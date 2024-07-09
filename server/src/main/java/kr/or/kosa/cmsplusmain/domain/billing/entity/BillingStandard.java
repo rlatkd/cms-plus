@@ -3,7 +3,6 @@ package kr.or.kosa.cmsplusmain.domain.billing.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;

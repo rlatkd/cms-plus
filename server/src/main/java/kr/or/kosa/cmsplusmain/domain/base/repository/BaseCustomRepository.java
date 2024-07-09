@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.base.repository;
 
-import static io.netty.util.AsciiString.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingStandard.*;
@@ -27,7 +26,6 @@ import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
@@ -65,8 +63,10 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return switch (pageable.getOrderBy()) {
 			case "memberName" -> new OrderSpecifier<>(order, member.name);
 			case "contractDay" -> new OrderSpecifier<>(order, contract.contractDay);
-			case "contractPrice" -> new OrderSpecifier<>(order, contractProduct.price.multiply(contractProduct.quantity).sum());
-			case "billingPrice" -> new OrderSpecifier<>(order, billingProduct.price.multiply(billingProduct.quantity).sum());
+			case "contractPrice" ->
+				new OrderSpecifier<>(order, contractProduct.price.multiply(contractProduct.quantity).sum());
+			case "billingPrice" ->
+				new OrderSpecifier<>(order, billingProduct.price.multiply(billingProduct.quantity).sum());
 			case "billingDate" -> new OrderSpecifier<>(order, billing.billingDate);
 			default -> new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
 		};
@@ -83,12 +83,15 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	protected BooleanExpression billingStandardNotDel() {
 		return billingStandard.deleted.isFalse();
 	}
+
 	protected BooleanExpression billingProductNotDel() {
 		return billingProduct.deleted.isFalse();
 	}
+
 	protected BooleanExpression contractNotDel() {
 		return contract.deleted.isFalse();
 	}
+
 	protected BooleanExpression contractProductNotDel() {
 		return contractProduct.deleted.isFalse();
 	}
@@ -106,7 +109,8 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	}
 
 	protected BooleanExpression productNameContainsInGroup(String productName) {
-		if (productName == null) return null;
+		if (productName == null)
+			return null;
 		return Expressions.booleanTemplate(
 			"MAX(CASE WHEN {0} LIKE {1} THEN 1 ELSE 0 END) = 1",
 			QProduct.product.name, "%" + productName + "%"
@@ -114,12 +118,14 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	}
 
 	protected BooleanExpression billingPriceLoeInGroup(Long billingPrice) {
-		if (billingPrice == null) return null;
+		if (billingPrice == null)
+			return null;
 		return billingProduct.price.multiply(billingProduct.quantity).sum().loe(billingPrice);
 	}
 
 	protected BooleanExpression contractPriceLoeInGroup(Long contractPrice) {
-		if (contractPrice == null) return null;
+		if (contractPrice == null)
+			return null;
 		return contractProduct.price.multiply(contractProduct.quantity).sum().loe(contractPrice);
 	}
 

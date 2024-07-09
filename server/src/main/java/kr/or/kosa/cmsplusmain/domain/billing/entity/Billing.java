@@ -1,8 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.hibernate.annotations.Comment;
 
@@ -16,10 +14,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import kr.or.kosa.cmsplusmain.domain.base.OnlyNonSoftDeleted;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;

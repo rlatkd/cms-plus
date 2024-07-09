@@ -7,11 +7,11 @@ import lombok.Setter;
 @Setter
 public class TProductSaveReq { // 상품 등록
 
-    private Long id;
-    private Long vendorId;
-    private String name;
-    private double price;
-    private String createdDateTime;
-    private String memo;
+	private Long id;
+	private Long vendorId;
+	private String name;
+	private double price;
+	private String createdDateTime;
+	private String memo;
 
 }

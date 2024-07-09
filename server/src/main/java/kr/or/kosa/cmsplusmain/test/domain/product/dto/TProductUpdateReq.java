@@ -7,8 +7,8 @@ import lombok.Setter;
 @Setter
 public class TProductUpdateReq { // 상품 수정
 
-    private String name;
-    private double price;
-    private String memo;
+	private String name;
+	private double price;
+	private String memo;
 
 }

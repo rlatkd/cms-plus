@@ -5,11 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +34,16 @@ public class ContractService {
 			.map(ContractListItem::fromEntity)
 			.toList();
 	}
-	//
-	// /*
-	//  * 계약 상세
-	//  * */
-	// public ContractDetail findContractDetail(Long contractId) {
-	// 	Contract contract = contractRepository.findContractDetailById(contractId);
-	// 	return ContractDetail.fromEntity(contract);
-	// }
+
+	/*
+	 * 계약 상세
+	 * */
+	public ContractDetail findContractDetailById(Long contractId) {
+		Contract contract = contractRepository.findContractDetailById(contractId).orElseThrow(
+			() -> new EntityNotFoundException(String.valueOf(contractId))
+		);
+		return ContractDetail.fromEntity(contract);
+	}
 	//
 	// // @Transactional
 	// // public Contract createContract(String vendorUsername, Long memberId, ContractCreateReq contractCreateReq) {
