@@ -1,8 +1,8 @@
 package kr.or.kosa.cmsplusmain.domain.base.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.util.List;
 
 public class SortPageDto {
 
@@ -23,7 +23,19 @@ public class SortPageDto {
 		}
 
 		public int getPage() {
+
+			return (page - 1) * size;
+		}
+	}
+
+	@AllArgsConstructor
+	@Getter
+	public static class Res<T> {
+		private int totalPage;
+		private List<T> data;
+
 			return page - 1;
 		}
+
 	}
 }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -127,4 +128,13 @@ public class Member extends BaseEntity {
 	@Column(name = "member_auto_billing", nullable = false)
 	@Setter
 	private boolean autoBilling;
+
+	/*
+	 * 계약금액합
+	 * */
+	public Long totalContractPrice() {
+		return contracts.stream()
+				.mapToLong(Contract::getContractPrice)
+				.sum();
+	}
 }

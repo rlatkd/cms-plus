@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.base.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -45,4 +46,5 @@ public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
 	@Modifying
 	@Query("UPDATE #{#entityName} e SET e.deleted = false WHERE e.id = ?1")
 	void restore(ID id);
+
 }
