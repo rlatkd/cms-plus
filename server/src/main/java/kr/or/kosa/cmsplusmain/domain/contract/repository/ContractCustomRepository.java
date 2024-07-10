@@ -33,6 +33,9 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	/*
 	 * 계약 목록 조회
 	 * TODO 토탈 카운트
+	 *
+	 * 총 3번의 쿼리가 발생
+	 * 1.
 	 *  */
 	public List<Contract> findContractListWithCondition(String vendorUsername, ContractSearch search,
 		SortPageDto.Req pageable) {
@@ -87,7 +90,6 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	 * */
 	@Transactional
 	public void updateContract(Long contractId, String contractName, List<ContractProduct> contractProducts) {
-
 		// 기존 계약 상품 삭제
 		jpaQueryFactory
 			.update(contractProduct)
@@ -106,7 +108,10 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 			.execute();
 	}
 
-	public boolean isExistContractByIdAndVendorUsername(Long contractId, String vendorUsername) {
+	/*
+	* 고객과 계약 id 일치하는 계약 존재 여부
+	* */
+	public boolean isExistContractByUsername(Long contractId, String vendorUsername) {
 		Integer res = jpaQueryFactory
 			.selectOne()
 			.from(contract)
@@ -118,5 +123,35 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 			)
 			.fetchOne();
 		return res != null;
+	}
+
+	public int countAllContracts(String vendorUsername, ContractSearch search) {
+		return jpaQueryFactory
+			.select(contract.id.count())
+			.from(contract)
+
+			.join(contract.vendor, vendor)
+			.join(contract.member, member)
+			.leftJoin(contract.contractProducts, contractProduct).on(contractProductNotDel())    // left join
+			.join(contract.payment, payment)
+
+			.where(
+				contractNotDel(),                                // 계약 소프트 삭제
+
+				vendorUsernameEq(vendorUsername),                // 고객 일치
+
+				memberNameContains(search.getMemberName()),        // 회원 이름 포함
+				memberPhoneContains(search.getMemberPhone()),    // 회원 휴대번호 포함
+				contractDayEq(search.getContractDay()),            // 약정일 일치
+				contractStatusEq(search.getContractStatus()),    // 계약상태 일치
+				consentStatusEq(search.getConsentStatus())        // 동의상태 일치
+			)
+
+			.groupBy(contract.id)
+			.having(
+				productNameContainsInGroup(search.getProductName()),
+				contractPriceLoeInGroup(search.getContractPrice())
+			)
+			.fetchOne().intValue();
 	}
 }

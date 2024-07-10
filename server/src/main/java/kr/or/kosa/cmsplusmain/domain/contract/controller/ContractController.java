@@ -31,7 +31,7 @@ public class ContractController {
 	 * 검색, 정렬, 페이징
 	 * */
 	@GetMapping
-	public List<ContractListItem> getContractList(ContractSearch contractSearch, SortPageDto.Req pageRequest) {
+	public SortPageDto.Res<ContractListItem> getContractList(ContractSearch contractSearch, SortPageDto.Req pageRequest) {
 		// TODO security
 		String vendorUsername = "vendor1";
 		return contractService.findContractListWithConditions(vendorUsername, contractSearch, pageRequest);
@@ -45,7 +45,8 @@ public class ContractController {
 	 * */
 	@GetMapping("/{contractId}")
 	public ContractDetail getContractDetail(@PathVariable Long contractId) {
-		return contractService.findContractDetailById(contractId);
+		String vendorUsername = "vendor1";
+		return contractService.findContractDetailById(vendorUsername, contractId);
 	}
 
 	/*
@@ -57,6 +58,7 @@ public class ContractController {
 	 * */
 	@PutMapping("/{contractId}")
 	public void updateContract(@PathVariable Long contractId, @RequestBody ContractReq contractReq) {
-		contractService.updateContract(contractId, contractReq);
+		String vendorUsername = "vendor1";
+		contractService.updateContract(vendorUsername, contractId, contractReq);
 	}
 }

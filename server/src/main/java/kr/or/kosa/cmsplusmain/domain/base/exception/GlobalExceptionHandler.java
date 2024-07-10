@@ -11,10 +11,10 @@ import jakarta.persistence.EntityNotFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-	// @ExceptionHandler(EntityNotFoundException.class)
-	// public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
-	// 	return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-	// }
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+	}
 	//
 	// @ExceptionHandler(MethodArgumentNotValidException.class)
 	// public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {

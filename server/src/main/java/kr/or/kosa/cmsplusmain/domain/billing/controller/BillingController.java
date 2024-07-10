@@ -29,9 +29,9 @@ public class BillingController {
 	 * 계약 상세 - 청구 목록
 	 * */
 	@GetMapping("/contract")
-	public List<BillingListItem> getBillingListByContract(@RequestParam(name = "id") Long contractId,
-		SortPageDto.Req pageable) {
-		return billingService.findBillingsByContract(contractId, pageable);
+	public List<BillingListItem> getBillingListByContract(@RequestParam(name = "id") Long contractId, SortPageDto.Req pageable) {
+		String vendorUsername = "vendor1";
+		return billingService.findBillingsByContract(vendorUsername, contractId, pageable);
 	}
 
 	/*

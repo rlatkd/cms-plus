@@ -40,9 +40,8 @@ public class BillingService {
 	 * 계약 상세 - 청구 목록 조회
 	 *
 	 * 계약 id로 청구 목록을 가져온다.
-	 * 최신순 정렬
 	 * */
-	public List<BillingListItem> findBillingsByContract(Long contractId, SortPageDto.Req pageable) {
+	public List<BillingListItem> findBillingsByContract(String vendorUsername, Long contractId, SortPageDto.Req pageable) {
 		return billingCustomRepository.findBillingsByContractId(contractId, pageable).stream()
 			.map(BillingListItem::fromEntity)
 			.toList();
@@ -65,7 +64,7 @@ public class BillingService {
 	@Transactional
 	public void createBilling(String vendorUsername, BillingReq billingReq) {
 		// 계약 존재 여부 확인
-		if (!contractCustomRepository.isExistContractByIdAndVendorUsername(billingReq.getContractId(), vendorUsername)) {
+		if (!contractCustomRepository.isExistContractByUsername(billingReq.getContractId(), vendorUsername)) {
 			throw new EntityNotFoundException("해당하는 계약이 없습니다." + billingReq.getContractId().toString());
 		}
 
