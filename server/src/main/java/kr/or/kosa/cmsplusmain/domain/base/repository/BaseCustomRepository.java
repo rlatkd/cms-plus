@@ -99,6 +99,10 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return contractProduct.deleted.isFalse();
 	}
 
+	protected BooleanExpression productNotDel() {
+		return product.deleted.isFalse();
+	}
+
 	protected BooleanExpression memberNameContains(String memberName) {
 		return hasText(memberName) ? member.name.containsIgnoreCase(memberName) : null;
 	}

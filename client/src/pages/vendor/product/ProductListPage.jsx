@@ -3,11 +3,13 @@ import ProductModal from '@/components/vendor/modal/ProductModal';
 import { useEffect, useState } from 'react';
 
 const ProductListPage = () => {
-  const [isShowModal, setIsShowModal] = useState(false);
-  const [modalTitle, setModalTitle] = useState(''); //모달 제목 상태
-  const [productId, setProductId] = useState('');
+  const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
+  const [modalTitle, setModalTitle] = useState(''); // 모달 제목 상태
+  const [productId, setProductId] = useState(''); // 상품ID
   const [productList, setProductList] = useState([]); // 상품 목록
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
+  const [pageNum, setPageNum] = useState(''); // 페이지번호
+  const [size, setSize] = useState(''); // 페이지 사이즈
 
   // 상품 상세 조회용 더미데이터(상품 목록 조회에서 가져온 데이터라 가정)
   const dummyData = {
@@ -44,9 +46,9 @@ const ProductListPage = () => {
   };
 
   // 컴포넌트 마운트시 더미데이터 세팅
-  useEffect(() => {
-    setProductId(dummyData.data[0].id);
-  }, []);
+  // useEffect(() => {
+  //   setProductId(dummyData.data[0].id);
+  // }, []);
 
   // useEffect(() => {
   //   const fetchProductList = async () => {
@@ -80,6 +82,8 @@ const ProductListPage = () => {
     }
   };
 
+  const pageButtonClickHandle = () => {};
+
   return (
     <div className='primary-dashboard h-full w-full'>
       <button
@@ -90,7 +94,7 @@ const ProductListPage = () => {
 
       {/* 이건 목록에서 상품 하나 클릭하면 들어가도록 */}
       <button
-        className='rounded-lg bg-mint p-3 font-bold text-white'
+        className='rounded-lg bg-mint p-3 font-bold text-white mr-10'
         onClick={openDetailModalHandle}>
         임시 상품 상세 모달
       </button>
@@ -101,6 +105,10 @@ const ProductListPage = () => {
         modalTitle={modalTitle}
         productDetailData={productDetailData}
       />
+
+      <button className='rounded-lg bg-mint p-3 font-bold text-white mr-10'>1</button>
+
+      <button className='rounded-lg bg-mint p-3 font-bold text-white mr-10'>2</button>
     </div>
   );
 };
