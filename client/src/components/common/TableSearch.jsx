@@ -1,8 +1,8 @@
 const TableSearch = ({ search, handleSearchChange, show }) => {
   return (
     <tr className='text-sm'>
-      {search.map(searchItem => (
-        <th className='text-left py-3'>
+      {search.map((searchItem, idx) => (
+        <th key={idx} className='text-left py-3'>
           {searchItem.type === 'select' ? (
             <select
               className='px-3 py-1  border border-text_grey rounded-md'

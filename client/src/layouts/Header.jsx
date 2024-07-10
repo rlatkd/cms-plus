@@ -9,7 +9,7 @@ const Header = () => {
   };
 
   return (
-    <div className='flex h-24 items-end pl-8' style={{ border: '1px solid blue' }}>
+    <div className='flex h-24 items-end pl-8'>
       <BreadCrumb />
     </div>
   );
