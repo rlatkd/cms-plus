@@ -1,38 +1,50 @@
 package kr.or.kosa.cmsplusmain.domain.base.repository;
 
-import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.NoRepositoryBean;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+@NoRepositoryBean
+public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
 
-import jakarta.persistence.EntityManager;
-import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import lombok.RequiredArgsConstructor;
+	@Override
+	@Query("SELECT e FROM #{#entityName} e WHERE e.deleted = false")
+	List<T> findAll();
 
-@Repository
-@RequiredArgsConstructor
-public abstract class BaseRepository<T extends BaseEntity, ID extends Serializable> {
+	@Override
+	@Query("SELECT e FROM #{#entityName} e WHERE e.id IN ?1 AND e.deleted = false")
+	List<T> findAllById(Iterable<ID> ids);
 
-	private final EntityManager em;
-	protected final JPAQueryFactory jpaQueryFactory;
+	@Override
+	@Query("SELECT e FROM #{#entityName} e WHERE e.id = ?1 AND e.deleted = false")
+	Optional<T> findById(ID id);
 
-	/*
-	* 새로생성 혹은 수정완료시 (비영속 상태 객체 수정 완료 후 호출)
-	* */
-	@Transactional
-	public T save(T entity) {
-		return em.merge(entity);
-	}
+	@Override
+	@Query("SELECT COUNT(e) FROM #{#entityName} e WHERE e.deleted = false")
+	long count();
 
-	/*
-	* 소프트 삭제
-	* */
-	@Transactional
-	public void delete(T entity) {
-		entity.delete();
-		em.merge(entity);
-	}
+	@Override
+	@Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM #{#entityName} e WHERE e.id = ?1 AND e.deleted = false")
+	boolean existsById(ID id);
+
+	@Modifying
+	@Query("UPDATE #{#entityName} e SET e.deleted = true WHERE e.id = ?1")
+	void softDelete(ID id);
+
+	@Modifying
+	@Query("UPDATE #{#entityName} e SET e.deleted = true WHERE e.id IN ?1")
+	void softDeleteAllById(Iterable<? extends ID> ids);
+
+	@Query("SELECT e FROM #{#entityName} e WHERE e.deleted = true")
+	List<T> findAllDeleted();
+
+	@Modifying
+	@Query("UPDATE #{#entityName} e SET e.deleted = false WHERE e.id = ?1")
+	void restore(ID id);
+
 }

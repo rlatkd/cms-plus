@@ -36,7 +36,7 @@ jobs:
       - name: Gradle Build
         run: |
           cd server
-          ./gradlew build
+          ./gradlew clean build
         if: success()
 
       - name: PR Test Result

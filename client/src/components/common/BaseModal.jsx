@@ -9,7 +9,7 @@ const BaseModal = ({ isShowModal, setIsShowModal, modalTitle, height, width, chi
           <div className='fixed inset-0 bg-black opacity-25' />
           <div
             className={`z-10 flex flex-col rounded-lg bg-white p-6 shadow-lg ${height} ${width}`}>
-            <div className='mb-4 flex items-center justify-between border-b-2 border-ipt_border pb-3'>
+            <div className='mb-4 flex items-center justify-between border-b border-ipt_border pb-3'>
               <img src={itemIcon} alt='item' className='h-7 w-7 bg-mint' />
               <p className='text-xl font-bold'>{modalTitle}</p>
 
@@ -17,7 +17,7 @@ const BaseModal = ({ isShowModal, setIsShowModal, modalTitle, height, width, chi
                 <img src={closeIcon} alt='close' className='h-4 w-4' />
               </button>
             </div>
-            <div className='h-full border-2 border-red-500'>{children}</div>
+            <div>{children}</div>
           </div>
         </div>
       ) : null}

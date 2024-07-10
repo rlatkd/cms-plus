@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLRestriction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,25 +19,28 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import kr.or.kosa.cmsplusmain.domain.base.OnlyNonSoftDeleted;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Comment("회원과 고객간의 계약 (학원 - 학생 간 계약)")
 @Table(name = "contract")
 @Entity
 @Getter
+@Builder
+@ToString(exclude = {"vendor"})
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Contract extends BaseEntity {
 
@@ -61,7 +65,7 @@ public class Contract extends BaseEntity {
 	@Column(name = "contract_status", nullable = false)
 	@Enumerated(EnumType.STRING)
 	@NotNull
-	private ContractStatus status;
+	private ContractStatus status = ContractStatus.ENABLED;
 
 	@Comment("계약 이름")
 	@Column(name = "contract_name", nullable = false, length = 40)
@@ -91,25 +95,26 @@ public class Contract extends BaseEntity {
 	@NotNull
 	private LocalDate contractEndDate;
 
-	@Comment("계약 금액")
-	@Column(name = "contract_total_price", nullable = false)
-	private Long contractPrice;
-
 	/* 계약한 상품 목록 */
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)
-	@OnlyNonSoftDeleted
+	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private List<ContractProduct> contractProducts = new ArrayList<>();
 
-	private Long getContractPrice() {
+	/*
+	 * 계약금액
+	 * */
+	public Long getContractPrice() {
 		return contractProducts.stream()
-			.mapToLong(ContractProduct::getPrice)
+			.mapToLong(ContractProduct::getTotalPrice)
 			.sum();
 	}
 
-	/* 계약 금액 계산 후 업데이트 */
-	@PrePersist
-	@PreUpdate
-	public void preSave() {
-		contractPrice = getContractPrice();
+	/*
+	 * id만 들고있는 빈 객체
+	 * */
+	public static Contract of(Long contractId) {
+		Contract contract = new Contract();
+		contract.id = contractId;
+		return contract;
 	}
 }

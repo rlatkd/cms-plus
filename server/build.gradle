@@ -2,7 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
-    id 'checkstyle'
+//    id 'checkstyle'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2' // REST Docs
 }
 
 group = 'kr.or.kosa'
@@ -18,10 +19,15 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExtensions // REST Docs
 }
 
 repositories {
     mavenCentral()
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets")) // REST Docs
 }
 
 dependencies {
@@ -36,15 +42,66 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+    // Spring security, JWT
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // REST Docs
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+
+    // SMS
+    implementation 'net.nurigo:sdk:4.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Email
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+    outputs.dir snippetsDir // REST Docs
+}
+
+// REST Docs
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExtensions'
+    dependsOn test
+    // source를 지정하면 특정 adoc만 HTML로 만듬
+    sources {
+        include("**/index.adoc")
+    }
+    // 경로를 baseDir로 맞춰줌
+    baseDirFollowsSourceFile()
+}
+
+// REST Docs
+task copyDocs(type: Copy) {
+    dependsOn asciidoctor
+    from "${asciidoctor.outputDir}"
+    into "src/main/resources/static/docs"   // src/main/resources/static/docs로 복사
+}
+
+// REST Docs
+build {
+    dependsOn copyDocs
 }
 
 /**
@@ -66,22 +123,22 @@ clean.doLast {
 
 
 // Lint
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-tasks.withType(Checkstyle).configureEach {
-    mustRunAfter 'compileJava'
-    reports {
-        xml.required = false
-        html.required = true
-    }
-}
-
-checkstyle {
-    configFile = file("config/checkstyle/naver-checkstyle-rules.xml")
-    configProperties = ["suppressionFile": "config/checkstyle/naver-checkstyle-suppressions.xml"]
-    sourceSets = [sourceSets.main] // CompileQuerydsl 오류 해결
-}
-
-checkstyleMain.source = fileTree('src/main/java')
+//tasks.withType(JavaCompile).configureEach {
+//    options.encoding = 'UTF-8'
+//}
+//
+//tasks.withType(Checkstyle).configureEach {
+//    mustRunAfter 'compileJava'
+//    reports {
+//        xml.required = false
+//        html.required = true
+//    }
+//}
+//
+//checkstyle {
+//    configFile = file("config/checkstyle/naver-checkstyle-rules.xml")
+//    configProperties = ["suppressionFile": "config/checkstyle/naver-checkstyle-suppressions.xml"]
+//    sourceSets = [sourceSets.main] // CompileQuerydsl 오류 해결
+//}
+//
+//checkstyleMain.source = fileTree('src/main/java')

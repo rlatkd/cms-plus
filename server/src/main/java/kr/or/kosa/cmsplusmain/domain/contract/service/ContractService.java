@@ -1,27 +1,19 @@
 package kr.or.kosa.cmsplusmain.domain.contract.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.or.kosa.cmsplusmain.domain.base.dto.PageDto;
+import jakarta.persistence.EntityNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractSearch;
-import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
-import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.dto.CMSInfo;
-import kr.or.kosa.cmsplusmain.domain.payment.dto.CardInfo;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.CMSAutoPayment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.CardAutoPayment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,14 +23,44 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ContractService {
 
-	private final ContractRepository contractRepository;
+	private final ContractCustomRepository contractRepository;
 
-	public List<ContractListItem> findContracts(String vendorUsername, ContractSearch contractSearch, PageDto.Req pageable) {
-		return contractRepository.findContractsWithCondition(vendorUsername, contractSearch, pageable);
+	/*
+	 * 계약 목록 조회
+	 * */
+	public List<ContractListItem> findContractListWithConditions(
+		String vendorUsername, ContractSearch contractSearch, SortPageDto.Req pageable) {
+		return contractRepository
+			.findContractListWithCondition(vendorUsername, contractSearch, pageable)
+			.stream()
+			.map(ContractListItem::fromEntity)
+			.toList();
 	}
 
-	public ContractDetail findContractDetail(Long contractId) {
-		Contract contract = contractRepository.findContractById(contractId);
-		return ContractDetail.from(contract);
+	/*
+	 * 계약 상세
+	 * */
+	public ContractDetail findContractDetailById(Long contractId) {
+		Contract contract = contractRepository.findContractDetailById(contractId).orElseThrow(
+			() -> new EntityNotFoundException("계약 ID 없음(" + contractId + ")")
+		);
+		return ContractDetail.fromEntity(contract);
+	}
+
+
+	/*
+	* 계약 이름 및 상품 목록 수정
+	* */
+	@Transactional
+	public void updateContract(Long contractId, ContractReq contractReq) {
+		List<ContractProduct> contractProducts = contractReq.getContractProducts()
+			.stream()
+			.map(dto -> dto.toEntity(contractId))
+			.toList();
+
+		contractRepository.updateContract(
+			contractId,
+			contractReq.getContractName(),
+			contractProducts);
 	}
 }

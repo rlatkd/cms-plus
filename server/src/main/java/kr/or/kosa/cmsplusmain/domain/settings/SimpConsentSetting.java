@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.annotations.SQLRestriction;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -21,7 +23,6 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import kr.or.kosa.cmsplusmain.domain.base.OnlyNonSoftDeleted;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
@@ -44,7 +45,6 @@ public class SimpConsentSetting extends BaseEntity {
 	private Long id;
 
 	@OneToOne(mappedBy = "simpConsentSetting", fetch = FetchType.LAZY, optional = false)
-	@OnlyNonSoftDeleted
 	@NotNull
 	private Vendor vendor;
 
@@ -64,7 +64,7 @@ public class SimpConsentSetting extends BaseEntity {
 		joinColumns = @JoinColumn(name = "setting_simpconsent_id"),
 		inverseJoinColumns = @JoinColumn(name = "product_id")
 	)
-	@OnlyNonSoftDeleted
+	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private Set<Product> simpConsentProducts = new HashSet<>();
 
 	//TODO 설정 수정 삭제 메서드 구현

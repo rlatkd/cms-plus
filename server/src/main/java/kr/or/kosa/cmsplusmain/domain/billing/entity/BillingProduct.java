@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
+import org.hibernate.annotations.Comment;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,24 +28,30 @@ public class BillingProduct extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_id", nullable = false)
-	private Billing billing;
+	@Comment("청구상품의 청구기준")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "billing_standard_id")
+	private BillingStandard billingStandard;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	/*
+	 * 청구 상품이 사용될 때 상품의 이름이 항상 같이 사용된다.
+	 * fetch eager -> 쿼리 횟수 감소
+	 * */
+	@Comment("청구상품의 상품")
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "product_id")
 	private Product product;
 
-	@Column(name = "billing_product_extra_price")
-	private int extraPrice;
+	@Comment("청구상품의 가격")
+	@Column(name = "billing_product_price")
+	private int price;
 
-	@Column(name = "billing_prodcut_discount_price")
-	private int discountPrice;
-
+	@Comment("청구상품의 수량")
 	@Column(name = "billing_product_quantity")
+	//TODO 최대개수??
 	private int quantity;
 
-	public int getTotalPrice() {
-		return (product.getPrice() + extraPrice + discountPrice) * quantity;
+	public long getTotalPrice() {
+		return (long)price * quantity;
 	}
 }

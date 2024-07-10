@@ -11,9 +11,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +24,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "contract_product")
 @Getter
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContractProduct extends BaseEntity {
 
@@ -31,15 +36,13 @@ public class ContractProduct extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "contract_id")
+	@NotNull
 	private Contract contract;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "product_id")
+	@NotNull
 	private Product product;
-
-	@Comment("계약_상품 이름")
-	@Column(name = "contract_product_name", nullable = false)
-	private String name;
 
 	@Comment("계약_상품 가격")
 	@Column(name = "contract_product_price", nullable = false)
@@ -48,4 +51,8 @@ public class ContractProduct extends BaseEntity {
 	@Comment("계약_상품 수량")
 	@Column(name = "contract_product_quantity", nullable = false)
 	private int quantity;
+
+	public long getTotalPrice() {
+		return (long)price * quantity;
+	}
 }
