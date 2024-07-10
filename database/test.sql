@@ -72,3 +72,78 @@ VALUES
     (200000, 1, 0, 4, NOW(), 4),  -- 1:1 튜터링
     (80000, 2, 0, 5, NOW(), 3),   -- 온라인 강좌 (2개)
     (120000, 1, 0, 5, NOW(), 5);  -- 그룹 스터디
+
+-- payment_method_info 데이터 삽입
+INSERT INTO cmsplusmain.payment_method_info (deleted, created_datetime, payment_method_info_id, payment_method_info_method)
+VALUES
+    (0, NOW(), 1, 'CARD'),
+    (0, NOW(), 2, 'CMS'),
+    (0, NOW(), 3, 'CMS');
+
+-- auto_payment 데이터 삽입
+INSERT INTO cmsplusmain.auto_payment (payment_id, payment_method_info_id, payment_simpconsent_request_date, payment_consent_img_url, payment_sign_img_url)
+VALUES
+    (1, 1, '2024-01-15 10:00:00', 'https://example.com/consent1.jpg', 'https://example.com/sign1.jpg'),
+    (2, 2, '2024-01-16 11:00:00', 'https://example.com/consent2.jpg', 'https://example.com/sign2.jpg'),
+    (3, 3, '2024-01-17 12:00:00', 'https://example.com/consent3.jpg', 'https://example.com/sign3.jpg');
+
+-- buyer_payment 데이터 삽입
+INSERT INTO cmsplusmain.buyer_payment (payment_id)
+VALUES (4), (5);
+
+-- buyer_payment_method 데이터 삽입
+INSERT INTO cmsplusmain.buyer_payment_method (buyer_payment_payment_id, buyer_payment_method)
+VALUES
+    (4, 'CARD'),
+    (4, 'ACCOUNT');
+
+
+
+-- card_payment 데이터 삽입
+INSERT INTO cmsplusmain.card_payment (card_info_owner_birth, payment_method_info_id, card_info_number, card_info_owner)
+VALUES
+    ('1990-01-01', 1, '1234-5678-9012-3456', '홍길동');
+
+-- cms_payment 데이터 삽입
+INSERT INTO cmsplusmain.cms_payment (cms_owner_birth, payment_method_info_id, cms_account_number, cms_account_owner, cms_account_bank)
+VALUES
+    ('1995-05-05', 2, '987654321', '김철수', '088'),
+    ('1995-05-05', 3, '987654321', '김철수', '004');
+
+-- setting_simpconsent 데이터 삽입
+INSERT INTO cmsplusmain.setting_simpconsent (deleted, created_datetime)
+VALUES
+    (0, NOW()),
+    (0, NOW()),
+    (0, NOW());
+
+-- simpconsent_vendor_auto_payment_method 데이터 삽입
+INSERT INTO cmsplusmain.simpconsent_vendor_auto_payment_method (simp_consent_setting_setting_simpconsent_id, simpconsent_auto_payment_method)
+VALUES
+    (1, 'CARD'),
+    (1, 'CMS'),
+    (2, 'CMS'),
+    (3, 'CARD');
+
+-- contract_product 데이터 삽입
+INSERT INTO cmsplusmain.contract_product (contract_product_price, contract_product_quantity, deleted, contract_id, created_datetime, product_id)
+VALUES
+    (100000, 1, 0, 1, NOW(), 1),
+    (150000, 1, 0, 2, NOW(), 2),
+    (80000, 2, 0, 3, NOW(), 3),
+    (200000, 1, 0, 4, NOW(), 4),
+    (120000, 1, 0, 5, NOW(), 5);
+
+-- simpconsent_vendor_product 데이터 삽입
+INSERT INTO cmsplusmain.simpconsent_vendor_product (product_id, setting_simpconsent_id)
+VALUES
+    (1, 1),
+    (2, 1),
+    (3, 2),
+    (4, 2),
+    (5, 3);
+
+-- virtual_account_payment 데이터 삽입
+INSERT INTO cmsplusmain.virtual_account_payment (payment_id, virtual_payment_account_number, virtual_payment_bank_code, virtual_payment_account_owner)
+VALUES
+    (5, '1234567890123', '088', '이가상');

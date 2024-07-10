@@ -8,10 +8,9 @@ public class SortPageDto {
 
 	@Getter
 	@Setter
-	@ToString
 	public static class Req {
 
-		private int page = 0;
+		private int page = 1;
 		private int size = 10;
 
 		private String sort;
@@ -21,6 +20,10 @@ public class SortPageDto {
 			if (sort == null)
 				return false;
 			return sort.equalsIgnoreCase("asc");
+		}
+
+		public int getPage() {
+			return page - 1;
 		}
 	}
 }

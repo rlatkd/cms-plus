@@ -9,6 +9,7 @@ import lombok.Getter;
 public class BillingProductRes {
 	private Long id;
 	private Long billingStandardId;
+	private Long productId;
 	private String name;
 	private Integer price;
 	private Integer quantity;
@@ -17,6 +18,7 @@ public class BillingProductRes {
 		return BillingProductRes.builder()
 			.id(billingProduct.getId())
 			.billingStandardId(billingProduct.getBillingStandard().getId())
+			.productId(billingProduct.getProduct().getId())
 
 			// 주의
 			// 청구상품 과 청구 join 조회 필요

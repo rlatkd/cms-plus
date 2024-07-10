@@ -64,4 +64,10 @@ public class Product extends BaseEntity {
 	@ProductMemo
 	@Setter
 	private String memo = "";
+
+	public static Product of(Long id) {
+		Product emptyProduct = new Product();
+		emptyProduct.id = id;
+		return emptyProduct;
+	}
 }

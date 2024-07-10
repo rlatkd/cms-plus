@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLRestriction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
-import kr.or.kosa.cmsplusmain.domain.base.OnlyNonSoftDeleted;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import lombok.AccessLevel;
@@ -59,7 +59,7 @@ public class BillingStandard extends BaseEntity {
 
 	/* 청구 상품 목록 */
 	@OneToMany(mappedBy = "billingStandard")
-	@OnlyNonSoftDeleted
+	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private List<BillingProduct> billingProducts = new ArrayList<>();
 
 	/*
