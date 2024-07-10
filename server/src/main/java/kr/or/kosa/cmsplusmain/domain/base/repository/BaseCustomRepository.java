@@ -78,6 +78,9 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 
 	protected BooleanExpression billingNotDel() {
 		return billing.deleted.isFalse();
+
+	}protected BooleanExpression memberNotDel() {
+		return member.deleted.isFalse();
 	}
 
 	protected BooleanExpression billingStandardNotDel() {
