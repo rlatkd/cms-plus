@@ -19,23 +19,18 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductCustomRepository productCustomRepository;
 
-    // public ProductDetail findById(Long productId) {
-    //     Product product = productRepository
-    //             .findById(productId)
-    //             .orElseThrow(() -> new IllegalArgumentException("Product not found"));
-    //
-    //     return ProductDetail.fromEntity(product);
-    //
-    // }
-
     public ProductDetail findById(Long productId) {
+
+        // 계약 건수
         int contractNum = productCustomRepository
                 .getContractNumber(productId);
 
+        // 상품 정보(계약건수를 제외한)
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
+        // 계약 건수 + 상품 정보
         return ProductDetail.fromEntity(product, contractNum);
 
     }
