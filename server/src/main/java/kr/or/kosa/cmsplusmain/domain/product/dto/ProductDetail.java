@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
      private final int productPrice;
      private final String productMemo;
 
-     private final int contractNum;
+     private final int contractNum; // 계약 건수
 
      public static ProductDetail fromEntity(Product product, int contractNum) {
          return ProductDetail.builder()
@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
                  .productMemo(product.getMemo())
                  .contractNum(contractNum)
                  .build();
-
      }
 
  }

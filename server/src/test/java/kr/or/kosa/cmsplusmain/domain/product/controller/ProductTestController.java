@@ -61,7 +61,7 @@ class ProductTestController {
     // 상품 목록 조회
     @Test
     void findAllProductByCondition() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/vendor/product")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/vendor/producttest")
                         .param("page", "1")
                         .param("offset", "10")
                         .header(HttpHeaders.AUTHORIZATION, "ACCESS_TOKEN")
@@ -107,7 +107,7 @@ class ProductTestController {
         newProduct.setCreatedDateTime("2024-02-01 11:11:11");
         newProduct.setMemo("비고1");
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/vendor/product")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/vendor/producttest")
                         .header(HttpHeaders.AUTHORIZATION, "ACCESS_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newProduct)))
@@ -144,7 +144,7 @@ class ProductTestController {
     // 상품 상세 조회
     @Test
     void findProductById() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/vendor/product/{PRODUCT_ID}", 1L)
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/vendor/producttest/{PRODUCT_ID}", 1L)
                         .header(HttpHeaders.AUTHORIZATION, "ACCESS_TOKEN")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -178,7 +178,7 @@ class ProductTestController {
         updateProduct.setPrice(20.0);
         updateProduct.setMemo("비고 2");
 
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/vendor/product/{PRODUCT_ID}", 2L)
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/vendor/producttest/{PRODUCT_ID}", 2L)
                         .header(HttpHeaders.AUTHORIZATION, "ACCESS_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateProduct)))
@@ -210,7 +210,7 @@ class ProductTestController {
 
     @Test
     void deleteProduct() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/vendor/product/{PRODUCT_ID}", 2L)
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/vendor/producttest/{PRODUCT_ID}", 2L)
                         .header(HttpHeaders.AUTHORIZATION, "ACCESS_TOKEN")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
