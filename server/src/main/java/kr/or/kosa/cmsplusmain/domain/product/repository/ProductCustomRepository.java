@@ -4,10 +4,15 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.entity.ProductStatus;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
+import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
+import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.vendor;
 
 @Repository
 public class ProductCustomRepository extends BaseCustomRepository<Product> {
@@ -29,5 +34,15 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                 .fetchOne().intValue();
 
     }
+
+//    public List<Product> findAvailableProductsByVendorUsername(String username) {
+//        return jpaQueryFactory
+//                .selectFrom(product)
+//                .join(product.vendor, vendor)
+//                .where(vendor.username.eq(username)
+//                        .and(product.deleted.isFalse())
+//                        .and(product.status.eq(ProductStatus.ENABLED))) // ENABLED 상태의 상품만 가져옴
+//                .fetch();
+//    }
 
 }

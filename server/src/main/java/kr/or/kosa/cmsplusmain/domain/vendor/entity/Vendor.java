@@ -22,7 +22,7 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Username;
-import kr.or.kosa.cmsplusmain.domain.settings.SimpConsentSetting;
+import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

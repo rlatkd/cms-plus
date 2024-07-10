@@ -1,0 +1,101 @@
+package kr.or.kosa.cmsplusmain.domain.settings.service;
+
+import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
+import kr.or.kosa.cmsplusmain.domain.settings.dto.AvailableOptionsDto;
+import kr.or.kosa.cmsplusmain.domain.settings.dto.ProductDto;
+import kr.or.kosa.cmsplusmain.domain.settings.dto.SimpConsentSettingDto;
+import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
+import kr.or.kosa.cmsplusmain.domain.settings.repository.SimpConsentSettingCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
+import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityNotFoundException;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class SimpConsentSettingService {
+
+    private final SimpConsentSettingCustomRepository simpConsentSettingRepository;
+    private final VendorCustomRepository vendorRepository;
+    private final ProductRepository productRepository;
+    private final ProductCustomRepository productCustomRepository; // 이 줄을 추가합니다.
+
+
+    @Transactional
+    public SimpConsentSettingDto createSetting(String username) {
+        Vendor vendor = vendorRepository.findByUsername(username);
+        if (vendor == null) {
+            throw new EntityNotFoundException("Vendor not found with username: " + username);
+        }
+
+        SimpConsentSetting setting = SimpConsentSetting.builder()
+                .vendor(vendor)
+                .build();
+        simpConsentSettingRepository.save(setting);
+        return convertToDto(setting);
+    }
+
+    public SimpConsentSettingDto getSetting(String username) {
+        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(username);
+        if (setting == null) {
+            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + username);
+        }
+        return convertToDto(setting);
+    }
+
+    @Transactional
+    public SimpConsentSettingDto updateSetting(String username, SimpConsentSettingDto dto) {
+        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(username);
+        if (setting == null) {
+            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + username);
+        }
+
+        setting.getSimpConsentPayments().clear();
+        setting.getSimpConsentPayments().addAll(dto.getPaymentMethods());
+
+        setting.getSimpConsentProducts().clear();
+        dto.getProductIds().forEach(productId -> {
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productId));
+            setting.addProduct(product);
+        });
+
+        return convertToDto(setting);
+    }
+
+    public AvailableOptionsDto getAvailableOptions(String username) {
+        Set<PaymentMethod> availablePaymentMethods = Arrays.stream(PaymentMethod.values())
+                .filter(PaymentMethod::isAutoPayment)
+                .collect(Collectors.toSet());
+
+        List<ProductDto> availableProducts = productCustomRepository.findAvailableProductsByVendorUsername(username)
+                .stream()
+                .map(ProductDto::fromEntity)
+                .collect(Collectors.toList());
+
+        return new AvailableOptionsDto(availablePaymentMethods, availableProducts);
+    }
+
+
+
+    private SimpConsentSettingDto convertToDto(SimpConsentSetting setting) {
+        SimpConsentSettingDto dto = new SimpConsentSettingDto();
+        dto.setId(setting.getId());
+        dto.setVendorUsername(setting.getVendor().getUsername());
+        dto.setPaymentMethods(setting.getSimpConsentPayments());
+        dto.setProductIds(setting.getSimpConsentProducts().stream().map(Product::getId).collect(java.util.stream.Collectors.toSet()));
+        return dto;
+    }
+}

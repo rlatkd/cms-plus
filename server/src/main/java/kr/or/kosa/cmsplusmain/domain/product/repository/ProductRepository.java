@@ -4,6 +4,11 @@ import kr.or.kosa.cmsplusmain.domain.base.repository.BaseRepository;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductRepository extends BaseRepository<Product, Long> {
+
+//    List<Product> findByVendorUsernameAndDeletedFalse(String username);
+
 }
