@@ -102,6 +102,21 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 
 	/*
 	 * 회원 상세 - 기본정보(청구수)
+		select
+			count(distinct member1.id)
+		from
+			BillingStandard billingStandard
+		inner join
+			contract.vendor as vendor
+		inner join
+			contract.member as member1
+		inner join
+			billingStandard.contract as contract
+		where
+			vendor.username = ?1
+			and member1.id = ?2
+			and contract.deleted = ?3
+			and billingStandard.deleted = ?4
 	 * */
 	public int findBillingStandardByMemberId(String username, Long memberId){
 		Long res = jpaQueryFactory
@@ -122,6 +137,23 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 
 	/*
 	 * 회원 상세 - 기본정보(청구금액)
+	    select
+			sum(billingProduct.price * billingProduct.quantity)
+		from
+			BillingProduct billingProduct
+		inner join
+			billingProduct.billingStandard as billingStandard
+		inner join
+			billingStandard.contract as contract
+		inner join
+			contract.vendor as vendor
+		inner join
+			contract.member as member1
+		where
+			vendor.username = ?1
+			and member1.id = ?2
+			and contract.deleted = ?3
+			and billingStandard.deleted = ?4
 	 * */
 	public Long findBillingProductByMemberId(String username, Long memberId){
 		Long res = jpaQueryFactory

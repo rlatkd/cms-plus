@@ -51,6 +51,17 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
 
     /*
     * 회원 상세 조회 : 기본정보
+    *
+    *   select
+            member1
+        from
+            Member member1
+        inner join
+            member1.vendor as vendor
+        where
+            vendor.username = ?1
+            and member1.id = ?2
+            and member1.deleted = ?3
     * */
     public Optional<Member> findMemberDetailById(String Username, Long memberId){
         return Optional.ofNullable(
