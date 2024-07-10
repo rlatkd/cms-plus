@@ -1,16 +1,14 @@
 package kr.or.kosa.cmsplusmain.domain.product.repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductRes;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductQRes;
+import kr.or.kosa.cmsplusmain.domain.product.dto.QProductQRes;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
@@ -43,7 +41,8 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
     }
 
     // 고객의 상품 목록
-    public List<Tuple> findProductListWithCondition(String vendorUserName, SortPageDto.Req pageable) {
+    // 프로젝션 대상이 2개이기 떄문에 QueryProjection을 이용해 해결
+    public List<ProductQRes> findProductListWithCondition(String vendorUserName, SortPageDto.Req pageable) {
         /*
          * 해당 고객의 모든 상품(삭제되지않은)을 가져오는데, 상품의 정보와 상품이 포함된 계약 갯수를 가져와야함
          *
@@ -77,8 +76,8 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
          * where v.vendor_username = 'vendor1' and p.deleted = 0
          * group by p.product_id;
          * */
-        List<Tuple> result = jpaQueryFactory // 프로젝션 대상이 2개이므로 튜플 사용
-                .select(product, contractProduct.contract.countDistinct())
+        List<ProductQRes> result = jpaQueryFactory
+                .select(new QProductQRes(product, contractProduct.contract.countDistinct().intValue()))
                 .from(product)
                 .join(product.vendor, vendor)
                 .leftJoin(contractProduct)

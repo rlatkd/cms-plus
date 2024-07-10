@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/vendor/product")
 @RequiredArgsConstructor
@@ -21,8 +19,7 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ProductRes getProduct(@PathVariable("productId") Long productId) {
         String vendorUserName = "vendor1";
-        productService.validateProductUser(productId, vendorUserName);
-        return productService.findById(productId);
+        return productService.findById(productId, vendorUserName);
     }
 
     @GetMapping
