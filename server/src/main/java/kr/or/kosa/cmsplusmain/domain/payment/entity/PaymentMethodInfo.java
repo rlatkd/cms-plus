@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
  * 카드: 카드 번호, 카드 소유주 ...
  * CMS: 계좌 번호, 계좌 소유주 ...
  * */
-@Comment("결제수단 정보")
+@Comment("결제수단 세부정보")
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "payment_method_info_method")

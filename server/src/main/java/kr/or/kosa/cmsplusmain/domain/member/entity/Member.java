@@ -6,6 +6,7 @@ import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLRestriction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +24,6 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import kr.or.kosa.cmsplusmain.domain.base.OnlyNonSoftDeleted;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
@@ -107,7 +107,7 @@ public class Member extends BaseEntity {
 
 	/* 회원이 맺은 계약 목록 */
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-	@OnlyNonSoftDeleted
+	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private List<Contract> contracts = new ArrayList<>();
 
 	/************ 청구정보 ************/

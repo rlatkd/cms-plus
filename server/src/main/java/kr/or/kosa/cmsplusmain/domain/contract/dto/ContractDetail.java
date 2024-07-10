@@ -23,6 +23,21 @@ public class ContractDetail {
 	public static ContractDetail fromEntity(Contract contract) {
 
 		// NOT NULL
-		throw new RuntimeException("Not implemented yet");
+		final List<ContractProductRes> contractProductResList = contract.getContractProducts()
+			.stream()
+			.map(ContractProductRes::fromEntity)
+			.toList();
+
+		final PaymentDto paymentDto = PaymentDto.fromEntity(contract.getPayment());
+
+		return ContractDetail.builder()
+			.contractId(contract.getId())
+			.name(contract.getName())
+			.createdDateTime(contract.getCreatedDateTime())
+			.modifiedDateTime(contract.getModifiedDateTime())
+			.contractProducts(contractProductResList)
+			.contractPrice(contract.getContractPrice())
+			.payment(paymentDto)
+			.build();
 	}
 }

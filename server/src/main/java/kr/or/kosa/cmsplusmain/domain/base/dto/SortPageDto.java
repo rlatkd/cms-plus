@@ -8,7 +8,6 @@ public class SortPageDto {
 
 	@Getter
 	@Setter
-	@ToString
 	public static class Req {
 
 		private int page = 1;
@@ -24,6 +23,7 @@ public class SortPageDto {
 		}
 
 		public int getPage() {
+
 			return (page - 1) * size;
 		}
 	}
@@ -33,5 +33,9 @@ public class SortPageDto {
 	public static class Res<T> {
 		private int totalPage;
 		private List<T> data;
+
+			return page - 1;
+		}
+
 	}
 }

@@ -18,7 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Comment("납부자결제")
+@Comment("결제방식-납부자결제")
 @Entity
 @DiscriminatorValue(PaymentType.Values.BUYER)
 @Getter

@@ -10,6 +10,7 @@ public class ContractProductRes {
 
 	private Long id;
 	private Long contractId;
+	private Long productId;
 	private String name;
 	private Integer price;
 	private Integer quantity;
@@ -18,6 +19,7 @@ public class ContractProductRes {
 		return ContractProductRes.builder()
 			.id(contractProduct.getId())
 			.contractId(contractProduct.getContract().getId())
+			.productId(contractProduct.getProduct().getId())
 
 			// 주의
 			// 청구상품 과 청구 join 조회 필요
