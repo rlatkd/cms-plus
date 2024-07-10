@@ -1,5 +1,9 @@
 package kr.or.kosa.cmsplusmain.config;
 
+import kr.or.kosa.cmsplusmain.domain.vendor.jwt.CustomLogoutFilter;
+import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTFilter;
+import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
+import kr.or.kosa.cmsplusmain.domain.vendor.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,10 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
-import kr.or.kosa.cmsplusmain.domain.vendor.JWT.CustomLogoutFilter;
-import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTFilter;
-import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTUtil;
-import kr.or.kosa.cmsplusmain.domain.vendor.JWT.LoginFilter;
+
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -54,20 +56,22 @@ public class SecurityConfig {
 		http.httpBasic((auth) -> auth.disable());
 
 		http.authorizeHttpRequests((auth) -> auth
-			.requestMatchers("/api/v1/vendor/auth/login").permitAll()
-			.requestMatchers("/api/v1/vendor/auth/join").permitAll()
-			.requestMatchers("/api/v1/vendor/auth/logout").permitAll()
-			.requestMatchers("/api/v1/vendor/auth/refresh").permitAll()
-			.requestMatchers("/api/v1/vendor/auth/username-check").permitAll()
-			.requestMatchers("/", "/api/v1/**").permitAll()
-			.requestMatchers("/vendor").hasRole("VENDOR")
-			.requestMatchers("/member").hasRole("MEMBER")
-			.anyRequest().authenticated());
+				.requestMatchers("/api/v1/vendor/auth/login").permitAll()
+				.requestMatchers("/api/v1/vendor/auth/join").permitAll()
+				.requestMatchers("/api/v1/vendor/auth/logout").permitAll()
+				.requestMatchers("/api/v1/vendor/auth/refresh").permitAll()
+				.requestMatchers("/api/v1/vendor/auth/username-check").permitAll()
+				.requestMatchers("/api/v1/**","/**").permitAll()
+				.requestMatchers("/error").permitAll()
+				.requestMatchers("/vendor").hasRole("VENDOR")
+				.requestMatchers("/member").hasRole("MEMBER")
+
+				.anyRequest().authenticated());
 
 		http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
 		http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, redisTemplate),
-			UsernamePasswordAuthenticationFilter.class);
+				UsernamePasswordAuthenticationFilter.class);
 
 		http.addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTemplate), LogoutFilter.class);
 

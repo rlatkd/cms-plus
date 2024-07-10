@@ -8,6 +8,7 @@ import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
 import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.vendor;
@@ -18,27 +19,49 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         super(em, jpaQueryFactory);
     }
 
-    public int countAllByVendorUsername(String Username) {
+    /*
+    * 회원 목록 조회
+    * */
+    public List<Member> findAllMemberByVendor(String Username, SortPageDto.Req pageable) {
         return jpaQueryFactory
-                .select(member.id.countDistinct()).from(member)
-                .join(member.vendor, vendor)
-                .where(
-                        vendorUsernameEq(Username),
-                        memberNotDel()
-                )
-                .fetchOne().intValue();
+            .selectFrom(member)
+            .join(member.vendor, vendor)
+            .where(
+                    vendorUsernameEq(Username),
+                    memberNotDel()
+            )
+            .offset(pageable.getPage())
+            .limit(pageable.getSize())
+            .fetch();
     }
 
-    public List<Member> findPagedByVendorUsername(String Username, SortPageDto.Req pageable) {
+    /*
+     * 전체 회원 수
+     * */
+    public int countAllMemberByVendor(String Username) {
         return jpaQueryFactory
-                .selectFrom(member)
-                .join(member.vendor, vendor)
-                .where(
-                        vendorUsernameEq(Username),
-                        memberNotDel()
-                )
-                .offset(pageable.getPage())
-                .limit(pageable.getSize())
-                .fetch();
+            .select(member.id.countDistinct()).from(member)
+            .join(member.vendor, vendor)
+            .where(
+                    vendorUsernameEq(Username),
+                    memberNotDel()
+            )
+            .fetchOne().intValue();
+    }
+
+    /*
+    * 회원 상세 조회 : 기본정보
+    * */
+    public Optional<Member> findMemberDetailById(String Username, Long memberId){
+        return Optional.ofNullable(
+            jpaQueryFactory
+            .selectFrom(member)
+            .join(member.vendor, vendor)
+            .where(
+                    vendorUsernameEq(Username),
+                    member.id.eq(memberId),
+                    memberNotDel()
+            )
+            .fetchOne());
     }
 }

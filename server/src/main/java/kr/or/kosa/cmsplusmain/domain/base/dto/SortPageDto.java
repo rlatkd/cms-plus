@@ -33,9 +33,5 @@ public class SortPageDto {
 	public static class Res<T> {
 		private int totalPage;
 		private List<T> data;
-
-			return page - 1;
-		}
-
 	}
 }

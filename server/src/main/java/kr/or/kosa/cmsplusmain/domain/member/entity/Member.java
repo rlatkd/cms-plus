@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
@@ -83,6 +84,12 @@ public class Member extends BaseEntity {
 	@NotNull
 	@Setter
 	private String phone;
+
+	@Comment("회원 유선전화")
+	@Column(name = "member_homePhone", nullable = true, length = 20)
+	@HomePhone
+	@Setter
+	private String homePhone;
 
 	//TODO: 다음 도로명 주소 API 보고 수정하기
 	@Comment("회원 주소")

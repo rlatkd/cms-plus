@@ -39,7 +39,6 @@ import lombok.ToString;
 @Entity
 @Getter
 @Builder
-@ToString(exclude = {"vendor"})
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Contract extends BaseEntity {

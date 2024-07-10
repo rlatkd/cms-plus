@@ -11,6 +11,8 @@ import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -94,7 +96,46 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.orderBy(billing.createdDateTime.desc())
 			.offset(pageable.getPage())
 			.limit(pageable.getSize())
-			.fetch();
+				.fetch();
 	}
+
+	/*
+	 * 회원 상세 - 기본정보(청구수)
+	 * */
+	public int findBillingStandardByMemberId(String username, Long memberId){
+		return jpaQueryFactory
+				.select(member.id.countDistinct()).from(billingStandard)
+				.join(contract.vendor, vendor)
+				.join(contract.member, member)
+				.join(billingStandard.contract, contract)
+				.where(
+						vendorUsernameEq(username),
+						member.id.eq(memberId),
+						contractNotDel(),
+						billingStandardNotDel()
+				)
+				.fetchOne().intValue();
+	}
+
+	/*
+	 * 회원 상세 - 기본정보(청구금액)
+	 * */
+	public List<BillingProduct> findBillingProductByMemberId(String username, Long memberId){
+		return jpaQueryFactory
+			.selectFrom(billingProduct)
+			.join(billingProduct.billingStandard,billingStandard)
+			.join(billingStandard.contract, contract)
+			.join(contract.vendor, vendor)
+			.join(contract.member, member)
+			.where(
+					vendorUsernameEq(username),
+					member.id.eq(memberId),
+					contractNotDel(),
+					billingStandardNotDel()
+			)
+			.fetch();
+
+	}
+
 
 }
