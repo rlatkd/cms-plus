@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.product.dto;
 
-import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import java.time.LocalDateTime;
 
  @Getter
  @Builder
- public class ProductDetail {
+ public class ProductRes {
 
      private final Long productId;
      private final String productName;
@@ -22,8 +21,8 @@ import java.time.LocalDateTime;
 
      private final int contractNum; // 계약 건수
 
-     public static ProductDetail fromEntity(Product product, int contractNum) {
-         return ProductDetail.builder()
+     public static ProductRes fromEntity(Product product, int contractNum) {
+         return ProductRes.builder()
                  .productId(product.getId())
                  .productName(product.getName())
                  .createdDateTime(product.getCreatedDateTime())
