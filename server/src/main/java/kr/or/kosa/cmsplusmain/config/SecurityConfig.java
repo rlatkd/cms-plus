@@ -60,6 +60,7 @@ public class SecurityConfig {
 			.requestMatchers("/api/v1/vendor/auth/refresh").permitAll()
 			.requestMatchers("/api/v1/vendor/auth/username-check").permitAll()
 			.requestMatchers("/", "/api/v1/**").permitAll()
+			.requestMatchers("/error").permitAll()
 			.requestMatchers("/vendor").hasRole("VENDOR")
 			.requestMatchers("/member").hasRole("MEMBER")
 			.anyRequest().authenticated());

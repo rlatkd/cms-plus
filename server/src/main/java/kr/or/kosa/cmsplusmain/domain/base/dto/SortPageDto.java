@@ -6,6 +6,10 @@ import java.util.List;
 
 public class SortPageDto {
 
+	public static int calcTotalPageNumber(int totalItemNum, int pageSize) {
+		return (int) Math.ceil((double) totalItemNum / pageSize);
+	}
+
 	@Getter
 	@Setter
 	public static class Req {
