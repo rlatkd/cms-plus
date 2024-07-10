@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import BaseLayout from '@/layouts/MobileBaseLayout';
 
-const indexPage = () => {
+const MemIndexPage = () => {
   return (
     <BaseLayout>
       <Outlet />
@@ -9,4 +9,4 @@ const indexPage = () => {
   );
 };
 
-export default indexPage;
+export default MemIndexPage;

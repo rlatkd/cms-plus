@@ -8,36 +8,30 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 
-// @Getter
-// public class ProductDetail {
-//
-//     private final Long productId;
-//     private final String productName;
-//
-//     private final LocalDateTime createdDateTime;
-//
-//     private final int productPrice;
-//     private final String productMemo;
-//
-//     private final int contractNum;
-//
-//     @Builder
-//     public ProductDetail(Long productId, String productName, LocalDateTime createdDateTime, int productPrice, String productMemo, int contractNum) {
-//         this.productId = productId;
-//         this.productName = productName;
-//         this.createdDateTime = createdDateTime;
-//         this.productPrice = productPrice;
-//         this.productMemo = productMemo;
-//         this.contractNum = contractNum;
-//     }
-//
-//     public static ProductDetail fromEntity(Product product) {
-//         if (product == null) {
-//             return null;
-//         }
-//
-//
-//
-//     }
-//
-// }
+ @Getter
+ @Builder
+ public class ProductDetail {
+
+     private final Long productId;
+     private final String productName;
+
+     private final LocalDateTime createdDateTime;
+
+     private final int productPrice;
+     private final String productMemo;
+
+     private final int contractNum;
+
+     public static ProductDetail fromEntity(Product product, int contractNum) {
+         return ProductDetail.builder()
+                 .productId(product.getId())
+                 .productName(product.getName())
+                 .createdDateTime(product.getCreatedDateTime())
+                 .productPrice(product.getPrice())
+                 .productMemo(product.getMemo())
+                 .contractNum(contractNum)
+                 .build();
+
+     }
+
+ }
