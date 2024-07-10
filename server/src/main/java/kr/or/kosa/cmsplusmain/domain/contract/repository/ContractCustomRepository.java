@@ -32,7 +32,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 
 	/*
 	 * 계약 목록 조회
-	 *
+	 * TODO 토탈 카운트
 	 *  */
 	public List<Contract> findContractListWithCondition(String vendorUsername, ContractSearch search,
 		SortPageDto.Req pageable) {
@@ -104,5 +104,19 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 			.where(contract.id.eq(contractId))
 			.set(contract.name, contractName)
 			.execute();
+	}
+
+	public boolean isExistContractByIdAndVendorUsername(Long contractId, String vendorUsername) {
+		Integer res = jpaQueryFactory
+			.selectOne()
+			.from(contract)
+			.join(contract.vendor, vendor)
+			.where(
+				contract.id.eq(contractId),
+				contractNotDel(),
+				vendorUsernameEq(vendorUsername)
+			)
+			.fetchOne();
+		return res != null;
 	}
 }
