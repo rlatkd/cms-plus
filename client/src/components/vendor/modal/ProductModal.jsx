@@ -12,8 +12,6 @@ const ProductModal = ({ isShowModal, setIsShowModal, modalTitle, productDetailDa
     return <div />;
   }
 
-  console.log(productDetailData);
-
   return (
     <BaseModal
       isShowModal={isShowModal}
