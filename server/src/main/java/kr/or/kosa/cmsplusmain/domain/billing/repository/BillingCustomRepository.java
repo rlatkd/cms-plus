@@ -104,7 +104,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 회원 상세 - 기본정보(청구수)
 	 * */
 	public int findBillingStandardByMemberId(String username, Long memberId){
-		return jpaQueryFactory
+		Long res = jpaQueryFactory
 				.select(member.id.countDistinct()).from(billingStandard)
 				.join(contract.vendor, vendor)
 				.join(contract.member, member)
@@ -115,28 +115,29 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 						contractNotDel(),
 						billingStandardNotDel()
 				)
-				.fetchOne().intValue();
+				.fetchOne();
+
+		return (res == null) ? 0 : res.intValue();
 	}
 
 	/*
 	 * 회원 상세 - 기본정보(청구금액)
 	 * */
-	public List<BillingProduct> findBillingProductByMemberId(String username, Long memberId){
-		return jpaQueryFactory
-			.selectFrom(billingProduct)
-			.join(billingProduct.billingStandard,billingStandard)
-			.join(billingStandard.contract, contract)
-			.join(contract.vendor, vendor)
-			.join(contract.member, member)
-			.where(
-					vendorUsernameEq(username),
-					member.id.eq(memberId),
-					contractNotDel(),
-					billingStandardNotDel()
-			)
-			.fetch();
-
+	public Long findBillingProductByMemberId(String username, Long memberId){
+		Long res = jpaQueryFactory
+				.select(billingProduct.price.multiply(billingProduct.quantity).sum())
+				.from(billingProduct)
+				.join(billingProduct.billingStandard,billingStandard)
+				.join(billingStandard.contract, contract)
+				.join(contract.vendor, vendor)
+				.join(contract.member, member)
+				.where(
+						vendorUsernameEq(username),
+						member.id.eq(memberId),
+						contractNotDel(),
+						billingStandardNotDel()
+				)
+				.fetchOne().longValue();
+		return (res == null) ? 0 : res.longValue();
 	}
-
-
 }

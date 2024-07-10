@@ -59,10 +59,7 @@ public class MemberService {
         int billingCount = billingCustomRepository.findBillingStandardByMemberId(username, memberId);
 
         // 총 청구 금액
-        List<BillingProduct> billingProducts = billingCustomRepository.findBillingProductByMemberId(username, memberId);
-        Long totalBillingPrice = billingProducts.stream()
-                .mapToLong(bp -> bp.getPrice() * bp.getQuantity())
-                .sum();
+        Long totalBillingPrice = billingCustomRepository.findBillingProductByMemberId(username, memberId);
 
         return MemberDetail.fromEntity(member, billingCount, totalBillingPrice);
     }

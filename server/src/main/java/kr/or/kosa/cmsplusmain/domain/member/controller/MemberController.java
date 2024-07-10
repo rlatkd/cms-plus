@@ -39,7 +39,7 @@ public class MemberController {
     @GetMapping("/members/{memberId}")
     public MemberDetail getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId) {
 //        String username = userDetails.getUsername();
-        String username = "vendor2";
+        String username = "vendor1";
         return memberService.findMemberDetailById(username, memberId);
     }
 
