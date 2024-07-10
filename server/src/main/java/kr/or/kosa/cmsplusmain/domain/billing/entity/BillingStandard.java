@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,8 +20,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.EmptyBillingProductException;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,7 +49,7 @@ public class BillingStandard extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "billing_standard_status", nullable = false)
 	@NotNull
-	private BillingStandardStatus status;
+	private BillingStandardStatus status = BillingStandardStatus.ENABLED;
 
 	@Comment("청구 타입 [정기 or 추가]")
 	@Enumerated(EnumType.STRING)
@@ -58,9 +62,31 @@ public class BillingStandard extends BaseEntity {
 	private int contractDay;
 
 	/* 청구 상품 목록 */
-	@OneToMany(mappedBy = "billingStandard")
+	@OneToMany(mappedBy = "billingStandard", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private List<BillingProduct> billingProducts = new ArrayList<>();
+
+	@Builder
+	public BillingStandard(Contract contract, BillingType type, int contractDay, List<BillingProduct> billingProducts) {
+		// 청구는 최소 한 개의 상품을 가져야한다.
+		if (billingProducts.isEmpty()) {
+			throw new EmptyBillingProductException();
+		}
+
+		this.contract = contract;
+		this.type = type;
+		this.contractDay = contractDay;
+
+		billingProducts.forEach(this::addBillingProduct);
+	}
+
+	/*
+	* 청구 상품 추가
+	* */
+	public void addBillingProduct(BillingProduct billingProduct) {
+		billingProduct.setBillingStandard(this);
+		billingProducts.add(billingProduct);
+	}
 
 	/*
 	 * 청구금액

@@ -26,11 +26,13 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
 //        상품이 포함된 계약의 개수를 구하는 sql
 //        select count(distinct pc.contract_id)
 //        from product_contract pc
-//        where pc.product_id = #{productId}
+//        join contract c
+//        where pc.product_id = #{productId} and c.deleted = 0
         return jpaQueryFactory
                 .select(contract.id.countDistinct())
                 .from(contractProduct)
-                .where(contractProduct.product.id.eq(productId))
+                .join(contractProduct.contract, contract) // 계약-상품 테이블의 외래키인 계약ID를 타고 들어감
+                .where(contractProduct.product.id.eq(productId), contract.deleted.eq(false))
                 .fetchOne().intValue();
 
     }

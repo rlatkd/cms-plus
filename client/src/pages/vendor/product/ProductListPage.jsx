@@ -9,6 +9,7 @@ const ProductListPage = () => {
   const [productList, setProductList] = useState([]); // 상품 목록
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
 
+  // 상품 상세 조회용 더미데이터(상품 목록 조회에서 가져온 데이터라 가정)
   const dummyData = {
     page: 1,
     offset: 10,
@@ -42,6 +43,7 @@ const ProductListPage = () => {
     ],
   };
 
+  // 컴포넌트 마운트시 더미데이터 세팅
   useEffect(() => {
     setProductId(dummyData.data[0].id);
   }, []);
