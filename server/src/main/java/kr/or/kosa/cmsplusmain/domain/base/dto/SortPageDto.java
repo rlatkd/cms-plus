@@ -23,7 +23,7 @@ public class SortPageDto {
 		}
 
 		public int getPage() {
-
+			if (page < 1) return 1;
 			return (page - 1) * size;
 		}
 	}
@@ -33,9 +33,5 @@ public class SortPageDto {
 	public static class Res<T> {
 		private int totalPage;
 		private List<T> data;
-
-			return page - 1;
-		}
-
 	}
 }
