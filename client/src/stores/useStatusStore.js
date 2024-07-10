@@ -11,7 +11,7 @@ export const useStatusStore = create(
     }),
     {
       name: 'status-storage',
-      storage: createJSONStorage(() => localStorage),
+      getStorage: () => localStorage,
     }
   )
 );
