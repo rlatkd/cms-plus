@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractReq;
@@ -47,6 +49,15 @@ public class ContractController {
 	public ContractDetail getContractDetail(@PathVariable Long contractId) {
 		String vendorUsername = "vendor1";
 		return contractService.findContractDetailById(vendorUsername, contractId);
+	}
+
+	/*
+	 * 계약 상세 조회 - 청구 목록
+	 * */
+	@GetMapping("/{contractId}/billing")
+	public SortPageDto.Res<BillingListItem> getBillingListByContract(@PathVariable Long contractId, SortPageDto.Req pageable) {
+		String vendorUsername = "vendor1";
+		return contractService.findBillingsByContract(vendorUsername, contractId, pageable);
 	}
 
 	/*

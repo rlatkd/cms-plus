@@ -35,18 +35,6 @@ public class BillingService {
 
 	private final ContractCustomRepository contractCustomRepository;
 
-
-	/*
-	 * 계약 상세 - 청구 목록 조회
-	 *
-	 * 계약 id로 청구 목록을 가져온다.
-	 * */
-	public List<BillingListItem> findBillingsByContract(String vendorUsername, Long contractId, SortPageDto.Req pageable) {
-		return billingCustomRepository.findBillingsByContractId(contractId, pageable).stream()
-			.map(BillingListItem::fromEntity)
-			.toList();
-	}
-
 	/*
 	 * 청구목록 조회
 	 *

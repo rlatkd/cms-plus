@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
+import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractReq;
@@ -23,7 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ContractService {
 
-	private final ContractCustomRepository contractRepository;
+	private final ContractCustomRepository contractCustomRepository;
+	private final BillingCustomRepository billingCustomRepository;
 
 	/*
 	 * 계약 목록 조회
@@ -31,12 +34,12 @@ public class ContractService {
 	public SortPageDto.Res<ContractListItem> findContractListWithConditions(
 		String vendorUsername, ContractSearch contractSearch, SortPageDto.Req pageable) {
 
-		List<ContractListItem> data = contractRepository
+		List<ContractListItem> data = contractCustomRepository
 			.findContractListWithCondition(vendorUsername, contractSearch, pageable)
 			.stream()
 			.map(ContractListItem::fromEntity)
 			.toList();
-		int totalNum = contractRepository.countAllContracts(vendorUsername, contractSearch);
+		int totalNum = contractCustomRepository.countAllContracts(vendorUsername, contractSearch);
 		int totalPage = SortPageDto.calcTotalPageNumber(totalNum, pageable.getSize());
 
 		return new SortPageDto.Res<>(totalPage, data);
@@ -48,7 +51,7 @@ public class ContractService {
 	public ContractDetail findContractDetailById(String vendorUsername, Long contractId) {
 		validateContractUser(contractId, vendorUsername);
 
-		Contract contract = contractRepository.findContractDetailById(contractId).orElseThrow();
+		Contract contract = contractCustomRepository.findContractDetailById(contractId).orElseThrow();
 		return ContractDetail.fromEntity(contract);
 	}
 
@@ -64,10 +67,30 @@ public class ContractService {
 			.map(dto -> dto.toEntity(contractId))
 			.toList();
 
-		contractRepository.updateContract(
+		contractCustomRepository.updateContract(
 			contractId,
 			contractReq.getContractName(),
 			contractProducts);
+	}
+
+
+	/*
+	* 계약의 청구 목록
+	* */
+	public SortPageDto.Res<BillingListItem> findBillingsByContract(String vendorUsername, Long contractId,
+		SortPageDto.Req pageable)
+	{
+		validateContractUser(contractId, vendorUsername);
+
+		List<BillingListItem> items = billingCustomRepository.findBillingsByContractId(contractId, pageable)
+			.stream()
+			.map(BillingListItem::fromEntity)
+			.toList();
+
+		int totalItemNum = billingCustomRepository.countAllBillingsByContract(contractId);
+		int totalPage = SortPageDto.calcTotalPageNumber(totalItemNum, pageable.getSize());
+
+		return new SortPageDto.Res<>(totalPage, items);
 	}
 
 	/*
@@ -75,7 +98,7 @@ public class ContractService {
 	* 계약이 현재 로그인 고객의 계약인지 여부
 	* */
 	private void validateContractUser(Long contractId, String vendorUsername) {
-		if (contractRepository.isExistContractByUsername(contractId, vendorUsername)) {
+		if (contractCustomRepository.isExistContractByUsername(contractId, vendorUsername)) {
 			throw new EntityNotFoundException("계약 ID 없음(" + contractId + ")");
 		}
 	}

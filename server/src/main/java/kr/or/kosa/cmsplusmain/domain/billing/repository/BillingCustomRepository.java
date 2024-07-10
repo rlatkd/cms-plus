@@ -98,4 +98,24 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.fetch();
 	}
 
+	/*
+	 * 계약의 청구 전체 개수
+	 * */
+	public int countAllBillingsByContract(Long contractId) {
+		Long res = jpaQueryFactory
+			.select(billing.id.count())
+			.from(billing)
+			.join(billing.billingStandard, billingStandard)
+			.join(billingStandard.contract, contract)
+			.join(contract.member, member)
+			.join(contract.payment, payment)
+			.where(
+				billingNotDel(),
+				contract.id.eq(contractId)
+			)
+			.fetchOne();
+
+		return (res != null) ? res.intValue() : 0;
+	}
+
 }
