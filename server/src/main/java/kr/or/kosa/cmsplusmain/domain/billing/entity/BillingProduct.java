@@ -15,12 +15,17 @@ import jakarta.persistence.Table;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "billing_product")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString // 임시로
 public class BillingProduct extends BaseEntity {
@@ -33,6 +38,7 @@ public class BillingProduct extends BaseEntity {
 	@Comment("청구상품의 청구기준")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "billing_standard_id")
+	@Setter
 	private BillingStandard billingStandard;
 
 	/*

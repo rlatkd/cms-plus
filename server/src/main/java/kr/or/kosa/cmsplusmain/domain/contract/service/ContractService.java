@@ -28,31 +28,37 @@ public class ContractService {
 	/*
 	 * 계약 목록 조회
 	 * */
-	public List<ContractListItem> findContractListWithConditions(
+	public SortPageDto.Res<ContractListItem> findContractListWithConditions(
 		String vendorUsername, ContractSearch contractSearch, SortPageDto.Req pageable) {
-		return contractRepository
+
+		List<ContractListItem> data = contractRepository
 			.findContractListWithCondition(vendorUsername, contractSearch, pageable)
 			.stream()
 			.map(ContractListItem::fromEntity)
 			.toList();
+		int totalNum = contractRepository.countAllContracts(vendorUsername, contractSearch);
+		int totalPage = SortPageDto.calcTotalPageNumber(totalNum, pageable.getSize());
+
+		return new SortPageDto.Res<>(totalPage, data);
 	}
 
 	/*
 	 * 계약 상세
 	 * */
-	public ContractDetail findContractDetailById(Long contractId) {
-		Contract contract = contractRepository.findContractDetailById(contractId).orElseThrow(
-			() -> new EntityNotFoundException("계약 ID 없음(" + contractId + ")")
-		);
+	public ContractDetail findContractDetailById(String vendorUsername, Long contractId) {
+		validateContractUser(contractId, vendorUsername);
+
+		Contract contract = contractRepository.findContractDetailById(contractId).orElseThrow();
 		return ContractDetail.fromEntity(contract);
 	}
-
 
 	/*
 	* 계약 이름 및 상품 목록 수정
 	* */
 	@Transactional
-	public void updateContract(Long contractId, ContractReq contractReq) {
+	public void updateContract(String vendorUsername, Long contractId, ContractReq contractReq) {
+		validateContractUser(contractId, vendorUsername);
+
 		List<ContractProduct> contractProducts = contractReq.getContractProducts()
 			.stream()
 			.map(dto -> dto.toEntity(contractId))
@@ -62,5 +68,15 @@ public class ContractService {
 			contractId,
 			contractReq.getContractName(),
 			contractProducts);
+	}
+
+	/*
+	* 계약 ID 존재여부
+	* 계약이 현재 로그인 고객의 계약인지 여부
+	* */
+	private void validateContractUser(Long contractId, String vendorUsername) {
+		if (contractRepository.isExistContractByUsername(contractId, vendorUsername)) {
+			throw new EntityNotFoundException("계약 ID 없음(" + contractId + ")");
+		}
 	}
 }

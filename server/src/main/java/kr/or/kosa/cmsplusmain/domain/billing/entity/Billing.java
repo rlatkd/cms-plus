@@ -18,6 +18,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +28,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "billing")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Billing extends BaseEntity {
 
@@ -49,7 +53,7 @@ public class Billing extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "billing_status", nullable = false)
 	@NotNull
-	private BillingStatus billingStatus;
+	private BillingStatus billingStatus = BillingStatus.CREATED;
 
 	@Comment("청구서 메시지")
 	@Column(name = "billing_memo", length = 2000)

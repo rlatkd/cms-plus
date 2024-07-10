@@ -65,6 +65,7 @@ public class Product extends BaseEntity {
 	@Setter
 	private String memo = "";
 
+	// id값만 가진 빈 product를 생성
 	public static Product of(Long id) {
 		Product emptyProduct = new Product();
 		emptyProduct.id = id;
