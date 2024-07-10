@@ -21,13 +21,3 @@ spring:
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
-
-cloud:
-  aws:
-    s3:
-      bucket: <버킷이름>
-    stack.auto: false
-    region.static:
-    credentials:
-      accessKey: <발급받은 accessKey>
-      secretKey: <발급받은 secretKey>
