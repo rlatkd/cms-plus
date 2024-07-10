@@ -30,7 +30,7 @@ public class BillingController {
 	 * 청구목록 조회
 	 * */
 	@GetMapping
-	public List<BillingListItem> getBillingListWithCondition(BillingSearch search, SortPageDto.Req pageable) {
+	public SortPageDto.Res<BillingListItem> getBillingListWithCondition(BillingSearch search, SortPageDto.Req pageable) {
 		String vendorUsername = "vendor1";
 		return billingService.findBillings(vendorUsername, search, pageable);
 	}

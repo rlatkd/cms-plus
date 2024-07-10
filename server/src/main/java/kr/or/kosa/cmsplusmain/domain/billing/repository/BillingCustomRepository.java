@@ -118,4 +118,56 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 		return (res != null) ? res.intValue() : 0;
 	}
 
+	public boolean isExistBillingByUsername(Long billingId, String vendorUsername) {
+		Integer res = jpaQueryFactory
+			.selectOne()
+			.from(billing)
+			.join(billing.billingStandard, billingStandard)
+			.join(billingStandard.contract, contract)
+			.join(contract.vendor, vendor)
+			.where(
+				billing.id.eq(billingId),
+				billingNotDel(),
+				vendorUsernameEq(vendorUsername)
+			)
+			.fetchOne();
+
+		return res != null;
+	}
+
+	public int countAllBillings(String vendorUsername, BillingSearch search) {
+		Long count = jpaQueryFactory
+			.select(billing.id.count())
+			.from(billing)
+
+			.join(billing.billingStandard, billingStandard)
+			.leftJoin(billingStandard.billingProducts, billingProduct).on(billingProductNotDel())    // left join
+			.join(billingProduct.product, product)
+			.join(billingStandard.contract, contract)
+			.join(contract.vendor, vendor)
+			.join(contract.member, member)
+			.join(contract.payment, payment)
+
+			.where(
+				billingNotDel(),                                // 청구 소프트 삭제
+
+				vendorUsernameEq(vendorUsername),                // 고객 아이디 일치
+
+				memberNameContains(search.getMemberName()),        // 회원 이름 포함
+				memberPhoneContains(search.getMemberPhone()),    // 회원 휴대전화 포함
+				billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
+				paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
+				billingDateEq(search.getBillingDate())            // 결제일 일치
+			)
+
+			.groupBy(billing.id)
+			.having(
+				productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
+				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
+			)
+
+			.fetchOne();
+
+		return (count != null) ? count.intValue() : 0;
+	}
 }

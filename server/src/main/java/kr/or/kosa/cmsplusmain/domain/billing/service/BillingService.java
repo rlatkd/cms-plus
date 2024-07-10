@@ -40,10 +40,15 @@ public class BillingService {
 	 *
 	 * 검색, 정렬 조건을 반영한다.
 	 * */
-	public List<BillingListItem> findBillings(String vendorUsername, BillingSearch search, SortPageDto.Req pageable) {
-		return billingCustomRepository.findBillingListWithCondition(vendorUsername, search, pageable).stream()
+	public SortPageDto.Res<BillingListItem> findBillings(String vendorUsername, BillingSearch search, SortPageDto.Req pageable) {
+		List<BillingListItem> items = billingCustomRepository.findBillingListWithCondition(vendorUsername, search, pageable).stream()
 			.map(BillingListItem::fromEntity)
 			.toList();
+
+		int totalNum = billingCustomRepository.countAllBillings(vendorUsername, search);
+		int totalPage = SortPageDto.calcTotalPageNumber(totalNum, pageable.getSize());
+
+		return new SortPageDto.Res<>(totalPage, items);
 	}
 
 	/*
@@ -81,5 +86,15 @@ public class BillingService {
 			.billingDate(billingReq.getBillingDate())
 				.billingStatus(BillingStatus.CREATED)
 			.build());
+	}
+
+	/*
+	 * 청구 ID 존재여부
+	 * 청구가 현재 로그인 고객의 회원의 청구인지 여부
+	 * */
+	private void validateBillingUser(Long billingId, String vendorUsername) {
+		if (billingCustomRepository.isExistBillingByUsername(billingId, vendorUsername)) {
+			throw new EntityNotFoundException("청구 ID 없음(" + billingId + ")");
+		}
 	}
 }
