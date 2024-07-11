@@ -12,7 +12,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ContractListItemDto {
+public class ContractListItemRes {
 
 	private final Long contractId;                                    	// 계약 ID
 	private final String memberName;                                	// 회원 이름
@@ -23,7 +23,7 @@ public class ContractListItemDto {
 	private final ContractStatus contractStatus;                    	// 계약상태
 	private final ConsentStatus consentStatus;                        	// 동의상태
 
-	public static ContractListItemDto fromEntity(Contract contract) {
+	public static ContractListItemRes fromEntity(Contract contract) {
 
 		// NOT NULL
 		final Member member = contract.getMember();
@@ -36,7 +36,7 @@ public class ContractListItemDto {
 		final Payment payment = contract.getPayment();
 		final ConsentStatus consentStatus = payment.getConsentStatus();
 
-		return ContractListItemDto.builder()
+		return ContractListItemRes.builder()
 			.contractId(contract.getId())
 			.memberName(member.getName())
 			.memberPhone(member.getPhone())

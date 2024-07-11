@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ContractDetailDto {
+public class ContractDetailRes {
 
 	private final Long contractId;                                	// 계약 ID
 	private final String contractName;                              // 계약이름
@@ -20,7 +20,7 @@ public class ContractDetailDto {
 	private final Long contractPrice;                            	// 계약금액
 	private final PaymentDto payment;                            	// 결제정보
 
-	public static ContractDetailDto fromEntity(Contract contract) {
+	public static ContractDetailRes fromEntity(Contract contract) {
 
 		// NOT NULL
 		final List<ContractProductRes> contractProductResList = contract.getContractProducts()
@@ -30,7 +30,7 @@ public class ContractDetailDto {
 
 		final PaymentDto paymentDto = PaymentDto.fromEntity(contract.getPayment());
 
-		return ContractDetailDto.builder()
+		return ContractDetailRes.builder()
 			.contractId(contract.getId())
 			.contractName(contract.getName())
 			.createdDateTime(contract.getCreatedDateTime())

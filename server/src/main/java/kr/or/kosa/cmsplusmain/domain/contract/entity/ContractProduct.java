@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Comment("계약 - 상품 중계테이블. 상품 변동에 영향을 받지 않는다.")
 @Entity
@@ -38,7 +39,7 @@ public class ContractProduct extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "contract_id")
-	@NotNull
+	@Setter
 	private Contract contract;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -61,5 +62,20 @@ public class ContractProduct extends BaseEntity {
 	* */
 	public long getContractProductPrice() {
 		return (long)price * quantity;
+	}
+
+	/*
+	 * 계약상품 동일성 비교
+	 * 기반이된 상품, 계약상품 가격, 계약상품 수량
+	 * */
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ContractProduct other)) {
+			return false;
+		}
+
+		return (this.product.getId().equals(other.product.getId()))
+			&& (this.price == other.price)
+			&& (this.quantity == other.quantity);
 	}
 }

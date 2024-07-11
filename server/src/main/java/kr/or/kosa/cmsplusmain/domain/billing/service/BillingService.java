@@ -132,17 +132,21 @@ public class BillingService {
 		updateBillingProducts(billingStandard, newBillingProducts);
 	}
 
+	/*
+	 * 기존 청구상품과 신규 청구상품 비교해서
+	 * 새롭게 추가되거나 삭제된 것만 수정 반영
+	 * */
 	private void updateBillingProducts(BillingStandard billingStandard, List<BillingProduct> newBillingProducts) {
 		// 기존 청구상품
-		List<BillingProduct> orgBillingProducts = billingStandard.getBillingProducts();
+		List<BillingProduct> oldBillingProducts = billingStandard.getBillingProducts();
 
 		// 신규 청구상품에만 존재하는 것 추가
 		newBillingProducts.stream()
-			.filter(nbp -> !orgBillingProducts.contains(nbp))
+			.filter(nbp -> !oldBillingProducts.contains(nbp))
 			.forEach(billingStandard::addBillingProduct);
 
 		// 기존 청구상품에만 존재하는 것 삭제
-		orgBillingProducts.stream()
+		oldBillingProducts.stream()
 			.filter(obp -> !newBillingProducts.contains(obp))
 			.toList()
 			.forEach(billingStandard::removeBillingProduct);

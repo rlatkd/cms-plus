@@ -23,6 +23,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
+import kr.or.kosa.cmsplusmain.domain.contract.exception.EmptyContractProductException;
 import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -42,6 +43,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Contract extends BaseEntity {
+
+	private static final int MIN_CONTRACT_PRODUCT_NUMBER = 1;
 
 	@Id
 	@Column(name = "contract_id")
@@ -76,7 +79,6 @@ public class Contract extends BaseEntity {
 
 	@Comment("계약 약정일")
 	@Column(name = "contract_day", nullable = false)
-	@Setter
 	private int contractDay;
 
 	@Comment("계약 결제정보")
@@ -100,6 +102,26 @@ public class Contract extends BaseEntity {
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	@Builder.Default
 	private List<ContractProduct> contractProducts = new ArrayList<>();
+
+	/*
+	 * 계약 상품 추가
+	 * */
+	public void addContractProduct(ContractProduct contractProduct) {
+		contractProduct.setContract(this);
+		contractProducts.add(contractProduct);
+	}
+
+	/*
+	 * 계약 상품 삭제
+	 * */
+	public void removeContractProduct(ContractProduct contractProduct) {
+		// 계약은 최소 한 개 이상의 상품을 가져야한다.
+		if (contractProducts.size() == MIN_CONTRACT_PRODUCT_NUMBER) {
+			throw new EmptyContractProductException();
+		}
+		contractProduct.delete();
+		contractProducts.remove(contractProduct);
+	}
 
 	/*
 	 * 계약금액

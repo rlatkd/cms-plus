@@ -8,15 +8,17 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailDto;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,19 +28,20 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ContractService {
 
+	private final ContractRepository contractRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	private final BillingCustomRepository billingCustomRepository;
 
 	/*
 	 * 계약 목록 조회
 	 * */
-	public PageRes<ContractListItemDto> searchContracts(String vendorUsername, ContractSearchReq search, PageReq pageReq)
+	public PageRes<ContractListItemRes> searchContracts(String vendorUsername, ContractSearchReq search, PageReq pageReq)
 	{
 		// 1개 페이지 결과
-		List<ContractListItemDto> content = contractCustomRepository
+		List<ContractListItemRes> content = contractCustomRepository
 			.findContractListWithCondition(vendorUsername, search, pageReq)
 			.stream()
-			.map(ContractListItemDto::fromEntity)
+			.map(ContractListItemRes::fromEntity)
 			.toList();
 
 		// 전체 개수
@@ -50,15 +53,15 @@ public class ContractService {
 	/*
 	 * 계약의 청구 목록
 	 * */
-	public PageRes<BillingListItemDto> getBillingsByContract(
+	public PageRes<BillingListItemRes> getBillingsByContract(
 		String vendorUsername, Long contractId, PageReq pageReq)
 	{
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorUsername);
 
-		List<BillingListItemDto> content = billingCustomRepository.findBillingsByContractId(contractId, pageReq)
+		List<BillingListItemRes> content = billingCustomRepository.findBillingsByContractId(contractId, pageReq)
 			.stream()
-			.map(BillingListItemDto::fromEntity)
+			.map(BillingListItemRes::fromEntity)
 			.toList();
 
 		int totalContentCount = billingCustomRepository.countAllBillingsByContract(contractId);
@@ -73,33 +76,54 @@ public class ContractService {
 	/*
 	 * 계약 상세
 	 * */
-	public ContractDetailDto getContractDetail(String vendorUsername, Long contractId) {
+	public ContractDetailRes getContractDetail(String vendorUsername, Long contractId) {
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorUsername);
 
 		Contract contract = contractCustomRepository.findContractDetailById(contractId).orElseThrow();
-		return ContractDetailDto.fromEntity(contract);
+		return ContractDetailRes.fromEntity(contract);
 	}
 
 	/*
 	* 계약 이름 및 상품 목록 수정
 	* */
 	@Transactional
-	public void updateContract(
-		String vendorUsername, Long contractId, ContractCreateReq contractCreateReq)
-	{
+	public void updateContract(String vendorUsername, Long contractId, ContractCreateReq contractCreateReq) {
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorUsername);
 
-		List<ContractProduct> contractProducts = contractCreateReq.getContractProducts()
+		// 계약 이름 수정
+		Contract contract = contractRepository.findById(contractId).orElseThrow();
+		contract.setName(contractCreateReq.getContractName());
+
+		// 신규 계약상품
+		List<ContractProduct> newContractProducts = contractCreateReq.getContractProducts()
 			.stream()
-			.map(dto -> dto.toEntity(contractId))
+			.map(ContractProductReq::toEntity)
 			.toList();
 
-		contractCustomRepository.updateContract(
-			contractId,
-			contractCreateReq.getContractName(),
-			contractProducts);
+		// 계약상품 수정
+		updateContractProduct(contract, newContractProducts);
+	}
+
+	/*
+	* 기존 계약상품과 신규 계약상품 비교해서
+	* 새롭게 추가되거나 삭제된 것만 수정 반영
+	* */
+	private void updateContractProduct(Contract contract, List<ContractProduct> newContractProducts) {
+		// 기존 계약상품
+		List<ContractProduct> oldContractProducts = contract.getContractProducts();
+
+		// 신규 계약상품에만 존재하는 것 추가
+		newContractProducts.stream()
+			.filter(ncp -> !oldContractProducts.contains(ncp))
+			.forEach(contract::addContractProduct);
+
+		// 기존 계약상품에만 존재하는 것 삭제
+		oldContractProducts.stream()
+			.filter(ocp -> !newContractProducts.contains(ocp))
+			.toList()
+			.forEach(contract::removeContractProduct);
 	}
 
 	/*

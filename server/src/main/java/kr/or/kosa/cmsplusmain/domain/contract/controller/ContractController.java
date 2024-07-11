@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailDto;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class ContractController {
 	 * 계약 목록 조회
 	 * */
 	@GetMapping
-	public PageRes<ContractListItemDto> getContractList(ContractSearchReq contractSearchReq, PageReq pageReq) {
+	public PageRes<ContractListItemRes> getContractList(ContractSearchReq contractSearchReq, PageReq pageReq) {
 		String vendorUsername = "vendor1";
 		return contractService.searchContracts(vendorUsername, contractSearchReq, pageReq);
 	}
@@ -43,7 +43,7 @@ public class ContractController {
 	 * (청구정보에서 청구서 발송 수단, 자동 청구서 발송, 자동 청구 생성은 포함되어서 보내진다.)
 	 * */
 	@GetMapping("/{contractId}")
-	public ContractDetailDto getContractDetail(@PathVariable Long contractId) {
+	public ContractDetailRes getContractDetail(@PathVariable Long contractId) {
 		String vendorUsername = "vendor1";
 		return contractService.getContractDetail(vendorUsername, contractId);
 	}
@@ -52,7 +52,7 @@ public class ContractController {
 	 * 계약 상세 조회 - 청구 목록
 	 * */
 	@GetMapping("/{contractId}/billing")
-	public PageRes<BillingListItemDto> getBillingListByContract(@PathVariable Long contractId, PageReq pageReq) {
+	public PageRes<BillingListItemRes> getBillingListByContract(@PathVariable Long contractId, PageReq pageReq) {
 		String vendorUsername = "vendor1";
 		return contractService.getBillingsByContract(vendorUsername, contractId, pageReq);
 	}
