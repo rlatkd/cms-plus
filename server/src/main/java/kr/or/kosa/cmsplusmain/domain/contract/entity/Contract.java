@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -95,7 +96,7 @@ public class Contract extends BaseEntity {
 	private LocalDate contractEndDate;
 
 	/* 계약한 상품 목록 */
-	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private List<ContractProduct> contractProducts = new ArrayList<>();
 
