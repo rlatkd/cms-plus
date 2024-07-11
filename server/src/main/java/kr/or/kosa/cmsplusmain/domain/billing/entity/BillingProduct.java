@@ -60,7 +60,7 @@ public class BillingProduct extends BaseEntity {
 	@ProductQuantity
 	private int quantity;
 
-	public long getTotalPrice() {
+	public long getBillingProductPrice() {
 		return (long)price * quantity;
 	}
 }

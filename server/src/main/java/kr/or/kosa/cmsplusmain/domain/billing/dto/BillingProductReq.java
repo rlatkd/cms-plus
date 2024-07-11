@@ -12,9 +12,9 @@ public class BillingProductReq {
 	@NotNull
 	private Long productId;			// 상품 ID
 	@ProductPrice @NotNull
-	private Integer price;			// 상품 가격
+	private Integer price;			// 청구 상품 가격
 	@ProductQuantity @NotNull
-	private Integer quantity;		// 상품 개수
+	private Integer quantity;		// 청구 상품 개수
 
 	public BillingProduct toEntity() {
 		return BillingProduct.builder()

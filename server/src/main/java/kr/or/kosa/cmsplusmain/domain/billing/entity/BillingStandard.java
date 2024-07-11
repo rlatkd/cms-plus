@@ -102,7 +102,7 @@ public class BillingStandard extends BaseEntity {
 	 * */
 	public long getBillingPrice() {
 		return billingProducts.stream()
-			.mapToLong(BillingProduct::getTotalPrice)
+			.mapToLong(BillingProduct::getBillingProductPrice)
 			.sum();
 	}
 }

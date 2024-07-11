@@ -1,21 +1,21 @@
 package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
 @Getter
 @Builder
-public class MemberContractListItem {
+public class MemberContractListItemDto {
     private final Long contractId;                                    // 계약 ID
     private final String contractName;
+    // TODO: LocalDate로 리턴 후 프론트에서 처리
     private final String contractDate;
     private final int contractDay;
     private final List<ContractProductRes> contractProducts;
@@ -23,7 +23,7 @@ public class MemberContractListItem {
     private final ContractStatus contractStatus;
     private final ConsentStatus consentStatus;
 
-    public static MemberContractListItem fromEntity(Contract contract) {
+    public static MemberContractListItemDto fromEntity(Contract contract) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         String formattedContractDate = contract.getContractStartDate().format(formatter) + " ~ " + contract.getContractEndDate().format(formatter);
@@ -36,7 +36,7 @@ public class MemberContractListItem {
         final Payment payment = contract.getPayment();
         final ConsentStatus consentStatus = payment.getConsentStatus();
 
-        return MemberContractListItem.builder()
+        return MemberContractListItemDto.builder()
                 .contractId(contract.getId())
                 .contractName(contract.getName())
                 .contractDate(formattedContractDate)

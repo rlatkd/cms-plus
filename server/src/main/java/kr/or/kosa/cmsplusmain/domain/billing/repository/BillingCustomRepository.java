@@ -84,7 +84,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 *
 	 * 최신순 정렬
 	 * */
-	public List<Billing> findBillingsByContractId(Long contractId, SortPageDto.Req pageable) {
+	public List<Billing> findBillingsByContractId(Long contractId, PageReq pageable) {
 		return jpaQueryFactory
 			.selectFrom(billing)
 			.join(billing.billingStandard, billingStandard).fetchJoin()

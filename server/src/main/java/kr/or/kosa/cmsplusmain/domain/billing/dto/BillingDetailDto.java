@@ -37,12 +37,12 @@ public class BillingDetailDto {
 	private final Long billingPrice;						// 청구금액
 
 	public static BillingDetailDto fromEntity(Billing billing) {
-		BillingStandard billingStandard = billing.getBillingStandard();
-		Contract contract = billingStandard.getContract();
-		Member member = contract.getMember();
-		Payment payment = contract.getPayment();
+		final BillingStandard billingStandard = billing.getBillingStandard();
+		final Contract contract = billingStandard.getContract();
+		final Member member = contract.getMember();
+		final Payment payment = contract.getPayment();
 
-		List<BillingProductRes> billingProductResList = billingStandard.getBillingProducts()
+		final List<BillingProductRes> billingProductResList = billingStandard.getBillingProducts()
 			.stream()
 			.map(BillingProductRes::fromEntity)
 			.toList();

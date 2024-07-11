@@ -33,7 +33,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Comment("회원과 고객간의 계약 (학원 - 학생 간 계약)")
 @Table(name = "contract")
@@ -105,7 +104,7 @@ public class Contract extends BaseEntity {
 	 * */
 	public Long getContractPrice() {
 		return contractProducts.stream()
-			.mapToLong(ContractProduct::getTotalPrice)
+			.mapToLong(ContractProduct::getContractProductPrice)
 			.sum();
 	}
 
