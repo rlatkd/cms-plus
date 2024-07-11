@@ -6,7 +6,6 @@ import java.util.List;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 public class BillingCreateReq {

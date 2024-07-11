@@ -1,9 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
-import jakarta.validation.constraints.NotNull;
-import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
-import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;
-import lombok.ToString;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -17,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
+import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

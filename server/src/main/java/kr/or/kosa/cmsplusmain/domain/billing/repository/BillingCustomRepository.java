@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
@@ -38,7 +39,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 2. billingProduct <- batchsize 100
 	 * */
 	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearchReq search,
-		SortPageDto.Req pageable) {
+		PageReq pageReq) {
 		return jpaQueryFactory
 			.selectFrom(billing)
 
@@ -69,12 +70,12 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			)
 
 			.orderBy(
-				buildOrderSpecifier(pageable)
+				buildOrderSpecifier(pageReq)
 					.orElse(billing.createdDateTime.desc())				// 기본 정렬 = 생성시간 내림차순
 			)
 
-			.offset(pageable.getPage())
-			.limit(pageable.getSize())
+			.offset(pageReq.getPage())
+			.limit(pageReq.getSize())
 			.fetch();
 	}
 

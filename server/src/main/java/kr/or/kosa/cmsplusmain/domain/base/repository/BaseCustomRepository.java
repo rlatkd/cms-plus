@@ -14,6 +14,7 @@ import static org.springframework.util.StringUtils.*;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.product.entity.QProduct;
 import org.springframework.stereotype.Repository;
@@ -49,16 +50,16 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	/*
 	 * 정렬 조건 생성
 	 * */
-	protected Optional<OrderSpecifier<?>> buildOrderSpecifier(SortPageDto.Req pageable) {
-		if (pageable == null || !StringUtils.hasText(pageable.getOrderBy())) {
+	protected Optional<OrderSpecifier<?>> buildOrderSpecifier(PageReq pageReq) {
+		if (pageReq == null || !StringUtils.hasText(pageReq.getOrderBy())) {
 			return Optional.empty();
 		}
 
 		EntityPathBase<?> entity = null;
 		String fieldName = null;
-		Order order = pageable.isAsc() ? Order.ASC : Order.DESC;
+		Order order = pageReq.isAsc() ? Order.ASC : Order.DESC;
 
-		switch (pageable.getOrderBy()) {
+		switch (pageReq.getOrderBy()) {
 			case "memberName" -> {
 				fieldName = "name";
 				entity = member;
@@ -67,7 +68,7 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 			case "billingPrice" -> {
 				NumberExpression<Long> expression =
 					billingProduct.price.longValue().multiply(billingProduct.quantity).sum();
-				return Optional.ofNullable(pageable.isAsc() ? expression.asc() : expression.desc());
+				return Optional.ofNullable(pageReq.isAsc() ? expression.asc() : expression.desc());
 			}
 			case "billingDate" -> {
 				fieldName = "billingDate";
@@ -81,7 +82,7 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 			case "contractPrice" -> {
 				NumberExpression<Long> expression =
 					contractProduct.price.longValue().multiply(contractProduct.quantity).sum();
-				return Optional.ofNullable(pageable.isAsc() ? expression.asc() : expression.desc());
+				return Optional.ofNullable(pageReq.isAsc() ? expression.asc() : expression.desc());
 			}
 		}
 

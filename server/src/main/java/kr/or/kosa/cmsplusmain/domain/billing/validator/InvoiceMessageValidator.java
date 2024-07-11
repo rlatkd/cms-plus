@@ -1,7 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.billing.validator;
 
-import java.util.regex.Pattern;
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
