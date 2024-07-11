@@ -9,8 +9,8 @@ import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailDto;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
@@ -20,6 +20,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.DeleteBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingProductRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingStandardRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
@@ -36,6 +37,7 @@ public class BillingService {
 	private final BillingRepository billingRepository;
 	private final BillingCustomRepository billingCustomRepository;
 	private final BillingStandardRepository billingStandardRepository;
+	private final BillingProductRepository billingProductRepository;
 
 	private final ContractCustomRepository contractCustomRepository;
 
@@ -80,12 +82,12 @@ public class BillingService {
 	/*
 	 * 청구목록 조회
 	 * */
-	public PageRes<BillingListItemDto> searchBillings(String vendorUsername, BillingSearchReq search, PageReq pageReq) {
+	public PageRes<BillingListItemRes> searchBillings(String vendorUsername, BillingSearchReq search, PageReq pageReq) {
 		// 단일 페이지 결과
-		List<BillingListItemDto> content = billingCustomRepository
+		List<BillingListItemRes> content = billingCustomRepository
 			.findBillingListWithCondition(vendorUsername, search, pageReq)
 			.stream()
-			.map(BillingListItemDto::fromEntity)
+			.map(BillingListItemRes::fromEntity)
 			.toList();
 
 		// 전체 개수
@@ -97,12 +99,12 @@ public class BillingService {
 	/*
 	* 청구 상세 조회
 	* */
-	public BillingDetailDto getBillingDetail(String vendorUsername, Long billingId) {
+	public BillingDetailRes getBillingDetail(String vendorUsername, Long billingId) {
 		// 고객의 청구 여부 확인
 		validateBillingUser(billingId, vendorUsername);
 
 		Billing billing = billingCustomRepository.findBillingDetail(billingId);
-		return BillingDetailDto.fromEntity(billing);
+		return BillingDetailRes.fromEntity(billing);
 	}
 
 	/*
@@ -115,17 +117,35 @@ public class BillingService {
 
 		// 결제일, 청구서 메시지 수정
 		Billing billing = billingCustomRepository.findBillingWithStandard(billingId);
-		billing.updateBillingDate(billingUpdateReq.getBillingDate());
+		billing.setBillingDate(billingUpdateReq.getBillingDate());
 		billing.setInvoiceMessage(billingUpdateReq.getInvoiceMemo());
 
-		List<BillingProduct> billingProducts = billingUpdateReq.getBillingProducts()
+		BillingStandard billingStandard = billing.getBillingStandard();
+
+		// 신규 청구상품
+		List<BillingProduct> newBillingProducts = billingUpdateReq.getBillingProducts()
 			.stream()
 			.map(BillingProductReq::toEntity)
 			.toList();
 
-		// 청구 상품 수정
-		BillingStandard billingStandard = billing.getBillingStandard();
-		billingStandard.updateBillingProducts(billingProducts);
+		// 청구상품 수정
+		updateBillingProducts(billingStandard, newBillingProducts);
+	}
+
+	private void updateBillingProducts(BillingStandard billingStandard, List<BillingProduct> newBillingProducts) {
+		// 기존 청구상품
+		List<BillingProduct> orgBillingProducts = billingStandard.getBillingProducts();
+
+		// 신규 청구상품에만 존재하는 것 추가
+		newBillingProducts.stream()
+			.filter(nbp -> !orgBillingProducts.contains(nbp))
+			.forEach(billingStandard::addBillingProduct);
+
+		// 기존 청구상품에만 존재하는 것 삭제
+		orgBillingProducts.stream()
+			.filter(obp -> !newBillingProducts.contains(obp))
+			.toList()
+			.forEach(billingStandard::removeBillingProduct);
 	}
 
 	/*

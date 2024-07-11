@@ -60,7 +60,25 @@ public class BillingProduct extends BaseEntity {
 	@ProductQuantity
 	private int quantity;
 
+	/*
+	* 청구상품 가격 (상품 * 수량)
+	* */
 	public long getBillingProductPrice() {
 		return (long)price * quantity;
+	}
+
+	/*
+	* 청구상품 동일성 비교
+	* 기반이된 상품, 청구상품 가격, 청구상품 수량
+	* */
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof BillingProduct other)) {
+			return false;
+		}
+
+		return (this.product.getId().equals(other.product.getId()))
+			&& (this.price == other.price)
+			&& (this.quantity == other.quantity);
 	}
 }

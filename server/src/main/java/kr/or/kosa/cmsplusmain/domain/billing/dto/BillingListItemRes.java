@@ -15,7 +15,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class BillingListItemDto {
+public class BillingListItemRes {
 	private final Long billingId;                            	// 청구 ID
 	private final String memberName;                        	// 회원명
 	private final String memberPhone;                        	// 회원 휴대번호
@@ -25,7 +25,7 @@ public class BillingListItemDto {
 	private final PaymentType paymentType;                    	// 결제방식
 	private final LocalDate billingDate;                    	// 청구의 결제일
 
-	public static BillingListItemDto fromEntity(Billing billing) {
+	public static BillingListItemRes fromEntity(Billing billing) {
 
 		// NOT NULL
 		final BillingStandard billingStandard = billing.getBillingStandard();
@@ -39,7 +39,7 @@ public class BillingListItemDto {
 
 		final Payment payment = contract.getPayment();
 
-		return BillingListItemDto.builder()
+		return BillingListItemRes.builder()
 			.billingId(billing.getId())
 			.memberName(member.getName())
 			.memberPhone(member.getPhone())

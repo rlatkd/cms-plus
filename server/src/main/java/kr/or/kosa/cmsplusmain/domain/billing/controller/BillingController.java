@@ -13,8 +13,8 @@ import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailDto;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
@@ -42,7 +42,7 @@ public class BillingController {
 	 * 청구목록 조회
 	 * */
 	@GetMapping
-	public PageRes<BillingListItemDto> getBillingListWithCondition(BillingSearchReq search, PageReq pageReq) {
+	public PageRes<BillingListItemRes> getBillingListWithCondition(BillingSearchReq search, PageReq pageReq) {
 		String vendorUsername = "vendor1";
 		return billingService.searchBillings(vendorUsername, search, pageReq);
 	}
@@ -51,7 +51,7 @@ public class BillingController {
 	 * 청구상세 조회
 	 * */
 	@GetMapping("/{billingId}")
-	public BillingDetailDto getBillingDetail(@PathVariable Long billingId) {
+	public BillingDetailRes getBillingDetail(@PathVariable Long billingId) {
 		String vendorUsername = "vendor1";
 		return billingService.getBillingDetail(vendorUsername, billingId);
 	}

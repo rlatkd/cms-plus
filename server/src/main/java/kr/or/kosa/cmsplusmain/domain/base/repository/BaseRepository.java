@@ -36,9 +36,10 @@ public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
 	@Query("UPDATE #{#entityName} e SET e.deleted = true WHERE e.id = ?1")
 	void deleteById(ID id);
 
+	@Override
 	@Modifying
 	@Query("UPDATE #{#entityName} e SET e.deleted = true WHERE e.id IN ?1")
-	void softDeleteAllById(Iterable<? extends ID> ids);
+	void deleteAllById(Iterable<? extends ID> ids);
 
 	@Query("SELECT e FROM #{#entityName} e WHERE e.deleted = true")
 	List<T> findAllDeleted();

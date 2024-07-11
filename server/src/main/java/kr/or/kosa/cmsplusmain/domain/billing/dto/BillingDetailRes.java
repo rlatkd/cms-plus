@@ -16,7 +16,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class BillingDetailDto {
+public class BillingDetailRes {
 
 	private final Long memberId;							// 회원 ID
 	private final String memberName;						// 회원 이름
@@ -36,7 +36,7 @@ public class BillingDetailDto {
 	private final List<BillingProductRes> billingProducts;	// 청구상품 목록
 	private final Long billingPrice;						// 청구금액
 
-	public static BillingDetailDto fromEntity(Billing billing) {
+	public static BillingDetailRes fromEntity(Billing billing) {
 		final BillingStandard billingStandard = billing.getBillingStandard();
 		final Contract contract = billingStandard.getContract();
 		final Member member = contract.getMember();
@@ -47,7 +47,7 @@ public class BillingDetailDto {
 			.map(BillingProductRes::fromEntity)
 			.toList();
 
-		return BillingDetailDto.builder()
+		return BillingDetailRes.builder()
 			.memberId(member.getId())
 			.memberName(member.getName())
 			.memberPhone(member.getPhone())

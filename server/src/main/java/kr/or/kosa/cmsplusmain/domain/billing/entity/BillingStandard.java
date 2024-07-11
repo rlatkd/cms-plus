@@ -33,6 +33,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BillingStandard extends BaseEntity {
 
+	private static final int MIN_BILLING_PRODUCT_NUMBER = 1;
+
 	@Id
 	@Column(name = "billing_standard_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,6 +87,18 @@ public class BillingStandard extends BaseEntity {
 	public void addBillingProduct(BillingProduct billingProduct) {
 		billingProduct.setBillingStandard(this);
 		billingProducts.add(billingProduct);
+	}
+
+	/*
+	 * 청구 상품 삭제
+	 * */
+	public void removeBillingProduct(BillingProduct billingProduct) {
+		// 청구는 최소 한 개 이상의 상품을 가져야한다.
+		if (billingProducts.size() == MIN_BILLING_PRODUCT_NUMBER) {
+			throw new EmptyBillingProductException();
+		}
+		billingProduct.delete();
+		billingProducts.remove(billingProduct);
 	}
 
 	/*
