@@ -6,12 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetail;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemDto;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearch;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
@@ -39,41 +40,16 @@ public class BillingService {
 	private final ContractCustomRepository contractCustomRepository;
 
 	/*
-	 * 청구목록 조회
-	 *
-	 * 검색, 정렬 조건을 반영한다.
+	 * 청구 생성
 	 * */
-	public SortPageDto.Res<BillingListItem> findBillings(String vendorUsername, BillingSearch search, SortPageDto.Req pageable) {
-		List<BillingListItem> items = billingCustomRepository.findBillingListWithCondition(vendorUsername, search, pageable).stream()
-			.map(BillingListItem::fromEntity)
-			.toList();
-
-		int totalNum = billingCustomRepository.countAllBillings(vendorUsername, search);
-		int totalPage = SortPageDto.calcTotalPageNumber(totalNum, pageable.getSize());
-
-		return new SortPageDto.Res<>(totalPage, items);
-	}
-
-	/*
-	* 청구 상세 조회
-	* */
-	public BillingDetail findBillingDetail(String vendorUsername, Long billingId) {
-		validateBillingUser(billingId, vendorUsername);
-		Billing billing = billingCustomRepository.findBillingDetail(billingId);
-		return BillingDetail.fromEntity(billing);
-	}
-
-	/*
-	* 청구 생성
-	* */
 	@Transactional
 	public void createBilling(String vendorUsername, BillingCreateReq billingCreateReq) {
 		// 계약 존재 여부 확인
 		if (!contractCustomRepository.isExistContractByUsername(billingCreateReq.getContractId(), vendorUsername)) {
-			throw new EntityNotFoundException("해당하는 계약이 없습니다." + billingCreateReq.getContractId().toString());
+			throw new EntityNotFoundException();
 		}
 
-		// 청구 상품
+		// 청구 상품 목록
 		List<BillingProduct> billingProducts = billingCreateReq.getBillingProducts()
 			.stream()
 			.map(BillingProductReq::toEntity)
@@ -84,7 +60,7 @@ public class BillingService {
 			.contract(Contract.of(billingCreateReq.getContractId()))
 			.type(billingCreateReq.getBillingType())
 
-			// 청구 생성시 결제일을 넣어주는데 연월일 까지 넣어준다.
+			// 청구 생성시 결제일을 넣어주는데 연월일 형식으로 넣어준다.
 			// 정기 청구 시 필요한 약정일은 입력된 결제일에서 일 부분만 빼서 사용
 			// ex. 입력 결제일=2024.07.13 => 약정일=13
 			.contractDay(billingCreateReq.getBillingDate().getDayOfMonth())
@@ -93,11 +69,40 @@ public class BillingService {
 
 
 		// 청구 생성
-		Billing billing = billingRepository.save(Billing.builder()
+		Billing billing = Billing.builder()
 			.billingStandard(billingStandard)
 			.billingDate(billingCreateReq.getBillingDate())
-				.billingStatus(BillingStatus.CREATED)
-			.build());
+			.build();
+
+		billingRepository.save(billing);
+	}
+
+	/*
+	 * 청구목록 조회
+	 * */
+	public PageRes<BillingListItemDto> searchBillings(String vendorUsername, BillingSearchReq search, PageReq pageReq) {
+		// 단일 페이지 결과
+		List<BillingListItemDto> content = billingCustomRepository
+			.findBillingListWithCondition(vendorUsername, search, pageReq)
+			.stream()
+			.map(BillingListItemDto::fromEntity)
+			.toList();
+
+		// 전체 개수
+		int totalContentCount = billingCustomRepository.countAllBillings(vendorUsername, search);
+
+		return new PageRes<>(totalContentCount, pageReq.getSize(), content);
+	}
+
+	/*
+	* 청구 상세 조회
+	* */
+	public BillingDetailDto getBillingDetail(String vendorUsername, Long billingId) {
+		// 고객의 청구 여부 확인
+		validateBillingUser(billingId, vendorUsername);
+
+		Billing billing = billingCustomRepository.findBillingDetail(billingId);
+		return BillingDetailDto.fromEntity(billing);
 	}
 
 	/*
@@ -105,12 +110,13 @@ public class BillingService {
 	* */
 	@Transactional
 	public void updateBilling(String vendorUsername, Long billingId, BillingUpdateReq billingUpdateReq) {
+		// 고객의 청구 여부 확인
 		validateBillingUser(billingId, vendorUsername);
 
 		// 결제일, 청구서 메시지 수정
 		Billing billing = billingCustomRepository.findBillingWithStandard(billingId);
 		billing.updateBillingDate(billingUpdateReq.getBillingDate());
-		billing.setMemo(billingUpdateReq.getInvoiceMemo());
+		billing.setInvoiceMessage(billingUpdateReq.getInvoiceMemo());
 
 		List<BillingProduct> billingProducts = billingUpdateReq.getBillingProducts()
 			.stream()
@@ -127,11 +133,13 @@ public class BillingService {
 	* */
 	@Transactional
 	public void deleteBilling(String vendorUsername, Long billingId) {
+		// 고객의 청구 여부 확인
 		validateBillingUser(billingId, vendorUsername);
 
 		Billing billing = billingRepository.findById(billingId).orElseThrow();
 
-		// 청구서 발송 전 상태에서만 삭제가 가능하다.
+		// 청구상태에 따른 삭제 조건 존재
+		// 청구상태가 생성 (청구서 발송 전)에만 삭제가 가능하다.
 		if (!billing.getBillingStatus().equals(BillingStatus.CREATED)) {
 			throw new DeleteBillingException();
 		}

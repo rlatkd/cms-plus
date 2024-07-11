@@ -12,19 +12,26 @@ import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.product.entity.QProduct;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparablePath;
+import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
@@ -40,36 +47,55 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	protected final JPAQueryFactory jpaQueryFactory;
 
 	/*
-	 * 새로생성 혹은 수정완료시 (비영속 상태 객체 수정 완료 후 호출)
-	 * */
-	@Transactional
-	public T save(T entity) {
-		return em.merge(entity);
-	}
-
-	/*
 	 * 정렬 조건 생성
-	 *
-	 * 기본 조건: 생성일 내림차순
-	 *
 	 * */
-	protected OrderSpecifier<?> orderMethod(SortPageDto.Req pageable) {
-		if (pageable.getOrderBy() == null) {
-			return new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
+	protected Optional<OrderSpecifier<?>> buildOrderSpecifier(SortPageDto.Req pageable) {
+		if (pageable == null || !StringUtils.hasText(pageable.getOrderBy())) {
+			return Optional.empty();
 		}
 
+		EntityPathBase<?> entity = null;
+		String fieldName = null;
 		Order order = pageable.isAsc() ? Order.ASC : Order.DESC;
 
-		return switch (pageable.getOrderBy()) {
-			case "memberName" -> new OrderSpecifier<>(order, member.name);
-			case "contractDay" -> new OrderSpecifier<>(order, contract.contractDay);
-			case "contractPrice" ->
-				new OrderSpecifier<>(order, contractProduct.price.multiply(contractProduct.quantity).sum());
-			case "billingPrice" ->
-				new OrderSpecifier<>(order, billingProduct.price.multiply(billingProduct.quantity).sum());
-			case "billingDate" -> new OrderSpecifier<>(order, billing.billingDate);
-			default -> new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
-		};
+		switch (pageable.getOrderBy()) {
+			case "memberName" -> {
+				fieldName = "name";
+				entity = member;
+			}
+
+			case "billingPrice" -> {
+				NumberExpression<Long> expression =
+					billingProduct.price.longValue().multiply(billingProduct.quantity).sum();
+				return Optional.ofNullable(pageable.isAsc() ? expression.asc() : expression.desc());
+			}
+			case "billingDate" -> {
+				fieldName = "billingDate";
+				entity = billing;
+			}
+
+			case "contractDay" -> {
+				fieldName = "contractDay";
+				entity = contract;
+			}
+			case "contractPrice" -> {
+				NumberExpression<Long> expression =
+					contractProduct.price.longValue().multiply(contractProduct.quantity).sum();
+				return Optional.ofNullable(pageable.isAsc() ? expression.asc() : expression.desc());
+			}
+		}
+
+		return Optional.ofNullable(getSortColumn(entity, fieldName, order));
+	}
+
+	private OrderSpecifier<?> getSortColumn(EntityPathBase<?> entity, String fieldName, Order order) {
+		if (entity == null || fieldName == null) {
+			return null;
+		}
+
+		ComparablePath<?> path = new PathBuilder<>(entity.getType(), entity.getMetadata().getName())
+			.getComparable(fieldName, Comparable.class);
+		return (order.equals(Order.ASC)) ? path.asc() : path.desc();
 	}
 
 	protected BooleanExpression vendorUsernameEq(String vendorUsername) {

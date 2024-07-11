@@ -89,6 +89,11 @@ public class BillingStandard extends BaseEntity {
 		billingProducts.add(billingProduct);
 	}
 
+	/*
+	* 청구 상품 전체 수정
+	*
+	* 기존 청구상품 삭제 -> 새로운 청구 상품 추가
+	* */
 	public void updateBillingProducts(List<BillingProduct> billingProducts) {
 		this.billingProducts.forEach(BaseEntity::delete);
 		billingProducts.forEach(this::addBillingProduct);

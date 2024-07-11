@@ -4,7 +4,6 @@ import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingStandard.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
@@ -13,17 +12,14 @@ import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearch;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -41,7 +37,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 1. billing
 	 * 2. billingProduct <- batchsize 100
 	 * */
-	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearch search,
+	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearchReq search,
 		SortPageDto.Req pageable) {
 		return jpaQueryFactory
 			.selectFrom(billing)
@@ -72,7 +68,10 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
 			)
 
-			.orderBy(orderMethod(pageable))
+			.orderBy(
+				buildOrderSpecifier(pageable)
+					.orElse(billing.createdDateTime.desc())				// 기본 정렬 = 생성시간 내림차순
+			)
 
 			.offset(pageable.getPage())
 			.limit(pageable.getSize())
@@ -119,7 +118,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	}
 
 	/*
-	* 청구와 청구 기준 같이 조회
+	* 청구와 청구기준 같이 조회
 	* 청구 상품 수정시 사용됨
 	* */
 	public Billing findBillingWithStandard(Long billingId) {
@@ -211,7 +210,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	/*
 	* 고객의 전체 계약 수 (검색 조건 반영된 계약 수)
 	* */
-	public int countAllBillings(String vendorUsername, BillingSearch search) {
+	public int countAllBillings(String vendorUsername, BillingSearchReq search) {
 		Long count = jpaQueryFactory
 				.select(billing.id.count())
 				.from(billing)

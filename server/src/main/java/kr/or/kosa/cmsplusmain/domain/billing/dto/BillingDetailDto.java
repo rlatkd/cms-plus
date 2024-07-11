@@ -16,27 +16,27 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class BillingDetail {
+public class BillingDetailDto {
 
-	private final Long memberId;
-	private final String memberName;
-	private final String memberPhone;
+	private final Long memberId;							// 회원 ID
+	private final String memberName;						// 회원 이름
+	private final String memberPhone;						// 회원 휴대전화
 
-	private final Long contractId;
-	private final PaymentType paymentType;
-	private final PaymentMethod paymentMethod;
+	private final Long contractId;							// 계약 ID
+	private final PaymentType paymentType;					// 결제방식
+	private final PaymentMethod paymentMethod;				// 결제수단
 
-	private final Long billingId;
-	private final String billingName;
-	private final BillingType billingType;
-	private final LocalDate billingCreatedDate;
-	private final LocalDate billingDate;
-	private final String billingMemo;
+	private final Long billingId;							// 청구 ID
+	private final String billingName;						// 청구서명
+	private final BillingType billingType;					// 청구타입
+	private final LocalDate billingCreatedDate;				// 청구 생성일
+	private final LocalDate billingDate;					// 청구 결제일
+	private final String billingMemo;						// 청구서 메시지
 
-	private final List<BillingProductRes> billingProducts;
-	private final Long billingPrice;
+	private final List<BillingProductRes> billingProducts;	// 청구상품 목록
+	private final Long billingPrice;						// 청구금액
 
-	public static BillingDetail fromEntity(Billing billing) {
+	public static BillingDetailDto fromEntity(Billing billing) {
 		BillingStandard billingStandard = billing.getBillingStandard();
 		Contract contract = billingStandard.getContract();
 		Member member = contract.getMember();
@@ -47,7 +47,7 @@ public class BillingDetail {
 			.map(BillingProductRes::fromEntity)
 			.toList();
 
-		return BillingDetail.builder()
+		return BillingDetailDto.builder()
 			.memberId(member.getId())
 			.memberName(member.getName())
 			.memberPhone(member.getPhone())
@@ -61,7 +61,7 @@ public class BillingDetail {
 			.billingType(billingStandard.getType())
 			.billingCreatedDate(billing.getCreatedDateTime().toLocalDate())
 			.billingDate(billing.getBillingDate())
-			.billingMemo(billing.getMemo())
+			.billingMemo(billing.getInvoiceMessage())
 
 			.billingProducts(billingProductResList)
 			.billingPrice(billingStandard.getBillingPrice())

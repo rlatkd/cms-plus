@@ -9,14 +9,9 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
-@ToString
 public class BillingCreateReq {
-	@NotNull
-	private BillingType billingType;
-	@NotNull
-	private LocalDate billingDate;
-	@NotNull
-	private Long contractId;
-	@NotNull
-	private List<BillingProductReq> billingProducts;
+	@NotNull private BillingType billingType;					// 청구타입 (정기, 추가)
+	@NotNull private LocalDate billingDate;						// 청구 결제일
+	@NotNull private Long contractId;							// 청구 생성 기반 계약의 ID
+	@NotNull private List<BillingProductReq> billingProducts;	// 청구 상품 목록
 }

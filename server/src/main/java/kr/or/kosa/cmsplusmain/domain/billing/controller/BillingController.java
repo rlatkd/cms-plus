@@ -10,14 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetail;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemDto;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearch;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
 import lombok.RequiredArgsConstructor;
+
+// TODO security 연동
 
 @RestController
 @RequestMapping("/api/v1/vendor/billing")
@@ -27,31 +31,30 @@ public class BillingController {
 	private final BillingService billingService;
 
 	/*
+	 * 청구생성
+	 * */
+	@PostMapping
+	public void createBilling(@RequestBody @Valid BillingCreateReq billingCreateReq) {
+		String vendorUsername = "vendor1";
+		billingService.createBilling(vendorUsername, billingCreateReq);
+	}
+
+	/*
 	 * 청구목록 조회
 	 * */
 	@GetMapping
-	public SortPageDto.Res<BillingListItem> getBillingListWithCondition(BillingSearch search, SortPageDto.Req pageable) {
+	public PageRes<BillingListItemDto> getBillingListWithCondition(BillingSearchReq search, PageReq pageReq) {
 		String vendorUsername = "vendor1";
-		return billingService.findBillings(vendorUsername, search, pageable);
+		return billingService.searchBillings(vendorUsername, search, pageReq);
 	}
 
 	/*
 	 * 청구상세 조회
 	 * */
 	@GetMapping("/{billingId}")
-	public BillingDetail getBillingDetail(@PathVariable Long billingId) {
+	public BillingDetailDto getBillingDetail(@PathVariable Long billingId) {
 		String vendorUsername = "vendor1";
-		return billingService.findBillingDetail(vendorUsername, billingId);
-	}
-
-	/*
-	* 청구생성
-	* */
-	@PostMapping
-	public void createBilling(@RequestBody @Valid BillingCreateReq billingCreateReq) {
-		// TODO security
-		String vendorUsername = "vendor1";
-		billingService.createBilling(vendorUsername, billingCreateReq);
+		return billingService.getBillingDetail(vendorUsername, billingId);
 	}
 
 	/*
