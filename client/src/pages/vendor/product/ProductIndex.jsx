@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
-const ContractIndexPage = () => {
+const ProductIndex = () => {
   return <Outlet />;
 };
 
-export default ContractIndexPage;
+export default ProductIndex;

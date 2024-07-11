@@ -66,4 +66,14 @@ public abstract class Payment extends BaseEntity {
 	public PaymentStatus getPaymentStatus() {
 		return this.status;
 	}
+
+	public PaymentMethod getPaymentMethod() {
+		if (this.paymentType != PaymentType.AUTO) {
+			return null;
+		}
+
+		AutoPayment autoPayment = (AutoPayment) this;
+		PaymentMethodInfo paymentMethodInfo = autoPayment.getPaymentMethodInfo();
+		return (paymentMethodInfo == null) ? null : paymentMethodInfo.getPaymentMethod();
+	}
 }

@@ -22,11 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTUtil;
+import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -35,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class VendorService {
 	private final VendorCustomRepository vendorRepository;
 	private final ProductCustomRepository productCustomRepository;
+	private final VendorRepository vendorRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
@@ -49,7 +51,7 @@ public class VendorService {
 		// Custom exception도 좋고
 		//
 
-		boolean isExist = vendorRepository.isExistUsername(username);
+		boolean isExist = vendorCustomRepository.isExistUsername(username);
 		if (isExist) {
 			throw new IllegalArgumentException("Username already exists.");
 		}
@@ -141,6 +143,6 @@ public class VendorService {
 	}
 
 	public boolean isExistUsername(String username) {
-		return vendorRepository.isExistUsername(username);
+		return vendorCustomRepository.isExistUsername(username);
 	}
 }

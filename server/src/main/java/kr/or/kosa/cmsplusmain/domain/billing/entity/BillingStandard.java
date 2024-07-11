@@ -23,7 +23,6 @@ import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.EmptyBillingProductException;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +32,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BillingStandard extends BaseEntity {
+
+	private static final int MIN_BILLING_PRODUCT_NUMBER = 1;
 
 	@Id
 	@Column(name = "billing_standard_id")
@@ -89,11 +90,23 @@ public class BillingStandard extends BaseEntity {
 	}
 
 	/*
+	 * 청구 상품 삭제
+	 * */
+	public void removeBillingProduct(BillingProduct billingProduct) {
+		// 청구는 최소 한 개 이상의 상품을 가져야한다.
+		if (billingProducts.size() == MIN_BILLING_PRODUCT_NUMBER) {
+			throw new EmptyBillingProductException();
+		}
+		billingProduct.delete();
+		billingProducts.remove(billingProduct);
+	}
+
+	/*
 	 * 청구금액
 	 * */
 	public long getBillingPrice() {
 		return billingProducts.stream()
-			.mapToLong(BillingProduct::getTotalPrice)
+			.mapToLong(BillingProduct::getBillingProductPrice)
 			.sum();
 	}
 }

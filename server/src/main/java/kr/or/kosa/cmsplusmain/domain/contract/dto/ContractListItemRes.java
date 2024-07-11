@@ -12,18 +12,18 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ContractListItem {
+public class ContractListItemRes {
 
-	private final Long contractId;                                    // 계약 ID
-	private final String memberName;                                // 회원 이름
-	private final String memberPhone;                                // 회원 휴대번호
-	private final Integer contractDay;                                // 약정일
-	private final List<ContractProductRes> contractProducts;        // 계약 상품 목록
-	private final Long contractPrice;                                // 계약금액
-	private final ContractStatus contractStatus;                    // 계약상태
-	private final ConsentStatus consentStatus;                        // 동의상태
+	private final Long contractId;                                    	// 계약 ID
+	private final String memberName;                                	// 회원 이름
+	private final String memberPhone;                                	// 회원 휴대번호
+	private final Integer contractDay;                                	// 약정일
+	private final List<ContractProductRes> contractProducts;        	// 계약 상품 목록
+	private final Long contractPrice;                                	// 계약금액
+	private final ContractStatus contractStatus;                    	// 계약상태
+	private final ConsentStatus consentStatus;                        	// 동의상태
 
-	public static ContractListItem fromEntity(Contract contract) {
+	public static ContractListItemRes fromEntity(Contract contract) {
 
 		// NOT NULL
 		final Member member = contract.getMember();
@@ -35,9 +35,8 @@ public class ContractListItem {
 
 		final Payment payment = contract.getPayment();
 		final ConsentStatus consentStatus = payment.getConsentStatus();
-		//
 
-		return ContractListItem.builder()
+		return ContractListItemRes.builder()
 			.contractId(contract.getId())
 			.memberName(member.getName())
 			.memberPhone(member.getPhone())

@@ -12,24 +12,32 @@ import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.time.LocalDateTime;
 
+import com.querydsl.core.types.Path;
 import kr.or.kosa.cmsplusmain.domain.product.entity.QProduct;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparablePath;
+import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.product.entity.QProduct;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -40,36 +48,55 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	protected final JPAQueryFactory jpaQueryFactory;
 
 	/*
-	 * 새로생성 혹은 수정완료시 (비영속 상태 객체 수정 완료 후 호출)
-	 * */
-	@Transactional
-	public T save(T entity) {
-		return em.merge(entity);
-	}
-
-	/*
 	 * 정렬 조건 생성
-	 *
-	 * 기본 조건: 생성일 내림차순
-	 *
 	 * */
-	protected OrderSpecifier<?> orderMethod(SortPageDto.Req pageable) {
-		if (pageable.getOrderBy() == null) {
-			return new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
+	protected Optional<OrderSpecifier<?>> buildOrderSpecifier(PageReq pageReq) {
+		if (pageReq == null || !StringUtils.hasText(pageReq.getOrderBy())) {
+			return Optional.empty();
 		}
 
-		Order order = pageable.isAsc() ? Order.ASC : Order.DESC;
+		EntityPathBase<?> entity = null;
+		String fieldName = null;
+		Order order = pageReq.isAsc() ? Order.ASC : Order.DESC;
 
-		return switch (pageable.getOrderBy()) {
-			case "memberName" -> new OrderSpecifier<>(order, member.name);
-			case "contractDay" -> new OrderSpecifier<>(order, contract.contractDay);
-			case "contractPrice" ->
-				new OrderSpecifier<>(order, contractProduct.price.multiply(contractProduct.quantity).sum());
-			case "billingPrice" ->
-				new OrderSpecifier<>(order, billingProduct.price.multiply(billingProduct.quantity).sum());
-			case "billingDate" -> new OrderSpecifier<>(order, billing.billingDate);
-			default -> new OrderSpecifier<>(Order.DESC, contract.createdDateTime);
-		};
+		switch (pageReq.getOrderBy()) {
+			case "memberName" -> {
+				fieldName = "name";
+				entity = member;
+			}
+
+			case "billingPrice" -> {
+				NumberExpression<Long> expression =
+					billingProduct.price.longValue().multiply(billingProduct.quantity).sum();
+				return Optional.ofNullable(pageReq.isAsc() ? expression.asc() : expression.desc());
+			}
+			case "billingDate" -> {
+				fieldName = "billingDate";
+				entity = billing;
+			}
+
+			case "contractDay" -> {
+				fieldName = "contractDay";
+				entity = contract;
+			}
+			case "contractPrice" -> {
+				NumberExpression<Long> expression =
+					contractProduct.price.longValue().multiply(contractProduct.quantity).sum();
+				return Optional.ofNullable(pageReq.isAsc() ? expression.asc() : expression.desc());
+			}
+		}
+
+		return Optional.ofNullable(getSortColumn(entity, fieldName, order));
+	}
+
+	private OrderSpecifier<?> getSortColumn(EntityPathBase<?> entity, String fieldName, Order order) {
+		if (entity == null || fieldName == null) {
+			return null;
+		}
+
+		ComparablePath<?> path = new PathBuilder<>(entity.getType(), entity.getMetadata().getName())
+			.getComparable(fieldName, Comparable.class);
+		return (order.equals(Order.ASC)) ? path.asc() : path.desc();
 	}
 
 	protected BooleanExpression vendorUsernameEq(String vendorUsername) {
@@ -111,10 +138,6 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return hasText(memberPhone) ? member.phone.containsIgnoreCase(memberPhone) : null;
 	}
 
-	protected BooleanExpression productNameContains(String productName) {
-		return hasText(productName) ? product.name.containsIgnoreCase(productName) : null;
-	}
-
 	protected BooleanExpression productNameContainsInGroup(String productName) {
 		if (productName == null)
 			return null;
@@ -144,6 +167,7 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return (contractDay != null) ? contract.contractDay.eq(contractDay) : null;
 	}
 
+
 	protected BooleanExpression billingStatusEq(BillingStatus billingStatus) {
 		return (billingStatus != null) ? billing.billingStatus.eq(billingStatus) : null;
 	}
@@ -159,4 +183,44 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	protected BooleanExpression consentStatusEq(ConsentStatus consentStatus) {
 		return (consentStatus != null) ? payment.consentStatus.eq(consentStatus) : null;
 	}
+
+	protected BooleanExpression productNameContains(String productName) {
+		return hasText(productName) ? product.name.containsIgnoreCase(productName) : null;
+	}
+
+	protected  BooleanExpression productMemoContains(String productMemo) {
+		return hasText(productMemo) ? product.memo.containsIgnoreCase(productMemo) : null;
+	}
+
+	protected BooleanExpression productCreatedDateEq(LocalDate productCreatedDate) {
+		return dateEq(product.createdDateTime, productCreatedDate);
+	}
+
+	protected BooleanExpression productPriceLoe(Integer productPrice) {
+		if (productPrice == null)
+			return null;
+		return product.price.loe(productPrice);
+	}
+
+	protected BooleanExpression contractNumberLoe(Integer contractNumber) {
+		if (contractNumber == null) {
+			return null;
+		}
+		return contractProduct.contract.countDistinct().loe(contractNumber);
+	}
+
+	/**
+	 * Date형식(yyyy-MM-dd)로 들어온 DTO를 DB에 있는 DateTime(yyyy-MM-dd hh:mm:ss)와 비교하는 공통 메서드
+	 * productCreatedDateEq 참고해서 쓰시오
+	 * */
+	protected BooleanExpression dateEq(Path<LocalDateTime> dateTimePath, LocalDate localDate) {
+		if (localDate == null) {
+			return null;
+		}
+		return Expressions.booleanTemplate(
+				"DATE({0}) = {1}",
+				dateTimePath, localDate
+		);
+	}
+
 }
