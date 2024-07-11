@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
+import lombok.ToString;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -26,6 +27,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString // 임시로
 public class BillingProduct extends BaseEntity {
 
 	@Id
