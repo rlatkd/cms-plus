@@ -13,7 +13,10 @@ import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
+import com.querydsl.core.types.Path;
+import kr.or.kosa.cmsplusmain.domain.product.entity.QProduct;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -135,10 +138,6 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return hasText(memberPhone) ? member.phone.containsIgnoreCase(memberPhone) : null;
 	}
 
-	protected BooleanExpression productNameContains(String productName) {
-		return hasText(productName) ? product.name.containsIgnoreCase(productName) : null;
-	}
-
 	protected BooleanExpression productNameContainsInGroup(String productName) {
 		if (productName == null)
 			return null;
@@ -168,6 +167,7 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return (contractDay != null) ? contract.contractDay.eq(contractDay) : null;
 	}
 
+
 	protected BooleanExpression billingStatusEq(BillingStatus billingStatus) {
 		return (billingStatus != null) ? billing.billingStatus.eq(billingStatus) : null;
 	}
@@ -183,4 +183,44 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	protected BooleanExpression consentStatusEq(ConsentStatus consentStatus) {
 		return (consentStatus != null) ? payment.consentStatus.eq(consentStatus) : null;
 	}
+
+	protected BooleanExpression productNameContains(String productName) {
+		return hasText(productName) ? product.name.containsIgnoreCase(productName) : null;
+	}
+
+	protected  BooleanExpression productMemoContains(String productMemo) {
+		return hasText(productMemo) ? product.memo.containsIgnoreCase(productMemo) : null;
+	}
+
+	protected BooleanExpression productCreatedDateEq(LocalDate productCreatedDate) {
+		return dateEq(product.createdDateTime, productCreatedDate);
+	}
+
+	protected BooleanExpression productPriceLoe(Integer productPrice) {
+		if (productPrice == null)
+			return null;
+		return product.price.loe(productPrice);
+	}
+
+	protected BooleanExpression contractNumberLoe(Integer contractNumber) {
+		if (contractNumber == null) {
+			return null;
+		}
+		return contractProduct.contract.countDistinct().loe(contractNumber);
+	}
+
+	/**
+	 * Date형식(yyyy-MM-dd)로 들어온 DTO를 DB에 있는 DateTime(yyyy-MM-dd hh:mm:ss)와 비교하는 공통 메서드
+	 * productCreatedDateEq 참고해서 쓰시오
+	 * */
+	protected BooleanExpression dateEq(Path<LocalDateTime> dateTimePath, LocalDate localDate) {
+		if (localDate == null) {
+			return null;
+		}
+		return Expressions.booleanTemplate(
+				"DATE({0}) = {1}",
+				dateTimePath, localDate
+		);
+	}
+
 }
