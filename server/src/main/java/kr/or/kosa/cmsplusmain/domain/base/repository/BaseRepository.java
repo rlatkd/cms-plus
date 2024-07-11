@@ -32,9 +32,10 @@ public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
 	@Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM #{#entityName} e WHERE e.id = ?1 AND e.deleted = false")
 	boolean existsById(ID id);
 
+	@Override
 	@Modifying
 	@Query("UPDATE #{#entityName} e SET e.deleted = true WHERE e.id = ?1")
-	void softDelete(ID id);
+	void deleteById(ID id);
 
 	@Modifying
 	@Query("UPDATE #{#entityName} e SET e.deleted = true WHERE e.id IN ?1")

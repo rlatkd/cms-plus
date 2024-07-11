@@ -17,6 +17,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.DeleteBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingStandardRepository;
@@ -119,6 +120,22 @@ public class BillingService {
 		// 청구 상품 수정
 		BillingStandard billingStandard = billing.getBillingStandard();
 		billingStandard.updateBillingProducts(billingProducts);
+	}
+
+	/*
+	* 청구 삭제
+	* */
+	@Transactional
+	public void deleteBilling(String vendorUsername, Long billingId) {
+		validateBillingUser(billingId, vendorUsername);
+
+		Billing billing = billingRepository.findById(billingId).orElseThrow();
+
+		// 청구서 발송 전 상태에서만 삭제가 가능하다.
+		if (!billing.getBillingStatus().equals(BillingStatus.CREATED)) {
+			throw new DeleteBillingException();
+		}
+		billingRepository.deleteById(billingId);
 	}
 
 	/*
