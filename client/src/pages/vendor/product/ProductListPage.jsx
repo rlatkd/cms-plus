@@ -95,9 +95,8 @@ const initialSearch = [
   { key: '금액', type: 'text', value: '' },
   {
     key: '계약수',
-    type: 'select',
+    type: 'text',
     value: '',
-    options: ['1일', '7일', '12일', '24일'],
   },
   { key: '생성시기', type: 'text', value: '' },
   { key: '비고', type: 'number', value: '' },
@@ -167,13 +166,13 @@ const ProductListPage = () => {
 
   // 생성시기 등록 모달 열기용 이벤트핸들러
   const handleOpenRegisterModal = () => {
-    setModalTitle('생성시기 등록');
+    setModalTitle('상품 등록');
     setIsShowModal(true);
   };
 
   // 생성시기 상세조회 모달 열기용 이벤트핸들러
   const handleOpenDetailModal = async () => {
-    setModalTitle('생성시기 상세 정보');
+    setModalTitle('상품 상세 정보');
     try {
       const res = await getProductDetail(productId);
       setProductDetailData(res.data);
@@ -203,14 +202,14 @@ const ProductListPage = () => {
       <button
         className='rounded-lg bg-mint p-3 font-bold text-white mr-10'
         onClick={handleOpenRegisterModal}>
-        임시 생성시기 등록 모달
+        임시 상품 등록 모달
       </button>
 
       {/* 이건 목록에서 생성시기 하나 클릭하면 들어가도록 */}
       <button
         className='rounded-lg bg-mint p-3 font-bold text-white mr-10'
         onClick={handleOpenDetailModal}>
-        임시 생성시기 상세 모달
+        임시 상품 상세 모달
       </button>
 
       <Table

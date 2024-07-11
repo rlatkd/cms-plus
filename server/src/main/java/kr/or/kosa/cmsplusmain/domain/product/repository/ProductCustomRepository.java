@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductQRes;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductSearch;
 import kr.or.kosa.cmsplusmain.domain.product.dto.QProductQRes;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import org.springframework.stereotype.Repository;
@@ -26,23 +27,25 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
     public int getContractNumber(Long productId) {
         /*
          * 상품이 포함된 계약의 개수를 구함
-         * select count(distinct pc.contract_id)
+         * select count(distinct cp.contract_id)
          * from contract_product cp
          * join contract c
          * where cp.product_id = #{productId} and c.deleted = 0
          * */
-        return jpaQueryFactory
+        Long res = jpaQueryFactory
                 .select(contract.id.countDistinct())
                 .from(contractProduct)
                 .join(contractProduct.contract, contract) // 계약-상품 테이블의 외래키인 계약ID를 타고 들어감
                 .where(contractProduct.product.id.eq(productId),
                         contractNotDel())
-                .fetchOne().intValue();
+                .fetchOne();
+
+        return (res == null) ? 0 : res.intValue();
     }
 
     // 고객의 상품 목록
-    // 프로젝션 대상이 2개이기 떄문에 QueryProjection을 이용해 해결
-    public List<ProductQRes> findProductListWithCondition(String vendorUserName, SortPageDto.Req pageable) {
+    // 프로젝션 대상이 2개이상이기 때문에 QueryProjection을 이용
+    public List<ProductQRes> findProductListWithCondition(String vendorUserName, ProductSearch search, SortPageDto.Req pageable) {
         /*
          * 해당 고객의 모든 상품(삭제되지않은)을 가져오는데, 상품의 정보와 상품이 포함된 계약 갯수를 가져와야함
          *
@@ -59,13 +62,13 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
          * where pc.product_id = #{productId} and c.deleted = 0
          *
          * 1. 해당 고객의 모든 상품(삭제되지않은)을 가져오는데, 상품의 정보와 상품이 포함된 계약 갯수를 가져와야함
-         * select vendor_product.* count(distinct pc.contract_id)
+         * select vendor_product.* count(distinct cp.contract_id)
          * from (select *
          *         from product p
          *         join vendor v
-         *         where v.vendor_userName = #{userName} and p.deleted = 0) vp , product_contract pc
+         *         where v.vendor_userName = #{userName} and p.deleted = 0) vp , contract_product cp
          * join contract c
-         * where pc.product_id = vp.product_id and c.deleted = 0
+         * where cp.product_id = vp.product_id and c.deleted = 0
          *
          * 2. (최종)
          * select p.*, count(distinct cp.contract_id) as contract_count
@@ -76,31 +79,36 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
          * where v.vendor_username = 'vendor1' and p.deleted = 0
          * group by p.product_id;
          * */
-        List<ProductQRes> result = jpaQueryFactory
-                .select(new QProductQRes(product, contractProduct.contract.countDistinct().intValue()))
+        List<ProductQRes> res = jpaQueryFactory
+                .select(new QProductQRes(product, contractProduct.contract.countDistinct().intValue())) //ProductQRes의 QueryDSL DTO 생성
                 .from(product)
                 .join(product.vendor, vendor)
                 .leftJoin(contractProduct)
-                .on(contractProduct.product.eq(product),
-                        (contractProductNotDel()))
+                        .on(contractProduct.product.eq(product), (contractProductNotDel()))
                 .leftJoin(contract)
-                .on(contractProduct.contract.eq(contract),
-                        (contractNotDel()))
+                        .on(contractProduct.contract.eq(contract), (contractNotDel()))
                 .where(
-                        vendor.username.eq(vendorUserName),
-                        productNotDel()
+                        productNotDel(),                                        // 상품 소프트 삭제
+                        vendorUsernameEq(vendorUserName),                       // 고객 아이디 일치
+                        productNameContains(search.getProductName()),           // 상품 이름 포함
+                        productPriceLoe(search.getProductPrice()),              // 상품 가격 이하
+                        productMemoContains(search.getProductMemo()),           // 상품 비고 포함
+                        productCreatedDateEq(search.getProductCreatedDate())    // 상품 생성시기 일치
                 )
                 .groupBy(product.id)
+                .having( // 집계함수(ex. count)에 대한 조건문은 where절이 아닌 having절에서 사용함
+                        contractNumberLoe(search.getContractNumber())           // 상품들의 각 해당하는 계약수 이하
+                )
                 .offset(pageable.getPage())
                 .limit(pageable.getSize())
                 .fetch();
 
-        return result;
+        return res;
     }
 
     // 고객의 상품 총 갯수
     public int countAllProducts(String vendorUsername) {
-        return jpaQueryFactory
+        Long res = jpaQueryFactory
                 .select(product.id.count())
                 .from(product)
                 .join(product.vendor, vendor)
@@ -108,7 +116,9 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                         vendorUsernameEq(vendorUsername),
                         productNotDel()
                 )
-                .fetchOne().intValue();
+                .fetchOne();
+
+        return (res == null) ? 0 : res.intValue();
     }
 
     // 특정 고객이 본인의 상품이 아닌거 조회하는거 처리
@@ -120,7 +130,7 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
          * join vendor v on p.vendor_id = v.vendor_id
          * where p.product_id = #{productId} and v.vendor_username = #{vendorUsername}
          * */
-        Integer count = jpaQueryFactory
+        Integer res = jpaQueryFactory
                 .selectOne()
                 .from(product)
                 .join(product.vendor, vendor)
@@ -128,7 +138,7 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                         vendor.username.eq(vendorUsername))
                 .fetchFirst();
 
-        return count != null;
+        return res != null;
     }
 
 }
