@@ -2,11 +2,9 @@ package kr.or.kosa.cmsplusmain.domain.product.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class ProductQRes {
 
     private final Product product;
