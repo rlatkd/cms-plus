@@ -36,8 +36,4 @@ public enum PaymentMethod {
 		public static final String ACCOUNT = "ACCOUNT";
 	}
 
-	public static boolean isAutoPayment(PaymentMethod method) {
-		return method == CMS || method == CARD;
-	}
-
 }

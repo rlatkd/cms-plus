@@ -1,11 +1,13 @@
 package kr.or.kosa.cmsplusmain.domain.settings.service;
 
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductRes;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
+import kr.or.kosa.cmsplusmain.domain.product.service.ProductService;
 import kr.or.kosa.cmsplusmain.domain.settings.dto.AvailableOptionsDto;
-import kr.or.kosa.cmsplusmain.domain.settings.dto.ProductDto;
 import kr.or.kosa.cmsplusmain.domain.settings.dto.SimpConsentSettingDto;
 import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import kr.or.kosa.cmsplusmain.domain.settings.repository.SimpConsentSettingCustomRepository;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,23 +33,10 @@ public class SimpConsentSettingService {
     private final SimpConsentSettingCustomRepository simpConsentSettingRepository;
     private final VendorCustomRepository vendorRepository;
     private final ProductRepository productRepository;
-    private final ProductCustomRepository productCustomRepository; // 이 줄을 추가합니다.
+    private final ProductService productService;
 
 
-    @Transactional
-    public SimpConsentSettingDto createSetting(String username) {
-        Vendor vendor = vendorRepository.findByUsername(username);
-        if (vendor == null) {
-            throw new EntityNotFoundException("Vendor not found with username: " + username);
-        }
-
-        SimpConsentSetting setting = SimpConsentSetting.builder()
-                .vendor(vendor)
-                .build();
-        simpConsentSettingRepository.save(setting);
-        return convertToDto(setting);
-    }
-
+    /* 고객 간편동의 설정 세팅 조회 */
     public SimpConsentSettingDto getSetting(String username) {
         SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(username);
         if (setting == null) {
@@ -55,6 +45,7 @@ public class SimpConsentSettingService {
         return convertToDto(setting);
     }
 
+    /* 고객 간편동의 설정 세팅 수정 */
     @Transactional
     public SimpConsentSettingDto updateSetting(String username, SimpConsentSettingDto dto) {
         SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(username);
@@ -62,8 +53,13 @@ public class SimpConsentSettingService {
             throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + username);
         }
 
+        Set<PaymentMethod> autoPaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
         setting.getSimpConsentPayments().clear();
-        setting.getSimpConsentPayments().addAll(dto.getPaymentMethods());
+        setting.getSimpConsentPayments().addAll(
+                dto.getPaymentMethods().stream()
+                        .filter(autoPaymentMethods::contains)
+                        .collect(Collectors.toSet())
+        );
 
         setting.getSimpConsentProducts().clear();
         dto.getProductIds().forEach(productId -> {
@@ -75,15 +71,11 @@ public class SimpConsentSettingService {
         return convertToDto(setting);
     }
 
-    public AvailableOptionsDto getAvailableOptions(String username) {
-        Set<PaymentMethod> availablePaymentMethods = Arrays.stream(PaymentMethod.values())
-                .filter(PaymentMethod::isAutoPayment)
-                .collect(Collectors.toSet());
 
-        List<ProductDto> availableProducts = productCustomRepository.findAvailableProductsByVendorUsername(username)
-                .stream()
-                .map(ProductDto::fromEntity)
-                .collect(Collectors.toList());
+    public AvailableOptionsDto getAvailableOptions(String username) {
+        Set<PaymentMethod> availablePaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
+
+        List<ProductRes> availableProducts = productService.findAvailableProductsByVendorUsername(username);
 
         return new AvailableOptionsDto(availablePaymentMethods, availableProducts);
     }

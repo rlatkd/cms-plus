@@ -44,6 +44,7 @@ public class SimpConsentSetting extends BaseEntity {
 	@Column(name = "setting_simpconsent_id")
 	private Long id;
 
+	@Setter
 	@OneToOne(mappedBy = "simpConsentSetting", fetch = FetchType.LAZY, optional = false)
 	@NotNull
 	private Vendor vendor;
@@ -70,8 +71,13 @@ public class SimpConsentSetting extends BaseEntity {
 	//TODO 설정 수정 삭제 메서드 구현
 	// 자동결제 수단만 가능하도록
 
+
 	public void addProduct(Product product) {
 		this.simpConsentProducts.add(product);
+	}
+
+	public void addPaymentMethod(PaymentMethod paymentMethod) {
+		this.simpConsentPayments.add(paymentMethod);
 	}
 
 

@@ -135,15 +135,16 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
     }
 
 
-//    public List<Product> findAvailableProductsByVendorUsername(String username) {
-//        return jpaQueryFactory
-//                .selectFrom(product)
-//                .join(product.vendor, vendor)
-//                .where(vendor.username.eq(username)
-//                        .and(product.deleted.isFalse())
-//                        .and(product.status.eq(ProductStatus.ENABLED))) // ENABLED 상태의 상품만 가져옴
-//                .fetch();
-//    }
+    /* 고객의 상품 목록 조회 */
+    public List<Product> findAvailableProductsByVendorUsername(String username) {
+        return jpaQueryFactory
+                .selectFrom(product)
+                .join(product.vendor, vendor)
+                .where(vendor.username.eq(username)
+                        .and(productNotDel())
+                        )
+                .fetch();
+    }
 
 }
 

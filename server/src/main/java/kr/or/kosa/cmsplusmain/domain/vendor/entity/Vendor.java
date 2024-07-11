@@ -100,4 +100,9 @@ public class Vendor extends BaseEntity {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "setting_simpconset_id")
 	private SimpConsentSetting simpConsentSetting;
+
+	public void setSimpConsentSetting(SimpConsentSetting simpConsentSetting) {
+		this.simpConsentSetting = simpConsentSetting;
+		simpConsentSetting.setVendor(this);
+	}
 }
