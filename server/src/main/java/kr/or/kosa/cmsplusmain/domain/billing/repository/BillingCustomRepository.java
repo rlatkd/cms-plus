@@ -11,6 +11,8 @@ import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -95,7 +97,42 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.orderBy(billing.createdDateTime.desc())
 			.offset(pageable.getPage())
 			.limit(pageable.getSize())
-			.fetch();
+				.fetch();
+	}
+
+	/*
+	 * 회원 상세 - 기본정보(청구수)
+		select
+			count(distinct member1.id)
+		from
+			BillingStandard billingStandard
+		inner join
+			contract.vendor as vendor
+		inner join
+			contract.member as member1
+		inner join
+			billingStandard.contract as contract
+		where
+			vendor.username = ?1
+			and member1.id = ?2
+			and contract.deleted = ?3
+			and billingStandard.deleted = ?4
+	 * */
+	public int findBillingStandardByMemberId(String username, Long memberId){
+		Long res = jpaQueryFactory
+				.select(member.id.countDistinct()).from(billingStandard)
+				.join(contract.vendor, vendor)
+				.join(contract.member, member)
+				.join(billingStandard.contract, contract)
+				.where(
+						vendorUsernameEq(username),
+						member.id.eq(memberId),
+						contractNotDel(),
+						billingStandardNotDel()
+				)
+				.fetchOne();
+
+		return (res == null) ? 0 : res.intValue();
 	}
 
 	/*
@@ -137,37 +174,80 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 
 	public int countAllBillings(String vendorUsername, BillingSearch search) {
 		Long count = jpaQueryFactory
-			.select(billing.id.count())
-			.from(billing)
+				.select(billing.id.count())
+				.from(billing)
 
-			.join(billing.billingStandard, billingStandard)
-			.leftJoin(billingStandard.billingProducts, billingProduct).on(billingProductNotDel())    // left join
-			.join(billingProduct.product, product)
-			.join(billingStandard.contract, contract)
-			.join(contract.vendor, vendor)
-			.join(contract.member, member)
-			.join(contract.payment, payment)
+				.join(billing.billingStandard, billingStandard)
+				.leftJoin(billingStandard.billingProducts, billingProduct).on(billingProductNotDel())    // left join
+				.join(billingProduct.product, product)
+				.join(billingStandard.contract, contract)
+				.join(contract.vendor, vendor)
+				.join(contract.member, member)
+				.join(contract.payment, payment)
 
-			.where(
-				billingNotDel(),                                // 청구 소프트 삭제
+				.where(
+						billingNotDel(),                                // 청구 소프트 삭제
 
-				vendorUsernameEq(vendorUsername),                // 고객 아이디 일치
+						vendorUsernameEq(vendorUsername),                // 고객 아이디 일치
 
-				memberNameContains(search.getMemberName()),        // 회원 이름 포함
-				memberPhoneContains(search.getMemberPhone()),    // 회원 휴대전화 포함
-				billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
-				paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
-				billingDateEq(search.getBillingDate())            // 결제일 일치
-			)
+						memberNameContains(search.getMemberName()),        // 회원 이름 포함
+						memberPhoneContains(search.getMemberPhone()),    // 회원 휴대전화 포함
+						billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
+						paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
+						billingDateEq(search.getBillingDate())            // 결제일 일치
+				)
 
-			.groupBy(billing.id)
-			.having(
-				productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
-				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
-			)
+				.groupBy(billing.id)
+				.having(
+						productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
+						billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
+				)
 
-			.fetchOne();
+				.fetchOne();
 
 		return (count != null) ? count.intValue() : 0;
+	}
+
+	/*
+
+
+
+	 회원 상세 - 기본정보(청구금액)
+	    select
+			sum(billingProduct.price * billingProduct.quantity)
+		from
+			BillingProduct billingProduct
+		inner join
+			billingProduct.billingStandard as billingStandard
+		inner join
+			billingStandard.contract as contract
+		inner join
+			contract.vendor as vendor
+		inner join
+			contract.member as member1
+		where
+			vendor.username = ?1
+			and member1.id = ?2
+			and contract.deleted = ?3
+			and billingStandard.deleted = ?4
+	  */
+
+
+	public Long findBillingProductByMemberId(String username, Long memberId){
+		Long res = jpaQueryFactory
+				.select(billingProduct.price.multiply(billingProduct.quantity).sum())
+				.from(billingProduct)
+				.join(billingProduct.billingStandard,billingStandard)
+				.join(billingStandard.contract, contract)
+				.join(contract.vendor, vendor)
+				.join(contract.member, member)
+				.where(
+						vendorUsernameEq(username),
+						member.id.eq(memberId),
+						contractNotDel(),
+						billingStandardNotDel()
+				)
+				.fetchOne().longValue();
+		return (res == null) ? 0 : res.longValue();
 	}
 }

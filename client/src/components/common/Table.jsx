@@ -41,8 +41,9 @@ const Table = ({ cols, search, items, handleSearchChange, show }) => {
       />
       <tbody>
         <TableSearch search={search} handleSearchChange={handleSearchChange} show={show} />
-        {items.map(item => (
+        {items.map((item, idx) => (
           <TableRow
+            key={idx}
             item={item}
             cols={cols}
             itemKey={itemKey}

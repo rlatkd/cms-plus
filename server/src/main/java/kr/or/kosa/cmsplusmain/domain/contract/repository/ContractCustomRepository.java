@@ -108,6 +108,41 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	}
 
 	/*
+	 * 회원 상세 조회 - 계약리스트
+	 * */
+	public List<Contract> findContractListItemByMemberId(String Username, Long memberId, SortPageDto.Req pageable) {
+		return jpaQueryFactory
+				.selectFrom(contract)
+				.join(contract.member, member)
+				.join(contract.vendor, vendor)
+				.leftJoin(contract.contractProducts, contractProduct).on(contractProductNotDel())
+				.where(
+						vendorUsernameEq(Username),
+						member.id.eq(memberId),
+						contractNotDel()
+				)
+				.offset(pageable.getPage())
+				.limit(pageable.getSize())
+				.fetch();
+	}
+
+	/*
+	 * 회원 상세 조회 - 계약리스트 수
+	 * */
+	public int countContractListItemByMemberId(String Username, Long memberId) {
+		return jpaQueryFactory
+				.select(contract.id.countDistinct()).from(contract)
+				.join(contract.member, member)
+				.join(contract.vendor, vendor)
+				.where(
+						vendorUsernameEq(Username),
+						member.id.eq(memberId),
+						contractNotDel()
+				)
+				.fetchOne().intValue();
+	}
+
+	/* 
 	* 고객과 계약 id 일치하는 계약 존재 여부
 	* */
 	public boolean isExistContractByUsername(Long contractId, String vendorUsername) {

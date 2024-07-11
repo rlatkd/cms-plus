@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.vendor.JWT;
+package kr.or.kosa.cmsplusmain.domain.vendor.jwt;
 
 import java.io.IOException;
 import java.io.PrintWriter;

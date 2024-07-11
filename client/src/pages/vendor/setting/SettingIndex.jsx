@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
-const BillingIndexPage = () => {
+const SettingIndex = () => {
   return <Outlet />;
 };
 
-export default BillingIndexPage;
+export default SettingIndex;
