@@ -174,40 +174,45 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 
 	public int countAllBillings(String vendorUsername, BillingSearch search) {
 		Long count = jpaQueryFactory
-			.select(billing.id.count())
-			.from(billing)
+				.select(billing.id.count())
+				.from(billing)
 
-			.join(billing.billingStandard, billingStandard)
-			.leftJoin(billingStandard.billingProducts, billingProduct).on(billingProductNotDel())    // left join
-			.join(billingProduct.product, product)
-			.join(billingStandard.contract, contract)
-			.join(contract.vendor, vendor)
-			.join(contract.member, member)
-			.join(contract.payment, payment)
+				.join(billing.billingStandard, billingStandard)
+				.leftJoin(billingStandard.billingProducts, billingProduct).on(billingProductNotDel())    // left join
+				.join(billingProduct.product, product)
+				.join(billingStandard.contract, contract)
+				.join(contract.vendor, vendor)
+				.join(contract.member, member)
+				.join(contract.payment, payment)
 
-			.where(
-				billingNotDel(),                                // 청구 소프트 삭제
+				.where(
+						billingNotDel(),                                // 청구 소프트 삭제
 
-				vendorUsernameEq(vendorUsername),                // 고객 아이디 일치
+						vendorUsernameEq(vendorUsername),                // 고객 아이디 일치
 
-				memberNameContains(search.getMemberName()),        // 회원 이름 포함
-				memberPhoneContains(search.getMemberPhone()),    // 회원 휴대전화 포함
-				billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
-				paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
-				billingDateEq(search.getBillingDate())            // 결제일 일치
-			)
+						memberNameContains(search.getMemberName()),        // 회원 이름 포함
+						memberPhoneContains(search.getMemberPhone()),    // 회원 휴대전화 포함
+						billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
+						paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
+						billingDateEq(search.getBillingDate())            // 결제일 일치
+				)
 
-			.groupBy(billing.id)
-			.having(
-				productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
-				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
-			)
+				.groupBy(billing.id)
+				.having(
+						productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
+						billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
+				)
 
-			.fetchOne();
+				.fetchOne();
 
 		return (count != null) ? count.intValue() : 0;
-/*
-	 * 회원 상세 - 기본정보(청구금액)
+	}
+
+	/*
+
+
+
+	 회원 상세 - 기본정보(청구금액)
 	    select
 			sum(billingProduct.price * billingProduct.quantity)
 		from
@@ -225,7 +230,9 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			and member1.id = ?2
 			and contract.deleted = ?3
 			and billingStandard.deleted = ?4
-	 * */
+	  */
+
+
 	public Long findBillingProductByMemberId(String username, Long memberId){
 		Long res = jpaQueryFactory
 				.select(billingProduct.price.multiply(billingProduct.quantity).sum())
