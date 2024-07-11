@@ -1,23 +1,22 @@
 package kr.or.kosa.cmsplusmain.domain.billing.controller;
 
-import java.util.List;
-
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetail;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearch;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 @RestController
 @RequestMapping("/api/v1/vendor/billing")
@@ -36,12 +35,30 @@ public class BillingController {
 	}
 
 	/*
+	 * 청구상세 조회
+	 * */
+	@GetMapping("/{billingId}")
+	public BillingDetail getBillingDetail(@PathVariable Long billingId) {
+		String vendorUsername = "vendor1";
+		return billingService.findBillingDetail(vendorUsername, billingId);
+	}
+
+	/*
 	* 청구생성
 	* */
 	@PostMapping
-	public void createBilling(@RequestBody @Valid BillingReq billingReq) {
+	public void createBilling(@RequestBody @Valid BillingCreateReq billingCreateReq) {
 		// TODO security
 		String vendorUsername = "vendor1";
-		billingService.createBilling(vendorUsername, billingReq);
+		billingService.createBilling(vendorUsername, billingCreateReq);
+	}
+
+	/*
+	* 청구 수정
+	* */
+	@PutMapping("/{billingId}")
+	public void updateBilling(@PathVariable Long billingId, @RequestBody @Valid BillingUpdateReq billingUpdateReq) {
+		String vendorUsername = "vendor1";
+		billingService.updateBilling(vendorUsername, billingId, billingUpdateReq);
 	}
 }
