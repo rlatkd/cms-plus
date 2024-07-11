@@ -213,7 +213,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	* */
 	public int countAllBillings(String vendorUsername, BillingSearchReq search) {
 		Long count = jpaQueryFactory
-				.select(billing.id.count())
+				.select(billing.id.countDistinct())
 				.from(billing)
 
 				.join(billing.billingStandard, billingStandard)

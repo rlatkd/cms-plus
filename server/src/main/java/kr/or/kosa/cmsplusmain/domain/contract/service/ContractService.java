@@ -107,7 +107,7 @@ public class ContractService {
 	* 계약이 현재 로그인 고객의 계약인지 여부
 	* */
 	private void validateContractUser(Long contractId, String vendorUsername) {
-		if (contractCustomRepository.isExistContractByUsername(contractId, vendorUsername)) {
+		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorUsername)) {
 			throw new EntityNotFoundException("계약 ID 없음(" + contractId + ")");
 		}
 	}

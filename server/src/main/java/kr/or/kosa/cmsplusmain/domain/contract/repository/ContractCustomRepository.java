@@ -165,7 +165,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 
 	public int countAllContracts(String vendorUsername, ContractSearchReq search) {
 		Long count = jpaQueryFactory
-			.select(contract.id.count())
+			.select(contract.id.countDistinct())
 			.from(contract)
 
 			.join(contract.vendor, vendor)
