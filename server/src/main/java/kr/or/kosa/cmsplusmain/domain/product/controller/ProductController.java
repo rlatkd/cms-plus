@@ -1,7 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.product.controller;
 
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductDetail;
-import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductRes;
 import kr.or.kosa.cmsplusmain.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +17,15 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/{productId}")
-    public ProductDetail getProduct(@PathVariable("productId") Long productId) {
-        return productService.findById(productId);
+    public ProductRes getProduct(@PathVariable("productId") Long productId) {
+        String vendorUserName = "vendor1";
+        return productService.findById(productId, vendorUserName);
     }
 
-
-
-
-
+    @GetMapping
+    public SortPageDto.Res<ProductRes> getProductListItem(SortPageDto.Req pageable) {
+        String vendorUserName = "vendor1";
+        return productService.findProductsByUser(vendorUserName, pageable);
+    }
 
 }

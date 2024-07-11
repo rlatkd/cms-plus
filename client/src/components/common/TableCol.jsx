@@ -4,8 +4,10 @@ const TableCol = ({ cols, isSelectedAll, handleClickCheckBoxAll }) => (
       <th className='text-left px-4 py-3'>
         <input type='checkbox' checked={isSelectedAll()} onChange={handleClickCheckBoxAll} />
       </th>
-      {cols.map(col => (
-        <th className='text-left p-2 '>{col}</th>
+      {cols.map((col, idx) => (
+        <th key={idx} className='text-left p-2 '>
+          {col}
+        </th>
       ))}
     </tr>
   </thead>

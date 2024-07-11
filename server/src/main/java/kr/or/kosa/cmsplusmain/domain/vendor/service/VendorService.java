@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTUtil;
+import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;

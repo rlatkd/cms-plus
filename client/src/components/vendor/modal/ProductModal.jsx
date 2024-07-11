@@ -46,10 +46,10 @@ const ProductModal = ({ isShowModal, setIsShowModal, modalTitle, productDetailDa
             <label className='block mb-2 font-semibold text-text_grey'>계약수(건)</label>
             <input
               type='text'
-              placeholder='0'
-              readOnly
+              placeholder={modalTitle === '상품 상세 정보' ? productDetailData.contractNum : ''} // 상품 상세 정보 페이지에선 계약수에 데이터 뿌려줘야 함
+              readOnly // 고객은 계약수를 수정 할 수 없음
               className='mt-1 w-full rounded-md border border-slate-300  px-3 py-2 text-sm placeholder-slate-400 shadow-sm placeholder:text-sm bg-ipt_disa cursor-default'
-              onMouseDown={e => e.preventDefault()}
+              onMouseDown={e => e.preventDefault()} // 마우스 이벤트 방지
             />
           </div>
         </div>

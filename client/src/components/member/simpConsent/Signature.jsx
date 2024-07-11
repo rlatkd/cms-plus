@@ -11,11 +11,38 @@ const Signature = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  // 서명이 비어있는지 확인하는 함수
+  const isSignatureEmpty = () => {
+    return signatureRef.current && signatureRef.current.isEmpty();
+  };
+
   const saveSignature = () => {
     if (signatureRef.current) {
-      const dataUrl = signatureRef.current.toDataURL();
-      setUserData({ signatureUrl: dataUrl });
-      closeModal();
+      if (isSignatureEmpty()) {
+        alert('서명을 먼저 생성해주세요.');
+        return;
+      }
+
+      const canvas = signatureRef.current.getCanvas();
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        setUserData({ ...userData, signatureUrl: url, signatureBlob: blob });
+        closeModal();
+      }, 'image/png');
+    }
+  };
+
+  const saveSignatureAsPNG = () => {
+    if (userData.signatureBlob) {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(userData.signatureBlob);
+      link.download = 'signature.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } else {
+      alert('서명을 먼저 생성해주세요.');
     }
   };
 
@@ -96,8 +123,6 @@ const Signature = () => {
 
       {isModalOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-          {' '}
-          {/* z-50 추가 */}
           <div className='rounded-lg bg-white p-4'>
             <h3 className='mb-2 text-base font-semibold'>서명하기</h3>
             <SignatureCanvas
@@ -123,6 +148,14 @@ const Signature = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {userData.signatureUrl && (
+        <button
+          onClick={saveSignatureAsPNG}
+          className='mt-4 w-full rounded-lg bg-mint px-4 py-2 text-sm text-white'>
+          서명 이미지 다운로드
+        </button>
       )}
     </div>
   );
