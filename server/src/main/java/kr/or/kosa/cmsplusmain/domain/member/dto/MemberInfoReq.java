@@ -9,7 +9,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class MemberReq {
+public class MemberInfoReq {
     private int memberId;
     private String memberName;
     private String memberPhone;

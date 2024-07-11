@@ -100,4 +100,10 @@ public class Vendor extends BaseEntity {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "setting_simpconset_id")
 	private SimpConsentSetting simpConsentSetting;
+
+	public static Vendor of(Long id) {
+		Vendor emptyVendor = new Vendor();
+		emptyVendor.id = id;
+		return emptyVendor;
+	}
 }

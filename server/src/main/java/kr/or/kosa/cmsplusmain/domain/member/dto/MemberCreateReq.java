@@ -1,6 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.member.dto;
 
-public class MemberRegister {
-    private MemberReq memberReq ; // 회원정보
+public class MemberCreateReq {
+    private MemberInfoReq memberInfoReq; // 회원정보
 
 }

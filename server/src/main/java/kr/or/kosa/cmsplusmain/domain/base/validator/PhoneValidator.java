@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class PhoneValidator implements ConstraintValidator<Phone, String> {
 
 	private static final Pattern PHONE_PATTERN = Pattern.compile(
-		"^01(?:0|1|[6-9])-?(?:\\d{3}|\\d{4})-?\\d{4}$"
+		"^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$"
 	);
 
 	@Override

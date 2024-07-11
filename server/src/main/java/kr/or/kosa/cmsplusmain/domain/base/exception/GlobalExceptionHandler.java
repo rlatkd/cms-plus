@@ -15,12 +15,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
-	//
-	// @ExceptionHandler(MethodArgumentNotValidException.class)
-	// public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-	// 	return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-	// }
-	//
+
+	 @ExceptionHandler(MethodArgumentNotValidException.class)
+	 public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+	 	return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	 }
+
 	// @ExceptionHandler(IllegalArgumentException.class)
 	// public ResponseEntity<String> handleMethodArgumentNotValidException(IllegalArgumentException ex) {
 	// 	return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);

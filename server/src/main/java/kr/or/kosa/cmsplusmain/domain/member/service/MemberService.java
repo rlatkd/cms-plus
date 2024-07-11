@@ -80,4 +80,12 @@ public class MemberService {
 
         return new SortPageDto.Res<>(totalPages, memberContractListItems);
     }
+
+    /*
+     * 회원 등록
+     * */
+
+    public void createMember() {
+        
+    }
 }
