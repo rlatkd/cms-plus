@@ -64,6 +64,7 @@ public class Contract extends BaseEntity {
 	@Column(name = "contract_status", nullable = false)
 	@Enumerated(EnumType.STRING)
 	@NotNull
+	@Builder.Default
 	private ContractStatus status = ContractStatus.ENABLED;
 
 	@Comment("계약 이름")
@@ -97,6 +98,7 @@ public class Contract extends BaseEntity {
 	/* 계약한 상품 목록 */
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
+	@Builder.Default
 	private List<ContractProduct> contractProducts = new ArrayList<>();
 
 	/*
