@@ -1,8 +1,10 @@
 package kr.or.kosa.cmsplusmain.domain.base.dto;
 
-import lombok.*;
-
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 public class SortPageDto {
 
