@@ -17,6 +17,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.UpdateBillingDateException;
+import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,10 +55,36 @@ public class Billing extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "billing_status", nullable = false)
 	@NotNull
+	@Builder.Default
 	private BillingStatus billingStatus = BillingStatus.CREATED;
 
 	@Comment("청구서 메시지")
-	@Column(name = "billing_memo", length = 2000)
+	@Column(name = "billing_invoice_message", length = 2000)
+	@InvoiceMessage
 	@Setter
-	private String memo;
+	private String invoiceMessage;
+
+	/*
+	* 청구서명
+	*
+	* 결제일 기준으로
+	* YYYY년 MM월 청구서 형식으로 자동생성
+	* */
+	public String getBillingName() {
+		String year = Integer.toString(billingDate.getYear());
+		String month = Integer.toString(billingDate.getMonthValue());
+		return "%s년 %s월 청구서".formatted(year, month);
+	}
+
+	/*
+	* 청구 결제일 수정
+	* */
+	public void setBillingDate(LocalDate billingDate) {
+		// 청구의 결제일은 청구서 발송 전 상태에서만 수정 가능하다.
+		if (!billingStatus.equals(BillingStatus.CREATED)) {
+			throw new UpdateBillingDateException();
+		}
+
+		this.billingDate = billingDate;
+	}
 }

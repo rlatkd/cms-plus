@@ -16,13 +16,15 @@ import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class VendorService {
-	private final VendorCustomRepository vendorRepository;
+	private final VendorCustomRepository vendorCustomRepository;
+	private final VendorRepository vendorRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
@@ -37,7 +39,7 @@ public class VendorService {
 		// Custom exception도 좋고
 		//
 
-		boolean isExist = vendorRepository.isExistUsername(username);
+		boolean isExist = vendorCustomRepository.isExistUsername(username);
 		if (isExist) {
 			throw new IllegalArgumentException("Username already exists.");
 		}
@@ -99,6 +101,6 @@ public class VendorService {
 	}
 
 	public boolean isExistUsername(String username) {
-		return vendorRepository.isExistUsername(username);
+		return vendorCustomRepository.isExistUsername(username);
 	}
 }

@@ -1,20 +1,15 @@
 package kr.or.kosa.cmsplusmain.domain.member.controller;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItem;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItem;
-import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/vendor/management")
@@ -47,7 +42,7 @@ public class MemberController {
      * 회원 상세 - 계약 리스트 조회
      * */
     @GetMapping("/members/contracts/{memberId}")
-    public SortPageDto.Res<MemberContractListItem> getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId , SortPageDto.Req pageable) {
+    public SortPageDto.Res<MemberContractListItemDto> getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId , SortPageDto.Req pageable) {
 //        String username = userDetails.getUsername();
         String username = "vendor1";
         return memberService.findContractListItemByMemberId(username, memberId, pageable);

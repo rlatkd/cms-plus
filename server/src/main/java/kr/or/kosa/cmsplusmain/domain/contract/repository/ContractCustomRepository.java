@@ -10,16 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -36,8 +35,8 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	 * 총 3번의 쿼리가 발생
 	 * 1.
 	 *  */
-	public List<Contract> findContractListWithCondition(String vendorUsername, ContractSearch search,
-		SortPageDto.Req pageable) {
+	public List<Contract> findContractListWithCondition(String vendorUsername, ContractSearchReq search,
+		PageReq pageReq) {
 		return jpaQueryFactory
 			.selectFrom(contract)
 
@@ -64,10 +63,13 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 				contractPriceLoeInGroup(search.getContractPrice())
 			)
 
-			.orderBy(orderMethod(pageable))
+			.orderBy(
+				buildOrderSpecifier(pageReq)
+					.orElse(contract.createdDateTime.desc())
+			)
 
-			.offset(pageable.getPage())
-			.limit(pageable.getSize())
+			.offset(pageReq.getPage())
+			.limit(pageReq.getSize())
 			.fetch();
 	}
 
@@ -82,29 +84,6 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 				contractNotDel(),
 				contract.id.eq(id))
 			.fetchOne());
-	}
-
-	/*
-	 * 계약 정보 수정
-	 * */
-	@Transactional
-	public void updateContract(Long contractId, String contractName, List<ContractProduct> contractProducts) {
-		// 기존 계약 상품 삭제
-		jpaQueryFactory
-			.update(contractProduct)
-			.where(contractProduct.contract.id.eq(contractId))
-			.set(contractProduct.deleted, true)
-			.execute();
-
-		// 새로운 계약 상품 추가
-		contractProducts.forEach(em::persist);
-
-		// 계약 이름 변경
-		jpaQueryFactory
-			.update(contract)
-			.where(contract.id.eq(contractId))
-			.set(contract.name, contractName)
-			.execute();
 	}
 
 	/*
@@ -130,16 +109,19 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	 * 회원 상세 조회 - 계약리스트 수
 	 * */
 	public int countContractListItemByMemberId(String Username, Long memberId) {
-		return jpaQueryFactory
-				.select(contract.id.countDistinct()).from(contract)
-				.join(contract.member, member)
-				.join(contract.vendor, vendor)
-				.where(
-						vendorUsernameEq(Username),
-						member.id.eq(memberId),
-						contractNotDel()
-				)
-				.fetchOne().intValue();
+		Long res = jpaQueryFactory
+			.select(contract.id.countDistinct())
+			.from(contract)
+			.join(contract.member, member)
+			.join(contract.vendor, vendor)
+			.where(
+				vendorUsernameEq(Username),
+				member.id.eq(memberId),
+				contractNotDel()
+			)
+			.fetchOne();
+
+		return (res != null) ? res.intValue() : 0;
 	}
 
 	/* 
@@ -159,9 +141,9 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 		return res != null;
 	}
 
-	public int countAllContracts(String vendorUsername, ContractSearch search) {
+	public int countAllContracts(String vendorUsername, ContractSearchReq search) {
 		Long count = jpaQueryFactory
-			.select(contract.id.count())
+			.select(contract.id.countDistinct())
 			.from(contract)
 
 			.join(contract.vendor, vendor)

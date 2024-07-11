@@ -12,10 +12,6 @@ public class ContractNameValidator implements ConstraintValidator<ContractName, 
 	);
 
 	@Override
-	public void initialize(ContractName constraintAnnotation) {
-	}
-
-	@Override
 	public boolean isValid(String contractName, ConstraintValidatorContext context) {
 		if (contractName == null) {
 			return true; // null 값은 다른 어노테이션으로 처리
