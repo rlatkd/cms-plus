@@ -32,7 +32,6 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 
 	/*
 	 * 계약 목록 조회
-	 * TODO 토탈 카운트
 	 *
 	 * 총 3번의 쿼리가 발생
 	 * 1.
@@ -126,7 +125,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	}
 
 	public int countAllContracts(String vendorUsername, ContractSearch search) {
-		return jpaQueryFactory
+		Long count = jpaQueryFactory
 			.select(contract.id.count())
 			.from(contract)
 
@@ -152,6 +151,8 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 				productNameContainsInGroup(search.getProductName()),
 				contractPriceLoeInGroup(search.getContractPrice())
 			)
-			.fetchOne().intValue();
+			.fetchOne();
+
+		return (count != null) ? count.intValue() : 0;
 	}
 }
