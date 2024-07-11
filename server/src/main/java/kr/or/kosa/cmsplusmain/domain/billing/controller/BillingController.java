@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItem;
@@ -26,19 +27,10 @@ public class BillingController {
 	private final BillingService billingService;
 
 	/*
-	 * 계약 상세 - 청구 목록
-	 * */
-	@GetMapping("/contract")
-	public List<BillingListItem> getBillingListByContract(@RequestParam(name = "id") Long contractId, SortPageDto.Req pageable) {
-		String vendorUsername = "vendor1";
-		return billingService.findBillingsByContract(vendorUsername, contractId, pageable);
-	}
-
-	/*
 	 * 청구목록 조회
 	 * */
 	@GetMapping
-	public List<BillingListItem> getBillingListWithCondition(BillingSearch search, SortPageDto.Req pageable) {
+	public SortPageDto.Res<BillingListItem> getBillingListWithCondition(BillingSearch search, SortPageDto.Req pageable) {
 		String vendorUsername = "vendor1";
 		return billingService.findBillings(vendorUsername, search, pageable);
 	}
