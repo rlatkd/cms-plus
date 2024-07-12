@@ -1,12 +1,21 @@
 import { publicAxios } from '.';
 
-// 상품 리스트 조회
+// 상품 등록
+export const createProduct = async productData => {
+  try {
+    return await publicAxios.post('/v1/vendor/product', productData);
+  } catch (err) {
+    console.error('상품 등록 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 상품 목록 조회
 export const getProductList = async (searchParams = {}) => {
   try {
     return await publicAxios.get('/v1/vendor/product', {
       params: {
-        page: 1,
-        size: 10,
+        size: 9,
         ...searchParams,
       },
     });
