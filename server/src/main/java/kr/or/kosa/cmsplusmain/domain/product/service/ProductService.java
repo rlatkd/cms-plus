@@ -1,12 +1,12 @@
 package kr.or.kosa.cmsplusmain.domain.product.service;
 
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductQRes;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductRes;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductSearch;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
+import kr.or.kosa.cmsplusmain.domain.product.dto.*;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,21 +22,37 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductCustomRepository productCustomRepository;
 
-    // 상품 목록 조회
-    public SortPageDto.Res<ProductRes> findProductsByUser(String vendorUserName, ProductSearch search, SortPageDto.Req pageable) {
-        List<ProductRes> productList = productCustomRepository.findProductListWithCondition(vendorUserName, search, pageable)
-                .stream()
-                .map(ProductQRes::toProductRes)
-                .toList();
-
-        int totalNum = productCustomRepository.countAllProducts(vendorUserName);
-        int totalPage = (int) Math.ceil((double) totalNum / pageable.getSize());
-
-        return new SortPageDto.Res<>(totalPage, productList);
+    /*
+    * TODO 상품 생성
+    *  repository
+    *  service
+    *  controller
+    *  exception - 이전꺼 포함
+    *  validation - 이전꺼 포함
+    * */
+    @Transactional
+    public void createProduct(Long vendorId, ProductCreateReq productCreateReq) {
+        productRepository.save(productCreateReq.toEntity(Vendor.builder().id(vendorId).build()));
     }
 
-    // 상품 상세 조회
-    public ProductRes findById(Long productId, String vendorUserName) {
+    /*
+     * 상품 목록 조회
+     * */
+    public PageRes<ProductListItemRes> searchProducts(String vendorUserName, ProductSearchReq search, PageReq pageable) {
+        List<ProductListItemRes> content = productCustomRepository.findProductListWithCondition(vendorUserName, search, pageable)
+                .stream()
+                .map(ProductQueryDto::toProductRes)
+                .toList();
+
+        int totalContentCount = productCustomRepository.countAllProducts(vendorUserName);
+
+        return new PageRes<>(totalContentCount, pageable.getSize(), content);
+    }
+
+    /*
+     * 상품 상세 조회
+     * */
+    public ProductDetailRes getProductDetail(Long productId, String vendorUserName) {
         // 해당 상품들 주인이 맞는지 검증
         validateProductUser(productId, vendorUserName);
 
@@ -50,11 +66,11 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
         // 계약 건수 + 상품 정보
-        return ProductRes.fromEntity(product, contractNum);
+        return ProductDetailRes.fromEntity(product, contractNum);
     }
 
     // 유효성 검증
-    public void validateProductUser(Long productId, String vendorUserName) {
+    private void validateProductUser(Long productId, String vendorUserName) {
         if (!productCustomRepository.isExistProductByUsername(productId, vendorUserName)) {
             throw new IllegalArgumentException("Not Owner");
         }

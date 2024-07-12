@@ -35,7 +35,7 @@ const ProductListPage = () => {
   const fetchProductList = async (searchParams = {}) => {
     try {
       const res = await getProductList(searchParams);
-      const formattedData = res.data.data.map((data, index) => ({
+      const formattedData = res.data.content.map((data, index) => ({
         //받아온 data 테이블 형식에 맞게 포맷팅
         No: index + 1,
         상품명: data.productName,

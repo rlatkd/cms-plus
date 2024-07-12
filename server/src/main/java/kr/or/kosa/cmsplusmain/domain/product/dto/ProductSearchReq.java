@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter // 세터 필요
-public class ProductSearch { // final 금지(@RequestParam으로 받는게 아님)
+public class ProductSearchReq { // final 금지(@RequestParam으로 받는게 아님)
 
     /****** 검색 가능 항목 *******/
     private String productName;
