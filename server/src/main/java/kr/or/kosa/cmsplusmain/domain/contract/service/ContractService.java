@@ -24,7 +24,6 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethodInfo;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
-import kr.or.kosa.cmsplusmain.domain.payment.repository.PaymentCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
