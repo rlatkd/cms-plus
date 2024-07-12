@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.vendor.jwt;
 
 import java.io.IOException;
 
+import jakarta.servlet.http.Cookie;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -44,17 +45,21 @@ public class CustomLogoutFilter extends GenericFilterBean {
 			filterChain.doFilter(request, response);
 		}
 
-		// Refreah token 존재 여부 검증
-		String authorizationRefresh = request.getHeader("Authorization-refresh");
+		//get refresh token
+		String refreshToken = null;
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("refresh_token")) {
+				refreshToken = cookie.getValue();
+			}
+		}
 
-		if (authorizationRefresh == null || !authorizationRefresh.startsWith("Bearer ")) {
+		if (refreshToken == null) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 
 		// Refresh token 만료 기한 체크
-		String refreshToken = authorizationRefresh.split(" ")[1];
-
 		try {
 			jwtUtil.isExpired(refreshToken);
 		} catch (ExpiredJwtException e) {
@@ -82,7 +87,13 @@ public class CustomLogoutFilter extends GenericFilterBean {
 		String username = jwtUtil.getUsername(refreshToken);
 		redisTemplate.delete(username);
 
-		response.setStatus(HttpServletResponse.SC_OK);
+		//Refresh 토큰 Cookie 값 0
+		Cookie cookie = new Cookie("refresh_token", null);
+		cookie.setMaxAge(0);
+		cookie.setPath("/");
+		response.addCookie(cookie);
+		System.out.println(cookie.getName()+" : "+cookie.getValue());
+
 		response.setContentType("text/plain");
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write("Logout successful");
