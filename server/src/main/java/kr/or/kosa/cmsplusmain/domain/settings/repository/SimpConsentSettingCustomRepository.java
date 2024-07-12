@@ -20,8 +20,10 @@ public class SimpConsentSettingCustomRepository extends BaseCustomRepository<Sim
         return jpaQueryFactory
                 .selectFrom(simpConsentSetting)
                 .join(simpConsentSetting.vendor, vendor)
-                .where(vendor.username.eq(username)
-                        .and(simpConsentSetting.deleted.isFalse()))
+                .where(
+                        vendorUsernameEq(username),
+                        simpConsentSetting.deleted.isFalse()
+                )
                 .fetchOne();
     }
 }

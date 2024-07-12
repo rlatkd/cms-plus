@@ -79,9 +79,8 @@ public class VendorService {
 		}
 
 		// ProductCustomRepository를 사용하여 상품 조회
-		//  vendor1: 실제 회원에 맞는 값을 사용
-		// 전체 상품을 넣어야 하나?
-		List<Product> defaultProducts = productCustomRepository.findAvailableProductsByVendorUsername("vendor1");
+		//  전체 상품 조회
+		List<Product> defaultProducts = productCustomRepository.findProducts();
 
 		for (Product product : defaultProducts) {
 			setting.addProduct(product);

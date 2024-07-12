@@ -13,6 +13,7 @@ import java.util.List;
 
 import java.util.List;
 
+
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
@@ -140,11 +141,21 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
         return jpaQueryFactory
                 .selectFrom(product)
                 .join(product.vendor, vendor)
-                .where(vendor.username.eq(username)
-                        .and(productNotDel())
-                        )
+                .where(
+                        vendorUsernameEq(username),
+                        productNotDel()
+                )
                 .fetch();
     }
+
+    /* 전체 상품 목록 조회 */
+    public List<Product> findProducts() {
+        return jpaQueryFactory
+                .selectFrom(product)
+                .where(productNotDel())
+                .fetch();
+    }
+
 
 }
 
