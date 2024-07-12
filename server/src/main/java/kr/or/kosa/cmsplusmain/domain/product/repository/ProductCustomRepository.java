@@ -4,7 +4,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductCreateReq;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductQueryDto;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductSearchReq;
 import kr.or.kosa.cmsplusmain.domain.product.dto.QProductQueryDto;
@@ -48,7 +47,7 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
 
     // 고객의 상품 목록
     // 프로젝션 대상이 2개이상이기 때문에 QueryProjection을 이용
-    public List<ProductQueryDto> findProductListWithCondition(String vendorUserName, ProductSearchReq search, PageReq pageable) {
+    public List<ProductQueryDto> findProductListWithCondition(Long vendorId, ProductSearchReq search, PageReq pageable) {
         /*
          * 해당 고객의 모든 상품(삭제되지않은)을 가져오는데, 상품의 정보와 상품이 포함된 계약 갯수를 가져와야함
          *
@@ -80,19 +79,27 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
          * left join contract_product cp on cp.product_id = p.product_id and cp.deleted = 0
          * left join contract c on c.contract_id = cp.contract_id and c.deleted = 0
          * where v.vendor_username = 'vendor1' and p.deleted = 0
-         * group by p.product_id;
+         * group by p.product_id
+         *
+         * 3. (JOIN문 줄이는 개선)
+         * select p.*, count(istinct cp.contract_id) as contract_count
+         * from product p
+         * left join contract_product cp on cp.product_id = p.product_id and cp.deleted = 0
+         * left join contract c on c.contract_id = cp.contract_id and c.deleted = 0
+         * where ~
+         * group by p.product_id
          * */
         List<ProductQueryDto> res = jpaQueryFactory
                 .select(new QProductQueryDto(product, contractProduct.contract.countDistinct().intValue())) //ProductQRes의 QueryDSL DTO 생성
                 .from(product)
-                .join(product.vendor, vendor)
+                // .join(product.vendor, vendor) // 조인문 제거
                 .leftJoin(contractProduct)
                         .on(contractProduct.product.eq(product), (contractProductNotDel()))
                 .leftJoin(contract)
                         .on(contractProduct.contract.eq(contract), (contractNotDel()))
                 .where(
                         productNotDel(),                                        // 상품 소프트 삭제
-                        vendorUsernameEq(vendorUserName),                       // 고객 아이디 일치
+                        productVendorIdEq(vendorId), // 상품의 고객 아이디 일치(수정된 로직); product.vendor.id.eq(vendorId)
                         productNameContains(search.getProductName()),           // 상품 이름 포함
                         productPriceLoe(search.getProductPrice()),              // 상품 가격 이하
                         productMemoContains(search.getProductMemo()),           // 상품 비고 포함
@@ -110,13 +117,13 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
     }
 
     // 고객의 상품 총 갯수
-    public int countAllProducts(String vendorUsername) {
+    public int countAllProducts(Long vendorId) {
         Long res = jpaQueryFactory
                 .select(product.id.count())
                 .from(product)
                 .join(product.vendor, vendor)
                 .where(
-                        vendorUsernameEq(vendorUsername),
+                        productVendorIdEq(vendorId),
                         productNotDel()
                 )
                 .fetchOne();
@@ -125,7 +132,7 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
     }
 
     // 특정 고객이 본인의 상품이 아닌거 조회하는거 처리
-    public boolean isExistProductByUsername(Long productId, String vendorUsername) {
+    public boolean isExistProductByUsername(Long productId, Long vendorId) {
         /*
          * 고객테이블에 있는 고객이름이 해당 상품의 고객ID의 이름인지 확인
          * select 1
@@ -138,7 +145,7 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                 .from(product)
                 .join(product.vendor, vendor)
                 .where(product.id.eq(productId),
-                        vendor.username.eq(vendorUsername))
+                        vendor.id.eq(vendorId))
                 .fetchFirst();
 
         return res != null;

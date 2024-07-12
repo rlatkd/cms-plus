@@ -38,13 +38,13 @@ public class ProductService {
     /*
      * 상품 목록 조회
      * */
-    public PageRes<ProductListItemRes> searchProducts(String vendorUserName, ProductSearchReq search, PageReq pageable) {
-        List<ProductListItemRes> content = productCustomRepository.findProductListWithCondition(vendorUserName, search, pageable)
+    public PageRes<ProductListItemRes> searchProducts(Long vendorId, ProductSearchReq search, PageReq pageable) {
+        List<ProductListItemRes> content = productCustomRepository.findProductListWithCondition(vendorId, search, pageable)
                 .stream()
                 .map(ProductQueryDto::toProductRes)
                 .toList();
 
-        int totalContentCount = productCustomRepository.countAllProducts(vendorUserName);
+        int totalContentCount = productCustomRepository.countAllProducts(vendorId);
 
         return new PageRes<>(totalContentCount, pageable.getSize(), content);
     }
@@ -52,9 +52,9 @@ public class ProductService {
     /*
      * 상품 상세 조회
      * */
-    public ProductDetailRes getProductDetail(Long productId, String vendorUserName) {
+    public ProductDetailRes getProductDetail(Long productId, Long vendorId) {
         // 해당 상품들 주인이 맞는지 검증
-        validateProductUser(productId, vendorUserName);
+        validateProductUser(productId, vendorId);
 
         // 계약 건수
         int contractNum = productCustomRepository
@@ -70,8 +70,8 @@ public class ProductService {
     }
 
     // 유효성 검증
-    private void validateProductUser(Long productId, String vendorUserName) {
-        if (!productCustomRepository.isExistProductByUsername(productId, vendorUserName)) {
+    private void validateProductUser(Long productId, Long vendorId) {
+        if (!productCustomRepository.isExistProductByUsername(productId, vendorId)) {
             throw new IllegalArgumentException("Not Owner");
         }
     }
