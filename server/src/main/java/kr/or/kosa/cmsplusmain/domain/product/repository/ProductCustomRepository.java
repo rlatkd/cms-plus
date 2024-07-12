@@ -116,15 +116,19 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
         return res;
     }
 
-    // 고객의 상품 총 갯수
-    public int countAllProducts(Long vendorId) {
+    // (조건이 있다면 조건에 따른)고객의 상품 총 갯수
+    public int countAllProductsWithCondition(Long vendorId, ProductSearchReq search) {
         Long res = jpaQueryFactory
                 .select(product.id.count())
                 .from(product)
-                .join(product.vendor, vendor)
                 .where(
+                        //상품 총 갯수에도 search를 반영해야함, 단 having절은 반영X
+                        productNotDel(),
                         productVendorIdEq(vendorId),
-                        productNotDel()
+                        productNameContains(search.getProductName()),
+                        productPriceLoe(search.getProductPrice()),
+                        productMemoContains(search.getProductMemo()),
+                        productCreatedDateEq(search.getProductCreatedDate())
                 )
                 .fetchOne();
 
@@ -150,7 +154,5 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
 
         return res != null;
     }
-
-
 
 }

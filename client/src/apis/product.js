@@ -15,7 +15,6 @@ export const getProductList = async (searchParams = {}) => {
   try {
     return await publicAxios.get('/v1/vendor/product', {
       params: {
-        size: 9,
         ...searchParams,
       },
     });

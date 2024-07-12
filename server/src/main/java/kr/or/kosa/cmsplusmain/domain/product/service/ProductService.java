@@ -23,12 +23,7 @@ public class ProductService {
     private final ProductCustomRepository productCustomRepository;
 
     /*
-    * TODO 상품 생성
-    *  repository
-    *  service
-    *  controller
-    *  exception - 이전꺼 포함
-    *  validation - 이전꺼 포함
+    * 상품 생성
     * */
     @Transactional
     public void createProduct(Long vendorId, ProductCreateReq productCreateReq) {
@@ -44,7 +39,7 @@ public class ProductService {
                 .map(ProductQueryDto::toProductRes)
                 .toList();
 
-        int totalContentCount = productCustomRepository.countAllProducts(vendorId);
+        int totalContentCount = productCustomRepository.countAllProductsWithCondition(vendorId, search); // search 추가
 
         return new PageRes<>(totalContentCount, pageable.getSize(), content);
     }
