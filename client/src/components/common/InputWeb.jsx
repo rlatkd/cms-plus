@@ -7,6 +7,7 @@ const InputWeb = ({
   classContainer = '',
   classLabel = '',
   classInput = '',
+  ...props
 }) => {
   return (
     <div className={`${classContainer}`}>
@@ -20,6 +21,7 @@ const InputWeb = ({
         id={id}
         type={type}
         placeholder={placeholder}
+        {...props}
       />
     </div>
   );

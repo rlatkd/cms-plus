@@ -68,9 +68,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		String username = jwtUtil.getUsername(accessToken);
 		String role = jwtUtil.getRole(accessToken);
+		Long id = Long.valueOf(jwtUtil.getId(accessToken));
 
 		Vendor vendor = Vendor.builder()
 			.username(username)
+			.id(id)
 			.role(UserRole.valueOf(role))
 			.build();
 

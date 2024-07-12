@@ -50,14 +50,16 @@ public class VendorController {
 		try {
 			RefreshTokenRes refreshTokenRes = vendorService.refresh(request, response);
 
-			// 응답 본문 작성
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-
-			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.writeValue(response.getWriter(), refreshTokenRes);
-
 			return ResponseEntity.ok(refreshTokenRes);
+
+//			// 응답 본문 작성
+//			response.setContentType("application/json");
+//			response.setCharacterEncoding("UTF-8");
+//
+//			ObjectMapper objectMapper = new ObjectMapper();
+//			objectMapper.writeValue(response.getWriter(), refreshTokenRes);
+//
+//			return ResponseEntity.ok(refreshTokenRes);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		} catch (IOException e) {

@@ -1,11 +1,21 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/InputWeb';
+import { postLogin } from '@/apis/auth';
 
 const LoginForm = () => {
   const navigate = useNavigate();
 
   const handleMoveSignup = () => {
     navigate('/signup');
+  };
+
+  const axiosLogin = async data => {
+    try {
+      console.log('!----로그인 성공----!'); // 삭제예정
+      const res = await postLogin(data);
+    } catch (err) {
+      console.error('axiosJoin => ', err.response.data);
+    }
   };
 
   return (

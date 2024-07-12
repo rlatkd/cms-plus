@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+import jakarta.servlet.http.Cookie;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,6 +27,7 @@ import kr.or.kosa.cmsplusmain.domain.vendor.dto.LoginDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	private static final Logger logger = LoggerFactory.getLogger(LoginFilter.class);
@@ -63,6 +66,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		Authentication authentication) throws IOException {
 		VendorUserDetailsDto vendorUserDetails = (VendorUserDetailsDto)authentication.getPrincipal();
 		String username = vendorUserDetails.getUsername();
+		Long id = vendorUserDetails.getId();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -70,8 +74,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String role = auth.getAuthority();
 
 		// JWT 토큰 생성
-		String accessToken = jwtUtil.createJwt("access", username, role, 30 * 60 * 1000L);
-		String refreshToken = jwtUtil.createJwt("refresh", username, role, 14 * 24 * 60 * 60 * 1000L);
+		String accessToken = jwtUtil.createJwt("access", username, id, role, 30 * 60 * 1000L);
+		String refreshToken = jwtUtil.createJwt("refresh", username, id, role, 14 * 24 * 60 * 60 * 1000L);
 
 		// Redis에 저장
 		redisTemplate.opsForValue().set(username, refreshToken, 14, TimeUnit.DAYS);
@@ -79,6 +83,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		// 저장된 토큰 확인
 		String savedToken = redisTemplate.opsForValue().get(username);
 		logger.info("Saved RedisToken for username {}: {}", username, savedToken);
+
+		// refresh token 응답
+		response.addCookie(createCookie("refresh_token", refreshToken));
 
 		// 응답 본문 작성
 		response.setContentType("application/json");
@@ -88,7 +95,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		// JSON 응답 본문 작성
 		AccessTokenRes accessTokenRes = AccessTokenRes.builder()
 			.accessToken(accessToken)
-			.refreshToken(refreshToken)
+			.username(username)
 			.role(role.replace("ROLE_", ""))
 			.build();
 
@@ -100,5 +107,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException failed) {
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	}
+
+	private Cookie createCookie(String key, String value) {
+		Cookie cookie = new Cookie(key, value);
+		cookie.setMaxAge(14 * 24 * 60 * 60);
+		cookie.setHttpOnly(true);
+		//cookie.setSecure(true);    // https 요청에 대한 접근제한
+		//cookie.setPath("/");
+		return cookie;
 	}
 }

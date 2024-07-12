@@ -29,6 +29,16 @@ public class JWTUtil {
                 .get("username", String.class);
     }
 
+    public Long getId(String token) {
+
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("id", Long.class);
+    }
+
     public String getRole(String token) {
 
         return Jwts.parser()
@@ -38,6 +48,8 @@ public class JWTUtil {
                 .getPayload()
                 .get("role", String.class);
     }
+
+
 
     public String getCategory(String token) {
 
@@ -60,11 +72,12 @@ public class JWTUtil {
                 .before(new Date());
     }
 
-    public String createJwt(String category, String username, String role, Long expiredMs) {
+    public String createJwt(String category, String username, Long id, String role, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category)
                 .claim("username", username)
+                .claim("id", id)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
