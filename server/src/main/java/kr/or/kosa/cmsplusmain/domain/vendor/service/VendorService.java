@@ -1,8 +1,19 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.service;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.entity.ProductStatus;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
+import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +34,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class VendorService {
-	private final VendorCustomRepository vendorCustomRepository;
+	private final VendorCustomRepository vendorRepository;
+	private final ProductCustomRepository productCustomRepository;
 	private final VendorRepository vendorRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
@@ -47,7 +59,36 @@ public class VendorService {
 		// TODO
 		// 상품 하나 추가
 		// 상품을 토대로 기본 설정 추가
-		vendorRepository.save(signupDto.toEntity(username, password, role));
+		//vendorRepository.save(signupDto.toEntity(username, password, role));
+
+		Vendor vendor = signupDto.toEntity(username, password, role);
+
+		// 간편동의 설정 초기화
+		SimpConsentSetting simpConsentSetting = createDefaultSimpConsentSetting();
+		vendor.setSimpConsentSetting(simpConsentSetting);
+
+		vendorRepository.save(vendor);
+	}
+
+	// 간편동의 설정 기본값
+	private SimpConsentSetting createDefaultSimpConsentSetting() {
+		SimpConsentSetting setting = SimpConsentSetting.builder().build();
+
+		// 전체 자동결제 수단 추가
+		Set<PaymentMethod> autoPaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
+		for (PaymentMethod paymentMethod : autoPaymentMethods) {
+			setting.addPaymentMethod(paymentMethod);
+		}
+
+		// ProductCustomRepository를 사용하여 상품 조회
+		//  전체 상품 조회
+		List<Product> defaultProducts = productCustomRepository.findProducts();
+
+		for (Product product : defaultProducts) {
+			setting.addProduct(product);
+		}
+
+		return setting;
 	}
 
 	@Transactional
