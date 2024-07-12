@@ -1,11 +1,9 @@
 package kr.or.kosa.cmsplusmain.domain.settings.dto;
 
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import lombok.Data;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 public class SimpConsentSettingDto {

@@ -2,7 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.payment.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 
 @Converter(autoApply = true)
 public class PaymentTypeConverter implements AttributeConverter<PaymentType, String> {

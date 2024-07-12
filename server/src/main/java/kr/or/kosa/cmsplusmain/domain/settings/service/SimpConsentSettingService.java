@@ -1,17 +1,15 @@
 package kr.or.kosa.cmsplusmain.domain.settings.service;
 
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductRes;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
-import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
 import kr.or.kosa.cmsplusmain.domain.product.service.ProductService;
 import kr.or.kosa.cmsplusmain.domain.settings.dto.AvailableOptionsDto;
 import kr.or.kosa.cmsplusmain.domain.settings.dto.SimpConsentSettingDto;
 import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import kr.or.kosa.cmsplusmain.domain.settings.repository.SimpConsentSettingCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

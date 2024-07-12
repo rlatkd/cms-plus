@@ -19,11 +19,7 @@ import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.AutoPayment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethodInfo;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +40,7 @@ public class ContractService {
 	 * 내용:
 	 * 	계약 조회, 계약상품 목록 조회(+? batch_size=100), 전체 개수 조회
 	 * */
-	public PageRes<ContractListItemRes> searchContracts(String vendorUsername, ContractSearchReq search, PageReq pageReq)
+	public PageRes<ContractListItemRes> searchContracts(Long vendorUsername, ContractSearchReq search, PageReq pageReq)
 	{
 		// 단일 페이지 결과
 		List<ContractListItemRes> content = contractCustomRepository

@@ -1,15 +1,15 @@
 package kr.or.kosa.cmsplusmain.domain.payment.dto;
 
-import kr.or.kosa.cmsplusmain.domain.payment.entity.AutoPayment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.CardPayment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.CmsPayment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.AutoPaymentType;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethodInfo;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.VirtualAccountPayment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.VirtualAccountPaymentType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -39,11 +39,11 @@ public class PaymentDto {
 
 		switch (paymentType) {
 			case AUTO -> {
-				AutoPayment autoPayment = (AutoPayment)payment;
+				AutoPaymentType autoPaymentType = (AutoPaymentType)payment;
 
 				// NULLABLE
 				// 신규 회원 등록시 결제수단 정보를 회원설정으로 설정시 NULL
-				PaymentMethodInfo paymentMethodInfo = autoPayment.getPaymentMethodInfo();
+				PaymentMethodInfo paymentMethodInfo = autoPaymentType.getPaymentMethodInfo();
 				if (paymentMethodInfo == null) {
 					break;
 				}
@@ -51,32 +51,32 @@ public class PaymentDto {
 				PaymentMethod paymentMethod = paymentMethodInfo.getPaymentMethod();
 				switch (paymentMethod) {
 					case CMS -> {
-						CmsPayment cmsPayment = (CmsPayment)paymentMethodInfo;
+						CmsPaymentMethod cmsPaymentMethod = (CmsPaymentMethod)paymentMethodInfo;
 						CMSInfo cmsInfo = CMSInfo.builder()
-							.bank(cmsPayment.getBank())
-							.accountNumber(cmsPayment.getAccountNumber())
-							.accountOwner(cmsPayment.getAccountOwner())
-							.accountOwnerBirth(cmsPayment.getAccountOwnerBirth())
+							.bank(cmsPaymentMethod.getBank())
+							.accountNumber(cmsPaymentMethod.getAccountNumber())
+							.accountOwner(cmsPaymentMethod.getAccountOwner())
+							.accountOwnerBirth(cmsPaymentMethod.getAccountOwnerBirth())
 							.build();
 						paymentDtoBuilder = paymentDtoBuilder.cmsInfo(cmsInfo);
 					}
 					case CARD -> {
-						CardPayment cardPayment = (CardPayment)paymentMethodInfo;
+						CardPaymentMethod cardPaymentMethod = (CardPaymentMethod)paymentMethodInfo;
 						CardInfo cardInfo = CardInfo.builder()
-							.cardNumber(cardPayment.getCardNumber())
-							.cardOwner(cardPayment.getCardOwner())
-							.cardOwnerBirth(cardPayment.getCardOwnerBirth())
+							.cardNumber(cardPaymentMethod.getCardNumber())
+							.cardOwner(cardPaymentMethod.getCardOwner())
+							.cardOwnerBirth(cardPaymentMethod.getCardOwnerBirth())
 							.build();
 						paymentDtoBuilder = paymentDtoBuilder.cardInfo(cardInfo);
 					}
 				}
 			}
 			case VIRTUAL -> {
-				VirtualAccountPayment virtualAccountPayment = (VirtualAccountPayment)payment;
+				VirtualAccountPaymentType virtualAccountPaymentType = (VirtualAccountPaymentType)payment;
 				VirtualAccountInfo virtualAccountInfo = VirtualAccountInfo.builder()
-					.bank(virtualAccountPayment.getBank())
-					.accountOwner(virtualAccountPayment.getAccountOwner())
-					.accountNumber(virtualAccountPayment.getAccountNumber())
+					.bank(virtualAccountPaymentType.getBank())
+					.accountOwner(virtualAccountPaymentType.getAccountOwner())
+					.accountNumber(virtualAccountPaymentType.getAccountNumber())
 					.build();
 				paymentDtoBuilder = paymentDtoBuilder.virtualAccountInfo(virtualAccountInfo);
 			}

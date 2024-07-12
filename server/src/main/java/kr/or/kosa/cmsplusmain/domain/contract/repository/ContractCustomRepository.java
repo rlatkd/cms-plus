@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.contract.repository;
 
+
+
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
@@ -19,6 +21,7 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.QContract;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -35,12 +38,11 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	 * 총 3번의 쿼리가 발생
 	 * 1.
 	 *  */
-	public List<Contract> findContractListWithCondition(String vendorUsername, ContractSearchReq search,
+	public List<Contract> findContractListWithCondition(Long vendorId, ContractSearchReq search,
 		PageReq pageReq) {
 		return jpaQueryFactory
 			.selectFrom(contract)
 
-			.join(contract.vendor, vendor)
 			.join(contract.member, member).fetchJoin()
 			.leftJoin(contract.contractProducts, contractProduct).on(contractProductNotDel())    // left join
 			.join(contract.payment, payment).fetchJoin()
@@ -48,7 +50,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 			.where(
 				contractNotDel(),                                // 계약 소프트 삭제
 
-				vendorUsernameEq(vendorUsername),                // 고객 일치
+				contract.vendor.id.eq(vendorId),                // 고객 일치
 
 				memberNameContains(search.getMemberName()),        // 회원 이름 포함
 				memberPhoneContains(search.getMemberPhone()),    // 회원 휴대번호 포함
@@ -127,15 +129,14 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	/* 
 	* 고객과 계약 id 일치하는 계약 존재 여부
 	* */
-	public boolean isExistContractByUsername(Long contractId, String vendorUsername) {
+	public boolean isExistContractByUsername(Long contractId, Long vendorId) {
 		Integer res = jpaQueryFactory
 			.selectOne()
 			.from(contract)
-			.join(contract.vendor, vendor)
 			.where(
+				contract.vendor.id.eq(vendorId),
 				contract.id.eq(contractId),
-				contractNotDel(),
-				vendorUsernameEq(vendorUsername)
+				contractNotDel()
 			)
 			.fetchOne();
 		return res != null;

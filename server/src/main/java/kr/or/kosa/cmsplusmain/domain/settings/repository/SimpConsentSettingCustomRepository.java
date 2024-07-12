@@ -6,8 +6,6 @@ import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import org.springframework.stereotype.Repository;
 
-import static kr.or.kosa.cmsplusmain.domain.settings.entity.QSimpConsentSetting.simpConsentSetting;
-import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.vendor;
 
 @Repository
 public class SimpConsentSettingCustomRepository extends BaseCustomRepository<SimpConsentSetting> {
