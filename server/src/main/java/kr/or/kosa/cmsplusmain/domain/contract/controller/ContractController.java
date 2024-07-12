@@ -31,7 +31,7 @@ public class ContractController {
 	 * 계약 목록 조회
 	 * */
 	@GetMapping
-	public PageRes<ContractListItemRes> getContractList(ContractSearchReq contractSearchReq, PageReq pageReq) {
+	public PageRes<ContractListItemRes> getContractListWithCondition(ContractSearchReq contractSearchReq, PageReq pageReq) {
 		String vendorUsername = "vendor1";
 		return contractService.searchContracts(vendorUsername, contractSearchReq, pageReq);
 	}

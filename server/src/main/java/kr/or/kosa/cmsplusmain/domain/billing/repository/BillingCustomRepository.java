@@ -38,8 +38,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 1. billing
 	 * 2. billingProduct <- batchsize 100
 	 * */
-	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearchReq search,
-		PageReq pageReq) {
+	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearchReq search, PageReq pageReq) {
 		return jpaQueryFactory
 			.selectFrom(billing)
 

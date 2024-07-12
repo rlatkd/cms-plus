@@ -19,6 +19,12 @@ import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.AutoPayment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethodInfo;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.repository.PaymentCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,10 +40,14 @@ public class ContractService {
 
 	/*
 	 * 계약 목록 조회
+	 *
+	 * 총 발생 쿼리수: 3회
+	 * 내용:
+	 * 	계약 조회, 계약상품 목록 조회(+? batch_size=100), 전체 개수 조회
 	 * */
 	public PageRes<ContractListItemRes> searchContracts(String vendorUsername, ContractSearchReq search, PageReq pageReq)
 	{
-		// 1개 페이지 결과
+		// 단일 페이지 결과
 		List<ContractListItemRes> content = contractCustomRepository
 			.findContractListWithCondition(vendorUsername, search, pageReq)
 			.stream()
@@ -52,6 +62,10 @@ public class ContractService {
 
 	/*
 	 * 계약의 청구 목록
+	 *
+	 * 총 발생 쿼리수: 4회
+	 * 내용:
+	 * 	존재여부 확인, 계약 조회, 계약상품 목록 조회(+? batch_size=100), 전체 개수 조회
 	 * */
 	public PageRes<BillingListItemRes> getBillingsByContract(
 		String vendorUsername, Long contractId, PageReq pageReq)
@@ -75,12 +89,27 @@ public class ContractService {
 
 	/*
 	 * 계약 상세
+	 *
+	 * TODO 에러
+	 *  PaymentMethodInfo proxy casting
 	 * */
 	public ContractDetailRes getContractDetail(String vendorUsername, Long contractId) {
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorUsername);
 
-		Contract contract = contractCustomRepository.findContractDetailById(contractId).orElseThrow();
+		Contract contract = contractCustomRepository.findContractDetailById(contractId);
+		Payment payment = contract.getPayment();
+
+		// if (payment.getPaymentType().equals(PaymentType.AUTO)) {
+		// 	AutoPayment autoPayment = (AutoPayment) payment;
+		// 	PaymentMethod paymentMethod = autoPayment.getPaymentMethod();
+		// 	PaymentMethodInfo paymentMethodInfo = switch (paymentMethod) {
+		// 		case CARD -> paymentCustomRepository.findCardPaymentById(payment.getId());
+		// 		default -> null;
+		// 	};
+		// 	autoPayment.setPaymentMethodInfo(paymentMethodInfo);
+		// }
+
 		return ContractDetailRes.fromEntity(contract);
 	}
 
@@ -102,7 +131,7 @@ public class ContractService {
 			.map(ContractProductReq::toEntity)
 			.toList();
 
-		// 계약상품 수정
+		// 계약상품목록 수정
 		updateContractProduct(contract, newContractProducts);
 	}
 
@@ -114,12 +143,12 @@ public class ContractService {
 		// 기존 계약상품
 		List<ContractProduct> oldContractProducts = contract.getContractProducts();
 
-		// 신규 계약상품에만 존재하는 것 추가
+		// 새롭게 추가되는 계약상품 저장
 		newContractProducts.stream()
 			.filter(ncp -> !oldContractProducts.contains(ncp))
 			.forEach(contract::addContractProduct);
 
-		// 기존 계약상품에만 존재하는 것 삭제
+		// 없어진 계약상품 삭제
 		oldContractProducts.stream()
 			.filter(ocp -> !newContractProducts.contains(ocp))
 			.toList()

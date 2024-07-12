@@ -76,14 +76,14 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	/*
 	 * 계약 상세 조회
 	 * */
-	public Optional<Contract> findContractDetailById(Long id) {
-		return Optional.ofNullable(jpaQueryFactory
+	public Contract findContractDetailById(Long id) {
+		return jpaQueryFactory
 			.selectFrom(contract)
 			.join(contract.payment, payment).fetchJoin()
 			.where(
 				contractNotDel(),
 				contract.id.eq(id))
-			.fetchOne());
+			.fetchOne();
 	}
 
 	/*
