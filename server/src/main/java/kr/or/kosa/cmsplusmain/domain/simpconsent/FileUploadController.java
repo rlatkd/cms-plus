@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.s3;
+package kr.or.kosa.cmsplusmain.domain.simpconsent;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/api/v1/upload")
 @RequiredArgsConstructor
 public class FileUploadController {
 
@@ -29,6 +29,7 @@ public class FileUploadController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
+
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("파일이 비어있습니다.");
             }

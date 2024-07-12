@@ -7,10 +7,13 @@ import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItem;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/vendor/management")
 @RequiredArgsConstructor
@@ -23,7 +26,7 @@ public class MemberController {
      * */
     @GetMapping("/members")
     public SortPageDto.Res<MemberListItem> getMemberList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, SortPageDto.Req pageable) {
-//        String username = userDetails.getUsername();
+//        String username1 = userDetails.getUsername();
         String username = "vendor1";
         return memberService.findMemberListItem(username, pageable);
     }

@@ -24,7 +24,7 @@ public class ProductQRes {
                 .productPrice(product.getPrice())
                 .productMemo(product.getMemo())
                 .contractNumber(contractNumber)
-                .createdDateTime(product.getCreatedDateTime()) // 엔티티에서 가져옴
+                .productCreatedDate(product.getCreatedDateTime().toLocalDate()) // 엔티티에서 가져옴
                 .build();
     }
 
