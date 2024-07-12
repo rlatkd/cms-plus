@@ -12,6 +12,7 @@ export default {
         ipt_border: '#C7CCD0', // 입력창 테두리
         ipt_disa: '#F1F1F1', // 입력창 비활성화
         essential: '#FF0000', // 필수정보 별태그
+        btn_disa: '#C4C4C4', // 버튼 비활성화
       },
 
       screens: {
@@ -22,10 +23,16 @@ export default {
         large_desktop: '1536px', // 2xl
       },
 
+      fontSize: {
+        15: ['15px', '20px'],
+      },
+
       spacing: {
-        17: '17px',
+        46: '46px',
         480: '480px',
+        580: '580px',
         640: '640px', // 모바일 max-width
+        680: '680px',
         1500: '1500px', // 브라우저 max-height
         2400: '2400px', // 브라우저 max-width
       },
@@ -34,6 +41,15 @@ export default {
         'dash-board': '0px 2px 6px rgba(0, 0, 0, 0.25)', // 대시보드 그림자
         'dash-sub': '0px 1px 6px 0px #DADBDC', // 서브 대시보드 그림자
         sidebars: '0 1px 3.5px 0 rgba(218, 219, 220, 1)', // 사이드바 아이콘 그림자
+        modal: '0 3px 10px rgba(209, 209, 209, 1)',
+      },
+
+      fontWeight: {
+        300: '300',
+        400: '400',
+        700: '700',
+        800: '800',
+        900: '900',
       },
 
       keyframes: {

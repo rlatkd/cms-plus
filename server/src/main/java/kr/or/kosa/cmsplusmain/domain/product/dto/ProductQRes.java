@@ -2,11 +2,9 @@ package kr.or.kosa.cmsplusmain.domain.product.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class ProductQRes {
 
     private final Product product;
@@ -26,7 +24,7 @@ public class ProductQRes {
                 .productPrice(product.getPrice())
                 .productMemo(product.getMemo())
                 .contractNumber(contractNumber)
-                .createdDateTime(product.getCreatedDateTime()) // 엔티티에서 가져옴
+                .productCreatedDate(product.getCreatedDateTime().toLocalDate()) // 엔티티에서 가져옴
                 .build();
     }
 

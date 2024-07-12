@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
-const MemberIndexPage = () => {
+const BillingIndex = () => {
   return <Outlet />;
 };
 
-export default MemberIndexPage;
+export default BillingIndex;

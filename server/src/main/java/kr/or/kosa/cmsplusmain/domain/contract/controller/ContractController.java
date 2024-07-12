@@ -1,7 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.contract.controller;
 
-import java.util.List;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -10,13 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetail;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItem;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearch;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import lombok.RequiredArgsConstructor;
+
+// TODO security
 
 @RestController
 @RequestMapping("/api/v1/vendor/contract")
@@ -27,14 +29,11 @@ public class ContractController {
 
 	/*
 	 * 계약 목록 조회
-	 *
-	 * 검색, 정렬, 페이징
 	 * */
 	@GetMapping
-	public SortPageDto.Res<ContractListItem> getContractList(ContractSearch contractSearch, SortPageDto.Req pageRequest) {
-		// TODO security
+	public PageRes<ContractListItemRes> getContractList(ContractSearchReq contractSearchReq, PageReq pageReq) {
 		String vendorUsername = "vendor1";
-		return contractService.findContractListWithConditions(vendorUsername, contractSearch, pageRequest);
+		return contractService.searchContracts(vendorUsername, contractSearchReq, pageReq);
 	}
 
 	/*
@@ -44,9 +43,18 @@ public class ContractController {
 	 * (청구정보에서 청구서 발송 수단, 자동 청구서 발송, 자동 청구 생성은 포함되어서 보내진다.)
 	 * */
 	@GetMapping("/{contractId}")
-	public ContractDetail getContractDetail(@PathVariable Long contractId) {
+	public ContractDetailRes getContractDetail(@PathVariable Long contractId) {
 		String vendorUsername = "vendor1";
-		return contractService.findContractDetailById(vendorUsername, contractId);
+		return contractService.getContractDetail(vendorUsername, contractId);
+	}
+
+	/*
+	 * 계약 상세 조회 - 청구 목록
+	 * */
+	@GetMapping("/{contractId}/billing")
+	public PageRes<BillingListItemRes> getBillingListByContract(@PathVariable Long contractId, PageReq pageReq) {
+		String vendorUsername = "vendor1";
+		return contractService.getBillingsByContract(vendorUsername, contractId, pageReq);
 	}
 
 	/*
@@ -57,8 +65,8 @@ public class ContractController {
 	 * 즉, 계약과 결제 수정에 사용된다.
 	 * */
 	@PutMapping("/{contractId}")
-	public void updateContract(@PathVariable Long contractId, @RequestBody ContractReq contractReq) {
+	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractCreateReq contractCreateReq) {
 		String vendorUsername = "vendor1";
-		contractService.updateContract(vendorUsername, contractId, contractReq);
+		contractService.updateContract(vendorUsername, contractId, contractCreateReq);
 	}
 }

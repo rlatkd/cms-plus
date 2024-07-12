@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.vendor.contorller;
+package kr.or.kosa.cmsplusmain.domain.vendor.controller;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import kr.or.kosa.cmsplusmain.domain.vendor.JWT.JWTUtil;
+import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.service.VendorService;

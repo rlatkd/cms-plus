@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ContractSearch {
+public class ContractSearchReq {
 
 	/****** 검색 가능 항목 *******/
 

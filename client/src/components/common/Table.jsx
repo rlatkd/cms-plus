@@ -3,7 +3,7 @@ import TableRow from './TableRow';
 import TableCol from './TableCol';
 import TableSearch from './TableSearch';
 
-const Table = ({ cols, search, items, handleSearchChange, show }) => {
+const Table = ({ cols, search, items, handleSearchChange, show, onRowClick, onSearchClick }) => {
   const [selection, setSelection] = useState([]);
   const itemKey = cols[0];
 
@@ -40,14 +40,20 @@ const Table = ({ cols, search, items, handleSearchChange, show }) => {
         handleClickCheckBoxAll={handleClickCheckBoxAll}
       />
       <tbody>
-        <TableSearch search={search} handleSearchChange={handleSearchChange} show={show} />
-        {items.map(item => (
+        <TableSearch
+          search={search}
+          handleSearchChange={handleSearchChange}
+          onSearchClick={onSearchClick}
+        />
+        {items.map((item, idx) => (
           <TableRow
+            key={idx}
             item={item}
             cols={cols}
             itemKey={itemKey}
             selection={selection}
             handleClickCheckBox={handleClickCheckBox}
+            onRowClick={onRowClick} // onRowClick 이벤트 전달
           />
         ))}
       </tbody>

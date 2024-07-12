@@ -1,7 +1,10 @@
+import SignupForm from '@/components/SignupForm';
+
 const SignupPage = () => {
   return (
-    <div>
-      <h1>회원가입</h1>
+    <div className='p-3 relative'>
+      <img className='h-[40vh] w-[100vw]' src='/src/assets/backgroundImgUp.png' alt='background' />
+      <SignupForm />
     </div>
   );
 };

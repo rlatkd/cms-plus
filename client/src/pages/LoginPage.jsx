@@ -1,8 +1,14 @@
+import LoginForm from '@/components/LoginForm';
+
 const LoginPage = () => {
   return (
     <>
-      <h1>로그인
-      </h1>
+      <LoginForm />
+      <img
+        className=' absolute right-0 top-0 h-[88vh] w-[44vw] hidden mobile:block'
+        src='/src/assets/backgroundImgSide.png'
+        alt='background'
+      />
     </>
   );
 };
