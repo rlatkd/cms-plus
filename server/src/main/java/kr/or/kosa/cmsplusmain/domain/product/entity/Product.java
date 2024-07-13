@@ -15,7 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import kr.or.kosa.cmsplusmain.domain.product.validator.ProductMemo;
+import kr.or.kosa.cmsplusmain.domain.base.validator.Memo;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
@@ -60,7 +60,7 @@ public class Product extends BaseEntity {
 
 	@Comment("상품 비고")
 	@Column(name = "product_memo", length = 2000)
-	@ProductMemo
+	@Memo
 	@Setter
 	private String memo = "";
 

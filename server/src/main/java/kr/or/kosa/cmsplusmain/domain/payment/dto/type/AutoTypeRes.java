@@ -2,10 +2,6 @@ package kr.or.kosa.cmsplusmain.domain.payment.dto.type;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.Comment;
-
-import jakarta.persistence.Column;
-import kr.or.kosa.cmsplusmain.domain.base.validator.HttpUrl;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Builder;

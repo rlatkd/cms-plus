@@ -15,7 +15,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class SignupDto {
+public class SignupReq {
 
 	@Username
 	@NotNull
