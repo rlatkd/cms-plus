@@ -2,6 +2,8 @@ package kr.or.kosa.cmsplusmain.domain.product.repository;
 
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

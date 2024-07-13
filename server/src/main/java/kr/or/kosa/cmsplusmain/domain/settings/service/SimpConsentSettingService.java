@@ -34,20 +34,20 @@ public class SimpConsentSettingService {
 
 
     /* 고객 간편동의 설정 세팅 조회 */
-    public SimpConsentSettingDto getSetting(String username) {
-        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(username);
+    public SimpConsentSettingDto getSetting(Long vendorId) {
+        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(vendorId);
         if (setting == null) {
-            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + username);
+            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + vendorId);
         }
         return convertToDto(setting);
     }
 
     /* 고객 간편동의 설정 세팅 수정 */
     @Transactional
-    public SimpConsentSettingDto updateSetting(String username, SimpConsentSettingDto dto) {
-        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(username);
+    public SimpConsentSettingDto updateSetting(Long vendorId, SimpConsentSettingDto dto) {
+        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(vendorId);
         if (setting == null) {
-            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + username);
+            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + vendorId);
         }
 
         Set<PaymentMethod> autoPaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
