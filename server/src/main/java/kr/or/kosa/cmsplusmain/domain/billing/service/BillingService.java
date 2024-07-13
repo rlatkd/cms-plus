@@ -17,15 +17,11 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.billing.exception.DeleteBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,7 +52,7 @@ public class BillingService {
 			throw new EntityNotFoundException();
 		}
 
-		List<BillingProduct> billingProducts = conventToBillingProducts(billingCreateReq.getBillingProducts());
+		List<BillingProduct> billingProducts = convertToBillingProducts(billingCreateReq.getBillingProducts());
 
 		// 청구 생성
 		Billing billing = new Billing(
@@ -127,7 +123,7 @@ public class BillingService {
 		billing.setInvoiceMessage(billingUpdateReq.getInvoiceMemo());
 
 		// 신규 청구상품
-		List<BillingProduct> newBillingProducts = conventToBillingProducts(billingUpdateReq.getBillingProducts());
+		List<BillingProduct> newBillingProducts = convertToBillingProducts(billingUpdateReq.getBillingProducts());
 
 		// 청구상품 수정
 		updateBillingProducts(billing, newBillingProducts);
@@ -179,7 +175,7 @@ public class BillingService {
 	* 상품이름을 청구상품 테이블에 저장해
 	* 청구상품 조회시 상품 이름만을 가져오기위한 조인을 없앤다.
 	* */
-	private List<BillingProduct> conventToBillingProducts(List<BillingProductReq> billingProductReqs) {
+	private List<BillingProduct> convertToBillingProducts(List<BillingProductReq> billingProductReqs) {
 		// 상품 ID
 		List<Long> productIds = billingProductReqs.stream()
 			.mapToLong(BillingProductReq::getProductId)
