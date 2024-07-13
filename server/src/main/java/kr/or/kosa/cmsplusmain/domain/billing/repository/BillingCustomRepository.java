@@ -5,6 +5,7 @@ package kr.or.kosa.cmsplusmain.domain.billing.repository;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
@@ -49,6 +50,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.join(billing.contract, contract).fetchJoin()
 			.join(contract.member, member).fetchJoin()
 			.join(contract.payment, payment).fetchJoin()
+			.leftJoin(contract.contractProducts, contractProduct).on(contractProduct.deleted.isFalse())
 
 			.where(
 				billingNotDel(),                                	// 청구 삭제 여부
@@ -87,6 +89,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.join(billing.contract, contract)
 			.join(contract.member, member)
 			.join(contract.payment, payment)
+			.leftJoin(contract.contractProducts, contractProduct).on(contractProduct.deleted.isFalse())
 
 			.where(
 				billingNotDel(),                                	// 청구 삭제 여부
