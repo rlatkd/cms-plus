@@ -1,9 +1,9 @@
 import NextButton from '@/components/common/buttons/StatusNextButton';
 import PreviousButton from '@/components/common/buttons/StatusPreButton';
-import RegisterBasicInfo from '@/components/vendor/member/RegisterBasicInfo';
-import RegisterBillingInfo from '@/components/vendor/member/RegisterBillingInfo';
-import RegisterContractInfo from '@/components/vendor/member/RegisterContractInfo';
-import RegisterPaymentInfo from '@/components/vendor/member/RegisterPaymentInfo';
+import RegisterBasicInfo from '@/components/vendor/member/register/RegisterBasicInfo';
+import RegisterBillingInfo from '@/components/vendor/member/register/RegisterBillingInfo';
+import RegisterContractInfo from '@/components/vendor/member/register/RegisterContractInfo';
+import RegisterPaymentInfo from '@/components/vendor/member/register/RegisterPaymentInfo';
 import useStatusStepper from '@/hooks/useStatusStepper';
 import { useStatusStore } from '@/stores/useStatusStore';
 import { useNavigate } from 'react-router-dom';

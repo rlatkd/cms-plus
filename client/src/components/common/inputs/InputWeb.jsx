@@ -4,6 +4,7 @@ const InputWeb = ({
   id,
   label,
   required,
+  disabled,
   type = 'text',
   placeholder,
   classContainer = '',
@@ -30,11 +31,14 @@ const InputWeb = ({
         htmlFor={id}>
         {label}
       </label>
-      <div className='relative'>
+      <div className='relative '>
         <input
           ref={inputRef}
-          className={`${classInput} placeholder:text-text_grey text-black border border-ipt_border focus:border-mint focus:outline-none focus:ring-mint focus:ring-1 placeholder:text-xs text-sm p-4  rounded-lg w-full`}
+          className={`${classInput} placeholder:text-text_grey text-black border
+                    ${disabled && 'bg-ipt_disa '} border-ipt_border focus:border-mint focus:outline-none 
+                    focus:ring-mint focus:ring-1 placeholder:text-xs text-sm p-4  rounded-lg w-full`}
           id={id}
+          disabled={disabled}
           type={type !== 'password' ? type : showPassword ? 'text' : 'password'}
           placeholder={placeholder}
           {...props}

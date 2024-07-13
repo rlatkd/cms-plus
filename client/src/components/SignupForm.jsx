@@ -143,7 +143,11 @@ const SignupForm = () => {
             />
             <button
               className={`ml-3  w-32 rounded-lg text-white text-sm font-700 h-46
-                ${vendorFormData.username.length > 4 ? 'bg-mint hover:bg-mint_hover' : 'bg-btn_disa'}  `}
+                ${
+                  vendorFormData.username !== null && vendorFormData.username.length > 4
+                    ? 'bg-mint hover:bg-mint_hover'
+                    : 'bg-btn_disa'
+                }  `}
               onClick={handleCheckUsername}>
               중복확인
             </button>
@@ -153,7 +157,7 @@ const SignupForm = () => {
           <InputWeb
             id='password'
             label='비밀번호'
-            type={showPassword ? 'text' : 'password'}
+            type='password'
             placeholder='비밀번호(숫자, 영문, 특수문자 조합 8 ~ 16)'
             required
             classContainer='w-1/2 mr-5'
@@ -166,7 +170,7 @@ const SignupForm = () => {
           <InputWeb
             id='passwordCheck'
             label='비밀번호 확인'
-            type={showPassword ? 'text' : 'password'}
+            type='password'
             placeholder='비밀번호(숫자, 영문, 특수문자 조합 8 ~ 16)'
             required
             classContainer='w-1/2'
