@@ -17,7 +17,7 @@ public class BillingProductRes {
 	public static BillingProductRes fromEntity(BillingProduct billingProduct) {
 		return BillingProductRes.builder()
 			.billingProductId(billingProduct.getId())
-			.billingStandardId(billingProduct.getBillingStandard().getId())
+			.billingStandardId(billingProduct.getBilling().getId())
 			.productId(billingProduct.getProduct().getId())
 
 			// 주의

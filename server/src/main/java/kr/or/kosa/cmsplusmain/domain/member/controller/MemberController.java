@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.member.controller;
 
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
@@ -26,9 +27,8 @@ public class MemberController {
      * */
     @GetMapping("/members")
     public SortPageDto.Res<MemberListItem> getMemberList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, SortPageDto.Req pageable) {
-        String username = userDetails.getUsername();
-//        String username = "vendor1";
-        return memberService.findMemberListItem(username, pageable);
+        Long vendorId = 1L;
+        return memberService.findMemberListItem(vendorId, pageable);
     }
 
     /*
@@ -36,18 +36,16 @@ public class MemberController {
      * */
     @GetMapping("/members/{memberId}")
     public MemberDetail getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId) {
-//        String username = userDetails.getUsername();
-        String username = "vendor1";
-        return memberService.findMemberDetailById(username, memberId);
+        Long vendorId = 1L;
+        return memberService.findMemberDetailById(vendorId, memberId);
     }
 
     /*
      * 회원 상세 - 계약 리스트 조회
      * */
     @GetMapping("/members/contracts/{memberId}")
-    public SortPageDto.Res<MemberContractListItemDto> getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId , SortPageDto.Req pageable) {
-//        String username = userDetails.getUsername();
-        String username = "vendor1";
-        return memberService.findContractListItemByMemberId(username, memberId, pageable);
+    public SortPageDto.Res<MemberContractListItemDto> getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId , PageReq pageable) {
+        Long vendorId = 1L;
+        return memberService.findContractListItemByMemberId(vendorId, memberId, pageable);
     }
 }

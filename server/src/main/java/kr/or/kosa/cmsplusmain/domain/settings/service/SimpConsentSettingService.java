@@ -1,17 +1,15 @@
 package kr.or.kosa.cmsplusmain.domain.settings.service;
 
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductRes;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
-import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
 import kr.or.kosa.cmsplusmain.domain.product.service.ProductService;
 import kr.or.kosa.cmsplusmain.domain.settings.dto.AvailableOptionsDto;
 import kr.or.kosa.cmsplusmain.domain.settings.dto.SimpConsentSettingDto;
 import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import kr.or.kosa.cmsplusmain.domain.settings.repository.SimpConsentSettingCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,20 +34,20 @@ public class SimpConsentSettingService {
 
 
     /* 고객 간편동의 설정 세팅 조회 */
-    public SimpConsentSettingDto getSetting(String username) {
-        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(username);
+    public SimpConsentSettingDto getSetting(Long vendorId) {
+        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(vendorId);
         if (setting == null) {
-            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + username);
+            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + vendorId);
         }
         return convertToDto(setting);
     }
 
     /* 고객 간편동의 설정 세팅 수정 */
     @Transactional
-    public SimpConsentSettingDto updateSetting(String username, SimpConsentSettingDto dto) {
-        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(username);
+    public SimpConsentSettingDto updateSetting(Long vendorId, SimpConsentSettingDto dto) {
+        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(vendorId);
         if (setting == null) {
-            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + username);
+            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + vendorId);
         }
 
         Set<PaymentMethod> autoPaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
@@ -72,10 +69,10 @@ public class SimpConsentSettingService {
     }
 
 
-    public AvailableOptionsDto getAvailableOptions(String username) {
+    public AvailableOptionsDto getAvailableOptions(Long vendorId) {
         Set<PaymentMethod> availablePaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
 
-        List<ProductRes> availableProducts = productService.findAvailableProductsByVendorUsername(username);
+        List<ProductListItemRes> availableProducts = productService.findAvailableProductsByVendorUsername(vendorId);
 
         return new AvailableOptionsDto(availablePaymentMethods, availableProducts);
     }

@@ -44,6 +44,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Contract extends BaseEntity {
 
+	// 최소 계약상품 수
 	private static final int MIN_CONTRACT_PRODUCT_NUMBER = 1;
 
 	@Id
@@ -63,19 +64,12 @@ public class Contract extends BaseEntity {
 	@NotNull
 	private Member member;
 
-	@Comment("계약 상태")
-	@Column(name = "contract_status", nullable = false)
-	@Enumerated(EnumType.STRING)
-	@NotNull
-	@Builder.Default
-	private ContractStatus status = ContractStatus.ENABLED;
-
 	@Comment("계약 이름")
 	@Column(name = "contract_name", nullable = false, length = 40)
 	@ContractName
 	@NotNull
 	@Setter
-	private String name;
+	private String contractName;
 
 	@Comment("계약 약정일")
 	@Column(name = "contract_day", nullable = false)

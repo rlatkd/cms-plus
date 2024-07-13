@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.payment.entity;
+package kr.or.kosa.cmsplusmain.domain.payment.entity.method;
 
 import java.time.LocalDate;
 
@@ -16,10 +16,9 @@ import lombok.NoArgsConstructor;
 
 @Comment("결제수단 - 카드")
 @Entity
-@DiscriminatorValue(PaymentMethod.Values.CARD)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CardPayment extends PaymentMethodInfo {
+public class CardPaymentMethod extends PaymentMethodInfo {
 
 	@Comment("카드 번호")
 	@Column(name = "card_info_number", nullable = false)

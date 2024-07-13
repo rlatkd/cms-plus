@@ -20,22 +20,22 @@ public class SimpConsentSettingController {
     /* 고객 간편동의 설정 세팅 조회 */
     @GetMapping
     public ResponseEntity<SimpConsentSettingDto> getSetting() {
-        String username  = "vendor1";
-        return ResponseEntity.ok(simpConsentSettingService.getSetting(username));
+        Long vendorId = 1L;
+        return ResponseEntity.ok(simpConsentSettingService.getSetting(vendorId));
     }
 
     /* 고객 간편동의 설정 세팅 수정 */
     @PutMapping
     public ResponseEntity<SimpConsentSettingDto> updateSetting(@RequestBody SimpConsentSettingDto dto) {
-        String username  = "vendor1";
-        return ResponseEntity.ok(simpConsentSettingService.updateSetting(username, dto));
+        Long vendorId = 1L;
+        return ResponseEntity.ok(simpConsentSettingService.updateSetting(vendorId, dto));
     }
 
     /* 간편동의 상품, 결제수단 리스트 조회 */
     @GetMapping("/available-options")
     public ResponseEntity<?> getAvailableOptions() {
-        String username  = "vendor1";
-        AvailableOptionsDto options = simpConsentSettingService.getAvailableOptions(username);
+        Long vendorId = 1L;
+        AvailableOptionsDto options = simpConsentSettingService.getAvailableOptions(vendorId);
         return ResponseEntity.ok(options);
     }
 

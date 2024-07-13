@@ -73,10 +73,10 @@ public class ProductService {
     }
 
 
-    public List<ProductRes> findAvailableProductsByVendorUsername(String username) {
-        return productCustomRepository.findAvailableProductsByVendorUsername(username)
+    public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
+        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
                 .stream()
-                .map(product -> ProductRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
+                .map(product -> ProductListItemRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
                 .collect(Collectors.toList());
     }
 

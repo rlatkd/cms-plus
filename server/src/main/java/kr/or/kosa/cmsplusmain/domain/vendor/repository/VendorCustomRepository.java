@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.repository;
 
+
 import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
 import org.springframework.stereotype.Repository;

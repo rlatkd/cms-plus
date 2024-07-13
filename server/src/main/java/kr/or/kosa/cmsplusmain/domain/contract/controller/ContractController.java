@@ -31,9 +31,9 @@ public class ContractController {
 	 * 계약 목록 조회
 	 * */
 	@GetMapping
-	public PageRes<ContractListItemRes> getContractList(ContractSearchReq contractSearchReq, PageReq pageReq) {
-		String vendorUsername = "vendor1";
-		return contractService.searchContracts(vendorUsername, contractSearchReq, pageReq);
+	public PageRes<ContractListItemRes> getContractListWithCondition(ContractSearchReq contractSearchReq, PageReq pageReq) {
+		Long vendorId = 1L;
+		return contractService.searchContracts(vendorId, contractSearchReq, pageReq);
 	}
 
 	/*
@@ -44,8 +44,8 @@ public class ContractController {
 	 * */
 	@GetMapping("/{contractId}")
 	public ContractDetailRes getContractDetail(@PathVariable Long contractId) {
-		String vendorUsername = "vendor1";
-		return contractService.getContractDetail(vendorUsername, contractId);
+		Long vendorId = 1L;
+		return contractService.getContractDetail(vendorId, contractId);
 	}
 
 	/*
@@ -53,8 +53,8 @@ public class ContractController {
 	 * */
 	@GetMapping("/{contractId}/billing")
 	public PageRes<BillingListItemRes> getBillingListByContract(@PathVariable Long contractId, PageReq pageReq) {
-		String vendorUsername = "vendor1";
-		return contractService.getBillingsByContract(vendorUsername, contractId, pageReq);
+		Long vendorId = 1L;
+		return contractService.getBillingsByContract(vendorId, contractId, pageReq);
 	}
 
 	/*
@@ -66,7 +66,7 @@ public class ContractController {
 	 * */
 	@PutMapping("/{contractId}")
 	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractCreateReq contractCreateReq) {
-		String vendorUsername = "vendor1";
-		contractService.updateContract(vendorUsername, contractId, contractCreateReq);
+		Long vendorId = 1L;
+		contractService.updateContract(vendorId, contractId, contractCreateReq);
 	}
 }

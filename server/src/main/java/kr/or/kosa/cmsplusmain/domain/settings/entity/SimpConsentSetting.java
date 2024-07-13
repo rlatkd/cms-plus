@@ -24,7 +24,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 

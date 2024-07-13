@@ -1,151 +1,716 @@
 use cmsplusmain;
 
--- Vendor 데이터 삽입
-INSERT INTO vendor (deleted, created_datetime, vendor_phone, vendor_username, vendor_dept, vendor_name, vendor_email, vendor_password, user_role)
+-- Sample data for cmsplusmain.payment_method_info
+INSERT INTO cmsplusmain.payment_method_info (deleted, created_datetime, deleted_datetime, modified_datetime, payment_method_info_id)
 VALUES
-    (0, NOW(), '01012345678', 'vendor1', '영업부', '김판매', 'vendor1@example.com', 'password123', 'ROLE_VENDOR'),
-    (0, NOW(), '01023456789', 'vendor2', '마케팅부', '이마케팅', 'vendor2@example.com', 'password456', 'ROLE_VENDOR'),
-    (0, NOW(), '01034567890', 'vendor3', '고객지원부', '박지원', 'vendor3@example.com', 'password789', 'ROLE_VENDOR');
+    (0, NOW(), NULL, NOW(), 1),
+    (0, NOW(), NULL, NOW(), 2),
+    (0, NOW(), NULL, NOW(), 3),
+    (0, NOW(), NULL, NOW(), 4),
+    (0, NOW(), NULL, NOW(), 5),
+    (0, NOW(), NULL, NOW(), 6),
+    (0, NOW(), NULL, NOW(), 7),
+    (0, NOW(), NULL, NOW(), 8),
+    (0, NOW(), NULL, NOW(), 9),
+    (0, NOW(), NULL, NOW(), 10),
+    (0, NOW(), NULL, NOW(), 11),
+    (0, NOW(), NULL, NOW(), 12),
+    (0, NOW(), NULL, NOW(), 13),
+    (0, NOW(), NULL, NOW(), 14),
+    (0, NOW(), NULL, NOW(), 15),
+    (0, NOW(), NULL, NOW(), 16),
+    (0, NOW(), NULL, NOW(), 17),
+    (0, NOW(), NULL, NOW(), 18),
+    (0, NOW(), NULL, NOW(), 19),
+    (0, NOW(), NULL, NOW(), 20),
+    (0, NOW(), NULL, NOW(), 21),
+    (0, NOW(), NULL, NOW(), 22),
+    (0, NOW(), NULL, NOW(), 23),
+    (0, NOW(), NULL, NOW(), 24),
+    (0, NOW(), NULL, NOW(), 25),
+    (0, NOW(), NULL, NOW(), 26),
+    (0, NOW(), NULL, NOW(), 27),
+    (0, NOW(), NULL, NOW(), 28),
+    (0, NOW(), NULL, NOW(), 29),
+    (0, NOW(), NULL, NOW(), 30);
 
--- Member 데이터 삽입
-INSERT INTO member (deleted, member_auto_billing, member_auto_invoice_send, member_enroll_date, created_datetime, vendor_id, member_phone, member_name, member_email, member_invoice_send_method, member_status)
+-- Sample data for cmsplusmain.card_payment_method
+INSERT INTO cmsplusmain.card_payment_method (payment_method_info_id, card_info_number, card_info_owner, card_info_owner_birth)
 VALUES
-    (0, 1, 1, '2024-01-01', NOW(), 1, '01098765432', '학생1', 'student1@example.com', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2024-01-02', NOW(), 1, '01087654321', '학생2', 'student2@example.com', 'SMS', 'ENABLED'),
-    (0, 1, 1, '2024-01-03', NOW(), 2, '01076543210', '학생3', 'student3@example.com', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2024-01-04', NOW(), 2, '01065432109', '학생4', 'student4@example.com', 'SMS', 'ENABLED'),
-    (0, 1, 1, '2024-01-05', NOW(), 3, '01054321098', '학생5', 'student5@example.com', 'EMAIL', 'ENABLED');
+    (1, '1234567890123456', '김철수', '1990-01-01'),
+    (2, '2345678901234567', '이영희', '1991-02-02'),
+    (3, '3456789012345678', '박민수', '1992-03-03'),
+    (4, '4567890123456789', '최지우', '1993-04-04'),
+    (5, '5678901234567890', '홍길동', '1994-05-05'),
+    (6, '6789012345678901', '유재석', '1995-06-06'),
+    (7, '7890123456789012', '강호동', '1996-07-07'),
+    (8, '8901234567890123', '신동엽', '1997-08-08'),
+    (9, '9012345678901234', '김태호', '1998-09-09'),
+    (10, '0123456789012345', '김건모', '1999-10-10'),
+    (11, '1234567890123456', '이효리', '2000-11-11'),
+    (12, '2345678901234567', '비', '2001-12-12'),
+    (13, '3456789012345678', '김종국', '2002-01-01'),
+    (14, '4567890123456789', '박명수', '2003-02-02'),
+    (15, '5678901234567890', '정준하', '2004-03-03'),
+    (16, '6789012345678901', '하하', '2005-04-04'),
+    (17, '7890123456789012', '서장훈', '2006-05-05'),
+    (18, '8901234567890123', '이상민', '2007-06-06'),
+    (19, '9012345678901234', '박수홍', '2008-07-07'),
+    (20, '0123456789012345', '이휘재', '2009-08-08'),
+    (21, '1234567890123456', '김숙', '2010-09-09'),
+    (22, '2345678901234567', '송은이', '2011-10-10'),
+    (23, '3456789012345678', '김신영', '2012-11-11'),
+    (24, '4567890123456789', '안영미', '2013-12-12'),
+    (25, '5678901234567890', '유민상', '2014-01-01'),
+    (26, '6789012345678901', '김준현', '2015-02-02'),
+    (27, '7890123456789012', '김지민', '2016-03-03'),
+    (28, '8901234567890123', '김영철', '2017-04-04'),
+    (29, '9012345678901234', '장도연', '2018-05-05'),
+    (30, '0123456789012345', '홍현희', '2019-06-06');
 
--- Payment 데이터 삽입
-INSERT INTO payment (deleted, created_datetime, payment_type, payment_consent_status, payment_status)
+-- Sample data for cmsplusmain.cms_payment_method
+INSERT INTO cmsplusmain.cms_payment_method (payment_method_info_id, cms_account_number, cms_account_owner, cms_account_bank, cms_owner_birth)
 VALUES
-    (0, NOW(), 'AUTO', 'ACCEPT', 'ENABLED'),
-    (0, NOW(), 'AUTO', 'ACCEPT', 'ENABLED'),
-    (0, NOW(), 'AUTO', 'ACCEPT', 'ENABLED'),
-    (0, NOW(), 'AUTO', 'ACCEPT', 'ENABLED'),
-    (0, NOW(), 'AUTO', 'ACCEPT', 'ENABLED');
+    (1, '1111111111111', '박준형', '088', '1985-03-03'),
+    (2, '2222222222222', '최수현', '004', '1986-04-04'),
+    (3, '3333333333333', '정우성', '088', '1987-05-05'),
+    (4, '4444444444444', '이정재', '004', '1988-06-06'),
+    (5, '5555555555555', '박보검', '088', '1989-07-07'),
+    (6, '6666666666666', '송중기', '004', '1990-08-08'),
+    (7, '7777777777777', '강동원', '088', '1991-09-09'),
+    (8, '8888888888888', '원빈', '004', '1992-10-10'),
+    (9, '9999999999999', '현빈', '088', '1993-11-11'),
+    (10, '1010101010101', '이민호', '004', '1994-12-12'),
+    (11, '1212121212121', '김수현', '088', '1995-01-01'),
+    (12, '1313131313131', '주원', '004', '1996-02-02'),
+    (13, '1414141414141', '차은우', '088', '1997-03-03'),
+    (14, '1515151515151', '류준열', '004', '1998-04-04'),
+    (15, '1616161616161', '유아인', '088', '1999-05-05'),
+    (16, '1717171717171', '이동욱', '004', '2000-06-06'),
+    (17, '1818181818181', '김우빈', '088', '2001-07-07'),
+    (18, '1919191919191', '정해인', '004', '2002-08-08'),
+    (19, '2020202020202', '송강호', '088', '2003-09-09'),
+    (20, '2121212121212', '정우', '004', '2004-10-10'),
+    (21, '2222222222222', '김강우', '088', '2005-11-11'),
+    (22, '2323232323232', '조인성', '004', '2006-12-12'),
+    (23, '2424242424242', '이종석', '088', '2007-01-01'),
+    (24, '2525252525252', '서강준', '004', '2008-02-02'),
+    (25, '2626262626262', '이동건', '088', '2009-03-03'),
+    (26, '2727272727272', '주지훈', '004', '2010-04-04'),
+    (27, '2828282828282', '김희원', '088', '2011-05-05'),
+    (28, '2929292929292', '박해준', '004', '2012-06-06'),
+    (29, '3030303030303', '박정민', '088', '2013-07-07'),
+    (30, '3131313131313', '양세종', '004', '2014-08-08');
 
--- Contract 데이터 삽입
-INSERT INTO contract (contract_day, contract_end_date, contract_start_date, deleted, created_datetime, member_id, payment_id, vendor_id, contract_name, contract_status)
+-- Sample data for cmsplusmain.payment_method_info_seq
+INSERT INTO cmsplusmain.payment_method_info_seq (next_val)
 VALUES
-    (1, '2024-12-31', '2024-01-01', 0, NOW(), 1, 1, 1, '1년 정기 계약', 'ENABLED'),
-    (15, '2024-12-31', '2024-01-15', 0, NOW(), 2, 2, 1, '11개월 계약', 'ENABLED'),
-    (1, '2024-06-30', '2024-01-01', 0, NOW(), 3, 3, 2, '6개월 계약', 'ENABLED'),
-    (1, '2024-12-31', '2024-01-01', 0, NOW(), 4, 4, 2, '1년 특별 계약', 'ENABLED'),
-    (1, '2024-12-31', '2024-01-01', 0, NOW(), 5, 5, 3, '1년 표준 계약', 'ENABLED');
+    (31),
+    (32),
+    (33),
+    (34),
+    (35),
+    (36),
+    (37),
+    (38),
+    (39),
+    (40),
+    (41),
+    (42),
+    (43),
+    (44),
+    (45),
+    (46),
+    (47),
+    (48),
+    (49),
+    (50),
+    (51),
+    (52),
+    (53),
+    (54),
+    (55),
+    (56),
+    (57),
+    (58),
+    (59),
+    (60);
 
--- Product 데이터 삽입
-INSERT INTO product (deleted, product_price, created_datetime, vendor_id, product_name, product_status)
+-- Sample data for cmsplusmain.payment_type_info
+INSERT INTO cmsplusmain.payment_type_info (deleted, created_datetime, deleted_datetime, modified_datetime, payment_type_info_id)
 VALUES
-    (0, 100000, NOW(), 1, '기본 강좌', 'ENABLED'),
-    (0, 150000, NOW(), 1, '심화 강좌', 'ENABLED'),
-    (0, 80000, NOW(), 2, '온라인 강좌', 'ENABLED'),
-    (0, 200000, NOW(), 2, '1:1 튜터링', 'ENABLED'),
-    (0, 120000, NOW(), 3, '그룹 스터디', 'ENABLED');
+    (0, NOW(), NULL, NOW(), 1),
+    (0, NOW(), NULL, NOW(), 2),
+    (0, NOW(), NULL, NOW(), 3),
+    (0, NOW(), NULL, NOW(), 4),
+    (0, NOW(), NULL, NOW(), 5),
+    (0, NOW(), NULL, NOW(), 6),
+    (0, NOW(), NULL, NOW(), 7),
+    (0, NOW(), NULL, NOW(), 8),
+    (0, NOW(), NULL, NOW(), 9),
+    (0, NOW(), NULL, NOW(), 10),
+    (0, NOW(), NULL, NOW(), 11),
+    (0, NOW(), NULL, NOW(), 12),
+    (0, NOW(), NULL, NOW(), 13),
+    (0, NOW(), NULL, NOW(), 14),
+    (0, NOW(), NULL, NOW(), 15),
+    (0, NOW(), NULL, NOW(), 16),
+    (0, NOW(), NULL, NOW(), 17),
+    (0, NOW(), NULL, NOW(), 18),
+    (0, NOW(), NULL, NOW(), 19),
+    (0, NOW(), NULL, NOW(), 20),
+    (0, NOW(), NULL, NOW(), 21),
+    (0, NOW(), NULL, NOW(), 22),
+    (0, NOW(), NULL, NOW(), 23),
+    (0, NOW(), NULL, NOW(), 24),
+    (0, NOW(), NULL, NOW(), 25),
+    (0, NOW(), NULL, NOW(), 26),
+    (0, NOW(), NULL, NOW(), 27),
+    (0, NOW(), NULL, NOW(), 28),
+    (0, NOW(), NULL, NOW(), 29),
+    (0, NOW(), NULL, NOW(), 30);
 
--- Billing_standard 데이터 삽입
-INSERT INTO billing_standard (billing_standard_contract_day, deleted, contract_id, created_datetime, billing_standard_status, billing_standard_type)
+-- Sample data for cmsplusmain.auto_payment_type
+INSERT INTO cmsplusmain.auto_payment_type (payment_type_info_id, payment_simpconsent_request_date, payment_consent_img_url, payment_sign_img_url)
 VALUES
-    (1, 0, 1, NOW(), 'ENABLED', 'REGULAR'),
-    (15, 0, 2, NOW(), 'ENABLED', 'REGULAR'),
-    (1, 0, 3, NOW(), 'ENABLED', 'REGULAR'),
-    (1, 0, 4, NOW(), 'ENABLED', 'REGULAR'),
-    (1, 0, 5, NOW(), 'ENABLED', 'REGULAR');
+    (1, NOW(), 'http://example.com/image1.jpg', 'http://example.com/sign1.jpg'),
+    (2, NOW(), 'http://example.com/image2.jpg', 'http://example.com/sign2.jpg'),
+    (3, NOW(), 'http://example.com/image3.jpg', 'http://example.com/sign3.jpg'),
+    (4, NOW(), 'http://example.com/image4.jpg', 'http://example.com/sign4.jpg'),
+    (5, NOW(), 'http://example.com/image5.jpg', 'http://example.com/sign5.jpg'),
+    (6, NOW(), 'http://example.com/image6.jpg', 'http://example.com/sign6.jpg'),
+    (7, NOW(), 'http://example.com/image7.jpg', 'http://example.com/sign7.jpg'),
+    (8, NOW(), 'http://example.com/image8.jpg', 'http://example.com/sign8.jpg'),
+    (9, NOW(), 'http://example.com/image9.jpg', 'http://example.com/sign9.jpg'),
+    (10, NOW(), 'http://example.com/image10.jpg', 'http://example.com/sign10.jpg'),
+    (11, NOW(), 'http://example.com/image11.jpg', 'http://example.com/sign11.jpg'),
+    (12, NOW(), 'http://example.com/image12.jpg', 'http://example.com/sign12.jpg'),
+    (13, NOW(), 'http://example.com/image13.jpg', 'http://example.com/sign13.jpg'),
+    (14, NOW(), 'http://example.com/image14.jpg', 'http://example.com/sign14.jpg'),
+    (15, NOW(), 'http://example.com/image15.jpg', 'http://example.com/sign15.jpg'),
+    (16, NOW(), 'http://example.com/image16.jpg', 'http://example.com/sign16.jpg'),
+    (17, NOW(), 'http://example.com/image17.jpg', 'http://example.com/sign17.jpg'),
+    (18, NOW(), 'http://example.com/image18.jpg', 'http://example.com/sign18.jpg'),
+    (19, NOW(), 'http://example.com/image19.jpg', 'http://example.com/sign19.jpg'),
+    (20, NOW(), 'http://example.com/image20.jpg', 'http://example.com/sign20.jpg'),
+    (21, NOW(), 'http://example.com/image21.jpg', 'http://example.com/sign21.jpg'),
+    (22, NOW(), 'http://example.com/image22.jpg', 'http://example.com/sign22.jpg'),
+    (23, NOW(), 'http://example.com/image23.jpg', 'http://example.com/sign23.jpg'),
+    (24, NOW(), 'http://example.com/image24.jpg', 'http://example.com/sign24.jpg'),
+    (25, NOW(), 'http://example.com/image25.jpg', 'http://example.com/sign25.jpg'),
+    (26, NOW(), 'http://example.com/image26.jpg', 'http://example.com/sign26.jpg'),
+    (27, NOW(), 'http://example.com/image27.jpg', 'http://example.com/sign27.jpg'),
+    (28, NOW(), 'http://example.com/image28.jpg', 'http://example.com/sign28.jpg'),
+    (29, NOW(), 'http://example.com/image29.jpg', 'http://example.com/sign29.jpg'),
+    (30, NOW(), 'http://example.com/image30.jpg', 'http://example.com/sign30.jpg');
 
--- Billing 데이터 삽입
-INSERT INTO billing (billing_date, deleted, billing_standard_id, created_datetime, billing_status)
+-- Sample data for cmsplusmain.buyer_payment_type
+INSERT INTO cmsplusmain.buyer_payment_type (payment_type_info_id)
 VALUES
-    ('2024-02-01', 0, 1, NOW(), 'CREATED'),
-    ('2024-02-15', 0, 2, NOW(), 'CREATED'),
-    ('2024-02-01', 0, 3, NOW(), 'CREATED'),
-    ('2024-02-01', 0, 4, NOW(), 'CREATED'),
-    ('2024-02-01', 0, 5, NOW(), 'CREATED');
+    (1),
+    (2),
+    (3),
+    (4),
+    (5),
+    (6),
+    (7),
+    (8),
+    (9),
+    (10),
+    (11),
+    (12),
+    (13),
+    (14),
+    (15),
+    (16),
+    (17),
+    (18),
+    (19),
+    (20),
+    (21),
+    (22),
+    (23),
+    (24),
+    (25),
+    (26),
+    (27),
+    (28),
+    (29),
+    (30);
 
--- Billing_product 데이터 삽입
-INSERT INTO billing_product (billing_product_price, billing_product_quantity, deleted, billing_standard_id, created_datetime, product_id)
+-- Sample data for cmsplusmain.buyer_payment_method
+INSERT INTO cmsplusmain.buyer_payment_method (buyer_payment_type_payment_type_info_id, buyer_payment_method)
 VALUES
-    (100000, 1, 0, 1, NOW(), 1),  -- 기본 강좌
-    (150000, 1, 0, 1, NOW(), 2),  -- 심화 강좌
-    (80000, 1, 0, 2, NOW(), 3),   -- 온라인 강좌
-    (200000, 1, 0, 2, NOW(), 4),  -- 1:1 튜터링
-    (120000, 1, 0, 3, NOW(), 5),  -- 그룹 스터디
-    (100000, 1, 0, 3, NOW(), 1),  -- 기본 강좌
-    (150000, 1, 0, 4, NOW(), 2),  -- 심화 강좌
-    (200000, 1, 0, 4, NOW(), 4),  -- 1:1 튜터링
-    (80000, 2, 0, 5, NOW(), 3),   -- 온라인 강좌 (2개)
-    (120000, 1, 0, 5, NOW(), 5);  -- 그룹 스터디
+    (1, 'ACCOUNT'),
+    (2, 'CARD'),
+    (3, 'CMS'),
+    (4, 'ACCOUNT'),
+    (5, 'CARD'),
+    (6, 'CMS'),
+    (7, 'ACCOUNT'),
+    (8, 'CARD'),
+    (9, 'CMS'),
+    (10, 'ACCOUNT'),
+    (11, 'CARD'),
+    (12, 'CMS'),
+    (13, 'ACCOUNT'),
+    (14, 'CARD'),
+    (15, 'CMS'),
+    (16, 'ACCOUNT'),
+    (17, 'CARD'),
+    (18, 'CMS'),
+    (19, 'ACCOUNT'),
+    (20, 'CARD'),
+    (21, 'CMS'),
+    (22, 'ACCOUNT'),
+    (23, 'CARD'),
+    (24, 'CMS'),
+    (25, 'ACCOUNT'),
+    (26, 'CARD'),
+    (27, 'CMS'),
+    (28, 'ACCOUNT'),
+    (29, 'CARD'),
+    (30, 'CMS');
 
--- payment_method_info 데이터 삽입
-INSERT INTO payment_method_info (deleted, created_datetime, payment_method_info_id, payment_method_info_method)
+-- Sample data for cmsplusmain.payment
+INSERT INTO cmsplusmain.payment (deleted, created_datetime, deleted_datetime, modified_datetime, payment_id, payment_method_info_id, payment_type_info_id, payment_method, payment_type)
 VALUES
-    (0, NOW(), 1, 'CARD'),
-    (0, NOW(), 2, 'CMS'),
-    (0, NOW(), 3, 'CMS');
+    (0, NOW(), NULL, NOW(), 1, 1, 1, 'CARD', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 2, 2, 2, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 3, 3, 3, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 4, 4, 4, 'CMS', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 5, 5, 5, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 6, 6, 6, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 7, 7, 7, 'CARD', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 8, 8, 8, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 9, 9, 9, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 10, 10, 10, 'CMS', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 11, 11, 11, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 12, 12, 12, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 13, 13, 13, 'CARD', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 14, 14, 14, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 15, 15, 15, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 16, 16, 16, 'CMS', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 17, 17, 17, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 18, 18, 18, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 19, 19, 19, 'CARD', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 20, 20, 20, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 21, 21, 21, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 22, 22, 22, 'CMS', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 23, 23, 23, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 24, 24, 24, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 25, 25, 25, 'CARD', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 26, 26, 26, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 27, 27, 27, NULL, 'VIRTUAL'),
+    (0, NOW(), NULL, NOW(), 28, 28, 28, 'CMS', 'AUTO'),
+    (0, NOW(), NULL, NOW(), 29, 29, 29, NULL, 'BUYER'),
+    (0, NOW(), NULL, NOW(), 30, 30, 30, NULL, 'VIRTUAL');
 
--- auto_payment 데이터 삽입
-INSERT INTO auto_payment (payment_id, payment_method_info_id, payment_simpconsent_request_date, payment_consent_img_url, payment_sign_img_url)
+
+-- Sample data for cmsplusmain.payment_type_info_seq
+INSERT INTO cmsplusmain.payment_type_info_seq (next_val)
 VALUES
-    (1, 1, '2024-01-15 10:00:00', 'https://example.com/consent1.jpg', 'https://example.com/sign1.jpg'),
-    (2, 2, '2024-01-16 11:00:00', 'https://example.com/consent2.jpg', 'https://example.com/sign2.jpg'),
-    (3, 3, '2024-01-17 12:00:00', 'https://example.com/consent3.jpg', 'https://example.com/sign3.jpg');
+    (31),
+    (32),
+    (33),
+    (34),
+    (35),
+    (36),
+    (37),
+    (38),
+    (39),
+    (40),
+    (41),
+    (42),
+    (43),
+    (44),
+    (45),
+    (46),
+    (47),
+    (48),
+    (49),
+    (50),
+    (51),
+    (52),
+    (53),
+    (54),
+    (55),
+    (56),
+    (57),
+    (58),
+    (59),
+    (60);
 
--- buyer_payment 데이터 삽입
-INSERT INTO buyer_payment (payment_id)
-VALUES (4), (5);
-
--- buyer_payment_method 데이터 삽입
-INSERT INTO buyer_payment_method (buyer_payment_payment_id, buyer_payment_method)
+-- Sample data for cmsplusmain.setting_simpconsent
+INSERT INTO cmsplusmain.setting_simpconsent (deleted, created_datetime, deleted_datetime, modified_datetime, setting_simpconsent_id)
 VALUES
-    (4, 'CARD'),
-    (4, 'ACCOUNT');
+    (0, NOW(), NULL, NOW(), 1),
+    (0, NOW(), NULL, NOW(), 2),
+    (0, NOW(), NULL, NOW(), 3),
+    (0, NOW(), NULL, NOW(), 4),
+    (0, NOW(), NULL, NOW(), 5),
+    (0, NOW(), NULL, NOW(), 6),
+    (0, NOW(), NULL, NOW(), 7),
+    (0, NOW(), NULL, NOW(), 8),
+    (0, NOW(), NULL, NOW(), 9),
+    (0, NOW(), NULL, NOW(), 10),
+    (0, NOW(), NULL, NOW(), 11),
+    (0, NOW(), NULL, NOW(), 12),
+    (0, NOW(), NULL, NOW(), 13),
+    (0, NOW(), NULL, NOW(), 14),
+    (0, NOW(), NULL, NOW(), 15),
+    (0, NOW(), NULL, NOW(), 16),
+    (0, NOW(), NULL, NOW(), 17),
+    (0, NOW(), NULL, NOW(), 18),
+    (0, NOW(), NULL, NOW(), 19),
+    (0, NOW(), NULL, NOW(), 20),
+    (0, NOW(), NULL, NOW(), 21),
+    (0, NOW(), NULL, NOW(), 22),
+    (0, NOW(), NULL, NOW(), 23),
+    (0, NOW(), NULL, NOW(), 24),
+    (0, NOW(), NULL, NOW(), 25),
+    (0, NOW(), NULL, NOW(), 26),
+    (0, NOW(), NULL, NOW(), 27),
+    (0, NOW(), NULL, NOW(), 28),
+    (0, NOW(), NULL, NOW(), 29),
+    (0, NOW(), NULL, NOW(), 30);
 
-
-
--- card_payment 데이터 삽입
-INSERT INTO card_payment (card_info_owner_birth, payment_method_info_id, card_info_number, card_info_owner)
+-- Sample data for cmsplusmain.simpconsent_vendor_auto_payment_method
+INSERT INTO cmsplusmain.simpconsent_vendor_auto_payment_method (simp_consent_setting_setting_simpconsent_id, simpconsent_auto_payment_method)
 VALUES
-    ('1990-01-01', 1, '1234-5678-9012-3456', '홍길동');
+    (1, 'ACCOUNT'),
+    (2, 'CARD'),
+    (3, 'CMS'),
+    (4, 'ACCOUNT'),
+    (5, 'CARD'),
+    (6, 'CMS'),
+    (7, 'ACCOUNT'),
+    (8, 'CARD'),
+    (9, 'CMS'),
+    (10, 'ACCOUNT'),
+    (11, 'CARD'),
+    (12, 'CMS'),
+    (13, 'ACCOUNT'),
+    (14, 'CARD'),
+    (15, 'CMS'),
+    (16, 'ACCOUNT'),
+    (17, 'CARD'),
+    (18, 'CMS'),
+    (19, 'ACCOUNT'),
+    (20, 'CARD'),
+    (21, 'CMS'),
+    (22, 'ACCOUNT'),
+    (23, 'CARD'),
+    (24, 'CMS'),
+    (25, 'ACCOUNT'),
+    (26, 'CARD'),
+    (27, 'CMS'),
+    (28, 'ACCOUNT'),
+    (29, 'CARD'),
+    (30, 'CMS');
 
--- cms_payment 데이터 삽입
-INSERT INTO cms_payment (cms_owner_birth, payment_method_info_id, cms_account_number, cms_account_owner, cms_account_bank)
+-- Sample data for cmsplusmain.vendor
+INSERT INTO cmsplusmain.vendor (deleted, created_datetime, deleted_datetime, modified_datetime, setting_simpconset_id, vendor_id, vendor_homephone, vendor_phone, vendor_username, vendor_dept, vendor_name, vendor_email, vendor_password, user_role)
 VALUES
-    ('1995-05-05', 2, '987654321', '김철수', '088'),
-    ('1995-05-05', 3, '987654321', '김철수', '004');
+    (0, NOW(), NULL, NOW(), 1, 1, '0212345678', '01012345678', 'user1', 'Dept1', '김철수', 'user1@example.com', 'password1', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 2, 2, '0212345679', '01012345679', 'user2', 'Dept2', '이영희', 'user2@example.com', 'password2', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 3, 3, '0212345680', '01012345680', 'user3', 'Dept3', '박민수', 'user3@example.com', 'password3', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 4, 4, '0212345681', '01012345681', 'user4', 'Dept4', '최지우', 'user4@example.com', 'password4', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 5, 5, '0212345682', '01012345682', 'user5', 'Dept5', '홍길동', 'user5@example.com', 'password5', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 6, 6, '0212345683', '01012345683', 'user6', 'Dept6', '유재석', 'user6@example.com', 'password6', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 7, 7, '0212345684', '01012345684', 'user7', 'Dept7', '강호동', 'user7@example.com', 'password7', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 8, 8, '0212345685', '01012345685', 'user8', 'Dept8', '신동엽', 'user8@example.com', 'password8', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 9, 9, '0212345686', '01012345686', 'user9', 'Dept9', '김태호', 'user9@example.com', 'password9', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 10, 10, '0212345687', '01012345687', 'user10', 'Dept10', '김건모', 'user10@example.com', 'password10', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 11, 11, '0212345688', '01012345688', 'user11', 'Dept11', '이효리', 'user11@example.com', 'password11', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 12, 12, '0212345689', '01012345689', 'user12', 'Dept12', '비', 'user12@example.com', 'password12', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 13, 13, '0212345690', '01012345690', 'user13', 'Dept13', '김종국', 'user13@example.com', 'password13', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 14, 14, '0212345691', '01012345691', 'user14', 'Dept14', '박명수', 'user14@example.com', 'password14', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 15, 15, '0212345692', '01012345692', 'user15', 'Dept15', '정준하', 'user15@example.com', 'password15', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 16, 16, '0212345693', '01012345693', 'user16', 'Dept16', '하하', 'user16@example.com', 'password16', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 17, 17, '0212345694', '01012345694', 'user17', 'Dept17', '서장훈', 'user17@example.com', 'password17', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 18, 18, '0212345695', '01012345695', 'user18', 'Dept18', '이상민', 'user18@example.com', 'password18', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 19, 19, '0212345696', '01012345696', 'user19', 'Dept19', '박수홍', 'user19@example.com', 'password19', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 20, 20, '0212345697', '01012345697', 'user20', 'Dept20', '이휘재', 'user20@example.com', 'password20', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 21, 21, '0212345698', '01012345698', 'user21', 'Dept21', '김숙', 'user21@example.com', 'password21', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 22, 22, '0212345699', '01012345699', 'user22', 'Dept22', '송은이', 'user22@example.com', 'password22', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 23, 23, '0212345700', '01012345700', 'user23', 'Dept23', '김신영', 'user23@example.com', 'password23', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 24, 24, '0212345701', '01012345701', 'user24', 'Dept24', '안영미', 'user24@example.com', 'password24', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 25, 25, '0212345702', '01012345702', 'user25', 'Dept25', '유민상', 'user25@example.com', 'password25', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 26, 26, '0212345703', '01012345703', 'user26', 'Dept26', '김준현', 'user26@example.com', 'password26', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 27, 27, '0212345704', '01012345704', 'user27', 'Dept27', '김지민', 'user27@example.com', 'password27', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 28, 28, '0212345705', '01012345705', 'user28', 'Dept28', '김영철', 'user28@example.com', 'password28', 'ROLE_VENDOR'),
+    (0, NOW(), NULL, NOW(), 29, 29, '0212345706', '01012345706', 'user29', 'Dept29', '장도연', 'user29@example.com', 'password29', 'ROLE_MEMBER'),
+    (0, NOW(), NULL, NOW(), 30, 30, '0212345707', '01012345707', 'user30', 'Dept30', '홍현희', 'user30@example.com', 'password30', 'ROLE_VENDOR');
 
--- setting_simpconsent 데이터 삽입
-INSERT INTO setting_simpconsent (deleted, created_datetime)
+-- Sample data for cmsplusmain.member
+INSERT INTO cmsplusmain.member (deleted, member_auto_billing, member_auto_invoice_send, member_enroll_date, created_datetime, deleted_datetime, member_id, modified_datetime, vendor_id, member_home_phone, member_phone, member_address, member_name, member_email, member_memo, member_invoice_send_method, member_status)
 VALUES
-    (0, NOW()),
-    (0, NOW()),
-    (0, NOW());
+    (0, 1, 1, '2020-01-01', NOW(), NULL, 1, NOW(), 1, '0212345678', '01012345678', '서울시 강남구', '박준형', 'member1@example.com', 'memo1', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-02', NOW(), NULL, 2, NOW(), 1, '0212345679', '01012345679', '서울시 강북구', '최수현', 'member2@example.com', 'memo2', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-03', NOW(), NULL, 3, NOW(), 1, '0212345680', '01012345680', '서울시 서초구', '정우성', 'member3@example.com', 'memo3', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-04', NOW(), NULL, 4, NOW(), 1, '0212345681', '01012345681', '서울시 송파구', '이정재', 'member4@example.com', 'memo4', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-05', NOW(), NULL, 5, NOW(), 1, '0212345682', '01012345682', '서울시 강동구', '박보검', 'member5@example.com', 'memo5', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-06', NOW(), NULL, 6, NOW(), 1, '0212345683', '01012345683', '서울시 중구', '송중기', 'member6@example.com', 'memo6', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-07', NOW(), NULL, 7, NOW(), 1, '0212345684', '01012345684', '서울시 종로구', '강동원', 'member7@example.com', 'memo7', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-08', NOW(), NULL, 8, NOW(), 1, '0212345685', '01012345685', '서울시 용산구', '원빈', 'member8@example.com', 'memo8', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-09', NOW(), NULL, 9, NOW(), 1, '0212345686', '01012345686', '서울시 마포구', '현빈', 'member9@example.com', 'memo9', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-10', NOW(), NULL, 10, NOW(), 1, '0212345687', '01012345687', '서울시 은평구', '이민호', 'member10@example.com', 'memo10', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-11', NOW(), NULL, 11, NOW(), 1, '0212345688', '01012345688', '서울시 서대문구', '김수현', 'member11@example.com', 'memo11', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-12', NOW(), NULL, 12, NOW(), 1, '0212345689', '01012345689', '서울시 동작구', '주원', 'member12@example.com', 'memo12', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-13', NOW(), NULL, 13, NOW(), 1, '0212345690', '01012345690', '서울시 관악구', '차은우', 'member13@example.com', 'memo13', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-14', NOW(), NULL, 14, NOW(), 1, '0212345691', '01012345691', '서울시 금천구', '류준열', 'member14@example.com', 'memo14', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-15', NOW(), NULL, 15, NOW(), 1, '0212345692', '01012345692', '서울시 양천구', '유아인', 'member15@example.com', 'memo15', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-16', NOW(), NULL, 16, NOW(), 1, '0212345693', '01012345693', '서울시 구로구', '이동욱', 'member16@example.com', 'memo16', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-17', NOW(), NULL, 17, NOW(), 1, '0212345694', '01012345694', '서울시 영등포구', '김우빈', 'member17@example.com', 'memo17', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-18', NOW(), NULL, 18, NOW(), 1, '0212345695', '01012345695', '서울시 강서구', '정해인', 'member18@example.com', 'memo18', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-19', NOW(), NULL, 19, NOW(), 1, '0212345696', '01012345696', '서울시 노원구', '송강호', 'member19@example.com', 'memo19', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-20', NOW(), NULL, 20, NOW(), 1, '0212345697', '01012345697', '서울시 도봉구', '정우', 'member20@example.com', 'memo20', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-21', NOW(), NULL, 21, NOW(), 1, '0212345698', '01012345698', '서울시 성북구', '김강우', 'member21@example.com', 'memo21', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-22', NOW(), NULL, 22, NOW(), 1, '0212345699', '01012345699', '서울시 광진구', '조인성', 'member22@example.com', 'memo22', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-23', NOW(), NULL, 23, NOW(), 1, '0212345700', '01012345700', '서울시 중랑구', '이종석', 'member23@example.com', 'memo23', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-24', NOW(), NULL, 24, NOW(), 1, '0212345701', '01012345701', '서울시 성동구', '서강준', 'member24@example.com', 'memo24', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-25', NOW(), NULL, 25, NOW(), 1, '0212345702', '01012345702', '서울시 강북구', '이동건', 'member25@example.com', 'memo25', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-26', NOW(), NULL, 26, NOW(), 1, '0212345703', '01012345703', '서울시 은평구', '주지훈', 'member26@example.com', 'memo26', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-27', NOW(), NULL, 27, NOW(), 1, '0212345704', '01012345704', '서울시 종로구', '김희원', 'member27@example.com', 'memo27', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-28', NOW(), NULL, 28, NOW(), 1, '0212345705', '01012345705', '서울시 용산구', '박해준', 'member28@example.com', 'memo28', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-29', NOW(), NULL, 29, NOW(), 1, '0212345706', '01012345706', '서울시 중구', '박정민', 'member29@example.com', 'memo29', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-30', NOW(), NULL, 30, NOW(), 1, '0212345707', '01012345707', '서울시 동대문구', '양세종', 'member30@example.com', 'memo30', 'SMS', 'DISABLED');
 
--- simpconsent_vendor_auto_payment_method 데이터 삽입
-INSERT INTO simpconsent_vendor_auto_payment_method (simp_consent_setting_setting_simpconsent_id, simpconsent_auto_payment_method)
+-- Sample data for cmsplusmain.contract
+INSERT INTO cmsplusmain.contract (contract_day, contract_end_date, contract_start_date, deleted, contract_id, created_datetime, deleted_datetime, member_id, modified_datetime, payment_id, vendor_id, contract_name)
 VALUES
-    (1, 'CARD'),
-    (1, 'CMS'),
-    (2, 'CMS'),
-    (3, 'CARD');
+    (15, '2023-12-31', '2023-01-01', 0, 1, NOW(), NULL, 1, NOW(), 1, 1, '계약 1'),
+    (15, '2023-12-31', '2023-01-02', 0, 2, NOW(), NULL, 2, NOW(), 2, 1, '계약 2'),
+    (15, '2023-12-31', '2023-01-03', 0, 3, NOW(), NULL, 3, NOW(), 3, 1, '계약 3'),
+    (15, '2023-12-31', '2023-01-04', 0, 4, NOW(), NULL, 4, NOW(), 4, 1, '계약 4'),
+    (15, '2023-12-31', '2023-01-05', 0, 5, NOW(), NULL, 5, NOW(), 5, 1, '계약 5'),
+    (15, '2023-12-31', '2023-01-06', 0, 6, NOW(), NULL, 6, NOW(), 6, 1, '계약 6'),
+    (15, '2023-12-31', '2023-01-07', 0, 7, NOW(), NULL, 7, NOW(), 7, 1, '계약 7'),
+    (15, '2023-12-31', '2023-01-08', 0, 8, NOW(), NULL, 8, NOW(), 8, 1, '계약 8'),
+    (15, '2023-12-31', '2023-01-09', 0, 9, NOW(), NULL, 9, NOW(), 9, 1, '계약 9'),
+    (15, '2023-12-31', '2023-01-10', 0, 10, NOW(), NULL, 10, NOW(), 10, 1, '계약 10'),
+    (15, '2023-12-31', '2023-01-11', 0, 11, NOW(), NULL, 11, NOW(), 11, 1, '계약 11'),
+    (15, '2023-12-31', '2023-01-12', 0, 12, NOW(), NULL, 12, NOW(), 12, 1, '계약 12'),
+    (15, '2023-12-31', '2023-01-13', 0, 13, NOW(), NULL, 13, NOW(), 13, 1, '계약 13'),
+    (15, '2023-12-31', '2023-01-14', 0, 14, NOW(), NULL, 14, NOW(), 14, 1, '계약 14'),
+    (15, '2023-12-31', '2023-01-15', 0, 15, NOW(), NULL, 15, NOW(), 15, 1, '계약 15'),
+    (15, '2023-12-31', '2023-01-16', 0, 16, NOW(), NULL, 16, NOW(), 16, 1, '계약 16'),
+    (15, '2023-12-31', '2023-01-17', 0, 17, NOW(), NULL, 17, NOW(), 17, 1, '계약 17'),
+    (15, '2023-12-31', '2023-01-18', 0, 18, NOW(), NULL, 18, NOW(), 18, 1, '계약 18'),
+    (15, '2023-12-31', '2023-01-19', 0, 19, NOW(), NULL, 19, NOW(), 19, 1, '계약 19'),
+    (15, '2023-12-31', '2023-01-20', 0, 20, NOW(), NULL, 20, NOW(), 20, 1, '계약 20'),
+    (15, '2023-12-31', '2023-01-21', 0, 21, NOW(), NULL, 21, NOW(), 21, 1, '계약 21'),
+    (15, '2023-12-31', '2023-01-22', 0, 22, NOW(), NULL, 22, NOW(), 22, 1, '계약 22'),
+    (15, '2023-12-31', '2023-01-23', 0, 23, NOW(), NULL, 23, NOW(), 23, 1, '계약 23'),
+    (15, '2023-12-31', '2023-01-24', 0, 24, NOW(), NULL, 24, NOW(), 24, 1, '계약 24'),
+    (15, '2023-12-31', '2023-01-25', 0, 25, NOW(), NULL, 25, NOW(), 25, 1, '계약 25'),
+    (15, '2023-12-31', '2023-01-26', 0, 26, NOW(), NULL, 26, NOW(), 26, 1, '계약 26'),
+    (15, '2023-12-31', '2023-01-27', 0, 27, NOW(), NULL, 27, NOW(), 27, 1, '계약 27'),
+    (15, '2023-12-31', '2023-01-28', 0, 28, NOW(), NULL, 28, NOW(), 28, 1, '계약 28'),
+    (15, '2023-12-31', '2023-01-29', 0, 29, NOW(), NULL, 29, NOW(), 29, 1, '계약 29'),
+    (15, '2023-12-31', '2023-01-30', 0, 30, NOW(), NULL, 30, NOW(), 30, 1, '계약 30');
 
--- contract_product 데이터 삽입
-INSERT INTO contract_product (contract_product_price, contract_product_quantity, deleted, contract_id, created_datetime, product_id)
+-- Sample data for cmsplusmain.billing
+INSERT INTO cmsplusmain.billing (billing_date, billing_standard_contract_day, deleted, billing_id, contract_id, created_datetime, deleted_datetime, modified_datetime, billing_invoice_message, billing_standard_type, billing_status)
 VALUES
-    (100000, 1, 0, 1, NOW(), 1),
-    (150000, 1, 0, 2, NOW(), 2),
-    (80000, 2, 0, 3, NOW(), 3),
-    (200000, 1, 0, 4, NOW(), 4),
-    (120000, 1, 0, 5, NOW(), 5);
+    ('2023-01-15', 15, 0, 1, 1, NOW(), NULL, NOW(), '청구서 메시지 1', 'REGULAR', 'CREATED'),
+    ('2023-02-15', 15, 0, 2, 2, NOW(), NULL, NOW(), '청구서 메시지 2', 'REGULAR', 'CREATED'),
+    ('2023-03-15', 15, 0, 3, 3, NOW(), NULL, NOW(), '청구서 메시지 3', 'REGULAR', 'CREATED'),
+    ('2023-04-15', 15, 0, 4, 4, NOW(), NULL, NOW(), '청구서 메시지 4', 'REGULAR', 'CREATED'),
+    ('2023-05-15', 15, 0, 5, 5, NOW(), NULL, NOW(), '청구서 메시지 5', 'REGULAR', 'CREATED'),
+    ('2023-06-15', 15, 0, 6, 6, NOW(), NULL, NOW(), '청구서 메시지 6', 'REGULAR', 'CREATED'),
+    ('2023-07-15', 15, 0, 7, 7, NOW(), NULL, NOW(), '청구서 메시지 7', 'REGULAR', 'CREATED'),
+    ('2023-08-15', 15, 0, 8, 8, NOW(), NULL, NOW(), '청구서 메시지 8', 'REGULAR', 'CREATED'),
+    ('2023-09-15', 15, 0, 9, 9, NOW(), NULL, NOW(), '청구서 메시지 9', 'REGULAR', 'CREATED'),
+    ('2023-10-15', 15, 0, 10, 10, NOW(), NULL, NOW(), '청구서 메시지 10', 'REGULAR', 'CREATED'),
+    ('2023-11-15', 15, 0, 11, 11, NOW(), NULL, NOW(), '청구서 메시지 11', 'REGULAR', 'CREATED'),
+    ('2023-12-15', 15, 0, 12, 12, NOW(), NULL, NOW(), '청구서 메시지 12', 'REGULAR', 'CREATED'),
+    ('2023-01-15', 15, 0, 13, 13, NOW(), NULL, NOW(), '청구서 메시지 13', 'REGULAR', 'CREATED'),
+    ('2023-02-15', 15, 0, 14, 14, NOW(), NULL, NOW(), '청구서 메시지 14', 'REGULAR', 'CREATED'),
+    ('2023-03-15', 15, 0, 15, 15, NOW(), NULL, NOW(), '청구서 메시지 15', 'REGULAR', 'CREATED'),
+    ('2023-04-15', 15, 0, 16, 16, NOW(), NULL, NOW(), '청구서 메시지 16', 'REGULAR', 'CREATED'),
+    ('2023-05-15', 15, 0, 17, 17, NOW(), NULL, NOW(), '청구서 메시지 17', 'REGULAR', 'CREATED'),
+    ('2023-06-15', 15, 0, 18, 18, NOW(), NULL, NOW(), '청구서 메시지 18', 'REGULAR', 'CREATED'),
+    ('2023-07-15', 15, 0, 19, 19, NOW(), NULL, NOW(), '청구서 메시지 19', 'REGULAR', 'CREATED'),
+    ('2023-08-15', 15, 0, 20, 20, NOW(), NULL, NOW(), '청구서 메시지 20', 'REGULAR', 'CREATED'),
+    ('2023-09-15', 15, 0, 21, 21, NOW(), NULL, NOW(), '청구서 메시지 21', 'REGULAR', 'CREATED'),
+    ('2023-10-15', 15, 0, 22, 22, NOW(), NULL, NOW(), '청구서 메시지 22', 'REGULAR', 'CREATED'),
+    ('2023-11-15', 15, 0, 23, 23, NOW(), NULL, NOW(), '청구서 메시지 23', 'REGULAR', 'CREATED'),
+    ('2023-12-15', 15, 0, 24, 24, NOW(), NULL, NOW(), '청구서 메시지 24', 'REGULAR', 'CREATED'),
+    ('2023-01-15', 15, 0, 25, 25, NOW(), NULL, NOW(), '청구서 메시지 25', 'REGULAR', 'CREATED'),
+    ('2023-02-15', 15, 0, 26, 26, NOW(), NULL, NOW(), '청구서 메시지 26', 'REGULAR', 'CREATED'),
+    ('2023-03-15', 15, 0, 27, 27, NOW(), NULL, NOW(), '청구서 메시지 27', 'REGULAR', 'CREATED'),
+    ('2023-04-15', 15, 0, 28, 28, NOW(), NULL, NOW(), '청구서 메시지 28', 'REGULAR', 'CREATED'),
+    ('2023-05-15', 15, 0, 29, 29, NOW(), NULL, NOW(), '청구서 메시지 29', 'REGULAR', 'CREATED'),
+    ('2023-06-15', 15, 0, 30, 30, NOW(), NULL, NOW(), '청구서 메시지 30', 'REGULAR', 'CREATED');
 
--- simpconsent_vendor_product 데이터 삽입
-INSERT INTO simpconsent_vendor_product (product_id, setting_simpconsent_id)
+-- Sample data for cmsplusmain.product
+INSERT INTO cmsplusmain.product (deleted, product_price, created_datetime, deleted_datetime, modified_datetime, product_id, vendor_id, product_name, product_memo, product_status)
+VALUES
+    (0, 10000, NOW(), NULL, NOW(), 1, 1, '상품 1', '비고 1', 'ENABLED'),
+    (0, 20000, NOW(), NULL, NOW(), 2, 1, '상품 2', '비고 2', 'ENABLED'),
+    (0, 30000, NOW(), NULL, NOW(), 3, 1, '상품 3', '비고 3', 'ENABLED'),
+    (0, 40000, NOW(), NULL, NOW(), 4, 1, '상품 4', '비고 4', 'ENABLED'),
+    (0, 50000, NOW(), NULL, NOW(), 5, 1, '상품 5', '비고 5', 'ENABLED'),
+    (0, 60000, NOW(), NULL, NOW(), 6, 1, '상품 6', '비고 6', 'ENABLED'),
+    (0, 70000, NOW(), NULL, NOW(), 7, 1, '상품 7', '비고 7', 'ENABLED'),
+    (0, 80000, NOW(), NULL, NOW(), 8, 1, '상품 8', '비고 8', 'ENABLED'),
+    (0, 90000, NOW(), NULL, NOW(), 9, 1, '상품 9', '비고 9', 'ENABLED'),
+    (0, 100000, NOW(), NULL, NOW(), 10, 1, '상품 10', '비고 10', 'ENABLED'),
+    (0, 110000, NOW(), NULL, NOW(), 11, 1, '상품 11', '비고 11', 'ENABLED'),
+    (0, 120000, NOW(), NULL, NOW(), 12, 1, '상품 12', '비고 12', 'ENABLED'),
+    (0, 130000, NOW(), NULL, NOW(), 13, 1, '상품 13', '비고 13', 'ENABLED'),
+    (0, 140000, NOW(), NULL, NOW(), 14, 1, '상품 14', '비고 14', 'ENABLED'),
+    (0, 150000, NOW(), NULL, NOW(), 15, 1, '상품 15', '비고 15', 'ENABLED'),
+    (0, 160000, NOW(), NULL, NOW(), 16, 1, '상품 16', '비고 16', 'ENABLED'),
+    (0, 170000, NOW(), NULL, NOW(), 17, 1, '상품 17', '비고 17', 'ENABLED'),
+    (0, 180000, NOW(), NULL, NOW(), 18, 1, '상품 18', '비고 18', 'ENABLED'),
+    (0, 190000, NOW(), NULL, NOW(), 19, 1, '상품 19', '비고 19', 'ENABLED'),
+    (0, 200000, NOW(), NULL, NOW(), 20, 1, '상품 20', '비고 20', 'ENABLED'),
+    (0, 210000, NOW(), NULL, NOW(), 21, 1, '상품 21', '비고 21', 'ENABLED'),
+    (0, 220000, NOW(), NULL, NOW(), 22, 1, '상품 22', '비고 22', 'ENABLED'),
+    (0, 230000, NOW(), NULL, NOW(), 23, 1, '상품 23', '비고 23', 'ENABLED'),
+    (0, 240000, NOW(), NULL, NOW(), 24, 1, '상품 24', '비고 24', 'ENABLED'),
+    (0, 250000, NOW(), NULL, NOW(), 25, 1, '상품 25', '비고 25', 'ENABLED'),
+    (0, 260000, NOW(), NULL, NOW(), 26, 1, '상품 26', '비고 26', 'ENABLED'),
+    (0, 270000, NOW(), NULL, NOW(), 27, 1, '상품 27', '비고 27', 'ENABLED'),
+    (0, 280000, NOW(), NULL, NOW(), 28, 1, '상품 28', '비고 28', 'ENABLED'),
+    (0, 290000, NOW(), NULL, NOW(), 29, 1, '상품 29', '비고 29', 'ENABLED'),
+    (0, 300000, NOW(), NULL, NOW(), 30, 1, '상품 30', '비고 30', 'ENABLED');
+
+-- Sample data for cmsplusmain.billing_product
+INSERT INTO cmsplusmain.billing_product (billing_product_price, billing_product_quantity, deleted, billing_id, billing_product_id, created_datetime, deleted_datetime, modified_datetime, product_id, billing_product_name)
+VALUES
+    (10000, 1, 0, 1, 1, NOW(), NULL, NOW(), 1, '청구상품 1'),
+    (20000, 2, 0, 2, 2, NOW(), NULL, NOW(), 2, '청구상품 2'),
+    (30000, 3, 0, 3, 3, NOW(), NULL, NOW(), 3, '청구상품 3'),
+    (40000, 4, 0, 4, 4, NOW(), NULL, NOW(), 4, '청구상품 4'),
+    (50000, 5, 0, 5, 5, NOW(), NULL, NOW(), 5, '청구상품 5'),
+    (60000, 6, 0, 6, 6, NOW(), NULL, NOW(), 6, '청구상품 6'),
+    (70000, 7, 0, 7, 7, NOW(), NULL, NOW(), 7, '청구상품 7'),
+    (80000, 8, 0, 8, 8, NOW(), NULL, NOW(), 8, '청구상품 8'),
+    (90000, 9, 0, 9, 9, NOW(), NULL, NOW(), 9, '청구상품 9'),
+    (100000, 10, 0, 10, 10, NOW(), NULL, NOW(), 10, '청구상품 10'),
+    (110000, 11, 0, 11, 11, NOW(), NULL, NOW(), 11, '청구상품 11'),
+    (120000, 12, 0, 12, 12, NOW(), NULL, NOW(), 12, '청구상품 12'),
+    (130000, 13, 0, 13, 13, NOW(), NULL, NOW(), 13, '청구상품 13'),
+    (140000, 14, 0, 14, 14, NOW(), NULL, NOW(), 14, '청구상품 14'),
+    (150000, 15, 0, 15, 15, NOW(), NULL, NOW(), 15, '청구상품 15'),
+    (160000, 16, 0, 16, 16, NOW(), NULL, NOW(), 16, '청구상품 16'),
+    (170000, 17, 0, 17, 17, NOW(), NULL, NOW(), 17, '청구상품 17'),
+    (180000, 18, 0, 18, 18, NOW(), NULL, NOW(), 18, '청구상품 18'),
+    (190000, 19, 0, 19, 19, NOW(), NULL, NOW(), 19, '청구상품 19'),
+    (200000, 20, 0, 20, 20, NOW(), NULL, NOW(), 20, '청구상품 20'),
+    (210000, 21, 0, 21, 21, NOW(), NULL, NOW(), 21, '청구상품 21'),
+    (220000, 22, 0, 22, 22, NOW(), NULL, NOW(), 22, '청구상품 22'),
+    (230000, 23, 0, 23, 23, NOW(), NULL, NOW(), 23, '청구상품 23'),
+    (240000, 24, 0, 24, 24, NOW(), NULL, NOW(), 24, '청구상품 24'),
+    (250000, 25, 0, 25, 25, NOW(), NULL, NOW(), 25, '청구상품 25'),
+    (260000, 26, 0, 26, 26, NOW(), NULL, NOW(), 26, '청구상품 26'),
+    (270000, 27, 0, 27, 27, NOW(), NULL, NOW(), 27, '청구상품 27'),
+    (280000, 28, 0, 28, 28, NOW(), NULL, NOW(), 28, '청구상품 28'),
+    (290000, 29, 0, 29, 29, NOW(), NULL, NOW(), 29, '청구상품 29'),
+    (300000, 30, 0, 30, 30, NOW(), NULL, NOW(), 30, '청구상품 30');
+
+-- Sample data for cmsplusmain.contract_product
+INSERT INTO cmsplusmain.contract_product (contract_product_price, contract_product_quantity, deleted, contract_id, contract_product_id, created_datetime, deleted_datetime, modified_datetime, product_id, contract_product_name)
+VALUES
+    (10000, 1, 0, 1, 1, NOW(), NULL, NOW(), 1, '계약상품 1'),
+    (20000, 2, 0, 2, 2, NOW(), NULL, NOW(), 2, '계약상품 2'),
+    (30000, 3, 0, 3, 3, NOW(), NULL, NOW(), 3, '계약상품 3'),
+    (40000, 4, 0, 4, 4, NOW(), NULL, NOW(), 4, '계약상품 4'),
+    (50000, 5, 0, 5, 5, NOW(), NULL, NOW(), 5, '계약상품 5'),
+    (60000, 6, 0, 6, 6, NOW(), NULL, NOW(), 6, '계약상품 6'),
+    (70000, 7, 0, 7, 7, NOW(), NULL, NOW(), 7, '계약상품 7'),
+    (80000, 8, 0, 8, 8, NOW(), NULL, NOW(), 8, '계약상품 8'),
+    (90000, 9, 0, 9, 9, NOW(), NULL, NOW(), 9, '계약상품 9'),
+    (100000, 10, 0, 10, 10, NOW(), NULL, NOW(), 10, '계약상품 10'),
+    (110000, 11, 0, 11, 11, NOW(), NULL, NOW(), 11, '계약상품 11'),
+    (120000, 12, 0, 12, 12, NOW(), NULL, NOW(), 12, '계약상품 12'),
+    (130000, 13, 0, 13, 13, NOW(), NULL, NOW(), 13, '계약상품 13'),
+    (140000, 14, 0, 14, 14, NOW(), NULL, NOW(), 14, '계약상품 14'),
+    (150000, 15, 0, 15, 15, NOW(), NULL, NOW(), 15, '계약상품 15'),
+    (160000, 16, 0, 16, 16, NOW(), NULL, NOW(), 16, '계약상품 16'),
+    (170000, 17, 0, 17, 17, NOW(), NULL, NOW(), 17, '계약상품 17'),
+    (180000, 18, 0, 18, 18, NOW(), NULL, NOW(), 18, '계약상품 18'),
+    (190000, 19, 0, 19, 19, NOW(), NULL, NOW(), 19, '계약상품 19'),
+    (200000, 20, 0, 20, 20, NOW(), NULL, NOW(), 20, '계약상품 20'),
+    (210000, 21, 0, 21, 21, NOW(), NULL, NOW(), 21, '계약상품 21'),
+    (220000, 22, 0, 22, 22, NOW(), NULL, NOW(), 22, '계약상품 22'),
+    (230000, 23, 0, 23, 23, NOW(), NULL, NOW(), 23, '계약상품 23'),
+    (240000, 24, 0, 24, 24, NOW(), NULL, NOW(), 24, '계약상품 24'),
+    (250000, 25, 0, 25, 25, NOW(), NULL, NOW(), 25, '계약상품 25'),
+    (260000, 26, 0, 26, 26, NOW(), NULL, NOW(), 26, '계약상품 26'),
+    (270000, 27, 0, 27, 27, NOW(), NULL, NOW(), 27, '계약상품 27'),
+    (280000, 28, 0, 28, 28, NOW(), NULL, NOW(), 28, '계약상품 28'),
+    (290000, 29, 0, 29, 29, NOW(), NULL, NOW(), 29, '계약상품 29'),
+    (300000, 30, 0, 30, 30, NOW(), NULL, NOW(), 30, '계약상품 30');
+
+-- Sample data for cmsplusmain.simpconsent_vendor_product
+INSERT INTO cmsplusmain.simpconsent_vendor_product (product_id, setting_simpconsent_id)
 VALUES
     (1, 1),
-    (2, 1),
-    (3, 2),
-    (4, 2),
-    (5, 3);
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+    (7, 7),
+    (8, 8),
+    (9, 9),
+    (10, 10),
+    (11, 11),
+    (12, 12),
+    (13, 13),
+    (14, 14),
+    (15, 15),
+    (16, 16),
+    (17, 17),
+    (18, 18),
+    (19, 19),
+    (20, 20),
+    (21, 21),
+    (22, 22),
+    (23, 23),
+    (24, 24),
+    (25, 25),
+    (26, 26),
+    (27, 27),
+    (28, 28),
+    (29, 29),
+    (30, 30);
 
--- virtual_account_payment 데이터 삽입
-INSERT INTO virtual_account_payment (payment_id, virtual_payment_account_number, virtual_payment_bank_code, virtual_payment_account_owner)
+-- Sample data for cmsplusmain.virtual_account_payment_type
+INSERT INTO cmsplusmain.virtual_account_payment_type (payment_type_info_id, virtual_payment_account_number, virtual_payment_bank_code, virtual_payment_account_owner)
 VALUES
-    (5, '1234567890123', '088', '이가상');
+    (1, '12345678901234', '088', '김철수'),
+    (2, '23456789012345', '004', '이영희'),
+    (3, '34567890123456', '088', '박민수'),
+    (4, '45678901234567', '004', '최지우'),
+    (5, '56789012345678', '088', '홍길동'),
+    (6, '67890123456789', '004', '유재석'),
+    (7, '78901234567890', '088', '강호동'),
+    (8, '89012345678901', '004', '신동엽'),
+    (9, '90123456789012', '088', '김태호'),
+    (10, '01234567890123', '004', '김건모'),
+    (11, '12345678901234', '088', '이효리'),
+    (12, '23456789012345', '004', '비'),
+    (13, '34567890123456', '088', '김종국'),
+    (14, '45678901234567', '004', '박명수'),
+    (15, '56789012345678', '088', '정준하'),
+    (16, '67890123456789', '004', '하하'),
+    (17, '78901234567890', '088', '서장훈'),
+    (18, '89012345678901', '004', '이상민'),
+    (19, '90123456789012', '088', '박수홍'),
+    (20, '01234567890123', '004', '이휘재'),
+    (21, '12345678901234', '088', '김숙'),
+    (22, '23456789012345', '004', '송은이'),
+    (23, '34567890123456', '088', '김신영'),
+    (24, '45678901234567', '004', '안영미'),
+    (25, '56789012345678', '088', '유민상'),
+    (26, '67890123456789', '004', '김준현'),
+    (27, '78901234567890', '088', '김지민'),
+    (28, '89012345678901', '004', '김영철'),
+    (29, '90123456789012', '088', '장도연'),
+    (30, '01234567890123', '004', '홍현희');
