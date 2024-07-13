@@ -39,6 +39,15 @@ public class BillingController {
 	}
 
 	/*
+	* 청구서 발송
+	* */
+	@GetMapping("invoice/{billingId}")
+	public void sendInvoice(@PathVariable Long billingId) {
+		Long vendorId = 1L;
+		billingService.sendInvoice(vendorId, billingId);
+	}
+
+	/*
 	 * 청구목록 조회
 	 * */
 	@GetMapping

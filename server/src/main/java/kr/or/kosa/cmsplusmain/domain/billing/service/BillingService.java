@@ -21,7 +21,11 @@ import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.messaging.service.MessageService;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
+import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,8 +38,69 @@ public class BillingService {
 	private final BillingRepository billingRepository;
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
-
 	private final ProductCustomRepository productCustomRepository;
+	private final MessageService messageService;
+
+	// 청구서 URL(청구 ID), 청구서 메시지 내용
+	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
+	private static final String INVOICE_MESSAGE_FORMAT =
+			"""
+			%s님의 청구서가 도착했습니다.
+			
+			- 청구서명: %s
+			- 납부할금액: %s원
+			- 납부 기한: %s
+			
+			납부하기: %s
+			""".trim();
+
+	/*
+	* 청구서 발송
+	* */
+	@Transactional
+	public void sendInvoice(Long vendorId, Long billingId) {
+		// 청구가 고객의 청구인지 확인
+		validateBillingUser(vendorId, billingId);
+
+		// 청구서 발송 가능 상태 확인 및 상태 변경
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		billing.sendInvoice();
+
+		// 청구 계약 회원
+		Contract contract = billing.getContract();
+		Member member = contract.getMember();
+
+		// 청구서 발송 수단 확인
+		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+
+		// 회원이 받을 문자(이메일) 내용
+		String invoiceMessage = createInvoiceMessage(billing, member);
+
+		// 청구서 링크 발송
+		switch (sendMethod) {
+			case SMS -> messageService.sendSms(member.getPhone(), invoiceMessage);
+			case EMAIL -> messageService.sendEmail(member.getEmail(), invoiceMessage);
+		}
+	}
+
+	/*
+	* 회원이 받을 청구서 링크 문자(이메일) 내용을 만들어준다.
+	* */
+	private String createInvoiceMessage(Billing billing, Member member) {
+		// 메시지 내용
+		String memberName = member.getName();
+		String invoiceName = billing.getInvoiceName();
+		String billingPrice = FormatUtil.formatMoney(billing.getBillingPrice());
+		String billingDate = billing.getBillingDate().toString();
+		String url = INVOICE_URL_FORMAT.formatted(billing.getId());
+
+		String message = INVOICE_MESSAGE_FORMAT
+			.formatted(memberName, invoiceName, billingPrice, billingDate, url)
+			.trim();
+
+		return message;
+	}
+
 	/*
 	 * 청구 생성
 	 *
@@ -174,6 +239,8 @@ public class BillingService {
 	*
 	* 상품이름을 청구상품 테이블에 저장해
 	* 청구상품 조회시 상품 이름만을 가져오기위한 조인을 없앤다.
+	*
+	* 상품 설정에서 이름 수정 불가 필요
 	* */
 	private List<BillingProduct> convertToBillingProducts(List<BillingProductReq> billingProductReqs) {
 		// 상품 ID

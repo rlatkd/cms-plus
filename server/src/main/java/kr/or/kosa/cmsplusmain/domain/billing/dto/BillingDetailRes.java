@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -28,6 +29,7 @@ public class BillingDetailRes {
 	private final Long billingId;							// 청구 ID
 	private final String billingName;						// 청구서명
 	private final BillingType billingType;					// 청구타입
+	private final BillingStatus billingStatus;				// 청구상태
 	private final LocalDate billingCreatedDate;				// 청구 생성일
 	private final LocalDate billingDate;					// 청구 결제일
 	private final String billingMemo;						// 청구서 메시지
@@ -55,8 +57,9 @@ public class BillingDetailRes {
 			.paymentMethod(payment.getPaymentMethod())
 
 			.billingId(billing.getId())
-			.billingName(billing.getBillingName())
+			.billingName(billing.getInvoiceName())
 			.billingType(billing.getBillingType())
+			.billingStatus(billing.getBillingStatus())
 			.billingCreatedDate(billing.getCreatedDateTime().toLocalDate())
 			.billingDate(billing.getBillingDate())
 			.billingMemo(billing.getInvoiceMessage())
