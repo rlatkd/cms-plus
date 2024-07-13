@@ -1,31 +1,24 @@
 package kr.or.kosa.cmsplusmain.domain.billing.repository;
 
-
-
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
-import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.extern.slf4j.Slf4j;
 
