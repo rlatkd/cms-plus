@@ -35,7 +35,6 @@ public class ProductController {
     public void createProduct(@RequestBody ProductCreateReq product) {
         Long vendorId = 1L;
         productService.createProduct(vendorId, product);
-
     }
 
 }

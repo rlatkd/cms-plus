@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.product.repository;
 
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
@@ -84,7 +86,7 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
          * group by p.product_id
          *
          * 3. (JOIN문 줄이는 개선)
-         * select p.*, count(istinct cp.contract_id) as contract_count
+         * select p.*, count(distinct cp.contract_id) as contract_count
          * from product p
          * left join contract_product cp on cp.product_id = p.product_id and cp.deleted = 0
          * left join contract c on c.contract_id = cp.contract_id and c.deleted = 0
@@ -120,11 +122,18 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
 
     // (조건이 있다면 조건에 따른)고객의 상품 총 갯수
     public int countAllProductsWithCondition(Long vendorId, ProductSearchReq search) {
-        Long res = jpaQueryFactory
-                .select(product.id.count())
+        // 서브쿼리 정의
+        // fetchCount는 deprecated
+        // fetch하고 size를 하여 그룹 수를 구하는건 지양
+        // 서브쿼리를 이용해 원래 조건의 그룹핑된 그룹의 갯수를 셈
+        JPQLQuery<Long> subQuery = JPAExpressions
+                .select(product.id)
                 .from(product)
+                .leftJoin(contractProduct)
+                .on(contractProduct.product.eq(product), contractProductNotDel())
+                .leftJoin(contract)
+                .on(contractProduct.contract.eq(contract), contractNotDel())
                 .where(
-                        //상품 총 갯수에도 search를 반영해야함, 단 having절은 반영X
                         productNotDel(),
                         productVendorIdEq(vendorId),
                         productNameContains(search.getProductName()),
@@ -132,6 +141,16 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                         productMemoContains(search.getProductMemo()),
                         productCreatedDateEq(search.getProductCreatedDate())
                 )
+                .groupBy(product.id)
+                .having(
+                        contractNumberLoe(search.getContractNumber())
+                );
+
+        // 메인쿼리에서 서브쿼리의 결과를 count
+        Long res = jpaQueryFactory
+                .select(product.id.count())
+                .from(product)
+                .where(product.id.in(subQuery))
                 .fetchOne();
 
         return (res == null) ? 0 : res.intValue();
