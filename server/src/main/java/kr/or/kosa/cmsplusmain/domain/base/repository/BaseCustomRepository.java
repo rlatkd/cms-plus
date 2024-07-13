@@ -6,7 +6,6 @@ import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
@@ -31,7 +30,6 @@ import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -163,10 +161,6 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 
 	protected BooleanExpression billingDateEq(LocalDate billingDate) {
 		return (billingDate != null) ? billing.billingDate.eq(billingDate) : null;
-	}
-
-	protected BooleanExpression contractStatusEq(ContractStatus contractStatus) {
-		return (contractStatus != null) ? contract.status.eq(contractStatus) : null;
 	}
 
 	// protected BooleanExpression consentStatusEq(ConsentStatus consentStatus) {

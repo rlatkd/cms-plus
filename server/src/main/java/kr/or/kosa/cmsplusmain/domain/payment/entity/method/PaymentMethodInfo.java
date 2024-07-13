@@ -3,15 +3,12 @@ package kr.or.kosa.cmsplusmain.domain.payment.entity.method;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import kr.or.kosa.cmsplusmain.domain.payment.converter.PaymentMethodConverter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

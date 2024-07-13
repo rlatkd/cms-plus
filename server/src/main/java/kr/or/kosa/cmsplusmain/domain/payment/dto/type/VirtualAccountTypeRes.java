@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.payment.dto;
+package kr.or.kosa.cmsplusmain.domain.payment.dto.type;
 
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Bank;
@@ -8,13 +8,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class VirtualAccountInfo {
-
+public class VirtualAccountTypeRes extends PaymentTypeInfoRes {
 	private Bank bank;
-
-	@PersonName
 	private String accountOwner;
-
-	@AccountNumber
 	private String accountNumber;
 }

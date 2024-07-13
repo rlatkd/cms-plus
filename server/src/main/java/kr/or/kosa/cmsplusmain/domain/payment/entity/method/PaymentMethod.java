@@ -15,6 +15,12 @@ public enum PaymentMethod implements BaseEnum {
 
 	private final String title;
 
+	public static class Const {
+		public static final String CARD = "CARD";
+		public static final String CMS = "CMS";
+		public static final String ACCOUNT = "ACCOUNT";
+	}
+
 	@Override
 	public String getCode() {
 		return name();

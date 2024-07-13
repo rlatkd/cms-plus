@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.payment.converter.BankConverter;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Bank;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.validator.AccountNumber;
 import lombok.AccessLevel;
 import lombok.Getter;

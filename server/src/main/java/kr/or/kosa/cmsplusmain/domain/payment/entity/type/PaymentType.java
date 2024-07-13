@@ -19,14 +19,10 @@ public enum PaymentType implements BaseEnum {
 	private final String title;
 	private final List<PaymentMethod> availablePaymentMethods;
 
-	@Override
-	public String getCode() {
-		return name();
-	}
-
-	@Override
-	public String getTitle() {
-		return title;
+	public static class Const {
+		public static final String AUTO = "AUTO";
+		public static final String BUYER = "BUYER";
+		public static final String VIRTUAL = "VIRTUAL";
 	}
 
 	/* 자동결제수단 확인용 */
@@ -37,5 +33,15 @@ public enum PaymentType implements BaseEnum {
 	/* 납부자결제 수단 확인용 */
 	public static List<PaymentMethod> getBuyerPaymentMethods() {
 		return PaymentType.BUYER.availablePaymentMethods;
+	}
+
+	@Override
+	public String getCode() {
+		return name();
+	}
+
+	@Override
+	public String getTitle() {
+		return title;
 	}
 }

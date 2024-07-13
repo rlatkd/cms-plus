@@ -1,21 +1,16 @@
-package kr.or.kosa.cmsplusmain.domain.payment.dto;
+package kr.or.kosa.cmsplusmain.domain.payment.dto.method;
 
 import java.time.LocalDate;
 
-import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Bank;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class CMSInfo {
+public class CMSMethodRes extends PaymentMethodInfoRes {
 	private Bank bank;
-
 	private String accountNumber;
-
-	@PersonName
 	private String accountOwner;
-
 	private LocalDate accountOwnerBirth;
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,5 @@ public abstract class PaymentTypeInfo extends BaseEntity {
 
 	@Id @GeneratedValue
 	@Column(name = "payment_type_info_id")
-	Long id;
+	private Long id;
 }

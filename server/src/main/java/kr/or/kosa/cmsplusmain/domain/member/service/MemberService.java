@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.member.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
@@ -29,14 +30,14 @@ public class MemberService {
     /*
      * 회원 목록 조회
      * */
-    public SortPageDto.Res<MemberListItem> findMemberListItem (String username, SortPageDto.Req pageable) {
+    public SortPageDto.Res<MemberListItem> findMemberListItem (Long vendorId, SortPageDto.Req pageable) {
 
-        int countMemberListItem = memberCustomRepository.countAllMemberByVendor(username);
+        int countMemberListItem = memberCustomRepository.countAllMemberByVendor(vendorId);
 
         int totalPages = (int) Math.ceil((double) countMemberListItem / pageable.getSize());
 
         List<MemberListItem> memberListItem = memberCustomRepository
-                .findAllMemberByVendor(username, pageable)
+                .findAllMemberByVendor(vendorId, pageable)
                 .stream()
                 .map(MemberListItem::fromEntity)
                 .toList();
@@ -47,17 +48,17 @@ public class MemberService {
     /*
     *  회원 상세 - 기본정보
     * */
-    public MemberDetail findMemberDetailById(String username, Long memberId) {
+    public MemberDetail findMemberDetailById(Long vendorId, Long memberId) {
 
         // 회원 정보 조회
-        Member member = memberCustomRepository.findMemberDetailById(username, memberId)
+        Member member = memberCustomRepository.findMemberDetailById(vendorId, memberId)
                         .orElseThrow(() -> new EntityNotFoundException("회원 ID 없음(" + memberId + ")"));
 
         // 청구서 수
-        int billingCount = billingCustomRepository.findBillingStandardByMemberId(username, memberId);
+        int billingCount = billingCustomRepository.findBillingStandardByMemberId(vendorId, memberId);
 
         // 총 청구 금액
-        Long totalBillingPrice = billingCustomRepository.findBillingProductByMemberId(username, memberId);
+        Long totalBillingPrice = billingCustomRepository.findBillingProductByMemberId(vendorId, memberId);
 
         return MemberDetail.fromEntity(member, billingCount, totalBillingPrice);
     }
@@ -65,13 +66,13 @@ public class MemberService {
     /*
     * 회원 상세 - 계약리스트
     * */
-    public SortPageDto.Res<MemberContractListItemDto> findContractListItemByMemberId(String username, Long memberId, SortPageDto.Req pageable) {
+    public SortPageDto.Res<MemberContractListItemDto> findContractListItemByMemberId(Long vendorId, Long memberId, PageReq pageable) {
 
-        int countAllContractListItemByMemberId = contractCustomRepository.countContractListItemByMemberId(username, memberId);
+        int countAllContractListItemByMemberId = contractCustomRepository.countContractListItemByMemberId(vendorId, memberId);
         int totalPages = (int) Math.ceil((double) countAllContractListItemByMemberId / pageable.getSize());
 
         List<MemberContractListItemDto> memberContractListItemDtos = contractCustomRepository
-                .findContractListItemByMemberId(username, memberId, pageable)
+                .findContractListItemByMemberId(vendorId, memberId, pageable)
                 .stream()
                 .map(MemberContractListItemDto::fromEntity)
                 .toList();

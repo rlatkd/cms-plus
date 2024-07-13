@@ -9,7 +9,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import kr.or.kosa.cmsplusmain.domain.base.validator.HttpUrl;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,16 +32,6 @@ public class AutoPaymentType extends PaymentTypeInfo {
 	@Comment("간편동의 마지막 요청시간")
 	@Column(name = "payment_simpconsent_request_date")
 	private LocalDateTime simpleConsentReqDateTime;
-
-	/*
-	 * 결제정보 상태
-	 *
-	 * 동의가 필요하다.
-	 * */
-	public PaymentStatus getPaymentStatus() {
-		return (getConsentStatus().equals(ConsentStatus.ACCEPT)) ?
-			PaymentStatus.ENABLED : PaymentStatus.DISABLED;
-	}
 
 	/*
 	 * 동의상태

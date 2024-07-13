@@ -1,5 +1,8 @@
 package kr.or.kosa.cmsplusmain.domain.member.repository;
 
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
+import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
@@ -20,12 +23,11 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     /*
     * 회원 목록 조회
     * */
-    public List<Member> findAllMemberByVendor(String Username, SortPageDto.Req pageable) {
+    public List<Member> findAllMemberByVendor(Long vendorId, SortPageDto.Req pageable) {
         return jpaQueryFactory
             .selectFrom(member)
-            .join(member.vendor, vendor)
             .where(
-                    vendorUsernameEq(Username),
+                    member.vendor.id.eq(vendorId),
                     memberNotDel()
             )
             .offset(pageable.getPage())
@@ -36,12 +38,11 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     /*
      * 전체 회원 수
      * */
-    public int countAllMemberByVendor(String Username) {
+    public int countAllMemberByVendor(Long vendorId) {
         return jpaQueryFactory
             .select(member.id.countDistinct()).from(member)
-            .join(member.vendor, vendor)
             .where(
-                    vendorUsernameEq(Username),
+                    member.vendor.id.eq(vendorId),
                     memberNotDel()
             )
             .fetchOne().intValue();
@@ -61,13 +62,12 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             and member1.id = ?2
             and member1.deleted = ?3
     * */
-    public Optional<Member> findMemberDetailById(String Username, Long memberId){
+    public Optional<Member> findMemberDetailById(Long vendorId, Long memberId){
         return Optional.ofNullable(
             jpaQueryFactory
             .selectFrom(member)
-            .join(member.vendor, vendor)
             .where(
-                    vendorUsernameEq(Username),
+                    member.vendor.id.eq(vendorId),
                     member.id.eq(memberId),
                     memberNotDel()
             )
