@@ -127,6 +127,16 @@ public class Contract extends BaseEntity {
 	}
 
 	/*
+	* 계약 삭제
+	* 계약상품도 같이 삭제된다
+	* */
+	@Override
+	public void delete() {
+		super.delete();
+		contractProducts.forEach(BaseEntity::delete);
+	}
+
+	/*
 	 * id만 들고있는 빈 객체
 	 * */
 	public static Contract of(Long contractId) {

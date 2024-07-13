@@ -16,9 +16,10 @@ public class BillingProductReq {
 	@ProductQuantity @NotNull
 	private Integer quantity;		// 청구 상품 개수
 
-	public BillingProduct toEntity() {
+	public BillingProduct toEntity(String productName) {
 		return BillingProduct.builder()
 			.product(Product.of(productId))
+			.name(productName)
 			.price(price)
 			.quantity(quantity)
 			.build();

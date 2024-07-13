@@ -22,6 +22,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.DeleteBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.EmptyBillingProductException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.UpdateBillingDateException;
 import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
@@ -55,12 +56,12 @@ public class Billing extends BaseEntity {
 
 	@Comment("청구 타입 [정기 or 추가]")
 	@Enumerated(EnumType.STRING)
-	@Column(name = "billing_standard_type", nullable = false)
+	@Column(name = "billing_type", nullable = false)
 	@NotNull
 	private BillingType billingType;
 
 	@Comment("청구의 약정일 (청구 생성시 설정한 결제일 != 계약의 약정일과 다를 수 있다.)")
-	@Column(name = "billing_standard_contract_day")
+	@Column(name = "billing_contract_day")
 	private int contractDay;
 
 	@Comment("결제일 (= 약정일, 납부 시작 및 종료 기간[납부기간은 하루이다.])")
@@ -94,6 +95,7 @@ public class Billing extends BaseEntity {
 		this.contract = contract;
 		this.billingType = billingType;
 		this.contractDay = contractDay;
+		this.billingDate = billingDate;
 
 		billingProducts.forEach(this::addBillingProduct);
 	}
@@ -149,5 +151,21 @@ public class Billing extends BaseEntity {
 		}
 
 		this.billingDate = billingDate;
+	}
+
+	/*
+	* 청구 삭제
+	*
+	* 청구 상품도 같이 삭제한다.
+	* */
+	@Override
+	public void delete() {
+		// 청구상태에 따른 삭제 조건 존재
+		// 청구상태가 생성 (청구서 발송 전)에만 삭제가 가능하다.
+		if (!billingStatus.equals(BillingStatus.CREATED)) {
+			throw new DeleteBillingException();
+		}
+		super.delete();
+		billingProducts.forEach(BaseEntity::delete);
 	}
 }
