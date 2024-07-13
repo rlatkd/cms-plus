@@ -1,5 +1,5 @@
 import React from 'react';
-import RadioGroup from '@/components/common/RadioGroup';
+import RadioGroup from '@/components/common/inputs/RadioGroup';
 import PaymentCard from '@/components/member/simpConsent/PaymentCard';
 import PaymentCMS from '@/components/member/simpConsent/PaymentCMS';
 import { useUserDataStore } from '@/stores/useUserDataStore';

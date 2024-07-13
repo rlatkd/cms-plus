@@ -19,4 +19,5 @@ public class ProductNameValidator implements ConstraintValidator<ProductName, St
 		}
 		return productName.length() >= MIN_NAME_LENGTH && productName.length() <= MAX_NAME_LENGTH;
 	}
+
 }

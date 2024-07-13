@@ -62,4 +62,8 @@ public class VendorUserDetailsDto implements UserDetails {
 	public Long getId() {
 		return vendor.getId();
 	}
+
+	public String getName() {
+		return vendor.getName();
+	}
 }

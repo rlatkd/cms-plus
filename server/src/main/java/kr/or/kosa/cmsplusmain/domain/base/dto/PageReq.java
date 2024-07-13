@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class PageReq {
 	private int page = 1;
-	private int size = 10;
+	private int size = 9; // 화면상 사이즈 9가 나음
 
 	private Order order;
 	private String orderBy;

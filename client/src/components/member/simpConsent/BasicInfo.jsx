@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Input from '@/components/common/Input';
-import AddressInput from '@/components/common/AddressInput';
+import Input from '@/components/common/inputs/Input';
+import AddressInput from '@/components/common/inputs/AddressInput';
 
 const BasicInfo = ({ userData, setUserData }) => {
   const [localData, setLocalData] = useState({

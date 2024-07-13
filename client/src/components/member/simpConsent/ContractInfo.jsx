@@ -1,5 +1,5 @@
 import React from 'react';
-import Input from '@/components/common/Input';
+import Input from '@/components/common/inputs/Input';
 import SelectField from '@/components/common/SelectField';
 import ProductItem from '@/components/common/ProductItem';
 import { useUserDataStore } from '@/stores/useUserDataStore';

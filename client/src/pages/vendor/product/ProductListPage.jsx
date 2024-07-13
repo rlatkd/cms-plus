@@ -1,5 +1,5 @@
 import { getProductDetail, getProductList } from '@/apis/product';
-import Table from '@/components/common/Table';
+import Table from '@/components/common/tables/Table';
 import ProductModal from '@/components/vendor/modal/ProductModal';
 import { useEffect, useState } from 'react';
 
@@ -24,47 +24,46 @@ const initialSearch = [
 const ProductListPage = () => {
   const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
   const [modalTitle, setModalTitle] = useState(''); // 모달 제목 상태
-  const [productId, setProductId] = useState(''); // 생성일ID
-  const [productList, setProductList] = useState([]); // 생성일 목록
-  const [productDetailData, setProductDetailData] = useState(null); // 생성일 상세 정보
+  const [productId, setProductId] = useState(''); // 상품ID
+  const [productList, setProductList] = useState([]); // 상품 목록
+  const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
   const [search, setSearch] = useState(initialSearch); // 상품 조건
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
 
   // 상품 목록 조회 함수
-  const fetchProductList = async (searchParams = {}) => {
+  const axiosProductList = async (searchParams = {}) => {
     try {
-      const res = await getProductList(searchParams);
-      const formattedData = res.data.data.map((data, index) => ({
-        //받아온 data 테이블 형식에 맞게 포맷팅
+      const res = await getProductList({ size: 9, ...searchParams }); // 사이즈는 9 고정
+      const formattedData = res.data.content.map((data, index) => ({
         No: index + 1,
         상품명: data.productName,
         금액: data.productPrice,
         계약수: data.contractNumber,
         생성일: data.productCreatedDate,
         비고: data.productMemo || '',
-        productId: data.productId, // 상품 상세 조회에 사용할 상품ID 매핑
+        productId: data.productId,
       }));
       setProductList(formattedData);
-      setTotalPages(res.data.totalPages || 1); // 전체 페이지 수 설정
+      setTotalPages(res.data.totalPage || 1);
     } catch (err) {
-      console.error('fetchProductList => ', err.response.data);
+      console.error('axiosProductList => ', err.response.data);
     }
   };
 
   // 페이지 진입 시 상품 목록 조회
   useEffect(() => {
-    fetchProductList({ page: currentPage });
+    axiosProductList();
   }, [currentPage]);
 
   // 상품 등록 모달 열기용 이벤트핸들러
-  const handleOpenRegisterModal = () => {
+  const handleCreateModalOpen = () => {
     setModalTitle('상품 등록');
     setIsShowModal(true);
   };
 
   // 상품 상세조회 모달 열기용 이벤트핸들러
-  const handleOpenDetailModal = async productId => {
+  const handleDetailModalOpen = async productId => {
     setModalTitle('상품 상세 정보');
     try {
       const res = await getProductDetail(productId);
@@ -86,10 +85,7 @@ const ProductListPage = () => {
 
   // 검색 클릭 이벤트 핸들러
   const handleSearchClick = async () => {
-    const searchParams = {
-      page: 1, // 기본 페이지
-      size: 10, // 기본 사이즈
-    };
+    const searchParams = { page: 1, size: 9 };
     search.forEach(searchProduct => {
       if (searchProduct.value) {
         const keyMapping = {
@@ -105,36 +101,38 @@ const ProductListPage = () => {
         }
       }
     });
-    await fetchProductList(searchParams);
-    setCurrentPage(1); // 검색 후 페이지(현재 보이는 페이지 버튼 숫자)를 1로 초기화
+    await axiosProductList(searchParams);
+    setCurrentPage(1); // 검색 후 현재 페이지를 1로 초기화
   };
 
   // 페이지 변경 핸들러
   const handlePageChange = page => {
     setCurrentPage(page);
-    fetchProductList({ page });
+    axiosProductList({ page });
   };
 
   return (
-    <div className='primary-dashboard h-full w-full flex flex-col'>
-      <button
-        className='rounded-lg bg-mint hover:bg-mint_hover p-3 font-bold text-white w-32'
-        onClick={handleOpenRegisterModal}>
-        임시 상품 등록 모달
-      </button>
+    <div className='primary-dashboard h-full w-full flex flex-col overflow-hidden'>
+      <div className='flex justify-end'>
+        <button
+          className='rounded-lg bg-mint hover:bg-mint_hover p-3 font-bold text-white w-24'
+          onClick={handleCreateModalOpen}>
+          상품 등록
+        </button>
+      </div>
 
-      <div className='flex-grow overflow-auto'>
+      <div className='flex-grow  mt-5'>
         <Table
           cols={cols}
           search={search}
           items={productList}
           handleSearchChange={handleSearchChange}
-          onRowClick={item => handleOpenDetailModal(item.productId)}
+          onRowClick={item => handleDetailModalOpen(item.productId)}
           onSearchClick={handleSearchClick}
         />
       </div>
 
-      {/* 페이지네이션(미완; 데이터 많아야 검토 가능할 것 같음) */}
+      {/* 페이지네이션*/}
       <div className='flex justify-center mt-5'>
         {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
           <button
@@ -151,6 +149,7 @@ const ProductListPage = () => {
         setIsShowModal={setIsShowModal}
         modalTitle={modalTitle}
         productDetailData={productDetailData}
+        refreshProductList={axiosProductList} // 모달에서 상품 등록 완료되면 추가된거 포함해서 상품 목록 다시 렌더링
       />
     </div>
   );
