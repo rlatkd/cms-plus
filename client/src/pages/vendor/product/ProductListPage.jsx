@@ -1,7 +1,8 @@
 import { getProductDetail, getProductList } from '@/apis/product';
 import Table from '@/components/common/tables/Table';
 import ProductModal from '@/components/vendor/modal/ProductModal';
-import { useEffect, useState } from 'react';
+import { validateField } from '@/utils/validators';
+import { useCallback, useEffect, useState } from 'react';
 
 // 상품 목록 조회 컬럼
 const cols = ['No', '상품명', '금액', '계약수', '생성일', '비고'];
@@ -23,38 +24,51 @@ const initialSearch = [
 
 const ProductListPage = () => {
   const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
-  const [modalTitle, setModalTitle] = useState(''); // 모달 제목 상태
-  const [productId, setProductId] = useState(''); // 상품ID
+  const [modalTitle, setModalTitle] = useState(''); // 모달 제목
   const [productList, setProductList] = useState([]); // 상품 목록
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
   const [search, setSearch] = useState(initialSearch); // 상품 조건
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
+
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
+
+  const [page, setPage] = useState(1); // 현재 표시할 페이지 번호 - 페이지 라우팅되는 변수와 페이징을 통해 api parameter에 영향을 주는 변수 분리
+
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
+
+  const [isValid, setIsValid] = useState(true); // 유효성 flag
 
   // 상품 목록 조회 함수
-  const axiosProductList = async (searchParams = {}) => {
-    try {
-      const res = await getProductList({ size: 9, ...searchParams }); // 사이즈는 9 고정
-      const formattedData = res.data.content.map((data, index) => ({
-        No: index + 1,
-        상품명: data.productName,
-        금액: data.productPrice,
-        계약수: data.contractNumber,
-        생성일: data.productCreatedDate,
-        비고: data.productMemo || '',
-        productId: data.productId,
-      }));
-      setProductList(formattedData);
-      setTotalPages(res.data.totalPage || 1);
-    } catch (err) {
-      console.error('axiosProductList => ', err.response.data);
-    }
-  };
+  // axiosProductLists는 useEffect 훅 내부에서 사용하고 있기 때문에
+  // 종속성 배열에 포함시키고 useCallback으로 함수 재생성 방지
+  // 의도하지 않은 렌더링 에러 방지
+  const axiosProductList = useCallback(
+    async (searchParams = {}, page = currentPage) => {
+      try {
+        const res = await getProductList({ size: 9, page: page, ...searchParams });
+        const formattedData = res.data.content.map((data, index) => ({
+          No: (page - 1) * 9 + index + 1,
+          상품명: data.productName,
+          금액: data.productPrice,
+          계약수: data.contractNumber,
+          생성일: data.productCreatedDate,
+          비고: data.productMemo || '',
+          productId: data.productId,
+        }));
+        setProductList(formattedData);
+        setTotalPages(res.data.totalPage || 1);
+      } catch (err) {
+        console.error('axiosProductList => ', err.response.data);
+      }
+    },
+    [currentPage]
+  );
 
   // 페이지 진입 시 상품 목록 조회
   useEffect(() => {
-    axiosProductList();
-  }, [currentPage]);
+    axiosProductList(currentSearchParams, currentPage);
+  }, [currentPage, currentSearchParams, axiosProductList]);
 
   // 상품 등록 모달 열기용 이벤트핸들러
   const handleCreateModalOpen = () => {
@@ -83,9 +97,35 @@ const ProductListPage = () => {
     );
   };
 
+  // 검색 안에 입력값 유효성 검사
+  const validateSearchParams = () => {
+    for (const searchProduct of search) {
+      if (searchProduct.value) {
+        const keyMapping = {
+          상품명: 'productName',
+          금액: 'productPrice',
+          계약수: 'contractNumber',
+          생성일: 'productCreatedDate',
+          비고: 'productMemo',
+        };
+        const paramKey = keyMapping[searchProduct.key];
+        if (paramKey) {
+          if (!validateField(paramKey, searchProduct.value)) {
+            alert(`[${searchProduct.key}]은(는) 숫자만 입력할 수 있습니다.`);
+            setIsValid(false);
+            return false;
+          }
+        }
+      }
+    }
+    setIsValid(true);
+    return true;
+  };
+
   // 검색 클릭 이벤트 핸들러
   const handleSearchClick = async () => {
-    const searchParams = { page: 1, size: 9 };
+    if (!validateSearchParams()) return;
+    const searchParams = { size: 9 };
     search.forEach(searchProduct => {
       if (searchProduct.value) {
         const keyMapping = {
@@ -101,14 +141,77 @@ const ProductListPage = () => {
         }
       }
     });
-    await axiosProductList(searchParams);
-    setCurrentPage(1); // 검색 후 현재 페이지를 1로 초기화
+    setCurrentSearchParams(searchParams);
+    setCurrentPage(1); // 검색 후 현재 페이지 초기화
+    setPage(1); // 검색 후 표시할 페이지 초기화
+    setPageGroup(0); // 검색 후 페이지 그룹 초기화
+    setIsValid(true); // 검색 후 유효성 flag 초기화
   };
 
-  // 페이지 변경 핸들러
-  const handlePageChange = page => {
-    setCurrentPage(page);
-    axiosProductList({ page });
+  // 페이지 변경 이벤트핸들러
+  const handlePageChange = newPage => {
+    if (!validateSearchParams()) return;
+    if (newPage !== currentPage) {
+      setCurrentPage(newPage);
+      setPage(newPage);
+    }
+  };
+
+  // 페이지 그룹 변경 이벤트핸들러
+  const handlePageGroupChange = direction => {
+    if (direction === 'next') {
+      setPageGroup(prev => prev + 1);
+      setPage((pageGroup + 1) * 5 + 1);
+      setCurrentPage((pageGroup + 1) * 5 + 1);
+    } else if (direction === 'prev' && pageGroup > 0) {
+      setPageGroup(prev => prev - 1);
+      setPage((pageGroup - 1) * 5 + 1);
+      setCurrentPage((pageGroup - 1) * 5 + 1);
+    }
+  };
+
+  // 페이지 버튼 렌더링 함수
+  const renderPageButtons = () => {
+    const startPage = pageGroup * 5 + 1;
+    const endPage = Math.min(startPage + 4, totalPages);
+    const buttons = [];
+
+    // 동적으로 css 함수 로직 개선 필요 (밑에 return div로 옮기고 싶음)
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          className={`mx-1 px-3 py-1 border rounded-lg w-8 h-8 flex items-center justify-center ${i === page ? 'bg-mint hover:bg-mint_hover text-white' : 'bg-white border border-white'}`}
+          onClick={() => handlePageChange(i)}>
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className='flex items-center'>
+        {/* 이전 버튼 */}
+        <button
+          key='prev'
+          className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${pageGroup === 0 ? 'invisible' : 'bg-white border border-white'}`}
+          onClick={() => handlePageGroupChange('prev')}
+          disabled={pageGroup === 0}>
+          {'<'}&nbsp;&nbsp;&nbsp;{'이전'}
+        </button>
+
+        {/* 1,2,3,4,5 버튼 영역 */}
+        <div className='flex justify-center'>{buttons}</div>
+
+        {/* 다음 버튼 */}
+        <button
+          key='next'
+          className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${endPage >= totalPages ? 'invisible' : 'bg-white border border-white'}`}
+          onClick={() => handlePageGroupChange('next')}
+          disabled={endPage >= totalPages}>
+          {'이후'}&nbsp;&nbsp;&nbsp;{'>'}
+        </button>
+      </div>
+    );
   };
 
   return (
@@ -133,23 +236,14 @@ const ProductListPage = () => {
       </div>
 
       {/* 페이지네이션*/}
-      <div className='flex justify-center mt-5'>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-          <button
-            key={page}
-            className={`mx-1 px-3 py-1 border rounded ${page === currentPage ? 'bg-mint hover:bg-mint_hover text-white' : 'bg-gray-200'}`}
-            onClick={() => handlePageChange(page)}>
-            {page}
-          </button>
-        ))}
-      </div>
+      <div className='flex justify-center mt-5'>{renderPageButtons()}</div>
 
       <ProductModal
         isShowModal={isShowModal}
         setIsShowModal={setIsShowModal}
         modalTitle={modalTitle}
         productDetailData={productDetailData}
-        refreshProductList={axiosProductList} // 모달에서 상품 등록 완료되면 추가된거 포함해서 상품 목록 다시 렌더링
+        refreshProductList={() => axiosProductList(currentSearchParams, currentPage)} // 모달에서 상품 등록 완료되면 추가된거 포함해서 상품 목록 다시 렌더링
       />
     </div>
   );

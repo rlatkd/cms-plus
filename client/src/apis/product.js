@@ -3,7 +3,8 @@ import { publicAxios } from '.';
 // 상품 등록
 export const createProduct = async productData => {
   try {
-    return await publicAxios.post('/v1/vendor/product', productData);
+    const res = await publicAxios.post('/v1/vendor/product', productData);
+    return res;
   } catch (err) {
     console.error('상품 등록 실패 => ', err.response.data);
     throw err;
@@ -13,11 +14,12 @@ export const createProduct = async productData => {
 // 상품 목록 조회
 export const getProductList = async (searchParams = {}) => {
   try {
-    return await publicAxios.get('/v1/vendor/product', {
+    const res = await publicAxios.get('/v1/vendor/product', {
       params: {
         ...searchParams,
       },
     });
+    return res;
   } catch (err) {
     console.error('상품 목록 조회 실패 => ', err.response.data);
     throw err;
@@ -27,9 +29,32 @@ export const getProductList = async (searchParams = {}) => {
 // 상품 상세 조회
 export const getProductDetail = async productId => {
   try {
-    return await publicAxios.get(`/v1/vendor/product/${productId}`);
+    const res = await publicAxios.get(`/v1/vendor/product/${productId}`);
+    return res;
   } catch (err) {
     console.error('상품 상세 조회 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 상품 수정
+export const updateProduct = async (productId, productData) => {
+  try {
+    const res = await publicAxios.put(`/v1/vendor/product/${productId}`, productData);
+    return res;
+  } catch (err) {
+    console.error('상품 수정 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 상품 삭제
+export const DeleteProduct = async productId => {
+  try {
+    const res = await publicAxios.delete(`/v1/vendor/product/${productId}`);
+    return res;
+  } catch (err) {
+    console.error('상품 삭제 실패 => ', err.response.data);
     throw err;
   }
 };

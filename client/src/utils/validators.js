@@ -17,8 +17,14 @@ export const validateField = (id, value) => {
     case 'phone': // 5.휴대전화 정규식
       return regex.phone.test(value);
 
-    case 'homePhone': // 4.유선전화 정규식
+    case 'homePhone': // 6.유선전화 정규식
       return regex.homePhone.test(value);
+
+    case 'productPrice': // 7. 금액 정규식
+      return regex.productPrice.test(value);
+
+    case 'contractNumber': // 8. 계약수
+      return regex.contractNumber.test(value);
 
     default:
       return true;
