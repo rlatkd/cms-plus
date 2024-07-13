@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupDto;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
@@ -43,9 +43,9 @@ public class VendorService {
 	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
-	public void join(SignupDto signupDto) {
-		String username = signupDto.getUsername();
-		String password = bCryptPasswordEncoder.encode(signupDto.getPassword());
+	public void join(SignupReq signupReq) {
+		String username = signupReq.getUsername();
+		String password = bCryptPasswordEncoder.encode(signupReq.getPassword());
 		UserRole role = UserRole.ROLE_VENDOR;
 
 		// 중복된 아이디가 입력된 경우 예외처리
@@ -61,7 +61,7 @@ public class VendorService {
 		// 상품을 토대로 기본 설정 추가
 		//vendorRepository.save(signupDto.toEntity(username, password, role));
 
-		Vendor vendor = signupDto.toEntity(username, password, role);
+		Vendor vendor = signupReq.toEntity(username, password, role);
 
 		// 간편동의 설정 초기화
 		SimpConsentSetting simpConsentSetting = createDefaultSimpConsentSetting();

@@ -29,6 +29,8 @@ export default {
 
       spacing: {
         46: '46px',
+        54: '54px',
+        360: '380px',
         480: '480px',
         580: '580px',
         640: '640px', // 모바일 max-width

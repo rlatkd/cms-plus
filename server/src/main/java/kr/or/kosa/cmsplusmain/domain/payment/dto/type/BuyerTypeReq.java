@@ -8,11 +8,11 @@ import lombok.Getter;
 import java.util.Set;
 
 @Getter
-public class BuyerTypeRes extends PaymentTypeInfoRes {
+public class BuyerTypeReq extends PaymentTypeInfoReq {
 	private final Set<PaymentMethod> availableMethods;
 
 	@Builder
-	public BuyerTypeRes(Set<PaymentMethod> availableMethods) {
+	public BuyerTypeReq(Set<PaymentMethod> availableMethods) {
 		super(PaymentType.BUYER);
 		this.availableMethods = availableMethods;
 	}

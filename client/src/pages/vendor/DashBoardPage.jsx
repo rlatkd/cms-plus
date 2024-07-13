@@ -1,4 +1,7 @@
 import { getMemberList } from '@/apis/member';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
+import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
+import { useContext } from 'react';
 
 const DashBoardPage = () => {
   // 회원 목록 조회
@@ -10,6 +13,18 @@ const DashBoardPage = () => {
     } catch (err) {
       console.error('axiosMemberList => ', err.response.data);
     }
+  };
+
+  const { alert: alertComp } = useContext(AlertContext);
+
+  const onAlertClick = async () => {
+    const result = await alertComp('hello world');
+  };
+
+  const { confirm: confirmComp } = useContext(ConfirmContext);
+
+  const onConfirmClick = async () => {
+    const result = await confirmComp('are you sure?');
   };
 
   return (
@@ -31,6 +46,10 @@ const DashBoardPage = () => {
       <div className='primary-dashboard flex-1'>
         <p>DashBoard</p>
         <button onClick={() => axiosMemberList()}>임시버튼</button>
+        <br />
+        <button onClick={() => onAlertClick()}>alert (component)</button>
+        <br />
+        <button onClick={() => onConfirmClick()}>confirm (component)</button>
       </div>
     </>
   );

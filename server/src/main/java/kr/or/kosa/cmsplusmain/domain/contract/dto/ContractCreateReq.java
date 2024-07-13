@@ -21,3 +21,4 @@ public class ContractCreateReq {
 	@ContractDay @NotNull
 	private Integer contractDay;						// 계약 약정일
 }
+

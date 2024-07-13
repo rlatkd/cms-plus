@@ -2,9 +2,15 @@ import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
 import { postLogin } from '@/apis/auth';
 import { useState } from 'react';
+import FindVendoPasswordModal from '@/components/vendor/modal/FIndVendorPasswordModal';
+import FindVendorIdModal from '@/components/vendor/modal/FindVendorIdModal';
+import ResetPasswordModal from '@/components/vendor/modal/ResetPasswordModal';
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const [isShowIdModal, setIsShowIdModal] = useState(false);
+  const [isShowPasswordModal, setIsShowPasswordModal] = useState(false);
+  const [isShowResetPasswordModal, setIsShowResetPasswordModal] = useState(false);
   const [vendorFormData, setVendorFormData] = useState({
     username: null,
     password: null,
@@ -70,9 +76,9 @@ const LoginForm = () => {
           />
         </div>
         <div className='text-text_grey text-sm  w-full flex justify-end cursor-pointer'>
-          <span>아이디 찾기</span>
+          <span onClick={() => setIsShowIdModal(true)}>아이디 찾기</span>
           <span className='mx-1'>/</span>
-          <span>비밀번호 찾기</span>
+          <span onClick={() => setIsShowPasswordModal(true)}>비밀번호 찾기</span>
         </div>
         <button className='font-700 bg-mint px-4 py-3  text-white rounded-lg  hover:bg-mint_hover'>
           로그인
@@ -89,6 +95,25 @@ const LoginForm = () => {
           </span>
         </div>
       </form>
+      <FindVendorIdModal
+        isShowModal={isShowIdModal}
+        setIsShowModal={setIsShowIdModal}
+        icon='/src/assets/user.svg'
+        modalTitle={'아이디 찾기'}
+      />
+      <FindVendoPasswordModal
+        isShowModal={isShowPasswordModal}
+        setIsShowModal={setIsShowPasswordModal}
+        setIsShowResetPasswordModal={setIsShowResetPasswordModal}
+        icon='/src/assets/password.svg'
+        modalTitle={'비밀번호 찾기'}
+      />
+      <ResetPasswordModal
+        isShowModal={isShowResetPasswordModal}
+        setIsShowModal={setIsShowResetPasswordModal}
+        icon='/src/assets/password.svg'
+        modalTitle={'비밀번호 재설정'}
+      />
     </div>
   );
 };

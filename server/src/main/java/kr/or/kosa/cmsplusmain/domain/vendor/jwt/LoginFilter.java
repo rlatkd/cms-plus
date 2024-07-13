@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.servlet.http.Cookie;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.LoginReq;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.AccessTokenRes;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.LoginDto;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
 
@@ -44,17 +44,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws
 		AuthenticationException {
 
-		LoginDto loginDto;
+		LoginReq loginReq;
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		try {
-			loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
+			loginReq = objectMapper.readValue(request.getInputStream(), LoginReq.class);
 		} catch (IOException e) {
 			throw new RuntimeException("Invaild login request format", e);
 		}
 
-		String username = loginDto.getUsername();
-		String password = loginDto.getPassword();
+		String username = loginReq.getUsername();
+		String password = loginReq.getPassword();
 
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password,
 			null);

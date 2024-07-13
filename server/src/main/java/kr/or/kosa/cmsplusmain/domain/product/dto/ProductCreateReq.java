@@ -2,7 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.product.dto;
 
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
-import kr.or.kosa.cmsplusmain.domain.product.validator.ProductMemo;
+import kr.or.kosa.cmsplusmain.domain.base.validator.Memo;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
@@ -20,7 +20,7 @@ public class ProductCreateReq {
     private Integer productPrice;
 
     @NotNull
-    @ProductMemo
+    @Memo
     private String productMemo;
 
     public Product toEntity(Vendor vendor) {

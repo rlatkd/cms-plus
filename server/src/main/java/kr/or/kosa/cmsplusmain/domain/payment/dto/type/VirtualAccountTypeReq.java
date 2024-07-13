@@ -6,16 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class VirtualAccountTypeRes extends PaymentTypeInfoRes {
+public class VirtualAccountTypeReq extends PaymentTypeInfoReq {
 	private final Bank bank;
 	private final String accountOwner;
-	private final String accountNumber;
 
 	@Builder
-	public VirtualAccountTypeRes(Bank bank, String accountOwner, String accountNumber) {
+	public VirtualAccountTypeReq(Bank bank, String accountOwner) {
 		super(PaymentType.VIRTUAL);
 		this.bank = bank;
 		this.accountOwner = accountOwner;
-		this.accountNumber = accountNumber;
 	}
 }

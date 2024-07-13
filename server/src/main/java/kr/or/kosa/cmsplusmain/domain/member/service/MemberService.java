@@ -79,4 +79,15 @@ public class MemberService {
 
         return new SortPageDto.Res<>(totalPages, memberContractListItemDtos);
     }
+
+    /*
+     * 회원 등록
+     * */
+
+    public void createMember(Long vendorId) {
+
+        // 회원 정보를 entity로 바꾸고 DB에 넣는다.
+
+        //
+    }
 }

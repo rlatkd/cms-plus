@@ -105,4 +105,10 @@ public class Vendor extends BaseEntity {
 		this.simpConsentSetting = simpConsentSetting;
 		simpConsentSetting.setVendor(this);
 	}
+
+	public static Vendor of(Long id) {
+		Vendor emptyVendor = new Vendor();
+		emptyVendor.id = id;
+		return emptyVendor;
+	}
 }

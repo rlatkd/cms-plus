@@ -13,11 +13,11 @@ import lombok.RequiredArgsConstructor;
 	visible = true
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = CardMethodRes.class, name = PaymentMethod.Const.CARD),
-	@JsonSubTypes.Type(value = CMSMethodRes.class, name = PaymentMethod.Const.CMS)
+	@JsonSubTypes.Type(value = CardMethodReq.class, name = PaymentMethod.Const.CARD),
+	@JsonSubTypes.Type(value = CMSMethodReq.class, name = PaymentMethod.Const.CMS)
 })
 @Getter
 @RequiredArgsConstructor
-public abstract class PaymentMethodInfoRes {
+public abstract class PaymentMethodInfoReq {
 	private final PaymentMethod paymentMethod;
 }

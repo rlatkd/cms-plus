@@ -6,9 +6,11 @@ import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
+import lombok.Builder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,10 +33,6 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Comment("회원 (학원의 학생)")
 @Entity
@@ -42,6 +40,8 @@ import lombok.Setter;
 	@UniqueConstraint(name = "unique_member_email", columnNames = {"member_email"}),
 	@UniqueConstraint(name = "unique_member_phone", columnNames = {"member_phone"})})
 @Getter
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
 
