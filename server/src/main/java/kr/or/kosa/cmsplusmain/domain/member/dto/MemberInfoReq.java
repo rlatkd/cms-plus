@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 public class MemberInfoReq {
-    private int memberId;
+    private Long memberId;
     private String memberName;
     private String memberPhone;
     private LocalDate memberEnrollDate;

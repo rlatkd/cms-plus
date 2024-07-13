@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class AccessTokenRes {
 	private final String accessToken;
-	private final String refreshToken;
+	private final String username;
+	private final String name;
 	private final String role;
 }

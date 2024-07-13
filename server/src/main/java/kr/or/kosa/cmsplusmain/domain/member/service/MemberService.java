@@ -2,10 +2,8 @@ package kr.or.kosa.cmsplusmain.domain.member.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItem;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItem;
@@ -67,18 +65,18 @@ public class MemberService {
     /*
     * 회원 상세 - 계약리스트
     * */
-    public SortPageDto.Res<MemberContractListItem> findContractListItemByMemberId(String username, Long memberId, SortPageDto.Req pageable) {
+    public SortPageDto.Res<MemberContractListItemDto> findContractListItemByMemberId(String username, Long memberId, SortPageDto.Req pageable) {
 
         int countAllContractListItemByMemberId = contractCustomRepository.countContractListItemByMemberId(username, memberId);
         int totalPages = (int) Math.ceil((double) countAllContractListItemByMemberId / pageable.getSize());
 
-        List<MemberContractListItem> memberContractListItems = contractCustomRepository
+        List<MemberContractListItemDto> memberContractListItemDtos = contractCustomRepository
                 .findContractListItemByMemberId(username, memberId, pageable)
                 .stream()
-                .map(MemberContractListItem::fromEntity)
+                .map(MemberContractListItemDto::fromEntity)
                 .toList();
 
-        return new SortPageDto.Res<>(totalPages, memberContractListItems);
+        return new SortPageDto.Res<>(totalPages, memberContractListItemDtos);
     }
 
     /*

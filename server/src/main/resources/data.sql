@@ -1,3 +1,5 @@
+use cmsplusmain;
+
 -- Vendor 데이터 삽입
 INSERT INTO vendor (deleted, created_datetime, vendor_phone, vendor_username, vendor_dept, vendor_name, vendor_email, vendor_password, user_role)
 VALUES

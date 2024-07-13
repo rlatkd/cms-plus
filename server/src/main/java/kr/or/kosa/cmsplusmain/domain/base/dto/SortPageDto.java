@@ -1,14 +1,13 @@
 package kr.or.kosa.cmsplusmain.domain.base.dto;
 
-import lombok.*;
-
 import java.util.List;
 
-public class SortPageDto {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-	public static int calcTotalPageNumber(int totalItemNum, int pageSize) {
-		return (int) Math.ceil((double) totalItemNum / pageSize);
-	}
+@Deprecated
+public class SortPageDto {
 
 	@Getter
 	@Setter
@@ -21,14 +20,11 @@ public class SortPageDto {
 		private String orderBy;
 
 		public boolean isAsc() {
-			if (sort == null)
-				return false;
-			return sort.equalsIgnoreCase("asc");
+			return sort != null && sort.equalsIgnoreCase("asc");
 		}
 
 		public int getPage() {
-			if (page < 1) return 1;
-			return (page - 1) * size;
+			return (page < 1) ? 0 : (page - 1) * size;
 		}
 	}
 
@@ -37,5 +33,9 @@ public class SortPageDto {
 	public static class Res<T> {
 		private int totalPage;
 		private List<T> data;
+	}
+
+	public static int calcTotalPageNumber(int totalItemNum, int pageSize) {
+		return (int) Math.ceil((double) totalItemNum / pageSize);
 	}
 }

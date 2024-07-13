@@ -44,7 +44,6 @@ public enum PaymentType {
 				return paymentType;
 			}
 		}
-
 		return null;
 	}
 
@@ -53,5 +52,10 @@ public enum PaymentType {
 		public static final String AUTO = "AUTO";
 		public static final String VIRTUAL_ACCOUNT = "VIRTUAL_ACCOUNT";
 		public static final String BUYER = "BUYER";
+	}
+
+	/* 자동결제수단 확인용 */
+	public static List<PaymentMethod> getAutoPaymentMethods() {
+		return PaymentType.AUTO.getAvailablePaymentMethods();
 	}
 }

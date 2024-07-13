@@ -5,24 +5,22 @@ import Checkbox from '@/components/common/CheckBox';
 
 const SettingSimpConsentPage = () => {
   const [isShowModal, setIsShowModal] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState([]); // 빈 배열로 시작
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [checkedItems, setCheckedItems] = useState({
     '실시간 CMS': true,
     카드: true,
   });
 
-  const handleProductChange = value => {
-    const newProduct = value;
-    setSelectedProducts(prev => {
-      if (!prev.includes(newProduct)) {
-        return [...prev, newProduct];
-      }
-      return prev;
-    });
+  const handleProductChange = newSelectedOptions => {
+    setSelectedProducts(newSelectedOptions);
   };
 
   const handleRemoveProduct = product => {
-    setSelectedProducts(prev => prev.filter(p => p !== product));
+    setSelectedProducts(prev => {
+      const newSelectedProducts = prev.filter(p => p !== product);
+      handleProductChange(newSelectedProducts);
+      return newSelectedProducts;
+    });
   };
 
   const handleCheckboxChange = name => {
@@ -45,7 +43,9 @@ const SettingSimpConsentPage = () => {
               </h3>
               <div className='flex items-center'>
                 <SelectField
-                  onChange={e => handleProductChange(e.target.value)}
+                  onChange={handleProductChange}
+                  label='상품을 선택해주세요.'
+                  required={true}
                   options={[
                     { value: 'JPA(5,000원)', label: 'JPA(5,000원)' },
                     { value: 'JPA2(3,000원)', label: 'JPA2(3,000원)' },
@@ -55,6 +55,7 @@ const SettingSimpConsentPage = () => {
                     { value: 'JPA6(3,000원)', label: 'JPA6(3,000원)' },
                     { value: 'JPA7(3,000원)', label: 'JPA7(3,000원)' },
                   ]}
+                  selectedOptions={selectedProducts}
                   className='h-13 w-64 rounded-md border border-gray-300 bg-white p-4 pr-10 text-base focus:border-teal-400 focus:outline-none focus:ring-teal-400'
                 />
                 <div className='ml-4 flex flex-wrap'>

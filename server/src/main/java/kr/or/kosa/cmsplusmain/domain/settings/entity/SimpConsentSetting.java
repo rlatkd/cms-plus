@@ -1,9 +1,10 @@
-package kr.or.kosa.cmsplusmain.domain.settings;
+package kr.or.kosa.cmsplusmain.domain.settings.entity;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import jakarta.persistence.CollectionTable;
@@ -26,14 +27,13 @@ import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "setting_simpconsent")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class SimpConsentSetting extends BaseEntity {
 
 	/* 최대 간편동의 설정 상품 수 */
@@ -44,6 +44,7 @@ public class SimpConsentSetting extends BaseEntity {
 	@Column(name = "setting_simpconsent_id")
 	private Long id;
 
+	@Setter
 	@OneToOne(mappedBy = "simpConsentSetting", fetch = FetchType.LAZY, optional = false)
 	@NotNull
 	private Vendor vendor;
@@ -69,4 +70,15 @@ public class SimpConsentSetting extends BaseEntity {
 
 	//TODO 설정 수정 삭제 메서드 구현
 	// 자동결제 수단만 가능하도록
+
+
+	public void addProduct(Product product) {
+		this.simpConsentProducts.add(product);
+	}
+
+	public void addPaymentMethod(PaymentMethod paymentMethod) {
+		this.simpConsentPayments.add(paymentMethod);
+	}
+
+
 }

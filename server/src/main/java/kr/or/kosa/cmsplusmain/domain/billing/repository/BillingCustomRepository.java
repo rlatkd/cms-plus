@@ -11,17 +11,15 @@ import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
 import java.util.List;
 
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearch;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,8 +38,8 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 1. billing
 	 * 2. billingProduct <- batchsize 100
 	 * */
-	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearch search,
-		SortPageDto.Req pageable) {
+	public List<Billing> findBillingListWithCondition(String vendorUsername, BillingSearchReq search,
+		PageReq pageReq) {
 		return jpaQueryFactory
 			.selectFrom(billing)
 
@@ -71,10 +69,13 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
 			)
 
-			.orderBy(orderMethod(pageable))
+			.orderBy(
+				buildOrderSpecifier(pageReq)
+					.orElse(billing.createdDateTime.desc())				// 기본 정렬 = 생성시간 내림차순
+			)
 
-			.offset(pageable.getPage())
-			.limit(pageable.getSize())
+			.offset(pageReq.getPage())
+			.limit(pageReq.getSize())
 			.fetch();
 	}
 
@@ -83,7 +84,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 *
 	 * 최신순 정렬
 	 * */
-	public List<Billing> findBillingsByContractId(Long contractId, SortPageDto.Req pageable) {
+	public List<Billing> findBillingsByContractId(Long contractId, PageReq pageable) {
 		return jpaQueryFactory
 			.selectFrom(billing)
 			.join(billing.billingStandard, billingStandard).fetchJoin()
@@ -98,6 +99,38 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.offset(pageable.getPage())
 			.limit(pageable.getSize())
 				.fetch();
+	}
+
+	/*
+	* 청구 상세
+	* */
+	public Billing findBillingDetail(Long billingId) {
+		return jpaQueryFactory
+			.selectFrom(billing)
+			.join(billing.billingStandard, billingStandard).fetchJoin()
+			.join(billingStandard.contract, contract).fetchJoin()
+			.join(contract.member, member).fetchJoin()
+			.join(contract.payment, payment).fetchJoin()
+			.where(
+				billingNotDel(),
+				billing.id.eq(billingId)
+			)
+			.fetchOne();
+	}
+
+	/*
+	* 청구와 청구기준 같이 조회
+	* 청구 상품 수정시 사용됨
+	* */
+	public Billing findBillingWithStandard(Long billingId) {
+		return jpaQueryFactory
+			.selectFrom(billing)
+			.join(billing.billingStandard, billingStandard).fetchJoin()
+			.where(
+				billingNotDel(),
+				billing.id.eq(billingId)
+			)
+			.fetchOne();
 	}
 
 	/*
@@ -155,6 +188,9 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 		return (res != null) ? res.intValue() : 0;
 	}
 
+	/*
+	* 고객의 계약 존재 여부
+	* */
 	public boolean isExistBillingByUsername(Long billingId, String vendorUsername) {
 		Integer res = jpaQueryFactory
 			.selectOne()
@@ -172,9 +208,12 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 		return res != null;
 	}
 
-	public int countAllBillings(String vendorUsername, BillingSearch search) {
+	/*
+	* 고객의 전체 계약 수 (검색 조건 반영된 계약 수)
+	* */
+	public int countAllBillings(String vendorUsername, BillingSearchReq search) {
 		Long count = jpaQueryFactory
-				.select(billing.id.count())
+				.select(billing.id.countDistinct())
 				.from(billing)
 
 				.join(billing.billingStandard, billingStandard)
@@ -209,9 +248,6 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	}
 
 	/*
-
-
-
 	 회원 상세 - 기본정보(청구금액)
 	    select
 			sum(billingProduct.price * billingProduct.quantity)
@@ -231,11 +267,9 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			and contract.deleted = ?3
 			and billingStandard.deleted = ?4
 	  */
-
-
 	public Long findBillingProductByMemberId(String username, Long memberId){
 		Long res = jpaQueryFactory
-				.select(billingProduct.price.multiply(billingProduct.quantity).sum())
+				.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
 				.from(billingProduct)
 				.join(billingProduct.billingStandard,billingStandard)
 				.join(billingStandard.contract, contract)
@@ -247,7 +281,9 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 						contractNotDel(),
 						billingStandardNotDel()
 				)
-				.fetchOne().longValue();
-		return (res == null) ? 0 : res.longValue();
+				.fetchOne();
+		return res;
 	}
+
+
 }

@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
-import lombok.ToString;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -14,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
+import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,6 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString // 임시로
 public class BillingProduct extends BaseEntity {
 
 	@Id
@@ -36,7 +36,7 @@ public class BillingProduct extends BaseEntity {
 	private Long id;
 
 	@Comment("청구상품의 청구기준")
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "billing_standard_id")
 	@Setter
 	private BillingStandard billingStandard;
@@ -46,20 +46,39 @@ public class BillingProduct extends BaseEntity {
 	 * fetch eager -> 쿼리 횟수 감소
 	 * */
 	@Comment("청구상품의 상품")
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "product_id")
 	private Product product;
 
 	@Comment("청구상품의 가격")
 	@Column(name = "billing_product_price")
+	@ProductPrice
 	private int price;
 
 	@Comment("청구상품의 수량")
 	@Column(name = "billing_product_quantity")
-	//TODO 최대개수??
+	@ProductQuantity
 	private int quantity;
 
-	public long getTotalPrice() {
+	/*
+	* 청구상품 가격 (상품 * 수량)
+	* */
+	public long getBillingProductPrice() {
 		return (long)price * quantity;
+	}
+
+	/*
+	* 청구상품 동일성 비교
+	* 기반이된 상품, 청구상품 가격, 청구상품 수량
+	* */
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof BillingProduct other)) {
+			return false;
+		}
+
+		return (this.product.getId().equals(other.product.getId()))
+			&& (this.price == other.price)
+			&& (this.quantity == other.quantity);
 	}
 }

@@ -22,7 +22,7 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Username;
-import kr.or.kosa.cmsplusmain.domain.settings.SimpConsentSetting;
+import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -100,6 +100,11 @@ public class Vendor extends BaseEntity {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "setting_simpconset_id")
 	private SimpConsentSetting simpConsentSetting;
+
+	public void setSimpConsentSetting(SimpConsentSetting simpConsentSetting) {
+		this.simpConsentSetting = simpConsentSetting;
+		simpConsentSetting.setVendor(this);
+	}
 
 	public static Vendor of(Long id) {
 		Vendor emptyVendor = new Vendor();

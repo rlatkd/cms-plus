@@ -18,4 +18,5 @@ public class CMSInfo {
 	private String accountOwner;
 
 	private LocalDate accountOwnerBirth;
+
 }
