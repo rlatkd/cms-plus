@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.product.entity;
 
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,18 +19,15 @@ import kr.or.kosa.cmsplusmain.domain.product.validator.ProductMemo;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Comment("고객이 등록한 상품")
 @Entity
 @Table(name = "product")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
-
 	@Id
 	@Column(name = "product_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +43,8 @@ public class Product extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "product_status", nullable = false)
 	@NotNull
-	private ProductStatus status;
+	@Builder.Default
+	private ProductStatus status = ProductStatus.ENABLED;
 
 	@Comment("상품 이름")
 	@Column(name = "product_name", nullable = false, length = 20)

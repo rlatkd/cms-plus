@@ -8,23 +8,23 @@ import java.time.LocalDate;
 
 @Getter
 @Builder
-public class ProductRes {
+public class ProductDetailRes {
 
     private final Long productId;
     private final String productName;
-    private final LocalDate productCreatedDate;
     private final int productPrice;
-    private final String productMemo;
     private final int contractNumber; // 계약 건수
+    private final LocalDate productCreatedDate;
+    private final String productMemo;
 
-    public static ProductRes fromEntity(Product product, int contractNumber) {
-        return ProductRes.builder()
+    public static ProductDetailRes fromEntity(Product product, int contractNumber) {
+        return ProductDetailRes.builder()
                 .productId(product.getId())
                 .productName(product.getName())
-                .productCreatedDate(product.getCreatedDateTime().toLocalDate())
                 .productPrice(product.getPrice())
-                .productMemo(product.getMemo())
                 .contractNumber(contractNumber)
+                .productCreatedDate(product.getCreatedDateTime().toLocalDate())
+                .productMemo(product.getMemo())
                 .build();
     }
 
