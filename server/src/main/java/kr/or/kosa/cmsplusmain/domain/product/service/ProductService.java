@@ -28,6 +28,7 @@ public class ProductService {
     * */
     @Transactional
     public void createProduct(Long vendorId, ProductCreateReq productCreateReq) {
+
         productRepository.save(productCreateReq.toEntity(Vendor.builder().id(vendorId).build()));
     }
 
@@ -65,12 +66,38 @@ public class ProductService {
         return ProductDetailRes.fromEntity(product, contractNum);
     }
 
+    /*
+     * 상품 수정
+     * */
+    @Transactional
+    public void updateProduct(Long vendorId, Long productId, ProductUpdateReq productUpdateReq) {
+        validateProductUser(productId, vendorId);
+        Product product = productRepository.findById(productId).orElseThrow(IllegalStateException::new);
+        product.setMemo(productUpdateReq.getProductMemo());
+        product.setPrice(productUpdateReq.getProductPrice());
+    }
+
+    /*
+     * 상품 수정
+     * */
+    @Transactional
+    public void deleteProduct(Long vendorId,Long productId) {
+        validateProductUser(productId, vendorId);
+        Product product = productRepository.findById(productId).orElseThrow(IllegalStateException::new);
+        product.delete();
+    }
+
     // 유효성 검증
-    private void validateProductUser(Long productId, Long vendorId) {
+    private void validateProductUser(Long vendorId, Long productId) {
         if (!productCustomRepository.isExistProductByUsername(productId, vendorId)) {
             throw new IllegalArgumentException("Not Owner");
         }
     }
+    
+    
+
+    
+    
 
 
     public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
