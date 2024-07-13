@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.product.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
@@ -12,7 +13,11 @@ import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import kr.or.kosa.cmsplusmain.domain.product.entity.ProductStatus;
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
@@ -157,6 +162,22 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
         return res != null;
     }
 
+    public Map<Long, String> findAllProductNamesById(List<Long> productIds) {
+        // 상품의 아이디와 이름만 select
+        List<Tuple> idAndNames = jpaQueryFactory
+            .select(product.id, product.name)
+            .from(product)
+            .where(productNotDel())
+            .fetch();
+
+        // 상품 ID와 이름 매핑
+        Map<Long, String> idToName = new HashMap<>();
+        for (Tuple tuple : idAndNames) {
+            idToName.put(tuple.get(product.id), tuple.get(product.name));
+        }
+
+        return idToName;
+    }
 
     /* 고객의 상품 목록 조회 */
     public List<Product> findAvailableProductsByVendorUsername(Long vendorId) {

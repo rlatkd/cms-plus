@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.billing.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,9 @@ import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,12 +39,13 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
 
+	private final ProductCustomRepository productCustomRepository;
 	/*
 	 * 청구 생성
 	 *
 	 * 총 발생 쿼리수: 4회
 	 * 내용:
-	 * 		존재여부 확인, 청구기준 생성, 청구상품 생성, 청구 생성
+	 * 		존재여부 확인, 상품 이름 조회, 청구 생성, 청구상품 생성
 	 * */
 	@Transactional
 	public void createBilling(Long vendorId, BillingCreateReq billingCreateReq) {
@@ -51,11 +56,7 @@ public class BillingService {
 			throw new EntityNotFoundException();
 		}
 
-		// 청구 상품 목록
-		List<BillingProduct> billingProducts = billingCreateReq.getBillingProducts()
-			.stream()
-			.map(BillingProductReq::toEntity)
-			.toList();
+		List<BillingProduct> billingProducts = conventToBillingProducts(billingCreateReq.getBillingProducts());
 
 		// 청구 생성
 		Billing billing = new Billing(
@@ -73,9 +74,9 @@ public class BillingService {
 	/*
 	 * 청구목록 조회
 	 *
-	 * 총 발생 쿼리수: 4회
+	 * 총 발생 쿼리수: 3회
 	 * 내용:
-	 * 		존재여부 확인, 청구 조회, 청구상품 목록 조회(+? batch_size=100), 결제수단 정보 조회
+	 * 		청구 조회, 청구상품 목록 조회(+? batch_size=100), 전체 개수 조회
 	 * */
 	public PageRes<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		// 단일 페이지 결과
@@ -94,9 +95,9 @@ public class BillingService {
 	/*
 	* 청구 상세 조회
 	*
-	* 총 발생 쿼리수: 4회
+	* 총 발생 쿼리수: 3회
 	* 내용:
-	* 	존재여부 확인, 청구목록 조회, 청구상품 목록 조회(+? batch_size=100), 결제수단 정보 조회
+	* 	존재여부 확인, 청구목록 조회, 청구상품 목록 조회(+? batch_size=100)
 	* */
 	public BillingDetailRes getBillingDetail(Long vendorId, Long billingId) {
 		// 고객의 청구 여부 확인
@@ -111,7 +112,9 @@ public class BillingService {
 	*
 	* 총 발생 쿼리수: 6회
 	* 내용:
-	* 	존재여부 확인, 청구 조회, 청구상품 목록 조회(+? batch_size=100), 청구상품 생성, 청구 수정, 청구상품 삭제
+	* 	존재여부 확인, 청구 조회, 상품 이름 조회, 청구상품 목록 조회(+? batch_size=100),
+	* 	청구상품 생성(*N 청구상품 수만큼), 청구 수정,
+	* 	청구상품 삭제(*N 삭제된 청구상품 수만큼)
 	* */
 	@Transactional
 	public void updateBilling(Long vendorId, Long billingId, BillingUpdateReq billingUpdateReq) {
@@ -124,10 +127,7 @@ public class BillingService {
 		billing.setInvoiceMessage(billingUpdateReq.getInvoiceMemo());
 
 		// 신규 청구상품
-		List<BillingProduct> newBillingProducts = billingUpdateReq.getBillingProducts()
-			.stream()
-			.map(BillingProductReq::toEntity)
-			.toList();
+		List<BillingProduct> newBillingProducts = conventToBillingProducts(billingUpdateReq.getBillingProducts());
 
 		// 청구상품 수정
 		updateBillingProducts(billing, newBillingProducts);
@@ -156,23 +156,45 @@ public class BillingService {
 	/*
 	* 청구 삭제
 	*
-	* 총 발생 쿼리수: 3회
+	* 총 발생 쿼리수: 4회
 	* 내용:
-	* 	존재여부 확인, 청구 조회, 청구 삭제
+	* 	존재여부 확인, 청구 조회, 청구상품 조회(+?), 청구 삭제(*N 청구상품수)
 	* */
 	@Transactional
 	public void deleteBilling(Long vendorId, Long billingId) {
 		// 고객의 청구 여부 확인
 		validateBillingUser(billingId, vendorId);
 
+		// 청구 상품도 동시 삭제처리된다.
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		billing.delete();
+	}
 
-		// 청구상태에 따른 삭제 조건 존재
-		// 청구상태가 생성 (청구서 발송 전)에만 삭제가 가능하다.
-		if (!billing.getBillingStatus().equals(BillingStatus.CREATED)) {
-			throw new DeleteBillingException();
-		}
-		billingRepository.deleteById(billingId);
+	/*
+	* 청구 상품 요청 -> 청구 상품 엔티티 변환 메서드
+	*
+	* 요청에서 상품의 ID를 받아서
+	* 상품의 ID를 토대로 상품 이름을 가져온다.
+	*
+	* 상품이름을 청구상품 테이블에 저장해
+	* 청구상품 조회시 상품 이름만을 가져오기위한 조인을 없앤다.
+	* */
+	private List<BillingProduct> conventToBillingProducts(List<BillingProductReq> billingProductReqs) {
+		// 상품 ID
+		List<Long> productIds = billingProductReqs.stream()
+			.mapToLong(BillingProductReq::getProductId)
+			.boxed().toList();
+
+		// 상품 ID -> 이름
+		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
+
+		// 청구 상품 목록
+		List<BillingProduct> billingProducts = billingProductReqs
+			.stream()
+			.map(dto -> dto.toEntity(productIdToName.get(dto.getProductId())))
+			.toList();
+
+		return billingProducts;
 	}
 
 	/*

@@ -90,12 +90,15 @@ public class ContractService {
 	/*
 	 * 계약 상세
 	 *
+	 * 총 발생 쿼리수: 3회
+	 * 내용:
+	 * 	존재여부 확인, 계약 조회, 계약상품 목록 조회(+? batch_size=100)
 	 * */
 	public ContractDetailRes getContractDetail(Long vendorId, Long contractId) {
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorId);
 
-		// 계약과 멤버, 결제정보 fetch join 결과
+		// 계약과 멤버, 결제정보 결과 동시 조인(fetch join)
 		Contract contract = contractCustomRepository.findContractDetailById(contractId);
 
 		// 결제방식 및 수단에 따른 dto 생성
@@ -107,7 +110,11 @@ public class ContractService {
 	}
 
 	/*
-	* 계약 이름 및 상품 목록 수정
+	* 계약 수정
+	*
+	* 총 발생 쿼리수: 3회
+	* 내용:
+	* 	존재여부 확인, 계약 조회, 계약상품 목록 조회(+? batch_size=100), 신규 계약상품 생성(*N), 계약이름 수정, 계약상품 삭제(*N)
 	* */
 	@Transactional
 	public void updateContract(Long vendorId, Long contractId, ContractCreateReq contractCreateReq) {
