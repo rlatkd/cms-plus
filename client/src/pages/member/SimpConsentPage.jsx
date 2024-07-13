@@ -4,11 +4,11 @@ import BasicInfo from '@/components/member/simpConsent/BasicInfo';
 import ContractInfo from '@/components/member/simpConsent/ContractInfo';
 import PaymentInfo from '@/components/member/simpConsent/PaymentInfo';
 import Signature from '@/components/member/simpConsent/Signature';
-import Loading from '@/components/common/Loading';
-import Success from '@/components/common/Success';
+import Loading from '@/components/common/member/Loading';
+import Success from '@/components/common/member/Success';
 
-import NextButton from '@/components/common/StatusNextButton';
-import PreviousButton from '@/components/common/StatusPreButton';
+import NextButton from '@/components/common/buttons/StatusNextButton';
+import PreviousButton from '@/components/common/buttons/StatusPreButton';
 
 import { useStatusStore } from '@/stores/useStatusStore';
 import { useUserDataStore } from '@/stores/useUserDataStore';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Input from '@/components/common/Input';
+import Input from '@/components/common/inputs/Input';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 
 const PaymentCard = () => {
