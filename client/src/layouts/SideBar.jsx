@@ -1,6 +1,4 @@
 import { NavLink } from 'react-router-dom';
-import TmpLogo from '@/assets/TmpLogo';
-import UpArrow from '@/assets/UpArrow';
 import vendorRoute from '@/routes/vendorRoute';
 import React from 'react';
 import { useSideBarActiveStore } from '@/stores/useSideBarActiveStore';
@@ -11,7 +9,7 @@ const SideBar = () => {
   return (
     <div className='hidden h-full w-80  animate-slideOut desktop:block desktop:animate-slideIn py-6 pl-4 mr-8'>
       <div className='mb-6 ml-3 mt-3 flex items-center'>
-        <TmpLogo className='mx-3 h-6 w-6' />
+        <img src='/src/assets/tmplogo.svg' alt='logo' className='mx-2 h-6 w-6' />
         <h1 className='text-lg font-800 text-text_black'>HYOSUNG CMS#</h1>
       </div>
       <div className='border-gradient mb-5 border-b-2' />
