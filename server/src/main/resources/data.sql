@@ -512,7 +512,7 @@ VALUES
     (15, '2023-12-31', '2023-01-30', 0, 30, NOW(), NULL, 30, NOW(), 30, 1, '계약 30');
 
 -- Sample data for cmsplusmain.billing
-INSERT INTO cmsplusmain.billing (billing_date, billing_standard_contract_day, deleted, billing_id, contract_id, created_datetime, deleted_datetime, modified_datetime, billing_invoice_message, billing_standard_type, billing_status)
+INSERT INTO cmsplusmain.billing (billing_date, billing_contract_day, deleted, billing_id, contract_id, created_datetime, deleted_datetime, modified_datetime, billing_invoice_message, billing_type, billing_status)
 VALUES
     ('2023-01-15', 15, 0, 1, 1, NOW(), NULL, NOW(), '청구서 메시지 1', 'REGULAR', 'CREATED'),
     ('2023-02-15', 15, 0, 2, 2, NOW(), NULL, NOW(), '청구서 메시지 2', 'REGULAR', 'CREATED'),

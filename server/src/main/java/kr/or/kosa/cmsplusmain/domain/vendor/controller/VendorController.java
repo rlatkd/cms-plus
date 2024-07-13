@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupDto;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.service.VendorService;
 import lombok.RequiredArgsConstructor;
 
@@ -30,9 +28,9 @@ public class VendorController {
 	private final JWTUtil jwtUtil;
 
 	@PostMapping("/join")
-	public ResponseEntity<String> join(@RequestBody @Valid SignupDto signupDto) {
+	public ResponseEntity<String> join(@RequestBody @Valid SignupReq signupReq) {
 		try {
-			vendorService.join(signupDto);
+			vendorService.join(signupReq);
 			return ResponseEntity.status(HttpStatus.CREATED).body("Signup successful.");
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

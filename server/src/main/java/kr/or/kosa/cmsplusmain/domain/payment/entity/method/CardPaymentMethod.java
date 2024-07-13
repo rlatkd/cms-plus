@@ -26,6 +26,16 @@ public class CardPaymentMethod extends PaymentMethodInfo {
 	@NotNull
 	private String cardNumber;
 
+	@Comment("카드 유효기간 월")
+	@Column(name = "card_info_validity_month", nullable = false)
+	@NotNull
+	private int cardMonth;
+
+	@Comment("카드 유효기간 년")
+	@Column(name = "card_info_validity_year", nullable = false)
+	@NotNull
+	private int cardYear;
+
 	@Comment("카드 소유주명")
 	@Column(name = "card_info_owner", nullable = false)
 	@PersonName
@@ -36,5 +46,7 @@ public class CardPaymentMethod extends PaymentMethodInfo {
 	@Column(name = "card_info_owner_birth", nullable = false)
 	@NotNull
 	private LocalDate cardOwnerBirth;
+
+
 }
 

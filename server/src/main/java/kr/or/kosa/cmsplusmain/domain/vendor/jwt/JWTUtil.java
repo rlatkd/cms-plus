@@ -49,6 +49,8 @@ public class JWTUtil {
                 .get("role", String.class);
     }
 
+
+
     public String getCategory(String token) {
 
         return Jwts.parser()

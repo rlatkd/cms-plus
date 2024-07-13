@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.product.validator;
+package kr.or.kosa.cmsplusmain.domain.base.validator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,11 +10,11 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = ProductMemoValidator.class)
+@Constraint(validatedBy = MemoValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ProductMemo {
-	String message() default "Invalid product memo";
+public @interface Memo {
+	String message() default "Invalid memo";
 
 	Class<?>[] groups() default {};
 

@@ -19,11 +19,7 @@ public class ContractProductRes {
 			.contractProductId(contractProduct.getId())
 			.contractId(contractProduct.getContract().getId())
 			.productId(contractProduct.getProduct().getId())
-
-			// 주의
-			// 청구상품 과 청구 join 조회 필요
-			.name(contractProduct.getProduct().getName())
-
+			.name(contractProduct.getName())
 			.price(contractProduct.getPrice())
 			.quantity(contractProduct.getQuantity())
 			.build();

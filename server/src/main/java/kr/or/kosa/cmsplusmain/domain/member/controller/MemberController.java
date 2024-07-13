@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.member.controller;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItem;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
@@ -47,5 +48,14 @@ public class MemberController {
     public SortPageDto.Res<MemberContractListItemDto> getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId , PageReq pageable) {
         Long vendorId = 1L;
         return memberService.findContractListItemByMemberId(vendorId, memberId, pageable);
+    }
+
+    /*
+     * 회원 목록 조회
+     * */
+    @PostMapping("/members")
+    public void createMember(@RequestBody MemberCreateReq memberCreateReq) {
+        Long vendorId = 1L;
+        memberService.createMember(vendorId);
     }
 }

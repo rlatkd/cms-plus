@@ -1,9 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.payment.dto.type;
 
-import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Bank;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
-import kr.or.kosa.cmsplusmain.domain.payment.validator.AccountNumber;
 import lombok.Builder;
 import lombok.Getter;
 

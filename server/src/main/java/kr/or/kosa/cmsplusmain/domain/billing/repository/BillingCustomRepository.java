@@ -154,7 +154,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	public List<Billing> findBillingsByContractId(Long contractId, PageReq pageable) {
 		return jpaQueryFactory
 			.selectFrom(billing)
-			.join(billing.contract, contract)
+			.join(billing.contract, contract).fetchJoin()
 			.join(contract.member, member).fetchJoin()
 			.join(contract.payment, payment).fetchJoin()
 			.where(
@@ -164,7 +164,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.orderBy(billing.createdDateTime.desc())
 			.offset(pageable.getPage())
 			.limit(pageable.getSize())
-				.fetch();
+			.fetch();
 	}
 
 	/*
