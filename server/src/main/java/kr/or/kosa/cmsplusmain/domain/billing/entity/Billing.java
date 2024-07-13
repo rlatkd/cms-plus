@@ -22,7 +22,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import kr.or.kosa.cmsplusmain.domain.billing.exception.AlreadySentInvoiceException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.CancelInvoiceException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.SendInvoiceException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.DeleteBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.EmptyBillingProductException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.UpdateBillingDateException;
@@ -159,10 +160,23 @@ public class Billing extends BaseEntity {
 	* 청구서 발송 가능 상태 확인 및 상태 변경
 	* */
 	public void sendInvoice() {
-		if (billingStatus != BillingStatus.CREATED) {
-			throw new AlreadySentInvoiceException();
+		// 청구서는 생성 상태이거나 미납 상태에서만 발송할 수 있다.
+		if (billingStatus != BillingStatus.CREATED && billingStatus != BillingStatus.NON_PAID) {
+			throw new SendInvoiceException();
 		}
 		billingStatus = BillingStatus.WAITING_PAYMENT;
+	}
+
+	/*
+	 * 청구서 발송 취소
+	 *
+	 * 청구서 발송 취소 가능 상태 확인 및 상태 변경
+	 * */
+	public void cancelInvoice() {
+		if (billingStatus != BillingStatus.WAITING_PAYMENT && billingStatus != BillingStatus.NON_PAID) {
+			throw new CancelInvoiceException();
+		}
+		billingStatus = BillingStatus.CREATED;
 	}
 
 	/*

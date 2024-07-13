@@ -62,25 +62,34 @@ public class BillingService {
 		// 청구가 고객의 청구인지 확인
 		validateBillingUser(vendorId, billingId);
 
-		// 청구서 발송 가능 상태 확인 및 상태 변경
+		// 청구서 발송 가능 상태 확인 및 청구상태 변경
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		billing.sendInvoice();
 
-		// 청구 계약 회원
 		Contract contract = billing.getContract();
 		Member member = contract.getMember();
-
-		// 청구서 발송 수단 확인
-		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
 
 		// 회원이 받을 문자(이메일) 내용
 		String invoiceMessage = createInvoiceMessage(billing, member);
 
 		// 청구서 링크 발송
+		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
 		switch (sendMethod) {
 			case SMS -> messageService.sendSms(member.getPhone(), invoiceMessage);
 			case EMAIL -> messageService.sendEmail(member.getEmail(), invoiceMessage);
 		}
+	}
+
+	/*
+	* 청구서 발송 취소
+	* */
+	@Transactional
+	public void cancelInvoice(Long vendorId, Long billingId) {
+		validateBillingUser(vendorId, billingId);
+
+		// 청구서 취소 가능 상태 확인 및 청구상태 변경
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		billing.cancelInvoice();
 	}
 
 	/*
