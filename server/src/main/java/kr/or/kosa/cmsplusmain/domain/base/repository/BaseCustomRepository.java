@@ -2,13 +2,10 @@ package kr.or.kosa.cmsplusmain.domain.base.repository;
 
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingStandard.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
@@ -16,7 +13,6 @@ import java.util.Optional;
 import java.time.LocalDateTime;
 
 import com.querydsl.core.types.Path;
-import kr.or.kosa.cmsplusmain.domain.product.entity.QProduct;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -34,10 +30,7 @@ import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
-import kr.or.kosa.cmsplusmain.domain.product.entity.QProduct;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -99,9 +92,6 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return (order.equals(Order.ASC)) ? path.asc() : path.desc();
 	}
 
-	protected BooleanExpression vendorUsernameEq(String vendorUsername) {
-		return hasText(vendorUsername) ? vendor.username.eq(vendorUsername) : null;
-	}
 
 	protected BooleanExpression productVendorIdEq(Long vendorId) {
 		if (vendorId == null) {
@@ -117,9 +107,6 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return member.deleted.isFalse();
 	}
 
-	protected BooleanExpression billingStandardNotDel() {
-		return billingStandard.deleted.isFalse();
-	}
 
 	protected BooleanExpression billingProductNotDel() {
 		return billingProduct.deleted.isFalse();
@@ -150,7 +137,7 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 			return null;
 		return Expressions.booleanTemplate(
 			"MAX(CASE WHEN {0} LIKE {1} THEN 1 ELSE 0 END) = 1",
-			QProduct.product.name, "%" + productName + "%"
+			product.name, "%" + productName + "%"
 		);
 	}
 
@@ -166,9 +153,9 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return contractProduct.price.multiply(contractProduct.quantity).sum().loe(contractPrice);
 	}
 
-	protected BooleanExpression paymentTypeEq(PaymentType paymentType) {
-		return (paymentType != null) ? payment.paymentType.eq(paymentType) : null;
-	}
+	// protected BooleanExpression paymentTypeEq(PaymentType paymentType) {
+	// 	return (paymentType != null) ? payment.paymentType.eq(paymentType) : null;
+	// }
 
 	protected BooleanExpression contractDayEq(Integer contractDay) {
 		return (contractDay != null) ? contract.contractDay.eq(contractDay) : null;
@@ -183,13 +170,9 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return (billingDate != null) ? billing.billingDate.eq(billingDate) : null;
 	}
 
-	protected BooleanExpression contractStatusEq(ContractStatus contractStatus) {
-		return (contractStatus != null) ? contract.status.eq(contractStatus) : null;
-	}
-
-	protected BooleanExpression consentStatusEq(ConsentStatus consentStatus) {
-		return (consentStatus != null) ? payment.consentStatus.eq(consentStatus) : null;
-	}
+	// protected BooleanExpression consentStatusEq(ConsentStatus consentStatus) {
+	// 	return (consentStatus != null) ? payment.consentStatus.eq(consentStatus) : null;
+	// }
 
 	protected BooleanExpression productNameContains(String productName) {
 		return hasText(productName) ? product.name.containsIgnoreCase(productName) : null;

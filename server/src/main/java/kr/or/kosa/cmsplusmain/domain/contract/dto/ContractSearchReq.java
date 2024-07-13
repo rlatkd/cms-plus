@@ -1,7 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,8 +16,8 @@ public class ContractSearchReq {
 	private Integer contractDay;
 	private Long contractPrice;
 	private String productName;
-	private ContractStatus contractStatus;
-	private ConsentStatus consentStatus;
+	private PaymentType paymentType;
+	private PaymentMethod paymentMethod;
 
 	/****** 정렬 가능 항목 *******/
 	// memberName

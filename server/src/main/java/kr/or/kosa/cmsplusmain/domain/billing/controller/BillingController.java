@@ -34,8 +34,8 @@ public class BillingController {
 	 * */
 	@PostMapping
 	public void createBilling(@RequestBody @Valid BillingCreateReq billingCreateReq) {
-		String vendorUsername = "vendor1";
-		billingService.createBilling(vendorUsername, billingCreateReq);
+		Long vendorId = 1L;
+		billingService.createBilling(vendorId, billingCreateReq);
 	}
 
 	/*
@@ -43,8 +43,8 @@ public class BillingController {
 	 * */
 	@GetMapping
 	public PageRes<BillingListItemRes> getBillingListWithCondition(BillingSearchReq search, PageReq pageReq) {
-		String vendorUsername = "vendor1";
-		return billingService.searchBillings(vendorUsername, search, pageReq);
+		Long vendorId = 1L;
+		return billingService.searchBillings(vendorId, search, pageReq);
 	}
 
 	/*
@@ -52,8 +52,8 @@ public class BillingController {
 	 * */
 	@GetMapping("/{billingId}")
 	public BillingDetailRes getBillingDetail(@PathVariable Long billingId) {
-		String vendorUsername = "vendor1";
-		return billingService.getBillingDetail(vendorUsername, billingId);
+		Long vendorId = 1L;
+		return billingService.getBillingDetail(vendorId, billingId);
 	}
 
 	/*
@@ -61,8 +61,8 @@ public class BillingController {
 	* */
 	@PutMapping("/{billingId}")
 	public void updateBilling(@PathVariable Long billingId, @RequestBody @Valid BillingUpdateReq billingUpdateReq) {
-		String vendorUsername = "vendor1";
-		billingService.updateBilling(vendorUsername, billingId, billingUpdateReq);
+		Long vendorId = 1L;
+		billingService.updateBilling(vendorId, billingId, billingUpdateReq);
 	}
 
 	/*
@@ -70,7 +70,7 @@ public class BillingController {
 	* */
 	@DeleteMapping("/{billingId}")
 	public void deleteBilling(@PathVariable Long billingId) {
-		String vendorUsername = "vendor1";
-		billingService.deleteBilling(vendorUsername, billingId);
+		Long vendorId = 1L;
+		billingService.deleteBilling(vendorId, billingId);
 	}
 }

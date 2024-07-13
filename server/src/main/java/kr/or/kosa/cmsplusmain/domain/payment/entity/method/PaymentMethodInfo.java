@@ -1,17 +1,14 @@
-package kr.or.kosa.cmsplusmain.domain.payment.entity;
+package kr.or.kosa.cmsplusmain.domain.payment.entity.method;
 
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import kr.or.kosa.cmsplusmain.domain.payment.converter.PaymentMethodConverter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,18 +24,11 @@ import lombok.NoArgsConstructor;
 @Comment("결제수단 세부정보")
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "payment_method_info_method")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class PaymentMethodInfo extends BaseEntity {
-
 	@Id
 	@GeneratedValue
 	@Column(name = "payment_method_info_id")
 	private Long id;
-
-	@Comment("결제수단")
-	@Convert(converter = PaymentMethodConverter.class)
-	@Column(name = "payment_method_info_method", updatable = false, insertable = false)
-	private PaymentMethod paymentMethod;
 }

@@ -4,13 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -37,12 +36,11 @@ public class BillingDetailRes {
 	private final Long billingPrice;						// 청구금액
 
 	public static BillingDetailRes fromEntity(Billing billing) {
-		final BillingStandard billingStandard = billing.getBillingStandard();
-		final Contract contract = billingStandard.getContract();
+		final Contract contract = billing.getContract();
 		final Member member = contract.getMember();
 		final Payment payment = contract.getPayment();
 
-		final List<BillingProductRes> billingProductResList = billingStandard.getBillingProducts()
+		final List<BillingProductRes> billingProductResList = billing.getBillingProducts()
 			.stream()
 			.map(BillingProductRes::fromEntity)
 			.toList();
@@ -58,13 +56,13 @@ public class BillingDetailRes {
 
 			.billingId(billing.getId())
 			.billingName(billing.getBillingName())
-			.billingType(billingStandard.getType())
+			.billingType(billing.getBillingType())
 			.billingCreatedDate(billing.getCreatedDateTime().toLocalDate())
 			.billingDate(billing.getBillingDate())
 			.billingMemo(billing.getInvoiceMessage())
 
 			.billingProducts(billingProductResList)
-			.billingPrice(billingStandard.getBillingPrice())
+			.billingPrice(billing.getBillingPrice())
 			.build();
 	}
 }

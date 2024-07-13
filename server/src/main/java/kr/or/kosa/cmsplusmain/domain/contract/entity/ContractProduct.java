@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;
 import lombok.AccessLevel;
@@ -27,8 +28,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "contract_product")
 @Getter
-@AllArgsConstructor
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContractProduct extends BaseEntity {
 
@@ -42,20 +41,32 @@ public class ContractProduct extends BaseEntity {
 	@Setter
 	private Contract contract;
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "product_id")
 	@NotNull
 	private Product product;
 
+	@Comment("계약_상품 이름")
+	@Column(name = "contract_product_name")
+	@ProductName
+	private String name;
+
 	@Comment("계약_상품 가격")
-	@Column(name = "contract_product_price", nullable = false)
+	@Column(name = "contract_product_price")
 	@ProductPrice
 	private int price;
 
 	@Comment("계약_상품 수량")
-	@Column(name = "contract_product_quantity", nullable = false)
+	@Column(name = "contract_product_quantity")
 	@ProductQuantity
 	private int quantity;
+
+	@Builder
+	public ContractProduct(Product product, int price, int quantity) {
+		this.product = product;
+		this.price = price;
+		this.quantity = quantity;
+	}
 
 	/*
 	* 계약 상품 계산된 금액

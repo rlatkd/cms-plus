@@ -19,6 +19,10 @@ import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,32 +36,42 @@ public class ContractService {
 	private final ContractCustomRepository contractCustomRepository;
 	private final BillingCustomRepository billingCustomRepository;
 
+	private final PaymentService paymentService;
+
 	/*
 	 * 계약 목록 조회
+	 *
+	 * 총 발생 쿼리수: 3회
+	 * 내용:
+	 * 	계약 조회, 계약상품 목록 조회(+? batch_size=100), 전체 개수 조회
 	 * */
-	public PageRes<ContractListItemRes> searchContracts(String vendorUsername, ContractSearchReq search, PageReq pageReq)
+	public PageRes<ContractListItemRes> searchContracts(Long vendorId, ContractSearchReq search, PageReq pageReq)
 	{
-		// 1개 페이지 결과
+		// 단일 페이지 결과
 		List<ContractListItemRes> content = contractCustomRepository
-			.findContractListWithCondition(vendorUsername, search, pageReq)
+			.findContractListWithCondition(vendorId, search, pageReq)
 			.stream()
 			.map(ContractListItemRes::fromEntity)
 			.toList();
 
 		// 전체 개수
-		int totalContentCount = contractCustomRepository.countAllContracts(vendorUsername, search);
+		int totalContentCount = contractCustomRepository.countAllContracts(vendorId, search);
 
 		return new PageRes<>(totalContentCount, pageReq.getSize(), content);
 	}
 
 	/*
 	 * 계약의 청구 목록
+	 *
+	 * 총 발생 쿼리수: 4회
+	 * 내용:
+	 * 	존재여부 확인, 계약 조회, 계약상품 목록 조회(+? batch_size=100), 전체 개수 조회
 	 * */
 	public PageRes<BillingListItemRes> getBillingsByContract(
-		String vendorUsername, Long contractId, PageReq pageReq)
+		Long vendorId, Long contractId, PageReq pageReq)
 	{
 		// 고객의 계약 여부 확인
-		validateContractUser(contractId, vendorUsername);
+		validateContractUser(contractId, vendorId);
 
 		List<BillingListItemRes> content = billingCustomRepository.findBillingsByContractId(contractId, pageReq)
 			.stream()
@@ -75,26 +89,34 @@ public class ContractService {
 
 	/*
 	 * 계약 상세
+	 *
 	 * */
-	public ContractDetailRes getContractDetail(String vendorUsername, Long contractId) {
+	public ContractDetailRes getContractDetail(Long vendorId, Long contractId) {
 		// 고객의 계약 여부 확인
-		validateContractUser(contractId, vendorUsername);
+		validateContractUser(contractId, vendorId);
 
-		Contract contract = contractCustomRepository.findContractDetailById(contractId).orElseThrow();
-		return ContractDetailRes.fromEntity(contract);
+		// 계약과 멤버, 결제정보 fetch join 결과
+		Contract contract = contractCustomRepository.findContractDetailById(contractId);
+
+		// 결제방식 및 수단에 따른 dto 생성
+		Payment payment = contract.getPayment();
+		PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfo(payment);
+		PaymentMethodInfoRes paymentMethodInfoRes = paymentService.getPaymentMethodInfo(payment);
+
+		return ContractDetailRes.fromEntity(contract, paymentTypeInfoRes, paymentMethodInfoRes);
 	}
 
 	/*
 	* 계약 이름 및 상품 목록 수정
 	* */
 	@Transactional
-	public void updateContract(String vendorUsername, Long contractId, ContractCreateReq contractCreateReq) {
+	public void updateContract(Long vendorId, Long contractId, ContractCreateReq contractCreateReq) {
 		// 고객의 계약 여부 확인
-		validateContractUser(contractId, vendorUsername);
+		validateContractUser(contractId, vendorId);
 
 		// 계약 이름 수정
 		Contract contract = contractRepository.findById(contractId).orElseThrow();
-		contract.setName(contractCreateReq.getContractName());
+		contract.setContractName(contractCreateReq.getContractName());
 
 		// 신규 계약상품
 		List<ContractProduct> newContractProducts = contractCreateReq.getContractProducts()
@@ -102,7 +124,7 @@ public class ContractService {
 			.map(ContractProductReq::toEntity)
 			.toList();
 
-		// 계약상품 수정
+		// 계약상품목록 수정
 		updateContractProduct(contract, newContractProducts);
 	}
 
@@ -114,12 +136,12 @@ public class ContractService {
 		// 기존 계약상품
 		List<ContractProduct> oldContractProducts = contract.getContractProducts();
 
-		// 신규 계약상품에만 존재하는 것 추가
+		// 새롭게 추가되는 계약상품 저장
 		newContractProducts.stream()
 			.filter(ncp -> !oldContractProducts.contains(ncp))
 			.forEach(contract::addContractProduct);
 
-		// 기존 계약상품에만 존재하는 것 삭제
+		// 없어진 계약상품 삭제
 		oldContractProducts.stream()
 			.filter(ocp -> !newContractProducts.contains(ocp))
 			.toList()
@@ -130,8 +152,8 @@ public class ContractService {
 	* 계약 ID 존재여부
 	* 계약이 현재 로그인 고객의 계약인지 여부
 	* */
-	private void validateContractUser(Long contractId, String vendorUsername) {
-		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorUsername)) {
+	private void validateContractUser(Long contractId, Long vendorId) {
+		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
 			throw new EntityNotFoundException("계약 ID 없음(" + contractId + ")");
 		}
 	}

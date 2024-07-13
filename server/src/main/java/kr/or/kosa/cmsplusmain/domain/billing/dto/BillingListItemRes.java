@@ -4,12 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStandard;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -28,11 +27,10 @@ public class BillingListItemRes {
 	public static BillingListItemRes fromEntity(Billing billing) {
 
 		// NOT NULL
-		final BillingStandard billingStandard = billing.getBillingStandard();
-		final Contract contract = billingStandard.getContract();
+		final Contract contract = billing.getContract();
 		final Member member = contract.getMember();
 
-		final List<BillingProductRes> billingProductResList = billingStandard.getBillingProducts()
+		final List<BillingProductRes> billingProductResList = billing.getBillingProducts()
 			.stream()
 			.map(BillingProductRes::fromEntity)
 			.toList();
@@ -44,7 +42,7 @@ public class BillingListItemRes {
 			.memberName(member.getName())
 			.memberPhone(member.getPhone())
 			.billingProducts(billingProductResList)
-			.billingPrice(billingStandard.getBillingPrice())
+			.billingPrice(billing.getBillingPrice())
 			.billingStatus(billing.getBillingStatus())
 			.paymentType(payment.getPaymentType())
 			.billingDate(billing.getBillingDate())

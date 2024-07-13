@@ -1,18 +1,16 @@
 package kr.or.kosa.cmsplusmain.domain.payment.entity;
 
+import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEnum;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-public enum Bank {
+@RequiredArgsConstructor
+public enum Bank implements BaseEnum {
 	SINHAN("088", "신한은행"), KOOKMIN("004", "국민은행");
 
 	private final String code;
 	private final String title;
-
-	Bank(String code, String title) {
-		this.code = code;
-		this.title = title;
-	}
 
 	public static Bank fromCode(String code) {
 		if (code == null || code.isEmpty()) {

@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;
 import lombok.AccessLevel;
@@ -37,18 +38,19 @@ public class BillingProduct extends BaseEntity {
 
 	@Comment("청구상품의 청구기준")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_standard_id")
+	@JoinColumn(name = "billing_id")
 	@Setter
-	private BillingStandard billingStandard;
+	private Billing billing;
 
-	/*
-	 * 청구 상품이 사용될 때 상품의 이름이 항상 같이 사용된다.
-	 * fetch eager -> 쿼리 횟수 감소
-	 * */
 	@Comment("청구상품의 상품")
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "product_id")
 	private Product product;
+
+	@Comment("청구상품의 이름")
+	@Column(name = "billing_product_name", nullable = false, updatable = false)
+	@ProductName
+	private String name;
 
 	@Comment("청구상품의 가격")
 	@Column(name = "billing_product_price")

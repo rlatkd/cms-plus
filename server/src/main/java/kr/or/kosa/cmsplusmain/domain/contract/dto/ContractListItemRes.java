@@ -1,12 +1,13 @@
 package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,8 +21,8 @@ public class ContractListItemRes {
 	private final Integer contractDay;                                	// 약정일
 	private final List<ContractProductRes> contractProducts;        	// 계약 상품 목록
 	private final Long contractPrice;                                	// 계약금액
-	private final ContractStatus contractStatus;                    	// 계약상태
-	private final ConsentStatus consentStatus;                        	// 동의상태
+	private final PaymentType paymentType;								// 결제방식
+	private final PaymentMethod paymentMethod;							// 결제수단
 
 	public static ContractListItemRes fromEntity(Contract contract) {
 
@@ -34,7 +35,6 @@ public class ContractListItemRes {
 			.toList();
 
 		final Payment payment = contract.getPayment();
-		final ConsentStatus consentStatus = payment.getConsentStatus();
 
 		return ContractListItemRes.builder()
 			.contractId(contract.getId())
@@ -43,8 +43,8 @@ public class ContractListItemRes {
 			.contractDay(contract.getContractDay())
 			.contractProducts(contractProductResList)
 			.contractPrice(contract.getContractPrice())
-			.contractStatus(contract.getStatus())
-			.consentStatus(consentStatus)
+			.paymentType(payment.getPaymentType())
+			.paymentMethod(payment.getPaymentMethod())
 			.build();
 	}
 }

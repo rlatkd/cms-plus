@@ -3,7 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.billing.dto;
 import java.time.LocalDate;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Getter;
 import lombok.Setter;
 
