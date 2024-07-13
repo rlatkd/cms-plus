@@ -2,10 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.product.controller;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductCreateReq;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductDetailRes;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductSearchReq;
+import kr.or.kosa.cmsplusmain.domain.product.dto.*;
 import kr.or.kosa.cmsplusmain.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +32,18 @@ public class ProductController {
     public void createProduct(@RequestBody ProductCreateReq product) {
         Long vendorId = 1L;
         productService.createProduct(vendorId, product);
+    }
+
+    @PutMapping("/{productId}")
+    public void updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductUpdateReq productUpdateReq) {
+        Long vendorId = 1L;
+        productService.updateProduct(vendorId, productId, productUpdateReq);
+    }
+
+    @DeleteMapping("/{productId}")
+    public void deleteProduct(@PathVariable("productId") Long productId) {
+        Long vendorId = 1L;
+        productService.deleteProduct(vendorId, productId);
     }
 
 }
