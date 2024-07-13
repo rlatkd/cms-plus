@@ -9,6 +9,7 @@ import kr.or.kosa.cmsplusmain.domain.product.dto.ProductSearchReq;
 import kr.or.kosa.cmsplusmain.domain.product.dto.QProductQueryDto;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import lombok.extern.slf4j.Slf4j;
+import kr.or.kosa.cmsplusmain.domain.product.entity.ProductStatus;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
@@ -155,4 +156,27 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
         return res != null;
     }
 
+
+    /* 고객의 상품 목록 조회 */
+    public List<Product> findAvailableProductsByVendorUsername(String username) {
+        return jpaQueryFactory
+                .selectFrom(product)
+                .join(product.vendor, vendor)
+                .where(
+                        vendorUsernameEq(username),
+                        productNotDel()
+                )
+                .fetch();
+    }
+
+    /* 전체 상품 목록 조회 */
+    public List<Product> findProducts() {
+        return jpaQueryFactory
+                .selectFrom(product)
+                .where(productNotDel())
+                .fetch();
+    }
+
+
 }
+

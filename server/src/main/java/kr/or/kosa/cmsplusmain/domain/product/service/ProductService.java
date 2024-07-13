@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -69,6 +70,14 @@ public class ProductService {
         if (!productCustomRepository.isExistProductByUsername(productId, vendorId)) {
             throw new IllegalArgumentException("Not Owner");
         }
+    }
+
+
+    public List<ProductRes> findAvailableProductsByVendorUsername(String username) {
+        return productCustomRepository.findAvailableProductsByVendorUsername(username)
+                .stream()
+                .map(product -> ProductRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
+                .collect(Collectors.toList());
     }
 
 }

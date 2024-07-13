@@ -3,12 +3,14 @@ package kr.or.kosa.cmsplusmain.domain.vendor.dto;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 
+@ToString
 @RequiredArgsConstructor
 public class VendorUserDetailsDto implements UserDetails {
 
@@ -55,5 +57,9 @@ public class VendorUserDetailsDto implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public Long getId() {
+		return vendor.getId();
 	}
 }

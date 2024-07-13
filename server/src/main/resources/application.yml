@@ -30,13 +30,16 @@ spring:
     redis:
       host: localhost
       port: 6379
-      repositories:
-        enabled: false
-
 
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
+
+
+coolsms:
+  api-key: NCS6FSXZJNQ2W4VB
+  api-secret: PW7L7IUM5REUVNL0HYKANDIL7XSLBRHK
+  sender-number: 01026270378
 
 cloud:
   aws:
@@ -47,9 +50,3 @@ cloud:
     credentials:
       accessKey: AKIA5FTZDY5XEBI6PM6M
       secretKey: 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
-
-coolsms:
-  api-key: NCS6FSXZJNQ2W4VB
-  api-secret: PW7L7IUM5REUVNL0HYKANDIL7XSLBRHK
-  sender-number: 01026270378
-

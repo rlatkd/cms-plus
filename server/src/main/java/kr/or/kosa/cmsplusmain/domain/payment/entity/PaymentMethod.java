@@ -35,4 +35,5 @@ public enum PaymentMethod {
 		public static final String CMS = "CMS";
 		public static final String ACCOUNT = "ACCOUNT";
 	}
+
 }
