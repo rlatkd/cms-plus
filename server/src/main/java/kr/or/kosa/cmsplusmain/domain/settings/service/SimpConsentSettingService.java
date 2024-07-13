@@ -2,7 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.settings.service;
 
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductRes;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
 import kr.or.kosa.cmsplusmain.domain.product.service.ProductService;
@@ -69,10 +69,10 @@ public class SimpConsentSettingService {
     }
 
 
-    public AvailableOptionsDto getAvailableOptions(String username) {
+    public AvailableOptionsDto getAvailableOptions(Long vendorId) {
         Set<PaymentMethod> availablePaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
 
-        List<ProductRes> availableProducts = productService.findAvailableProductsByVendorUsername(username);
+        List<ProductListItemRes> availableProducts = productService.findAvailableProductsByVendorUsername(vendorId);
 
         return new AvailableOptionsDto(availablePaymentMethods, availableProducts);
     }

@@ -10,6 +10,8 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.type.AutoPaymentType;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
@@ -23,6 +25,7 @@ import lombok.Getter;
 	@JsonSubTypes.Type(value = VirtualAccountTypeRes.class, name = PaymentType.Const.VIRTUAL)
 })
 @Getter
+@RequiredArgsConstructor
 public abstract class PaymentTypeInfoRes {
-	private PaymentType paymentType;
+	private final PaymentType paymentType;
 }

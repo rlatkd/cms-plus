@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
@@ -17,6 +19,7 @@ import lombok.Getter;
 	@JsonSubTypes.Type(value = CMSMethodRes.class, name = PaymentMethod.Const.CMS)
 })
 @Getter
+@RequiredArgsConstructor
 public abstract class PaymentMethodInfoRes {
-	private PaymentMethod paymentMethod;
+	private final PaymentMethod paymentMethod;
 }

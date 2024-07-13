@@ -93,6 +93,13 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 	}
 
 
+	protected BooleanExpression productVendorIdEq(Long vendorId) {
+		if (vendorId == null) {
+			return null;
+		}
+		return product.vendor.id.eq(vendorId);
+	}
+
 	protected BooleanExpression billingNotDel() {
 		return billing.deleted.isFalse();
 

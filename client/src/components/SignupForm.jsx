@@ -1,11 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import InputWeb from './common/InputWeb';
+import InputWeb from './common/inputs/InputWeb';
 import { getCheckUsername, postJoin } from '@/apis/auth';
 import { useState } from 'react';
 
 const SignupForm = () => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
   const [checkedUsername, setCheckedUsername] = useState('');
   const [vendorFormData, setVendorFormData] = useState({
     name: null,
@@ -28,16 +27,9 @@ const SignupForm = () => {
   // 유선 전화번호 정규식
   // 부서명 정규식
 
-  // 로그인 페이지 이동
-  const handleMoveLogin = () => {
-    navigate('/login');
-  };
-
   // 공백입력 막기
   const handleKeyDown = e => {
-    if (e.key === ' ') {
-      e.preventDefault();
-    }
+    e.key === ' ' && e.preventDefault();
   };
 
   // 사용자 입력값
@@ -102,20 +94,12 @@ const SignupForm = () => {
     return name && username && password && email && phone && department;
   };
 
-  // 비밀번호 표시 여부
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
-
   // 회원강비 API
   const axiosJoin = async data => {
     try {
       const res = await postJoin(data);
       console.log('!----회원가입 성공----!'); // 삭제예정
-      if (res.status === 201) {
-        console.log('성공');
-        handleMoveLogin();
-      }
+      navigate('/login');
     } catch (err) {
       console.error('axiosJoin => ', err.response.data);
     }
@@ -159,17 +143,17 @@ const SignupForm = () => {
             />
             <button
               className={`ml-3  w-32 rounded-lg text-white text-sm font-700 h-46
-                ${vendorFormData.username.length > 4 ? 'bg-mint ' : 'bg-btn_disa'}  `}
+                ${vendorFormData.username.length > 4 ? 'bg-mint hover:bg-mint_hover' : 'bg-btn_disa'}  `}
               onClick={handleCheckUsername}>
               중복확인
             </button>
           </div>
         </div>
-        <div className='w-full justify-between flex relative'>
+        <div className='w-full justify-between flex  '>
           <InputWeb
             id='password'
             label='비밀번호'
-            type={showPassword ? 'text' : 'password'}
+            type='password'
             placeholder='비밀번호(숫자, 영문, 특수문자 조합 8 ~ 16)'
             required
             classContainer='w-1/2 mr-5'
@@ -182,7 +166,7 @@ const SignupForm = () => {
           <InputWeb
             id='passwordCheck'
             label='비밀번호 확인'
-            type={showPassword ? 'text' : 'password'}
+            type='password'
             placeholder='비밀번호(숫자, 영문, 특수문자 조합 8 ~ 16)'
             required
             classContainer='w-1/2'
@@ -191,12 +175,6 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             autoComplete='off'
-          />
-          <img
-            src={showPassword ? '/src/assets/openeye.svg' : '/src/assets/closeeye.svg'}
-            alt='Toggle password visibility'
-            className='absolute right-2 top-2/3 transform -translate-y-1/2 cursor-pointer w-6'
-            onClick={handleTogglePassword}
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -255,14 +233,14 @@ const SignupForm = () => {
           <span
             className='text-mint underline cursor-pointer'
             onClick={() => {
-              handleMoveLogin();
+              navigate('/login');
             }}>
             로그인
           </span>
         </div>
         <button
           className={`px-6 py-3 rounded-lg text-white text-sm font-700 absolute right-6 bottom-8 cursor-pointer
-            ${isSignupBtnActive() ? 'bg-mint' : 'bg-btn_disa '}`}
+            ${isSignupBtnActive() ? 'bg-mint hover:bg-mint_hover' : 'bg-btn_disa '}`}
           onClick={handleSubmit}>
           아이디 만들기
         </button>

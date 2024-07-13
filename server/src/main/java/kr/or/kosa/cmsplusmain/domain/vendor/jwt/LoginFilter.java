@@ -66,6 +66,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		Authentication authentication) throws IOException {
 		VendorUserDetailsDto vendorUserDetails = (VendorUserDetailsDto)authentication.getPrincipal();
 		String username = vendorUserDetails.getUsername();
+		String name = vendorUserDetails.getName();
 		Long id = vendorUserDetails.getId();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -96,6 +97,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		AccessTokenRes accessTokenRes = AccessTokenRes.builder()
 			.accessToken(accessToken)
 			.username(username)
+			.name(name)
 			.role(role.replace("ROLE_", ""))
 			.build();
 

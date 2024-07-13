@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.vendor.jwt;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -28,6 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 
 		String authorization = request.getHeader("Authorization");
+		log.info("JWTFilter authorization : " + authorization);
 
 		// Authorization 헤더 검증
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -41,7 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		try {
 			jwtUtil.isExpired(accessToken);
 		} catch (ExpiredJwtException e) {
-
+			log.info("JWTFilter access token expired");
 			// response body
 			PrintWriter writer = response.getWriter();
 			writer.print("access token expired");
@@ -55,7 +58,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		// 토큰이 access인지 확인
 		if (!category.equals("access")) {
-
+			log.info("JWTFilter access token이 아님");
+			
 			// response body
 			PrintWriter writer = response.getWriter();
 			writer.print("invalid access token");

@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class Payment extends BaseEntity {
+public class Payment extends BaseEntity {
 
 	@Id
 	@Column(name = "payment_id")

@@ -28,7 +28,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "contract_product")
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContractProduct extends BaseEntity {
 
@@ -61,6 +60,13 @@ public class ContractProduct extends BaseEntity {
 	@Column(name = "contract_product_quantity")
 	@ProductQuantity
 	private int quantity;
+
+	@Builder
+	public ContractProduct(Product product, int price, int quantity) {
+		this.product = product;
+		this.price = price;
+		this.quantity = quantity;
+	}
 
 	/*
 	* 계약 상품 계산된 금액

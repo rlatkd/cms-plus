@@ -24,9 +24,8 @@ const TableSearch = ({ search, handleSearchChange, show, onSearchClick }) => {
           ) : (
             <div className='relative w-28 '>
               <input
-                className='px-3 py-1 w-full border border-text_grey rounded-md pr-8'
+                className='px-3 py-1 w-full border border-text_grey rounded-md pr-8  focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
                 type={searchItem.type}
-                placeholder='입력'
                 value={searchItem.value}
                 onChange={e => handleSearchChange(searchItem.key, e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && show()}

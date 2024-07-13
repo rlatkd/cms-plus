@@ -31,6 +31,7 @@ public class PaymentService {
 				.consentImgUrl(autoPaymentType.getConsentImgUrl())
 				.signImgUrl(autoPaymentType.getSignImgUrl())
 				.simpleConsentReqDateTime(autoPaymentType.getSimpleConsentReqDateTime())
+				.consentStatus(autoPaymentType.getConsentStatus())
 				.build();
 		}
 		else if (paymentTypeInfo instanceof BuyerPaymentType buyerPaymentType) {

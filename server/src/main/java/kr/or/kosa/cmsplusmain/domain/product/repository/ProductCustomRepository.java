@@ -5,6 +5,9 @@ import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductQueryDto;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductSearchReq;
+import kr.or.kosa.cmsplusmain.domain.product.dto.QProductQueryDto;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import kr.or.kosa.cmsplusmain.domain.product.entity.ProductStatus;
@@ -156,12 +159,11 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
 
 
     /* 고객의 상품 목록 조회 */
-    public List<Product> findAvailableProductsByVendorUsername(String username) {
+    public List<Product> findAvailableProductsByVendorUsername(Long vendorId) {
         return jpaQueryFactory
                 .selectFrom(product)
-                .join(product.vendor, vendor)
                 .where(
-                        vendorUsernameEq(username),
+                        product.vendor.id.eq(vendorId),
                         productNotDel()
                 )
                 .fetch();
