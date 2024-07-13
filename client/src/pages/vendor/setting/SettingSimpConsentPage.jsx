@@ -1,7 +1,7 @@
 import SimpConsentQrUrlModal from '@/components/vendor/modal/SimpConsentQrUrlModal';
 import { useState } from 'react';
 import SelectField from '@/components/common/SelectField';
-import Checkbox from '@/components/common/CheckBox';
+import Checkbox from '@/components/common/inputs/CheckBox';
 
 const SettingSimpConsentPage = () => {
   const [isShowModal, setIsShowModal] = useState(false);

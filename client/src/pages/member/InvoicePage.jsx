@@ -1,8 +1,8 @@
 import Main from '@/components/member/invoice/Main';
 import CheckInvoice from '@/components/member/invoice/CheckInvoice';
 
-import NextButton from '@/components/common/StatusNextButton';
-import PreviousButton from '@/components/common/StatusPreButton';
+import NextButton from '@/components/common/buttons/StatusNextButton';
+import PreviousButton from '@/components/common/buttons/StatusPreButton';
 
 import useStatusStepper from '@/hooks/useStatusStepper';
 import { useStatusStore } from '@/stores/useStatusStore';

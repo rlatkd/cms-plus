@@ -1,5 +1,5 @@
-import NextButton from '@/components/common/StatusNextButton';
-import PreviousButton from '@/components/common/StatusPreButton';
+import NextButton from '@/components/common/buttons/StatusNextButton';
+import PreviousButton from '@/components/common/buttons/StatusPreButton';
 import RegisterBasicInfo from '@/components/vendor/member/RegisterBasicInfo';
 import RegisterBillingInfo from '@/components/vendor/member/RegisterBillingInfo';
 import RegisterContractInfo from '@/components/vendor/member/RegisterContractInfo';

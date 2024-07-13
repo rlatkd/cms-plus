@@ -1,10 +1,10 @@
 import CardInfo from '@/components/member/card/CardInfo';
 import ChooseCard from '@/components/member/card/ChooseCard';
-import Loading from '@/components/common/Loading';
-import Success from '@/components/common/Success';
+import Loading from '@/components/common/member/Loading';
+import Success from '@/components/common/member/Success';
 
-import NextButton from '@/components/common/StatusNextButton';
-import PreviousButton from '@/components/common/StatusPreButton';
+import NextButton from '@/components/common/buttons/StatusNextButton';
+import PreviousButton from '@/components/common/buttons/StatusPreButton';
 
 import useStatusStepper from '@/hooks/useStatusStepper';
 import { useStatusStore } from '@/stores/useStatusStore';

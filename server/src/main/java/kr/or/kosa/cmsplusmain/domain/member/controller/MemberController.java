@@ -29,8 +29,8 @@ public class MemberController {
      * */
     @GetMapping("/members")
     public SortPageDto.Res<MemberListItem> getMemberList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, SortPageDto.Req pageable) {
-//        String username1 = userDetails.getUsername();
-        String username = "vendor1";
+        String username = userDetails.getUsername();
+//        String username = "vendor1";
         return memberService.findMemberListItem(username, pageable);
     }
 

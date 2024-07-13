@@ -1,5 +1,5 @@
 import { getProductDetail, getProductList } from '@/apis/product';
-import Table from '@/components/common/Table';
+import Table from '@/components/common/tables/Table';
 import ProductModal from '@/components/vendor/modal/ProductModal';
 import { useEffect, useState } from 'react';
 

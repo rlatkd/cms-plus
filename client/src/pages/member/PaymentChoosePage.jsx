@@ -1,5 +1,5 @@
-import NextButton from '@/components/common/StatusNextButton';
-import PreviousButton from '@/components/common/StatusPreButton';
+import NextButton from '@/components/common/buttons/StatusNextButton';
+import PreviousButton from '@/components/common/buttons/StatusPreButton';
 
 import { useStatusStore } from '@/stores/useStatusStore';
 import useStatusStepper from '@/hooks/useStatusStepper';

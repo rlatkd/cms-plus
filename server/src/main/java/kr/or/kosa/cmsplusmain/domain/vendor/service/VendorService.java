@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.servlet.http.Cookie;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -56,14 +58,14 @@ public class VendorService {
 
 		// Cookie에서 refresh token 접근
 		for(Cookie cookie : cookies) {
-			System.out.println("cookies == " + cookie.getValue());
+			System.out.println("cookies == "+ cookie.getName() + " : " + cookie.getValue());
 			if (cookie.getName().equals("refresh_token")) {
 				refreshToken = cookie.getValue();
 			}
 		}
-
-		// authorizationRefresh 헤더 검증
+		// refreshToken cookie 검증
 		if (refreshToken == null) {
+			log.info("refreshToken cookie 검증 : refresh token null");
 			throw new IllegalArgumentException("refresh token null");
 		}
 
@@ -71,6 +73,7 @@ public class VendorService {
 		try {
 			jwtUtil.isExpired(refreshToken);
 		} catch (ExpiredJwtException e) {
+			log.info("refreshToken 기간 만료");
 			throw new IllegalArgumentException("Invaild refresh token");
 		}
 
@@ -78,12 +81,14 @@ public class VendorService {
 
 		// 토큰이 refresh인지 확인
 		if (!category.equals("refresh")) {
+			log.info("refreshToken이 아님");
 			throw new IllegalArgumentException("Invalid refresh token");
 		}
 
 		// 토큰이 Redis에 저장되어 있는지 확인
 		String storedRefreshToken = redisTemplate.opsForValue().get(jwtUtil.getUsername(refreshToken));
 		if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+			log.info("refreshToken이 래디스에 없음");
 			throw new IllegalArgumentException("Invalid refresh token");
 		}
 
@@ -92,7 +97,7 @@ public class VendorService {
 		Long id = Long.valueOf(jwtUtil.getId(refreshToken));
 
 		// JWT 토큰 생성
-		String newAccessToken = jwtUtil.createJwt("access", username, id, role, 10 * 60 * 1000L);
+		String newAccessToken = jwtUtil.createJwt("access", username, id, role, 30 * 60 * 1000L);
 		String newRefreshToken = jwtUtil.createJwt("refresh", username, id, role, 24 * 60 * 60 * 1000L);
 
 		// 기존 토큰을 Redis에서 제거 후 새로운 토큰 저장

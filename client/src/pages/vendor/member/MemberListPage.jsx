@@ -1,4 +1,4 @@
-import Table from '@/components/common/Table';
+import Table from '@/components/common/tables/Table';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 const cols = [
