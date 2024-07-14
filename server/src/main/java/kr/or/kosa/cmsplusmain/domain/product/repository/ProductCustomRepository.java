@@ -163,21 +163,12 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
 
     // 특정 고객이 본인의 상품이 아닌거 조회하는거 처리
     public boolean isExistProductByUsername(Long productId, Long vendorId) {
-        /*
-         * 고객테이블에 있는 고객이름이 해당 상품의 고객ID의 이름인지 확인
-         * select 1
-         * from product p
-         * join vendor v on p.vendor_id = v.vendor_id
-         * where p.product_id = #{productId} and v.vendor_username = #{vendorUsername}
-         * */
         Integer res = jpaQueryFactory
                 .selectOne()
                 .from(product)
-                .join(product.vendor, vendor)
                 .where(product.id.eq(productId),
-                        vendor.id.eq(vendorId))
+                        product.vendor.id.eq(vendorId))
                 .fetchFirst();
-
         return res != null;
     }
 
