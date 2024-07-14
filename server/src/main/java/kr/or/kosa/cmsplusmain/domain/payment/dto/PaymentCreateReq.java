@@ -10,8 +10,8 @@ import lombok.Getter;
 public class PaymentCreateReq {
 
     // 결제방식 info req
-    PaymentTypeInfoReq paymentTypeInfoReq;
+    private PaymentTypeInfoReq paymentTypeInfoReq;
 
     // 결제수단 info req
-    PaymentMethodInfoReq paymentMethodInfoReq;
+    private PaymentMethodInfoReq paymentMethodInfoReq;
 }

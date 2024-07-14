@@ -9,18 +9,12 @@ import lombok.Getter;
 
 @Getter
 public class AutoTypeReq extends PaymentTypeInfoReq {
-	private final String signImgUrl;
 	private final String consentImgUrl;
-	private final LocalDateTime simpleConsentReqDateTime;
-	private final ConsentStatus consentStatus;
 
 	@Builder
 	public AutoTypeReq(String signImgUrl, String consentImgUrl, LocalDateTime simpleConsentReqDateTime,
 	    ConsentStatus consentStatus) {
 		super(PaymentType.AUTO);
-		this.signImgUrl = signImgUrl;
 		this.consentImgUrl = consentImgUrl;
-		this.simpleConsentReqDateTime = simpleConsentReqDateTime;
-		this.consentStatus = consentStatus;
 	}
 }
