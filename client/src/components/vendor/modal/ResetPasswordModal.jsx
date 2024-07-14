@@ -50,7 +50,9 @@ const ResetPasswordModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
-        <button className='font-700 bg-mint px-4 py-3  text-white rounded-xl  hover:bg-mint_hover'>
+        <button
+          className='font-700 bg-mint px-4 py-3  text-white rounded-xl  
+            transition-all duration-200 hover:bg-mint_hover'>
           비밀번호 재설정
         </button>
       </div>

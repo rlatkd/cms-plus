@@ -80,7 +80,9 @@ const LoginForm = () => {
           <span className='mx-1'>/</span>
           <span onClick={() => setIsShowPasswordModal(true)}>비밀번호 찾기</span>
         </div>
-        <button className='font-700 bg-mint px-4 py-3  text-white rounded-lg  hover:bg-mint_hover'>
+        <button
+          className='font-700 bg-mint px-4 py-3  text-white rounded-lg  
+                    transition-all duration-200 hover:bg-mint_hover'>
           로그인
         </button>
         <div className='border border-ipt_disa w-full' />

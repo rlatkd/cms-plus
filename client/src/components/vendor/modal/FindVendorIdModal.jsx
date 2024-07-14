@@ -57,7 +57,7 @@ const FindVendorIdModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
             className={`ml-3 w-3/12 disabled: text-white text-base font-700 h-54 rounded-xl 
                 ${
                   vendorIdFormData.phoneId !== null && vendorIdFormData.phoneId.length > 0
-                    ? 'bg-mint hover:bg-mint_hover'
+                    ? 'bg-mint hover:bg-mint_hover  transition-all duration-200'
                     : 'bg-btn_disa'
                 }  `}>
             인증번호 받기
@@ -72,7 +72,9 @@ const FindVendorIdModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
-        <button className='font-700 bg-mint px-4 py-3  text-white rounded-xl  hover:bg-mint_hover'>
+        <button
+          className='font-700 bg-mint px-4 py-3  text-white rounded-xl 
+              transition-all duration-200 hover:bg-mint_hover'>
           아이디 찾기
         </button>
       </div>
