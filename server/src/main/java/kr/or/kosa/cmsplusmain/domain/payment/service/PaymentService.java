@@ -1,7 +1,9 @@
 package kr.or.kosa.cmsplusmain.domain.payment.service;
 
+import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.*;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.*;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.*;
 import kr.or.kosa.cmsplusmain.domain.payment.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +13,6 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.type.AutoPaymentType;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.type.BuyerPaymentType;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.type.VirtualAccountPaymentType;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -28,6 +26,7 @@ public class PaymentService {
 	private final AutoPaymentTypeRepository autoPaymentTypeRepository;
 	private final CardPaymentMethodRepository cardPaymentMethodRepository;
 	private final CmsPaymentMethodRepository cmsPaymentMethodRepository;
+	private final PaymentRepository paymentRepository;
 
 	public PaymentTypeInfoRes getPaymentTypeInfo(Payment payment) {
 		PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
@@ -80,29 +79,60 @@ public class PaymentService {
 		return paymentMethodInfoRes;
 	}
 
+	@Transactional
+	public Payment createPayment(PaymentCreateReq paymentCreateReq) {
+
+		// 결제 방식 정보 ( 자동결제, 납부자결제, 가상계좌 )
+		PaymentTypeInfoReq paymentTypeInfoReq = paymentCreateReq.getPaymentTypeInfoReq();
+		PaymentTypeInfo paymentTypeInfo = createPaymentTypeInfo(paymentTypeInfoReq);
+
+		// 결제 방식 정보가 자동결제인 경우 : 결제 수단을 등록한다.
+		PaymentMethodInfo paymentMethodInfo = null;
+		PaymentMethodInfoReq paymentMethodInfoReq = paymentCreateReq.getPaymentMethodInfoReq();
+		if(paymentMethodInfoReq != null) {
+
+			// 결제 수단 정보 ( 카드, 실시간CMS )
+			paymentMethodInfo = createPaymentMethodInfo(paymentMethodInfoReq);
+		}
+
+		// 결제 정보
+		Payment payment = Payment.builder()
+				.paymentType(paymentTypeInfoReq.getPaymentType())   										  // 결제방식
+				.paymentTypeInfo(paymentTypeInfo)  															  // 결제방식 정보
+				.paymentMethod(paymentMethodInfoReq != null ? paymentMethodInfoReq.getPaymentMethod() : null) // 결제수단
+				.paymentMethodInfo(paymentMethodInfo)														  // 결제수단 정보
+				.build();
+
+		paymentRepository.save(payment);
+
+		return payment;
+	}
+
 	/*
 	 * 결제 방식 등록 ( 자동결제, 납부자결제, 가상계좌 )
 	 * */
-	@Transactional
-	public void createPaymentTypeInfo(PaymentTypeInfoReq paymentTypeInfoReq) {
+	private PaymentTypeInfo createPaymentTypeInfo(PaymentTypeInfoReq paymentTypeInfoReq) {
+		PaymentTypeInfo paymentTypeInfo = null;
 
 		// 결제방식 - 자동결제
 		if(paymentTypeInfoReq instanceof AutoTypeReq autoTypeReq){
 			AutoPaymentType autoPaymentType = autoTypeReq.toEntity();
 			autoPaymentTypeRepository.save(autoPaymentType);
+			paymentTypeInfo = autoPaymentType;
 		}
 
 		// 결제방식 - 납부자결제
 		else if(paymentTypeInfoReq instanceof BuyerTypeReq buyerTypeReq){
 			BuyerPaymentType buyerPaymentType = buyerTypeReq.toEntity();
 			buyerPaymentTypeRepository.save(buyerPaymentType);
+			paymentTypeInfo = buyerPaymentType;
 		}
 
 		// 결제방식 - 가상계좌
 		else if(paymentTypeInfoReq instanceof VirtualAccountTypeReq virtualAccountTypeReq){
 
 			//TODO
-			// 가상계좌 만드는 로직 필요 ( Luhn 알고리즘 )
+			// 가상계좌 만드는 로직 필요 
 			String accountNumber = "12345678901234";
 
 			//TODO
@@ -111,25 +141,31 @@ public class PaymentService {
 			// 가상계좌 DB에 저장
 			VirtualAccountPaymentType virtualAccountPaymentType =  virtualAccountTypeReq.toEntity(accountNumber);
 			virtualAccountPaymentTypeRepository.save(virtualAccountPaymentType);
+			paymentTypeInfo = virtualAccountPaymentType;
 		}
+
+		return paymentTypeInfo;
 	}
 
 	/*
 	 * 결제 수단 정보 ( 카드, 실시간 CMS )
 	 * */
-	@Transactional
-	public void createPaymentMethodInfo(PaymentMethodInfoReq paymentMethodInfoReq) {
+	private PaymentMethodInfo createPaymentMethodInfo(PaymentMethodInfoReq paymentMethodInfoReq) {
+		PaymentMethodInfo paymentMethodInfo = null;
 
 		// 결제수단 - Card 결제
 		if(paymentMethodInfoReq instanceof CardMethodReq cardMethodReq){
 			CardPaymentMethod cardPaymentMethod = cardMethodReq.toEntity();
 			cardPaymentMethodRepository.save(cardPaymentMethod);
+			paymentMethodInfo = cardPaymentMethod;
 		}
 
 		// 결제수단 - 실시간 CMS 결제
 		else if(paymentMethodInfoReq instanceof CMSMethodReq cmsMethodReq){
 			CmsPaymentMethod cmsPaymentMethod = cmsMethodReq.toEntity();
 			cmsPaymentMethodRepository.save(cmsPaymentMethod);
+			paymentMethodInfo = cmsPaymentMethod ;
 		}
+		return paymentMethodInfo;
 	}
 }

@@ -2,6 +2,8 @@ package kr.or.kosa.cmsplusmain.domain.contract.service;
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,7 @@ public class ContractService {
 	private final BillingCustomRepository billingCustomRepository;
 
 	private final PaymentService paymentService;
+	private final ContractProductRepository contractProductRepository;
 
 	/*
 	 * 계약 목록 조회
@@ -164,4 +167,16 @@ public class ContractService {
 			throw new EntityNotFoundException("계약 ID 없음(" + contractId + ")");
 		}
 	}
+
+
+//	public void createContract(Long vendorId, Member member, Payment payment, ContractCreateReq contractCreateReq) {
+//
+//		// 계약 정보를 DB에 저장한다.
+//		Contract contract = contractCreateReq.toEntity(vendorId , member, payment);
+//		contractRepository.save(contract);
+//
+//		// 계약 상품 정보를 DB에 저장한다.
+//		List<ContractProduct> contractProducts = contractCreateReq.toProductEntities(contract);
+//		contractProductRepository.saveAll(contractProducts);
+//	}
 }
