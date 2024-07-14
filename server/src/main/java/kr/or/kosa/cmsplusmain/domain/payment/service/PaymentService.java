@@ -1,16 +1,15 @@
 package kr.or.kosa.cmsplusmain.domain.payment.service;
 
-import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoReq;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.*;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.*;
+import kr.or.kosa.cmsplusmain.domain.payment.repository.AutoPaymentTypeRepository;
 import kr.or.kosa.cmsplusmain.domain.payment.repository.BuyerPaymentTypeRepository;
+import kr.or.kosa.cmsplusmain.domain.payment.repository.CardPaymentMethodRepository;
 import kr.or.kosa.cmsplusmain.domain.payment.repository.VirtualAccountPaymentTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CMSMethodRes;
-import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;
-import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
@@ -29,6 +28,8 @@ public class PaymentService {
 
 	private final VirtualAccountPaymentTypeRepository virtualAccountPaymentTypeRepository;
 	private final BuyerPaymentTypeRepository buyerPaymentTypeRepository;
+	private final AutoPaymentTypeRepository autoPaymentTypeRepository;
+	private final CardPaymentMethodRepository cardPaymentMethodRepository;
 
 	public PaymentTypeInfoRes getPaymentTypeInfo(Payment payment) {
 		PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
@@ -89,7 +90,8 @@ public class PaymentService {
 
 		// 결제방식 - 자동결제
 		if(paymentTypeInfoReq instanceof AutoTypeReq autoTypeReq){
-
+			AutoPaymentType autoPaymentType = autoTypeReq.toEntity();
+			autoPaymentTypeRepository.save(autoPaymentType);
 		}
 
 		// 결제방식 - 납부자결제
@@ -117,6 +119,14 @@ public class PaymentService {
 	/*
 	 * 결제 수단 정보 ( 카드, 실시간 CMS )
 	 * */
+	@Transactional
 	public void createPaymentMethodInfo(PaymentMethodInfoReq paymentMethodInfoReq) {
+		if(paymentMethodInfoReq instanceof CardMethodReq cardMethodReq){
+			CardPaymentMethod cardPaymentMethod = cardMethodReq.toEntity();
+			cardPaymentMethodRepository.save(cardPaymentMethod);
+		}
+		else if(paymentMethodInfoReq instanceof CMSMethodReq cmsMethodReq){
+
+		}
 	}
 }

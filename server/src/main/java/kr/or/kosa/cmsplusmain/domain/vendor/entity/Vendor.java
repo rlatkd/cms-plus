@@ -37,6 +37,10 @@ import lombok.NoArgsConstructor;
 	@UniqueConstraint(name = "unique_vendor_email", columnNames = {"vendor_email"}),
 	@UniqueConstraint(name = "unique_vendor_phone", columnNames = {"vendor_phone"})
 })
+
+//TODO
+// Build, ALL, No 이렇게 세개 전부다 사용해도 괜찮을까
+
 @Getter
 @Builder
 @AllArgsConstructor

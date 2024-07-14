@@ -34,6 +34,9 @@ public class BuyerPaymentType extends PaymentTypeInfo {
 	private Set<PaymentMethod> availableMethods = new HashSet<>();
 
 
+	//TODO
+	// 코드 점검 필요
+
 	@Builder
 	public BuyerPaymentType(Set<PaymentMethod> availableMethods) {
 		setAvailableMethods(availableMethods);

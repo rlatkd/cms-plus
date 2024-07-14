@@ -127,21 +127,6 @@ public class MemberService {
          *                 => 결제수단 -> 카드
          *                 => 결제수단 -> 회원설정
          *
-         * 다음과 같이 구분할 수 있다.
-         * @PostMapping("/payment")
-            public ResponseEntity<Void> createPayment(@RequestBody PaymentCreateReq paymentCreateReq) {
-                PaymentMethodInfoReq paymentMethodInfoReq = paymentCreateReq.getPaymentMethodInfoReq();
-
-                if (paymentMethodInfoReq instanceof CMSMethodReq) {
-                    CMSMethodReq cmsMethodReq = (CMSMethodReq) paymentMethodInfoReq;
-                    // CMSMethodReq 처리 로직
-                } else if (paymentMethodInfoReq instanceof CardMethodReq) {
-                    CardMethodReq cardMethodReq = (CardMethodReq) paymentMethodInfoReq;
-                    // CardMethodReq 처리 로직
-                }
-                return ResponseEntity.ok().build();
-           }
-         *
          * 결제방식 - 자동결제 => 결제 수단이 무엇인지 판별
          */
 

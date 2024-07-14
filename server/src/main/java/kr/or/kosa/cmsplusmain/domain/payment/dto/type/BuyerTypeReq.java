@@ -10,6 +10,9 @@ import lombok.Getter;
 
 import java.util.Set;
 
+//TODO
+// 코드 점검 필요
+
 @Getter
 public class BuyerTypeReq extends PaymentTypeInfoReq {
 	private final Set<PaymentMethod> availableMethods;

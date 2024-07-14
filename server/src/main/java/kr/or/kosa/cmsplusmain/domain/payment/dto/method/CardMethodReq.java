@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.payment.dto.method;
 
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,4 +25,13 @@ public class CardMethodReq extends PaymentMethodInfoReq{
         this.cardOwnerBirth = cardOwnerBirth;
     }
 
+    public CardPaymentMethod toEntity() {
+        return CardPaymentMethod.builder()
+                .cardNumber(this.cardNumber)
+                .cardMonth(this.cardMonth)
+                .cardYear(this.cardYear)
+                .cardOwner(this.cardOwner)
+                .cardOwnerBirth(this.cardOwnerBirth)
+                .build();
+    }
 }
