@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
@@ -47,23 +48,24 @@ public class BillingProduct extends BaseEntity {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
+	// 청구상품의 이름 수정불가
 	@Comment("청구상품의 이름")
 	@Column(name = "billing_product_name", nullable = false, updatable = false)
-	@ProductName
+	@ProductName @NotNull
 	private String name;
 
 	@Comment("청구상품의 가격")
-	@Column(name = "billing_product_price")
+	@Column(name = "billing_product_price", nullable = false)
 	@ProductPrice
 	private int price;
 
 	@Comment("청구상품의 수량")
-	@Column(name = "billing_product_quantity")
+	@Column(name = "billing_product_quantity", nullable = false)
 	@ProductQuantity
 	private int quantity;
 
 	/*
-	* 청구상품 가격 (상품 * 수량)
+	* 청구상품 가격 (가격 * 수량)
 	* */
 	public long getBillingProductPrice() {
 		return (long)price * quantity;

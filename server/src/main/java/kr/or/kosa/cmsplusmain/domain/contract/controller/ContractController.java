@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
@@ -63,10 +63,12 @@ public class ContractController {
 	 * 계약 상세 페이지에서 상품 수정 버튼 및 결제 수정 버튼 클릭 후
 	 * 나오는 수정 화면에서 호출해서 정보를 수정한다.
 	 * 즉, 계약과 결제 수정에 사용된다.
+	 *
+	 * TODO 생성 -> 수정으로 수정하기
 	 * */
 	@PutMapping("/{contractId}")
-	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractCreateReq contractCreateReq) {
+	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractUpdateReq contractUpdateReq) {
 		Long vendorId = 1L;
-		contractService.updateContract(vendorId, contractId, contractCreateReq);
+		contractService.updateContract(vendorId, contractId, contractUpdateReq);
 	}
 }

@@ -204,6 +204,23 @@ public class BillingService {
 	}
 
 	/*
+	* 청구 삭제
+	*
+	* 총 발생 쿼리수: 4회
+	* 내용:
+	* 	존재여부 확인, 청구 조회, 청구상품 조회(+?), 청구 삭제(*N 청구상품수)
+	* */
+	@Transactional
+	public void deleteBilling(Long vendorId, Long billingId) {
+		// 고객의 청구 여부 확인
+		validateBillingUser(billingId, vendorId);
+
+		// 청구 상품도 동시 삭제처리된다.
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		billing.delete();
+	}
+
+	/*
 	 * 기존 청구상품과 신규 청구상품 비교해서
 	 * 새롭게 추가되거나 삭제된 것만 수정 반영
 	 * */
@@ -221,23 +238,6 @@ public class BillingService {
 			.filter(obp -> !newBillingProducts.contains(obp))
 			.toList()
 			.forEach(billing::removeBillingProduct);
-	}
-
-	/*
-	* 청구 삭제
-	*
-	* 총 발생 쿼리수: 4회
-	* 내용:
-	* 	존재여부 확인, 청구 조회, 청구상품 조회(+?), 청구 삭제(*N 청구상품수)
-	* */
-	@Transactional
-	public void deleteBilling(Long vendorId, Long billingId) {
-		// 고객의 청구 여부 확인
-		validateBillingUser(billingId, vendorId);
-
-		// 청구 상품도 동시 삭제처리된다.
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
-		billing.delete();
 	}
 
 	/*

@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.contract.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +11,7 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductReq;
@@ -23,6 +24,7 @@ import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +37,7 @@ public class ContractService {
 	private final ContractRepository contractRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	private final BillingCustomRepository billingCustomRepository;
+	private final ProductCustomRepository productCustomRepository;
 
 	private final PaymentService paymentService;
 
@@ -117,29 +120,56 @@ public class ContractService {
 	* 	존재여부 확인, 계약 조회, 계약상품 목록 조회(+? batch_size=100), 신규 계약상품 생성(*N), 계약이름 수정, 계약상품 삭제(*N)
 	* */
 	@Transactional
-	public void updateContract(Long vendorId, Long contractId, ContractCreateReq contractCreateReq) {
+	public void updateContract(Long vendorId, Long contractId, ContractUpdateReq contractUpdateReq) {
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorId);
 
 		// 계약 이름 수정
 		Contract contract = contractRepository.findById(contractId).orElseThrow();
-		contract.setContractName(contractCreateReq.getContractName());
+		contract.setContractName(contractUpdateReq.getContractName());
 
 		// 신규 계약상품
-		List<ContractProduct> newContractProducts = contractCreateReq.getContractProducts()
-			.stream()
-			.map(ContractProductReq::toEntity)
-			.toList();
+		List<ContractProduct> newContractProducts = convertToContractProducts(contractUpdateReq.getContractProducts());
+
 
 		// 계약상품목록 수정
-		updateContractProduct(contract, newContractProducts);
+		updateContractProducts(contract, newContractProducts);
+	}
+
+	/*
+	 * 계약 상품 요청 -> 계약 상품 엔티티 변환 메서드
+	 *
+	 * 요청에서 상품의 ID를 받아서
+	 * 상품의 ID를 토대로 상품 이름을 가져온다.
+	 *
+	 * 상품이름을 계약상품 테이블에 저장해
+	 * 계약상품 조회시 상품 이름만을 가져오기위한 조인을 없앤다.
+	 *
+	 * 상품 설정에서 이름 수정 불가 필요
+	 * */
+	private List<ContractProduct> convertToContractProducts(List<ContractProductReq> contractProductReqs) {
+		// 상품 ID
+		List<Long> productIds = contractProductReqs.stream()
+			.mapToLong(ContractProductReq::getProductId)
+			.boxed().toList();
+
+		// 상품 ID -> 이름
+		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
+
+		// 청구 상품 목록
+		List<ContractProduct> contractProducts = contractProductReqs
+			.stream()
+			.map(dto -> dto.toEntity(productIdToName.get(dto.getProductId())))
+			.toList();
+
+		return contractProducts;
 	}
 
 	/*
 	* 기존 계약상품과 신규 계약상품 비교해서
 	* 새롭게 추가되거나 삭제된 것만 수정 반영
 	* */
-	private void updateContractProduct(Contract contract, List<ContractProduct> newContractProducts) {
+	private void updateContractProducts(Contract contract, List<ContractProduct> newContractProducts) {
 		// 기존 계약상품
 		List<ContractProduct> oldContractProducts = contract.getContractProducts();
 

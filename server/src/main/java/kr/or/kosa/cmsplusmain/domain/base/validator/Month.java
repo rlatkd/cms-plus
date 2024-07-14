@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.contract.validator;
+package kr.or.kosa.cmsplusmain.domain.base.validator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,11 +10,11 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = ContractDayValidator.class)
+@Constraint(validatedBy = DayValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ContractDay {
-	String message() default "Invalid contract day";
+public @interface Month {
+	String message() default "Invalid month";
 
 	Class<?>[] groups() default {};
 

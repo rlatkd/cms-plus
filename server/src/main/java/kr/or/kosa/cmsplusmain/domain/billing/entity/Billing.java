@@ -62,8 +62,9 @@ public class Billing extends BaseEntity {
 	private BillingType billingType;
 
 	@Comment("청구의 약정일 (청구 생성시 설정한 결제일 != 계약의 약정일과 다를 수 있다.)")
-	@Column(name = "billing_contract_day")
-	private int contractDay;
+	@Column(name = "billing_contract_day", nullable = false)
+	@NotNull
+	private Integer contractDay;
 
 	@Comment("결제일 (= 약정일, 납부 시작 및 종료 기간[납부기간은 하루이다.])")
 	@Column(name = "billing_date", nullable = false)

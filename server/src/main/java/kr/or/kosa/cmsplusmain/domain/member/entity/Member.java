@@ -86,19 +86,19 @@ public class Member extends BaseEntity {
 	private String phone;
 
 	@Comment("회원 유선전화")
-	@Column(name = "member_homePhone", nullable = true, length = 20)
+	@Column(name = "member_homePhone", length = 20)
 	@HomePhone
 	@Setter
 	private String homePhone;
 
 	//TODO: 다음 도로명 주소 API 보고 수정하기
 	@Comment("회원 주소")
-	@Column(name = "member_address", nullable = true, length = 40)
+	@Column(name = "member_address", length = 40)
 	@Setter
 	private String address;
 
 	@Comment("회원 메모")
-	@Column(name = "member_memo", nullable = true, length = 2000)
+	@Column(name = "member_memo", length = 2000)
 	@Size(max = 2000)
 	@Setter
 	private String memo;

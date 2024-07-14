@@ -6,7 +6,7 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Memo;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
 
@@ -50,5 +50,5 @@ public class MemberCreateReq {
 
     private PaymentCreateReq paymentCreateReq;   // 결제정보
 
-    private ContractCreateReq contractCreateReq; // 계약정보
+    private ContractUpdateReq contractUpdateReq; // 계약정보
 }

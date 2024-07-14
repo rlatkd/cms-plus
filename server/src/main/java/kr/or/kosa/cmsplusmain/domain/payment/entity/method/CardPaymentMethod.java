@@ -28,11 +28,13 @@ public class CardPaymentMethod extends PaymentMethodInfo {
 
 	@Comment("카드 유효기간 월")
 	@Column(name = "card_info_validity_month", nullable = false)
-	private int cardMonth;
+	@NotNull
+	private Integer cardMonth;
 
 	@Comment("카드 유효기간 년")
 	@Column(name = "card_info_validity_year", nullable = false)
-	private int cardYear;
+	@NotNull
+	private Integer cardYear;
 
 	@Comment("카드 소유주명")
 	@Column(name = "card_info_owner", nullable = false)
