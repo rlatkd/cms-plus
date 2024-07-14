@@ -2,10 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.payment.service;
 
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.*;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.*;
-import kr.or.kosa.cmsplusmain.domain.payment.repository.AutoPaymentTypeRepository;
-import kr.or.kosa.cmsplusmain.domain.payment.repository.BuyerPaymentTypeRepository;
-import kr.or.kosa.cmsplusmain.domain.payment.repository.CardPaymentMethodRepository;
-import kr.or.kosa.cmsplusmain.domain.payment.repository.VirtualAccountPaymentTypeRepository;
+import kr.or.kosa.cmsplusmain.domain.payment.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +27,7 @@ public class PaymentService {
 	private final BuyerPaymentTypeRepository buyerPaymentTypeRepository;
 	private final AutoPaymentTypeRepository autoPaymentTypeRepository;
 	private final CardPaymentMethodRepository cardPaymentMethodRepository;
+	private final CmsPaymentMethodRepository cmsPaymentMethodRepository;
 
 	public PaymentTypeInfoRes getPaymentTypeInfo(Payment payment) {
 		PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
@@ -121,12 +119,17 @@ public class PaymentService {
 	 * */
 	@Transactional
 	public void createPaymentMethodInfo(PaymentMethodInfoReq paymentMethodInfoReq) {
+
+		// 결제수단 - Card 결제
 		if(paymentMethodInfoReq instanceof CardMethodReq cardMethodReq){
 			CardPaymentMethod cardPaymentMethod = cardMethodReq.toEntity();
 			cardPaymentMethodRepository.save(cardPaymentMethod);
 		}
-		else if(paymentMethodInfoReq instanceof CMSMethodReq cmsMethodReq){
 
+		// 결제수단 - 실시간 CMS 결제
+		else if(paymentMethodInfoReq instanceof CMSMethodReq cmsMethodReq){
+			CmsPaymentMethod cmsPaymentMethod = cmsMethodReq.toEntity();
+			cmsPaymentMethodRepository.save(cmsPaymentMethod);
 		}
 	}
 }
