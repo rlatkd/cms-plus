@@ -88,17 +88,11 @@ public class ProductService {
     }
 
     // 유효성 검증
-    private void validateProductUser(Long vendorId, Long productId) {
+    private void validateProductUser(Long productId, Long vendorId) {
         if (!productCustomRepository.isExistProductByUsername(productId, vendorId)) {
             throw new IllegalArgumentException("Not Owner");
         }
     }
-    
-    
-
-    
-    
-
 
     public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
         return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
