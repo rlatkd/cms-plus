@@ -1,4 +1,5 @@
 import { getProductDetail, getProductList } from '@/apis/product';
+import PagiNation from '@/components/common/PagiNation';
 import Table from '@/components/common/tables/Table';
 import ProductModal from '@/components/vendor/modal/ProductModal';
 import { validateField } from '@/utils/validators';
@@ -28,16 +29,13 @@ const ProductListPage = () => {
   const [productList, setProductList] = useState([]); // 상품 목록
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
   const [search, setSearch] = useState(initialSearch); // 상품 조건
+  const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
+  const [isValid, setIsValid] = useState(true); // 유효성 flag
 
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
-
   const [page, setPage] = useState(1); // 현재 표시할 페이지 번호 - 페이지 라우팅되는 변수와 페이징을 통해 api parameter에 영향을 주는 변수 분리
-
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
-  const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
-
-  const [isValid, setIsValid] = useState(true); // 유효성 flag
 
   // 상품 목록 조회 함수
   // axiosProductLists는 useEffect 훅 내부에서 사용하고 있기 때문에
@@ -148,72 +146,6 @@ const ProductListPage = () => {
     setIsValid(true); // 검색 후 유효성 flag 초기화
   };
 
-  // 페이지 변경 이벤트핸들러
-  const handlePageChange = newPage => {
-    if (!validateSearchParams()) return;
-    if (newPage !== currentPage) {
-      setCurrentPage(newPage);
-      setPage(newPage);
-    }
-  };
-
-  // 페이지 그룹 변경 이벤트핸들러
-  const handlePageGroupChange = direction => {
-    if (direction === 'next') {
-      setPageGroup(prev => prev + 1);
-      setPage((pageGroup + 1) * 5 + 1);
-      setCurrentPage((pageGroup + 1) * 5 + 1);
-    } else if (direction === 'prev' && pageGroup > 0) {
-      setPageGroup(prev => prev - 1);
-      setPage((pageGroup - 1) * 5 + 1);
-      setCurrentPage((pageGroup - 1) * 5 + 1);
-    }
-  };
-
-  // 페이지 버튼 렌더링 함수
-  const renderPageButtons = () => {
-    const startPage = pageGroup * 5 + 1;
-    const endPage = Math.min(startPage + 4, totalPages);
-    const buttons = [];
-
-    // 동적으로 css 함수 로직 개선 필요 (밑에 return div로 옮기고 싶음)
-    for (let i = startPage; i <= endPage; i++) {
-      buttons.push(
-        <button
-          key={i}
-          className={`mx-1 px-3 py-1 border rounded-lg w-8 h-8 flex items-center justify-center ${i === page ? 'bg-mint hover:bg-mint_hover text-white' : 'bg-white border border-white'}`}
-          onClick={() => handlePageChange(i)}>
-          {i}
-        </button>
-      );
-    }
-
-    return (
-      <div className='flex items-center'>
-        {/* 이전 버튼 */}
-        <button
-          key='prev'
-          className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${pageGroup === 0 ? 'invisible' : 'bg-white border border-white'}`}
-          onClick={() => handlePageGroupChange('prev')}
-          disabled={pageGroup === 0}>
-          {'<'}&nbsp;&nbsp;&nbsp;{'이전'}
-        </button>
-
-        {/* 1,2,3,4,5 버튼 영역 */}
-        <div className='flex justify-center'>{buttons}</div>
-
-        {/* 다음 버튼 */}
-        <button
-          key='next'
-          className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${endPage >= totalPages ? 'invisible' : 'bg-white border border-white'}`}
-          onClick={() => handlePageGroupChange('next')}
-          disabled={endPage >= totalPages}>
-          {'다음'}&nbsp;&nbsp;&nbsp;{'>'}
-        </button>
-      </div>
-    );
-  };
-
   return (
     <div className='primary-dashboard h-full w-full flex flex-col overflow-hidden'>
       <div className='flex justify-end'>
@@ -236,7 +168,17 @@ const ProductListPage = () => {
       </div>
 
       {/* 페이지네이션*/}
-      <div className='flex justify-center mt-5'>{renderPageButtons()}</div>
+      <div className='flex justify-center mt-5'>
+        <PagiNation
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          pageGroup={pageGroup}
+          setPageGroup={setPageGroup}
+          page={page}
+          setPage={setPage}
+        />
+      </div>
 
       <ProductModal
         isShowModal={isShowModal}

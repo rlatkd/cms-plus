@@ -130,7 +130,7 @@ const vendorRoute = () => {
     {
       path: 'products',
       name: '상품',
-      icon: <Item fill='#ffffff' />,
+      icon: <Item fill='none' stroke='#7B809A' />,
       element: <ProductIndex />,
       children: [
         {

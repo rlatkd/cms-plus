@@ -32,9 +32,18 @@ const SideBar = () => {
                       <div
                         className={`mr-4 flex h-9 w-9 items-center justify-center rounded-xl ${isActive ? 'bg-mint' : 'bg-white shadow-sidebars'}`}>
                         {React.cloneElement(route.icon, {
-                          className: 'h-4 w-4',
-                          fill: isActive ? '#ffffff' : '#4FD1C5',
-                          stroke: '#ffffff',
+                          className: 'h-6 w-4',
+                          fill:
+                            route.path === 'products'
+                              ? isActive
+                                ? '#4FD1C5'
+                                : '#ffffff'
+                              : isActive
+                                ? '#ffffff'
+                                : '#4FD1C5',
+
+                          stroke:
+                            route.path === 'products' ? (isActive ? '#ffffff' : '#4FD1C5') : ' ',
                         })}
                       </div>
                       <p

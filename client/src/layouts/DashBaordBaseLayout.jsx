@@ -7,7 +7,7 @@ const DashBaordBaseLayout = ({ children }) => {
       <SideBar />
       <div className='flex h-full w-full flex-col'>
         <Header />
-        <main className='flex h-full flex-col overflow-auto p-5 pl-5 pr-5 desktop:pl-5'>
+        <main className='flex h-full flex-col overflow-auto p-5 pr-8 pb-7 desktop:pl-5'>
           {children}
         </main>
       </div>
