@@ -26,9 +26,10 @@ public class ContractProductReq {
 			.build();
 	}
 
-	public ContractProduct toEntity(Contract contract) {
+	public ContractProduct toEntity(Contract contract, String name) {
 		return ContractProduct.builder()
 				.product(Product.of(productId))
+				.name(name)
 				.contract(contract)
 				.price(price)
 				.quantity(quantity)

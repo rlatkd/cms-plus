@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 
+
 @Repository
 public class MemberCustomRepository extends BaseCustomRepository<Member> {
     public MemberCustomRepository(EntityManager em, JPAQueryFactory jpaQueryFactory) {

@@ -205,8 +205,16 @@ public class ContractService {
 		Contract contract = contractCreateReq.toEntity(vendorId , member, payment);
 		contractRepository.save(contract);
 
+
+		// 상품 ID -> 이름
+		List<Long> productIds = contractCreateReq.getContractProducts().stream()
+			.mapToLong(ContractProductReq::getProductId)
+			.boxed().toList();
+		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
+
+		List<ContractProduct> contractProducts = contractCreateReq.toProductEntities(contract, productIdToName);
+
 		// 계약 상품 정보를 DB에 저장한다.
-		List<ContractProduct> contractProducts = contractCreateReq.toProductEntities(contract);
 		contractProductRepository.saveAll(contractProducts);
 	}
 }
