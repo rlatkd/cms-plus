@@ -198,7 +198,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	/*
 	 회원 상세 - 기본정보(청구금액)
 	  */
-	public Long findBillingProductByMemberId(Long vendorId, Long memberId){
+	public Long findBillingPriceByMemberId(Long vendorId, Long memberId){
 		return jpaQueryFactory
 				.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
 				.from(billingProduct)

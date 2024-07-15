@@ -65,28 +65,19 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
      * 전체 회원 수
      * */
     public int countAllMemberByVendor(Long vendorId) {
-        return jpaQueryFactory
-            .select(member.id.countDistinct()).from(member)
+        Long res = jpaQueryFactory
+            .select(member.id.count())
+            .from(member)
             .where(
                     member.vendor.id.eq(vendorId),
                     memberNotDel()
             )
-            .fetchOne().intValue();
+            .fetchOne();
+        return (res != null) ? res.intValue() : 0;
     }
 
     /*
     * 회원 상세 조회 : 기본정보
-    *
-    *   select
-            member1
-        from
-            Member member1
-        inner join
-            member1.vendor as vendor
-        where
-            vendor.username = ?1
-            and member1.id = ?2
-            and member1.deleted = ?3
     * */
     public Optional<Member> findMemberDetailById(Long vendorId, Long memberId){
         return Optional.ofNullable(
