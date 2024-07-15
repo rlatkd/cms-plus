@@ -5,23 +5,32 @@ import { useLocation } from 'react-router-dom';
 const BreadCrumb = () => {
   const [currentRoute, setCurrentRoute] = useState({
     icon: '',
-    name: '',
-    childName: '',
+    name: [],
   });
 
   const location = useLocation();
 
-  const currentPaths = location.pathname.split('/').filter(path => path);
+  const currentPaths = location.pathname
+    .split('/')
+    .filter(path => path)
+    .slice(1);
 
   const breadCrumbTitle = () => {
     for (const route of vendorRoute()) {
-      if (currentPaths[1] === route.path) {
+      if (currentPaths[0] === route.path) {
         setCurrentRoute({
           icon: route.icon,
-          name: route.name,
-          childName: '',
+          name: [route.name],
         });
+
+        return route;
       }
+    }
+  };
+
+  const breadCrumbMenu = route => {
+    if (route.child) {
+      setCurrentRoute({});
     }
   };
 
@@ -61,7 +70,8 @@ const BreadCrumb = () => {
   };
 
   useEffect(() => {
-    breadCrumbSetting();
+    const route = breadCrumbTitle();
+    breadCrumbSetting(route);
   }, [location]);
 
   return (
