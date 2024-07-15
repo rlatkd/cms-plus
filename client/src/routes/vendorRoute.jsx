@@ -34,13 +34,13 @@ const vendorRoute = () => {
     {
       path: 'dashboard',
       name: '대시보드',
-      icon: <Home />,
+      icon: <Home fill='#7B809A' />,
       element: <DashBoard />,
     },
     {
       path: 'members',
       name: '회원',
-      icon: <User />,
+      icon: <User fill='#7B809A' />,
       element: <MemberIndex />,
       children: [
         {
@@ -72,7 +72,7 @@ const vendorRoute = () => {
     {
       path: 'contracts',
       name: '계약',
-      icon: <File />,
+      icon: <File fill='#7B809A' />,
       element: <ContractIndex />,
       children: [
         {
@@ -110,7 +110,7 @@ const vendorRoute = () => {
     {
       path: 'billings',
       name: '청구',
-      icon: <Card />,
+      icon: <Card fill='#7B809A' />,
       element: <BillingIndex />,
       children: [
         {
@@ -130,7 +130,7 @@ const vendorRoute = () => {
     {
       path: 'products',
       name: '상품',
-      icon: <Item />,
+      icon: <Item fill='#ffffff' />,
       element: <ProductIndex />,
       children: [
         {
@@ -144,7 +144,7 @@ const vendorRoute = () => {
     {
       path: 'setting',
       name: '설정',
-      icon: <Setting />,
+      icon: <Setting fill='#7B809A' />,
       element: <SettingIndex />,
       children: [
         {

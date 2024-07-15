@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const BreadCrumb = () => {
-  const [currentRoute, setCurrentRoute] = useState({
+  const [currentRoutes, setCurrentRoutes] = useState({
     icon: '',
     name: [],
   });
@@ -18,7 +18,7 @@ const BreadCrumb = () => {
   const breadCrumbTitle = () => {
     for (const route of vendorRoute()) {
       if (currentPaths[0] === route.path) {
-        setCurrentRoute({
+        setCurrentRoutes({
           icon: route.icon,
           name: [route.name],
         });
@@ -28,63 +28,49 @@ const BreadCrumb = () => {
     }
   };
 
-  const breadCrumbMenu = route => {
-    if (route.child) {
-      setCurrentRoute({});
-    }
-  };
-
-  const breadCrumbSetting = () => {
-    for (const route of vendorRoute()) {
-      if (currentPaths[1] === route.path) {
-        setCurrentRoute({
-          icon: route.icon,
-          name: route.name,
-          childName: route.name,
-        });
-
-        if (route.children) {
-          if (!currentPaths[2]) {
-            setCurrentRoute({
-              icon: route.icon,
-              name: route.name,
-              childName: route.children[0].name,
-            });
-            return;
-          } else {
-            for (const child of route.children) {
-              if (child.path.indexOf(currentPaths[2]) != -1) {
-                setCurrentRoute({
-                  icon: route.icon,
-                  name: route.name,
-                  childName: child.name,
-                });
-                return;
-              }
-            }
-          }
+  const breadCrumbMenu = (route, idx) => {
+    if (route.children) {
+      for (const child of route.children) {
+        console.log(child.name);
+        console.log(currentPaths.length);
+        if (currentPaths.length === 1) {
+          setCurrentRoutes(prevState => ({
+            ...prevState,
+            name: [...prevState.name, child.name],
+          }));
+          return;
+        } else if (child.path.includes(currentPaths[idx])) {
+          setCurrentRoutes(prevState => ({
+            ...prevState,
+            name: [...prevState.name, child.name],
+          }));
+          breadCrumbMenu(child, idx + 1);
+          return;
         }
-        return;
       }
     }
   };
 
   useEffect(() => {
     const route = breadCrumbTitle();
-    breadCrumbSetting(route);
+    breadCrumbMenu(route, 1);
+    console.log(currentRoutes.name);
   }, [location]);
 
   return (
     <div className='h-14 flex flex-col'>
       <div className='flex items-center text-text_grey mb-1'>
-        <div className='mr-3'>{currentRoute.icon}</div>
-
-        <p className='mr-3'>/</p>
-        <p className='mr-3'>{currentRoute.name}</p>
-        <p className='mr-3'>/</p>
-        <p className='text-text_black'>{currentRoute.childName}</p>
+        <div className='mr-3'>{currentRoutes.icon}</div>
+        {currentRoutes.name.map((name, idx) => (
+          <>
+            <p className='mr-3'>/</p>
+            <p className={`mr-3 font-700 ${idx > 0 && 'text-text_black'}`}>{name}</p>
+          </>
+        ))}
       </div>
-      <p className='text-text_black text-xl font-800'>{currentRoute.childName}</p>
+      <p className='text-text_black text-xl font-800'>
+        {currentRoutes.name[currentRoutes.name.length - 1]}
+      </p>
     </div>
   );
 };

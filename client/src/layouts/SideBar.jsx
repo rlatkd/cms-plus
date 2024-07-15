@@ -1,14 +1,18 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import vendorRoute from '@/routes/vendorRoute';
 import React from 'react';
 import { useSideBarActiveStore } from '@/stores/useSideBarActiveStore';
 
 const SideBar = () => {
+  const navigate = useNavigate();
+
   const { sideBarMenus, toggle } = useSideBarActiveStore();
 
   return (
     <div className='hidden h-full w-80  animate-slideOut desktop:block desktop:animate-slideIn py-6 pl-4 mr-8'>
-      <div className='mb-6 ml-3 mt-3 flex items-center'>
+      <div
+        className='mb-6 ml-3 mt-3 flex items-center cursor-pointer'
+        onClick={() => navigate('/vendor')}>
         <img src='/src/assets/tmplogo.svg' alt='logo' className='mx-2 h-6 w-6' />
         <h1 className='text-lg font-800 text-text_black'>HYOSUNG CMS#</h1>
       </div>
@@ -29,7 +33,8 @@ const SideBar = () => {
                         className={`mr-4 flex h-9 w-9 items-center justify-center rounded-xl ${isActive ? 'bg-mint' : 'bg-white shadow-sidebars'}`}>
                         {React.cloneElement(route.icon, {
                           className: 'h-4 w-4',
-                          fill: isActive ? 'white' : '#4FD1C5',
+                          fill: isActive ? '#ffffff' : '#4FD1C5',
+                          stroke: '#ffffff',
                         })}
                       </div>
                       <p
