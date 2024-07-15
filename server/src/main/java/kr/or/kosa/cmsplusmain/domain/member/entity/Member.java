@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.*;
 import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import lombok.*;
@@ -11,19 +12,6 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
 import lombok.Builder;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -86,19 +74,18 @@ public class Member extends BaseEntity {
 	private String phone;
 
 	@Comment("회원 유선전화")
-	@Column(name = "member_homePhone", length = 20)
+	@Column(name = "member_homePhone", nullable = true, length = 20)
 	@HomePhone
 	@Setter
 	private String homePhone;
 
-	//TODO: 다음 도로명 주소 API 보고 수정하기
 	@Comment("회원 주소")
-	@Column(name = "member_address", length = 40)
+	@Embedded
 	@Setter
-	private String address;
+	private Address address;
 
 	@Comment("회원 메모")
-	@Column(name = "member_memo", length = 2000)
+	@Column(name = "member_memo", nullable = true, length = 2000)
 	@Size(max = 2000)
 	@Setter
 	private String memo;
@@ -115,6 +102,7 @@ public class Member extends BaseEntity {
 	/* 회원이 맺은 계약 목록 */
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
+	@Builder.Default
 	private List<Contract> contracts = new ArrayList<>();
 
 	/************ 청구정보 ************/

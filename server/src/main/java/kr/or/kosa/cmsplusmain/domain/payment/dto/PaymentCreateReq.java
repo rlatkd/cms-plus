@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class PaymentCreateReq {
+    // 결제수단 info req
     @NotNull
     private PaymentTypeInfoReq paymentTypeInfoReq;
     private PaymentMethodInfoReq paymentMethodInfoReq;

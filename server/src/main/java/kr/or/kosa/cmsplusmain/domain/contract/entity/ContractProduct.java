@@ -60,9 +60,10 @@ public class ContractProduct extends BaseEntity {
 	private int quantity;
 
 	@Builder
-	public ContractProduct(Product product, String name, int price, int quantity) {
-		this.name = name;
+	public ContractProduct(Contract contract, Product product, String name, int price, int quantity) {
+		this.contract = contract;
 		this.product = product;
+		this.name = name;
 		this.price = price;
 		this.quantity = quantity;
 	}

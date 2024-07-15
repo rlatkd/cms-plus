@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.payment.entity.type;
 
+import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -38,4 +39,11 @@ public class VirtualAccountPaymentType extends PaymentTypeInfo {
 	@PersonName
 	@NotNull
 	private String accountOwner;
+
+	@Builder
+	public VirtualAccountPaymentType(Bank bank, String accountNumber, String accountOwner) {
+		this.bank = bank;
+		this.accountNumber = accountNumber;
+		this.accountOwner = accountOwner;
+	}
 }

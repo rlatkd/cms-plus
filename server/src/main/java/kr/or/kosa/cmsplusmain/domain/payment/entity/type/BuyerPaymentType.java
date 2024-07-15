@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.CollectionTable;
@@ -32,13 +33,23 @@ public class BuyerPaymentType extends PaymentTypeInfo {
 	@Column(name = "buyer_payment_method")
 	private Set<PaymentMethod> availableMethods = new HashSet<>();
 
+
+	//TODO
+	// 코드 점검 필요
+
+	@Builder
+	public BuyerPaymentType(Set<PaymentMethod> availableMethods) {
+		setAvailableMethods(availableMethods);
+	}
+
 	/*
 	 * 납부자결제 수단은 카드와 계좌만 가능하다.
 	 * */
 	public void setAvailableMethods(Set<PaymentMethod> availableMethods) {
 		List<PaymentMethod> paymentMethods = PaymentType.getBuyerPaymentMethods();
-		if (availableMethods.stream().anyMatch(paymentMethods::contains)) {
+		if (availableMethods.stream().anyMatch(method -> !paymentMethods.contains(method))) {
 			throw new IllegalArgumentException("납부자결제 가능 결제수단이 아닙니다.");
 		}
+		this.availableMethods = availableMethods;
 	}
 }

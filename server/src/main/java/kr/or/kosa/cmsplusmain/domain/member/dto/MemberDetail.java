@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.member.dto;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class MemberDetail {
     private final String memberPhone;             // 회원 휴대전화
     private final String memberEmail;             // 회원 이메일
     private final String memberHomePhone;         // 회원 자택 전화번호
-    private final String memberAddress;           // 회원 주소
+    private final Address memberAddress;           // 회원 주소
     private final String memberMemo;              // 회원 메모
     private final LocalDate memberEnrollDate;     // 회원 등록일
     private final LocalDateTime createdDateTime;  // 생성 일시

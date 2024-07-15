@@ -55,5 +55,4 @@ public class SignupReq {
 			.role(role)
 			.build();
 	}
-
 }

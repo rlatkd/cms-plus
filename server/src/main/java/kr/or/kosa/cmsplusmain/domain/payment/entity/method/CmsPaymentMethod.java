@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.payment.entity.method;
 
 import java.time.LocalDate;
 
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -13,13 +14,12 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.payment.converter.BankConverter;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Bank;
 import kr.or.kosa.cmsplusmain.domain.payment.validator.AccountNumber;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Comment("결제수단 - CMS")
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CmsPaymentMethod extends PaymentMethodInfo {
 

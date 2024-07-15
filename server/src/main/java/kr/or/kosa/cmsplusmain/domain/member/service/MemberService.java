@@ -6,10 +6,15 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItem;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,8 +29,12 @@ import java.util.List;
 public class MemberService {
 
     private final MemberCustomRepository memberCustomRepository;
+    private final MemberRepository memberRepository;
     private final ContractCustomRepository contractCustomRepository;
     private final BillingCustomRepository billingCustomRepository;
+
+    private final PaymentService paymentService;
+    private final ContractService contractService;
 
     /*
      * 회원 목록 조회
@@ -83,11 +92,24 @@ public class MemberService {
     /*
      * 회원 등록
      * */
+    @Transactional
+    public void createMember(Long vendorId, MemberCreateReq memberCreateReq) {
 
-    public void createMember(Long vendorId) {
+        // 회원 정보를 DB에 저장한다.
+        Member member = null;
 
-        // 회원 정보를 entity로 바꾸고 DB에 넣는다.
+        // 회원 존재 여부 확인 ( 휴대전화 번호 기준 )
+        if(memberCustomRepository.idExistMemberByPhone(vendorId, memberCreateReq.getMemberPhone())){
+            member = memberCustomRepository.findMemberByPhone(vendorId, memberCreateReq.getMemberPhone()).orElseThrow();
+        }
+        else {
+            member = memberRepository.save(memberCreateReq.toEntity(vendorId));
+        }
 
-        //
+        // 결제 정보를 DB에 저장한다.
+        Payment payment = paymentService.createPayment(memberCreateReq.getPaymentCreateReq());
+
+        // 계약 정보를 DB에 저장한다.
+        contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
     }
 }

@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.payment.entity;
 
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.Column;
@@ -17,13 +18,12 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Comment("결제정보")
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment extends BaseEntity {
 

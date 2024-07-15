@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
@@ -67,8 +67,8 @@ public class ContractController {
 	 * TODO 생성 -> 수정으로 수정하기
 	 * */
 	@PutMapping("/{contractId}")
-	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractUpdateReq contractUpdateReq) {
+	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractCreateReq contractCreateReq) {
 		Long vendorId = 1L;
-		contractService.updateContract(vendorId, contractId, contractUpdateReq);
+		contractService.updateContract(vendorId, contractId, contractCreateReq);
 	}
 }

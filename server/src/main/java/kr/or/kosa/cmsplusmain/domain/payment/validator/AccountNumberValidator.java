@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class AccountNumberValidator implements ConstraintValidator<AccountNumber, String> {
 
 	private static final Pattern ACCOUNT_NUMBER_PATTERN = Pattern.compile(
-		"^\\\\d{10,14}$"
+		"^\\d{10,14}$"
 	);
 
 	@Override
