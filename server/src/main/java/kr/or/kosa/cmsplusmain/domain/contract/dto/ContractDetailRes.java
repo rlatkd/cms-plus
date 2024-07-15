@@ -6,9 +6,6 @@ import java.util.List;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -35,7 +32,7 @@ public class ContractDetailRes {
 			.stream()
 			.map(ContractProductRes::fromEntity)
 			.toList();
-		
+
 		return ContractDetailRes.builder()
 			.contractId(contract.getId())
 			.contractName(contract.getContractName())

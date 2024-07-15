@@ -22,13 +22,14 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.CancelInvoiceException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.DeleteBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.EmptyBillingProductException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.SendInvoiceException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.UpdateBillingDateException;
 import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -135,7 +136,7 @@ public class Billing extends BaseEntity {
 	* 결제일 기준으로
 	* YYYY년 MM월 청구서 형식으로 자동생성
 	* */
-	public String getBillingName() {
+	public String getInvoiceName() {
 		String year = Integer.toString(billingDate.getYear());
 		String month = Integer.toString(billingDate.getMonthValue());
 		return "%s년 %s월 청구서".formatted(year, month);
@@ -154,6 +155,31 @@ public class Billing extends BaseEntity {
 	}
 
 	/*
+	* 청구서 발송
+	*
+	* 청구서 발송 가능 상태 확인 및 상태 변경
+	* */
+	public void sendInvoice() {
+		// 청구서는 생성 상태이거나 미납 상태에서만 발송할 수 있다.
+		if (billingStatus != BillingStatus.CREATED && billingStatus != BillingStatus.NON_PAID) {
+			throw new SendInvoiceException();
+		}
+		billingStatus = BillingStatus.WAITING_PAYMENT;
+	}
+
+	/*
+	 * 청구서 발송 취소
+	 *
+	 * 청구서 발송 취소 가능 상태 확인 및 상태 변경
+	 * */
+	public void cancelInvoice() {
+		if (billingStatus != BillingStatus.WAITING_PAYMENT && billingStatus != BillingStatus.NON_PAID) {
+			throw new CancelInvoiceException();
+		}
+		billingStatus = BillingStatus.CREATED;
+	}
+
+	/*
 	* 청구 삭제
 	*
 	* 청구 상품도 같이 삭제한다.
@@ -162,7 +188,7 @@ public class Billing extends BaseEntity {
 	public void delete() {
 		// 청구상태에 따른 삭제 조건 존재
 		// 청구상태가 생성 (청구서 발송 전)에만 삭제가 가능하다.
-		if (!billingStatus.equals(BillingStatus.CREATED)) {
+		if (billingStatus != BillingStatus.CREATED) {
 			throw new DeleteBillingException();
 		}
 		super.delete();
