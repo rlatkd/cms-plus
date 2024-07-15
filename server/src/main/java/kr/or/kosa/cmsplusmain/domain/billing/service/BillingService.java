@@ -133,7 +133,7 @@ public class BillingService {
 	public void payBilling(Long vendorId, Long billingId) {
 		validateBillingUser(vendorId, billingId);
 
-		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 
 		// 실시간 결제 가능 청구여부
 		if (!billing.canPayRealtime()) {
@@ -153,7 +153,7 @@ public class BillingService {
 	public void cancelPayBilling(Long vendorId, Long billingId) {
 		validateBillingUser(vendorId, billingId);
 
-		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		if (!billing.canCancelPaid()) {
 			throw new CancelPayException();
 		}
