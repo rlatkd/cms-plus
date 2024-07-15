@@ -194,12 +194,7 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return product.price.loe(productPrice);
 	}
 
-	protected BooleanExpression contractNumberLoe(Integer contractNumber) {
-		if (contractNumber == null) {
-			return null;
-		}
-		return contractProduct.contract.countDistinct().loe(contractNumber);
-	}
+
 
 	/**
 	 * Date형식(yyyy-MM-dd)로 들어온 DTO를 DB에 있는 DateTime(yyyy-MM-dd hh:mm:ss)와 비교하는 공통 메서드

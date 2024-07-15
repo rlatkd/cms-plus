@@ -132,4 +132,11 @@ public class Member extends BaseEntity {
 				.mapToLong(Contract::getContractPrice)
 				.sum();
 	}
+
+	/*
+	* 총 계약 수
+	* */
+	public int getContractNum() {
+		return contracts.size();
+	}
 }

@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.product.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.core.Tuple;
@@ -209,6 +210,11 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                 .fetch();
     }
 
-
+    private BooleanExpression contractNumberLoe(Integer contractNumber) {
+        if (contractNumber == null) {
+            return null;
+        }
+        return contractProduct.contract.countDistinct().loe(contractNumber);
+    }
 }
 
