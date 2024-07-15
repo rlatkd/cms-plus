@@ -380,3 +380,5 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,intellij,gradle,java,intellij+all,intellij+iml
 /src/main/generated/
+
+/src/main/resources/secure.properties
