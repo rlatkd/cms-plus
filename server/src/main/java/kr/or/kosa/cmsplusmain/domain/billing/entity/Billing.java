@@ -25,10 +25,13 @@ import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.CancelInvoiceException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.DeleteBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.EmptyBillingProductException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.PayBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.SendInvoiceException;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.UpdateBillingDateException;
 import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -144,6 +147,45 @@ public class Billing extends BaseEntity {
 	}
 
 	/*
+	* 청구서 발송 가능 상태여부
+	*
+	* 청구서는 [생성, 미납] 상태에서만 발송 가능하다.
+	* */
+	public boolean canSendInvoice() {
+		return billingStatus == BillingStatus.CREATED
+			|| billingStatus == BillingStatus.NON_PAID;
+	}
+
+	/*
+	* 청구서 발송 완료로 상태 변경
+	* */
+	public void setInvoiceSent() {
+		if (!canSendInvoice()) {
+			throw new SendInvoiceException();
+		}
+		billingStatus = BillingStatus.WAITING_PAYMENT;
+	}
+
+	/*
+	* 청구소 발송 취소 가능여부
+	*
+	* 청구서 취소는 수납 대기 상태에서만 가능하다.
+	* */
+	public boolean canCancelInvoice() {
+		return billingStatus == BillingStatus.WAITING_PAYMENT;
+	}
+
+	/*
+	 * 청구서 발송 취소 상태 변경
+	 * */
+	public void setInvoiceCancelled() {
+		if (!canCancelInvoice()) {
+			throw new SendInvoiceException();
+		}
+		billingStatus = BillingStatus.CREATED;
+	}
+
+	/*
 	* 청구 결제일 수정
 	* */
 	public void setBillingDate(LocalDate billingDate) {
@@ -156,28 +198,43 @@ public class Billing extends BaseEntity {
 	}
 
 	/*
-	* 청구서 발송
-	*
-	* 청구서 발송 가능 상태 확인 및 상태 변경
+	* 청구 실시간 결제 가능
 	* */
-	public void sendInvoice() {
-		// 청구서는 생성 상태이거나 미납 상태에서만 발송할 수 있다.
-		if (billingStatus != BillingStatus.CREATED && billingStatus != BillingStatus.NON_PAID) {
-			throw new SendInvoiceException();
+	public boolean canPayRealtime() {
+		// 청구상태 확인
+		if (billingStatus == BillingStatus.WAITING_PAYMENT
+			|| billingStatus == BillingStatus.CREATED) {
+			return false;
 		}
-		billingStatus = BillingStatus.WAITING_PAYMENT;
+
+		Payment payment = contract.getPayment();
+		return payment.canPayRealtime();
 	}
 
 	/*
-	 * 청구서 발송 취소
-	 *
-	 * 청구서 발송 취소 가능 상태 확인 및 상태 변경
-	 * */
-	public void cancelInvoice() {
-		if (billingStatus != BillingStatus.WAITING_PAYMENT && billingStatus != BillingStatus.NON_PAID) {
-			throw new CancelInvoiceException();
+	* 청구 실시간 결제 완료 상태변경
+	* */
+	public void setPaid() {
+		billingStatus = BillingStatus.PAID;
+	}
+
+	/*
+	* 청구 결제 취소 가능
+	* */
+	public boolean canCancelPaid() {
+		if (billingStatus != BillingStatus.PAID) {
+			return false;
 		}
-		billingStatus = BillingStatus.CREATED;
+
+		Payment payment = contract.getPayment();
+		return payment.canCancel();
+	}
+
+	/*
+	 * 청구 결제 취소 상태 변경
+	 * */
+	public void setPayCanceled() {
+		billingStatus = BillingStatus.WAITING_PAYMENT;
 	}
 
 	/*

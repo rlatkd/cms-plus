@@ -17,6 +17,9 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.CancelPayException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.PayBillingException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.SendInvoiceException;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
@@ -62,39 +65,26 @@ public class BillingService {
 		// 청구가 고객의 청구인지 확인
 		validateBillingUser(vendorId, billingId);
 
-		// 청구서 발송 가능 상태 확인 및 청구상태 변경
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
-		billing.sendInvoice();
+		// 청구서 발송 가능 상태 확인
+		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
+		if (!billing.canSendInvoice()) {
+			throw new SendInvoiceException();
+		}
 
 		Contract contract = billing.getContract();
 		Member member = contract.getMember();
 
-		// 회원이 받을 문자(이메일) 내용
+		// 회원에게 메시지 전송
 		String invoiceMessage = createInvoiceMessage(billing, member);
+		sendInvoiceMessage(invoiceMessage, member);
 
-		// 청구서 링크 발송
-		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
-		switch (sendMethod) {
-			case SMS -> messageService.sendSms(member.getPhone(), invoiceMessage);
-			case EMAIL -> messageService.sendEmail(member.getEmail(), invoiceMessage);
-		}
+		// 청구 수납 대기중 상태변경
+		billing.setInvoiceSent();
 	}
 
 	/*
-	* 청구서 발송 취소
-	* */
-	@Transactional
-	public void cancelInvoice(Long vendorId, Long billingId) {
-		validateBillingUser(vendorId, billingId);
-
-		// 청구서 취소 가능 상태 확인 및 청구상태 변경
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
-		billing.cancelInvoice();
-	}
-
-	/*
-	* 회원이 받을 청구서 링크 문자(이메일) 내용을 만들어준다.
-	* */
+	 * 회원이 받을 청구서 링크 문자(이메일) 내용을 만들어준다.
+	 * */
 	private String createInvoiceMessage(Billing billing, Member member) {
 		// 메시지 내용
 		String memberName = member.getName();
@@ -108,6 +98,70 @@ public class BillingService {
 			.trim();
 
 		return message;
+	}
+
+	private void sendInvoiceMessage(String message, Member member) {
+		// 청구서 링크 발송
+		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+		switch (sendMethod) {
+			case SMS -> messageService.sendSms(member.getPhone(), message);
+			case EMAIL -> messageService.sendEmail(member.getEmail(), message);
+		}
+	}
+
+	/*
+	* 청구서 발송 취소
+	* */
+	@Transactional
+	public void cancelInvoice(Long vendorId, Long billingId) {
+		validateBillingUser(vendorId, billingId);
+
+		// 청구서 취소 가능 상태 확인
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		if (!billing.canCancelInvoice()) {
+			throw new SendInvoiceException();
+		}
+
+		// 청구서 발송 취소 상태변경
+		billing.setInvoiceCancelled();
+	}
+
+	/*
+	* 청구 실시간 결제
+	* */
+	@Transactional
+	public void payBilling(Long vendorId, Long billingId) {
+		validateBillingUser(vendorId, billingId);
+
+		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
+
+		// 실시간 결제 가능 청구여부
+		if (!billing.canPayRealtime()) {
+			throw new PayBillingException();
+		}
+
+		//TODO 결제 프로세스
+
+		// 완납상태로 변경
+		billing.setPaid();
+	}
+
+	/*
+	* 청구 실시간 결제 취소
+	* */
+	@Transactional
+	public void cancelPayBilling(Long vendorId, Long billingId) {
+		validateBillingUser(vendorId, billingId);
+
+		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
+		if (!billing.canCancelPaid()) {
+			throw new CancelPayException();
+		}
+
+		// TODO 결제 취소 프로세스
+
+		// 수납대기 상태로 변경
+		billing.setPayCanceled();
 	}
 
 	/*
@@ -173,7 +227,7 @@ public class BillingService {
 		// 고객의 청구 여부 확인
 		validateBillingUser(billingId, vendorId);
 
-		Billing billing = billingCustomRepository.findBillingDetail(billingId);
+		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
 		return BillingDetailRes.fromEntity(billing);
 	}
 

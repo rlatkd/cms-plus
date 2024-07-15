@@ -127,7 +127,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	/*
 	 * 청구 상세
 	 * */
-	public Billing findBillingDetail(Long billingId) {
+	public Billing findBillingWithContract(Long billingId) {
 		return jpaQueryFactory
 			.selectFrom(billing)
 			.join(billing.contract, contract).fetchJoin()
