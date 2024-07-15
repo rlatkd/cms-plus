@@ -15,6 +15,8 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -103,9 +105,7 @@ public class PaymentService {
 				.paymentMethodInfo(paymentMethodInfo)														  // 결제수단 정보
 				.build();
 
-		paymentRepository.save(payment);
-
-		return payment;
+		return paymentRepository.save(payment);
 	}
 
 	/*
@@ -117,31 +117,24 @@ public class PaymentService {
 		// 결제방식 - 자동결제
 		if(paymentTypeInfoReq instanceof AutoTypeReq autoTypeReq){
 			AutoPaymentType autoPaymentType = autoTypeReq.toEntity();
-			autoPaymentTypeRepository.save(autoPaymentType);
-			paymentTypeInfo = autoPaymentType;
+			paymentTypeInfo = autoPaymentTypeRepository.save(autoPaymentType);
 		}
 
 		// 결제방식 - 납부자결제
 		else if(paymentTypeInfoReq instanceof BuyerTypeReq buyerTypeReq){
 			BuyerPaymentType buyerPaymentType = buyerTypeReq.toEntity();
-			buyerPaymentTypeRepository.save(buyerPaymentType);
-			paymentTypeInfo = buyerPaymentType;
+			paymentTypeInfo = buyerPaymentTypeRepository.save(buyerPaymentType);
 		}
 
 		// 결제방식 - 가상계좌
 		else if(paymentTypeInfoReq instanceof VirtualAccountTypeReq virtualAccountTypeReq){
 
-			//TODO
-			// 가상계좌 만드는 로직 필요 
-			String accountNumber = "12345678901234";
-
-			//TODO
-			// 가상계좌 중복 체크 여부 필요
+			// 가상계좌 14자리 랜덤으로 생성
+			String accountNumber = generateRandomAccountNumber(14);
 
 			// 가상계좌 DB에 저장
 			VirtualAccountPaymentType virtualAccountPaymentType =  virtualAccountTypeReq.toEntity(accountNumber);
-			virtualAccountPaymentTypeRepository.save(virtualAccountPaymentType);
-			paymentTypeInfo = virtualAccountPaymentType;
+			paymentTypeInfo = virtualAccountPaymentTypeRepository.save(virtualAccountPaymentType);
 		}
 
 		return paymentTypeInfo;
@@ -156,16 +149,23 @@ public class PaymentService {
 		// 결제수단 - Card 결제
 		if(paymentMethodInfoReq instanceof CardMethodReq cardMethodReq){
 			CardPaymentMethod cardPaymentMethod = cardMethodReq.toEntity();
-			cardPaymentMethodRepository.save(cardPaymentMethod);
-			paymentMethodInfo = cardPaymentMethod;
+			paymentMethodInfo = cardPaymentMethodRepository.save(cardPaymentMethod);
 		}
 
 		// 결제수단 - 실시간 CMS 결제
 		else if(paymentMethodInfoReq instanceof CMSMethodReq cmsMethodReq){
 			CmsPaymentMethod cmsPaymentMethod = cmsMethodReq.toEntity();
-			cmsPaymentMethodRepository.save(cmsPaymentMethod);
-			paymentMethodInfo = cmsPaymentMethod ;
+			paymentMethodInfo = cmsPaymentMethodRepository.save(cmsPaymentMethod);
 		}
+
 		return paymentMethodInfo;
+	}
+
+	private static String generateRandomAccountNumber(int length) {
+		StringBuilder accountNumber = new StringBuilder(length);
+		for (int i = 0; i < length; i++) {
+			accountNumber.append(ThreadLocalRandom.current().nextInt(10));
+		}
+		return accountNumber.toString();
 	}
 }

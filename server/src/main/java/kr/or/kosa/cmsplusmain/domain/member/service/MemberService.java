@@ -96,21 +96,20 @@ public class MemberService {
     public void createMember(Long vendorId, MemberCreateReq memberCreateReq) {
 
         // 회원 정보를 DB에 저장한다.
+        Member member = null;
 
         // 회원 존재 여부 확인 ( 휴대전화 번호 기준 )
-        if(memberCustomRepository.idExistMemberByPhone(memberCreateReq.getMemberPhone())){
-            log.info("회원이 이미 존재합니다: " + memberCreateReq.getMemberPhone());
+        if(memberCustomRepository.idExistMemberByPhone(vendorId, memberCreateReq.getMemberPhone())){
+            member = memberCustomRepository.findMemberByPhone(vendorId, memberCreateReq.getMemberPhone()).orElseThrow();
         }
         else {
-            Member member = memberCreateReq.toEntity(vendorId);
-            memberRepository.save(member);
+            member = memberRepository.save(memberCreateReq.toEntity(vendorId));
         }
 
         // 결제 정보를 DB에 저장한다.
         Payment payment = paymentService.createPayment(memberCreateReq.getPaymentCreateReq());
 
         // 계약 정보를 DB에 저장한다.
-//        contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
-
+        contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
     }
 }

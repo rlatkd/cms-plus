@@ -169,14 +169,14 @@ public class ContractService {
 	}
 
 
-//	public void createContract(Long vendorId, Member member, Payment payment, ContractCreateReq contractCreateReq) {
-//
-//		// 계약 정보를 DB에 저장한다.
-//		Contract contract = contractCreateReq.toEntity(vendorId , member, payment);
-//		contractRepository.save(contract);
-//
-//		// 계약 상품 정보를 DB에 저장한다.
-//		List<ContractProduct> contractProducts = contractCreateReq.toProductEntities(contract);
-//		contractProductRepository.saveAll(contractProducts);
-//	}
+	public void createContract(Long vendorId, Member member, Payment payment, ContractCreateReq contractCreateReq) {
+
+		// 계약 정보를 DB에 저장한다.
+		Contract contract = contractCreateReq.toEntity(vendorId , member, payment);
+		contractRepository.save(contract);
+
+		// 계약 상품 정보를 DB에 저장한다.
+		List<ContractProduct> contractProducts = contractCreateReq.toProductEntities(contract);
+		contractProductRepository.saveAll(contractProducts);
+	}
 }

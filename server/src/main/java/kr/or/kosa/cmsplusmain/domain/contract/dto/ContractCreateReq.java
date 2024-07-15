@@ -45,10 +45,10 @@ public class ContractCreateReq {
 				.build();
 	}
 
-//	public List<ContractProduct> toProductEntities(Contract contract) {
-//		return contractProducts.stream()
-//				.map(contractProduct -> contractProduct.toEntity(contract))
-//				.collect(Collectors.toList());
-//	}
+	public List<ContractProduct> toProductEntities(Contract contract) {
+		return contractProducts.stream()
+				.map(contractProduct -> contractProduct.toEntity(contract))
+				.collect(Collectors.toList());
+	}
 }
 

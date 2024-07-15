@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
 import jakarta.validation.constraints.NotNull;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
@@ -21,5 +22,14 @@ public class ContractProductReq {
 			.price(price)
 			.quantity(quantity)
 			.build();
+	}
+
+	public ContractProduct toEntity(Contract contract) {
+		return ContractProduct.builder()
+				.product(Product.of(productId))
+				.contract(contract)
+				.price(price)
+				.quantity(quantity)
+				.build();
 	}
 }

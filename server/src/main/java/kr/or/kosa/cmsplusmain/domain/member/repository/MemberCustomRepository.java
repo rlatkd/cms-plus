@@ -78,17 +78,29 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     /*
      * 회원 존재 여부 판단
      * */
-    public boolean idExistMemberByPhone(String phone) {
+    public boolean idExistMemberByPhone(Long vendorId, String phone) {
         Integer fetchOne = jpaQueryFactory
-                .selectOne()
-                .from(member)
+            .selectOne()
+            .from(member)
+            .where(
+                    member.vendor.id.eq(vendorId),
+                    member.phone.eq(phone),
+                    memberNotDel()
+            )
+            .fetchFirst();
+
+        return fetchOne != null;
+    }
+
+    public Optional<Member> findMemberByPhone(Long vendorId, String phone) {
+        return Optional.ofNullable(
+            jpaQueryFactory
+                .selectFrom(member)
                 .where(
+                        member.vendor.id.eq(vendorId),
                         member.phone.eq(phone),
                         memberNotDel()
                 )
-                .fetchFirst();
-
-        return fetchOne != null;
-
+                .fetchOne());
     }
 }

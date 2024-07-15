@@ -7,6 +7,7 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.Memo;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.entity.MemberStatus;
 import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
@@ -37,9 +38,7 @@ public class MemberCreateReq {
     @Email
     private String memberEmail; // 회원 이메일
 
-    //TODO
-    //은아가 정의한거 확인해보기
-    private String memberAddress; // 회원 주소
+    private Address memberAddress; // 회원 주소
 
     @Memo
     private String memberMemo; // 회원 메모
