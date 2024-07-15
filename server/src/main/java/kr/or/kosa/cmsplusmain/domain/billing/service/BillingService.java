@@ -17,11 +17,18 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.CancelPayException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.PayBillingException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.SendInvoiceException;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.messaging.service.MessageService;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
+import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,8 +41,129 @@ public class BillingService {
 	private final BillingRepository billingRepository;
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
-
 	private final ProductCustomRepository productCustomRepository;
+	private final MessageService messageService;
+
+	// 청구서 URL(청구 ID), 청구서 메시지 내용
+	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
+	private static final String INVOICE_MESSAGE_FORMAT =
+			"""
+			%s님의 청구서가 도착했습니다.
+			
+			- 청구서명: %s
+			- 납부할금액: %s원
+			- 납부 기한: %s
+			
+			납부하기: %s
+			""".trim();
+
+	/*
+	* 청구서 발송
+	* */
+	@Transactional
+	public void sendInvoice(Long vendorId, Long billingId) {
+		// 청구가 고객의 청구인지 확인
+		validateBillingUser(vendorId, billingId);
+
+		// 청구서 발송 가능 상태 확인
+		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
+		if (!billing.canSendInvoice()) {
+			throw new SendInvoiceException();
+		}
+
+		Contract contract = billing.getContract();
+		Member member = contract.getMember();
+
+		// 회원에게 메시지 전송
+		String invoiceMessage = createInvoiceMessage(billing, member);
+		sendInvoiceMessage(invoiceMessage, member);
+
+		// 청구 수납 대기중 상태변경
+		billing.setInvoiceSent();
+	}
+
+	/*
+	 * 회원이 받을 청구서 링크 문자(이메일) 내용을 만들어준다.
+	 * */
+	private String createInvoiceMessage(Billing billing, Member member) {
+		// 메시지 내용
+		String memberName = member.getName();
+		String invoiceName = billing.getInvoiceName();
+		String billingPrice = FormatUtil.formatMoney(billing.getBillingPrice());
+		String billingDate = billing.getBillingDate().toString();
+		String url = INVOICE_URL_FORMAT.formatted(billing.getId());
+
+		String message = INVOICE_MESSAGE_FORMAT
+			.formatted(memberName, invoiceName, billingPrice, billingDate, url)
+			.trim();
+
+		return message;
+	}
+
+	private void sendInvoiceMessage(String message, Member member) {
+		// 청구서 링크 발송
+		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+		switch (sendMethod) {
+			case SMS -> messageService.sendSms(member.getPhone(), message);
+			case EMAIL -> messageService.sendEmail(member.getEmail(), message);
+		}
+	}
+
+	/*
+	* 청구서 발송 취소
+	* */
+	@Transactional
+	public void cancelInvoice(Long vendorId, Long billingId) {
+		validateBillingUser(vendorId, billingId);
+
+		// 청구서 취소 가능 상태 확인
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		if (!billing.canCancelInvoice()) {
+			throw new SendInvoiceException();
+		}
+
+		// 청구서 발송 취소 상태변경
+		billing.setInvoiceCancelled();
+	}
+
+	/*
+	* 청구 실시간 결제
+	* */
+	@Transactional
+	public void payBilling(Long vendorId, Long billingId) {
+		validateBillingUser(vendorId, billingId);
+
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+
+		// 실시간 결제 가능 청구여부
+		if (!billing.canPayRealtime()) {
+			throw new PayBillingException();
+		}
+
+		//TODO 결제 프로세스
+
+		// 완납상태로 변경
+		billing.setPaid();
+	}
+
+	/*
+	* 청구 실시간 결제 취소
+	* */
+	@Transactional
+	public void cancelPayBilling(Long vendorId, Long billingId) {
+		validateBillingUser(vendorId, billingId);
+
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		if (!billing.canCancelPaid()) {
+			throw new CancelPayException();
+		}
+
+		// TODO 결제 취소 프로세스
+
+		// 수납대기 상태로 변경
+		billing.setPayCanceled();
+	}
+
 	/*
 	 * 청구 생성
 	 *
@@ -99,7 +227,7 @@ public class BillingService {
 		// 고객의 청구 여부 확인
 		validateBillingUser(billingId, vendorId);
 
-		Billing billing = billingCustomRepository.findBillingDetail(billingId);
+		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
 		return BillingDetailRes.fromEntity(billing);
 	}
 
@@ -130,6 +258,23 @@ public class BillingService {
 	}
 
 	/*
+	* 청구 삭제
+	*
+	* 총 발생 쿼리수: 4회
+	* 내용:
+	* 	존재여부 확인, 청구 조회, 청구상품 조회(+?), 청구 삭제(*N 청구상품수)
+	* */
+	@Transactional
+	public void deleteBilling(Long vendorId, Long billingId) {
+		// 고객의 청구 여부 확인
+		validateBillingUser(billingId, vendorId);
+
+		// 청구 상품도 동시 삭제처리된다.
+		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		billing.delete();
+	}
+
+	/*
 	 * 기존 청구상품과 신규 청구상품 비교해서
 	 * 새롭게 추가되거나 삭제된 것만 수정 반영
 	 * */
@@ -150,23 +295,6 @@ public class BillingService {
 	}
 
 	/*
-	* 청구 삭제
-	*
-	* 총 발생 쿼리수: 4회
-	* 내용:
-	* 	존재여부 확인, 청구 조회, 청구상품 조회(+?), 청구 삭제(*N 청구상품수)
-	* */
-	@Transactional
-	public void deleteBilling(Long vendorId, Long billingId) {
-		// 고객의 청구 여부 확인
-		validateBillingUser(billingId, vendorId);
-
-		// 청구 상품도 동시 삭제처리된다.
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
-		billing.delete();
-	}
-
-	/*
 	* 청구 상품 요청 -> 청구 상품 엔티티 변환 메서드
 	*
 	* 요청에서 상품의 ID를 받아서
@@ -174,6 +302,8 @@ public class BillingService {
 	*
 	* 상품이름을 청구상품 테이블에 저장해
 	* 청구상품 조회시 상품 이름만을 가져오기위한 조인을 없앤다.
+	*
+	* 상품 설정에서 이름 수정 불가 필요
 	* */
 	private List<BillingProduct> convertToBillingProducts(List<BillingProductReq> billingProductReqs) {
 		// 상품 ID

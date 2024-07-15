@@ -16,7 +16,7 @@ public class PageReq {
 	* 오름차순 여부
 	* */
 	public boolean isAsc() {
-		return order != null && order.equals(Order.ASC);
+		return order == Order.ASC;
 	}
 
 	/*

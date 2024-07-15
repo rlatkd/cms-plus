@@ -8,10 +8,12 @@ import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+
 
 
 @Repository
@@ -72,5 +74,34 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
                     memberNotDel()
             )
             .fetchOne());
+    }
+
+    /*
+     * 회원 존재 여부 판단
+     * */
+    public boolean idExistMemberByPhone(Long vendorId, String phone) {
+        Integer fetchOne = jpaQueryFactory
+            .selectOne()
+            .from(member)
+            .where(
+                    member.vendor.id.eq(vendorId),
+                    member.phone.eq(phone),
+                    memberNotDel()
+            )
+            .fetchFirst();
+
+        return fetchOne != null;
+    }
+
+    public Optional<Member> findMemberByPhone(Long vendorId, String phone) {
+        return Optional.ofNullable(
+            jpaQueryFactory
+                .selectFrom(member)
+                .where(
+                        member.vendor.id.eq(vendorId),
+                        member.phone.eq(phone),
+                        memberNotDel()
+                )
+                .fetchOne());
     }
 }

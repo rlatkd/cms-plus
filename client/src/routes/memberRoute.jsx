@@ -40,3 +40,4 @@ const memberRoute = () => {
 };
 
 export default memberRoute;
+

@@ -1,7 +1,10 @@
 package kr.or.kosa.cmsplusmain.domain.contract.service;
 
 import java.util.List;
+import java.util.Map;
 
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,7 @@ import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,8 +39,10 @@ public class ContractService {
 	private final ContractRepository contractRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	private final BillingCustomRepository billingCustomRepository;
+	private final ProductCustomRepository productCustomRepository;
 
 	private final PaymentService paymentService;
+	private final ContractProductRepository contractProductRepository;
 
 	/*
 	 * 계약 목록 조회
@@ -126,20 +132,47 @@ public class ContractService {
 		contract.setContractName(contractCreateReq.getContractName());
 
 		// 신규 계약상품
-		List<ContractProduct> newContractProducts = contractCreateReq.getContractProducts()
-			.stream()
-			.map(ContractProductReq::toEntity)
-			.toList();
+		List<ContractProduct> newContractProducts = convertToContractProducts(contractCreateReq.getContractProducts());
+
 
 		// 계약상품목록 수정
-		updateContractProduct(contract, newContractProducts);
+		updateContractProducts(contract, newContractProducts);
+	}
+
+	/*
+	 * 계약 상품 요청 -> 계약 상품 엔티티 변환 메서드
+	 *
+	 * 요청에서 상품의 ID를 받아서
+	 * 상품의 ID를 토대로 상품 이름을 가져온다.
+	 *
+	 * 상품이름을 계약상품 테이블에 저장해
+	 * 계약상품 조회시 상품 이름만을 가져오기위한 조인을 없앤다.
+	 *
+	 * 상품 설정에서 이름 수정 불가 필요
+	 * */
+	private List<ContractProduct> convertToContractProducts(List<ContractProductReq> contractProductReqs) {
+		// 상품 ID
+		List<Long> productIds = contractProductReqs.stream()
+			.mapToLong(ContractProductReq::getProductId)
+			.boxed().toList();
+
+		// 상품 ID -> 이름
+		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
+
+		// 청구 상품 목록
+		List<ContractProduct> contractProducts = contractProductReqs
+			.stream()
+			.map(dto -> dto.toEntity(productIdToName.get(dto.getProductId())))
+			.toList();
+
+		return contractProducts;
 	}
 
 	/*
 	* 기존 계약상품과 신규 계약상품 비교해서
 	* 새롭게 추가되거나 삭제된 것만 수정 반영
 	* */
-	private void updateContractProduct(Contract contract, List<ContractProduct> newContractProducts) {
+	private void updateContractProducts(Contract contract, List<ContractProduct> newContractProducts) {
 		// 기존 계약상품
 		List<ContractProduct> oldContractProducts = contract.getContractProducts();
 
@@ -163,5 +196,25 @@ public class ContractService {
 		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
 			throw new EntityNotFoundException("계약 ID 없음(" + contractId + ")");
 		}
+	}
+
+
+	public void createContract(Long vendorId, Member member, Payment payment, ContractCreateReq contractCreateReq) {
+
+		// 계약 정보를 DB에 저장한다.
+		Contract contract = contractCreateReq.toEntity(vendorId , member, payment);
+		contractRepository.save(contract);
+
+
+		// 상품 ID -> 이름
+		List<Long> productIds = contractCreateReq.getContractProducts().stream()
+			.mapToLong(ContractProductReq::getProductId)
+			.boxed().toList();
+		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
+
+		List<ContractProduct> contractProducts = contractCreateReq.toProductEntities(contract, productIdToName);
+
+		// 계약 상품 정보를 DB에 저장한다.
+		contractProductRepository.saveAll(contractProducts);
 	}
 }

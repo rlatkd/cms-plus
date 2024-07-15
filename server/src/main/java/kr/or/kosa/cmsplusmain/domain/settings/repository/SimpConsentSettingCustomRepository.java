@@ -10,6 +10,7 @@ import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import org.springframework.stereotype.Repository;
 
 
+
 @Repository
 public class SimpConsentSettingCustomRepository extends BaseCustomRepository<SimpConsentSetting> {
 
@@ -20,6 +21,7 @@ public class SimpConsentSettingCustomRepository extends BaseCustomRepository<Sim
     public SimpConsentSetting findByVendorUsername(Long vendorId) {
         return jpaQueryFactory
                 .selectFrom(simpConsentSetting)
+            .join(simpConsentSetting.simpConsentPayments).fetchJoin()
                 .where(
                         simpConsentSetting.vendor.id.eq(vendorId),
                         simpConsentSetting.deleted.isFalse()

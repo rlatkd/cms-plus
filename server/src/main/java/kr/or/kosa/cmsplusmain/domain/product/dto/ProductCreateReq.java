@@ -19,7 +19,6 @@ public class ProductCreateReq {
     @ProductPrice
     private Integer productPrice;
 
-    @NotNull
     @Memo
     private String productMemo;
 

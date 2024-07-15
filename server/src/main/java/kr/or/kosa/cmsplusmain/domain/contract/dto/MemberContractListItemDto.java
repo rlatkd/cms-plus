@@ -1,12 +1,9 @@
 package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import lombok.Builder;
 import lombok.Getter;
 

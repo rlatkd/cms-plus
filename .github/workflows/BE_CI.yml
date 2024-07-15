@@ -33,6 +33,9 @@ jobs:
       - name: Grant Permission
         run: chmod +x server/gradlew
 
+      - name: Inject secure
+        run: echo "${{ secrets.BE_SECURE_DEV }}" > server/src/main/resources/secure.properties
+
       - name: Gradle Build
         run: |
           cd server

@@ -18,7 +18,6 @@ import kr.or.kosa.cmsplusmain.domain.product.validator.ProductName;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,6 @@ import lombok.Setter;
 
 @Comment("계약 - 상품 중계테이블. 상품 변동에 영향을 받지 않는다.")
 @Entity
-@Table(name = "contract_product")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContractProduct extends BaseEntity {
@@ -47,8 +45,8 @@ public class ContractProduct extends BaseEntity {
 	private Product product;
 
 	@Comment("계약_상품 이름")
-	@Column(name = "contract_product_name")
-	@ProductName
+	@Column(name = "contract_product_name", nullable = false, updatable = false)
+	@ProductName @NotNull
 	private String name;
 
 	@Comment("계약_상품 가격")
@@ -62,8 +60,10 @@ public class ContractProduct extends BaseEntity {
 	private int quantity;
 
 	@Builder
-	public ContractProduct(Product product, int price, int quantity) {
+	public ContractProduct(Contract contract, Product product, String name, int price, int quantity) {
+		this.contract = contract;
 		this.product = product;
+		this.name = name;
 		this.price = price;
 		this.quantity = quantity;
 	}

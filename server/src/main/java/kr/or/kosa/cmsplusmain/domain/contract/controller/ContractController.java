@@ -63,6 +63,8 @@ public class ContractController {
 	 * 계약 상세 페이지에서 상품 수정 버튼 및 결제 수정 버튼 클릭 후
 	 * 나오는 수정 화면에서 호출해서 정보를 수정한다.
 	 * 즉, 계약과 결제 수정에 사용된다.
+	 *
+	 * TODO 생성 -> 수정으로 수정하기
 	 * */
 	@PutMapping("/{contractId}")
 	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractCreateReq contractCreateReq) {

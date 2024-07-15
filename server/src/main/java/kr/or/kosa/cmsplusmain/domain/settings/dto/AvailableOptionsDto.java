@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.settings.dto;
 
+import lombok.Data;
+import lombok.Getter;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
 import lombok.Getter;

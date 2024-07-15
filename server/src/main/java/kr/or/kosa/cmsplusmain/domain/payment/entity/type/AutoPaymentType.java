@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.payment.entity.type;
 
 import java.time.LocalDateTime;
 
+import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
 import io.micrometer.common.util.StringUtils;
@@ -32,6 +33,15 @@ public class AutoPaymentType extends PaymentTypeInfo {
 	@Comment("간편동의 마지막 요청시간")
 	@Column(name = "payment_simpconsent_request_date")
 	private LocalDateTime simpleConsentReqDateTime;
+
+	//TODO
+	// 기본생성자 어노테니션 쓴 entity에서 builder 패턴을 적용해도 괜찮은가
+
+	@Builder
+	public AutoPaymentType(String consentImgUrl, LocalDateTime simpleConsentReqDateTime) {
+		this.consentImgUrl = consentImgUrl;
+		this.simpleConsentReqDateTime = simpleConsentReqDateTime;
+	}
 
 	/*
 	 * 동의상태

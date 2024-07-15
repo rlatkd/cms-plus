@@ -2,7 +2,7 @@ spring:
   application:
     name: cmsplus-main
   jwt:
-    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdba
+    secret: ${JWT_SECRET}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/cmsplusmain?serverTimezone=UTC&characterEncoding=UTF-8
@@ -35,18 +35,12 @@ logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
 
-
-coolsms:
-  api-key: NCS6FSXZJNQ2W4VB
-  api-secret: PW7L7IUM5REUVNL0HYKANDIL7XSLBRHK
-  sender-number: 01026270378
-
 cloud:
   aws:
     s3:
-      bucket: cmssignawsbucket
+      bucket: ${S3_BUCKET}
     stack.auto: false
     region.static: ap-northeast-2
     credentials:
-      accessKey: AKIA5FTZDY5XEBI6PM6M
-      secretKey: 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
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}

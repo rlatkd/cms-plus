@@ -35,38 +35,38 @@ VALUES
     (0, NOW(), NULL, NOW(), 30);
 
 -- Sample data for cmsplusmain.card_payment_method
-INSERT INTO cmsplusmain.card_payment_method (payment_method_info_id, card_info_number, card_info_owner, card_info_owner_birth)
+INSERT INTO cmsplusmain.card_payment_method (payment_method_info_id, card_info_number, card_info_owner, card_info_owner_birth, card_info_validity_month, card_info_validity_year)
 VALUES
-    (1, '1234567890123456', '김철수', '1990-01-01'),
-    (2, '2345678901234567', '이영희', '1991-02-02'),
-    (3, '3456789012345678', '박민수', '1992-03-03'),
-    (4, '4567890123456789', '최지우', '1993-04-04'),
-    (5, '5678901234567890', '홍길동', '1994-05-05'),
-    (6, '6789012345678901', '유재석', '1995-06-06'),
-    (7, '7890123456789012', '강호동', '1996-07-07'),
-    (8, '8901234567890123', '신동엽', '1997-08-08'),
-    (9, '9012345678901234', '김태호', '1998-09-09'),
-    (10, '0123456789012345', '김건모', '1999-10-10'),
-    (11, '1234567890123456', '이효리', '2000-11-11'),
-    (12, '2345678901234567', '비', '2001-12-12'),
-    (13, '3456789012345678', '김종국', '2002-01-01'),
-    (14, '4567890123456789', '박명수', '2003-02-02'),
-    (15, '5678901234567890', '정준하', '2004-03-03'),
-    (16, '6789012345678901', '하하', '2005-04-04'),
-    (17, '7890123456789012', '서장훈', '2006-05-05'),
-    (18, '8901234567890123', '이상민', '2007-06-06'),
-    (19, '9012345678901234', '박수홍', '2008-07-07'),
-    (20, '0123456789012345', '이휘재', '2009-08-08'),
-    (21, '1234567890123456', '김숙', '2010-09-09'),
-    (22, '2345678901234567', '송은이', '2011-10-10'),
-    (23, '3456789012345678', '김신영', '2012-11-11'),
-    (24, '4567890123456789', '안영미', '2013-12-12'),
-    (25, '5678901234567890', '유민상', '2014-01-01'),
-    (26, '6789012345678901', '김준현', '2015-02-02'),
-    (27, '7890123456789012', '김지민', '2016-03-03'),
-    (28, '8901234567890123', '김영철', '2017-04-04'),
-    (29, '9012345678901234', '장도연', '2018-05-05'),
-    (30, '0123456789012345', '홍현희', '2019-06-06');
+    (1, '1234567890123456', '김철수', '1990-01-01', 1, 2027),
+    (2, '2345678901234567', '이영희', '1991-02-02', 1, 2027),
+    (3, '3456789012345678', '박민수', '1992-03-03', 1, 2027),
+    (4, '4567890123456789', '최지우', '1993-04-04', 1, 2027),
+    (5, '5678901234567890', '홍길동', '1994-05-05', 1, 2027),
+    (6, '6789012345678901', '유재석', '1995-06-06', 1, 2027),
+    (7, '7890123456789012', '강호동', '1996-07-07', 1, 2027),
+    (8, '8901234567890123', '신동엽', '1997-08-08', 1, 2027),
+    (9, '9012345678901234', '김태호', '1998-09-09', 1, 2027),
+    (10, '0123456789012345', '김건모', '1999-10-10', 1, 2027),
+    (11, '1234567890123456', '이효리', '2000-11-11', 1, 2027),
+    (12, '2345678901234567', '비', '2001-12-12', 1, 2027),
+    (13, '3456789012345678', '김종국', '2002-01-01', 1, 2027),
+    (14, '4567890123456789', '박명수', '2003-02-02', 1, 2027),
+    (15, '5678901234567890', '정준하', '2004-03-03', 1, 2027),
+    (16, '6789012345678901', '하하', '2005-04-04', 1, 2027),
+    (17, '7890123456789012', '서장훈', '2006-05-05', 1, 2027),
+    (18, '8901234567890123', '이상민', '2007-06-06', 1, 2027),
+    (19, '9012345678901234', '박수홍', '2008-07-07', 1, 2027),
+    (20, '0123456789012345', '이휘재', '2009-08-08', 1, 2027),
+    (21, '1234567890123456', '김숙', '2010-09-09', 1, 2027),
+    (22, '2345678901234567', '송은이', '2011-10-10', 1, 2027),
+    (23, '3456789012345678', '김신영', '2012-11-11', 1, 2027),
+    (24, '4567890123456789', '안영미', '2013-12-12', 1, 2027),
+    (25, '5678901234567890', '유민상', '2014-01-01', 1, 2027),
+    (26, '6789012345678901', '김준현', '2015-02-02', 1, 2027),
+    (27, '7890123456789012', '김지민', '2016-03-03', 1, 2027),
+    (28, '8901234567890123', '김영철', '2017-04-04', 1, 2027),
+    (29, '9012345678901234', '장도연', '2018-05-05', 1, 2027),
+    (30, '0123456789012345', '홍현희', '2019-06-06', 1, 2027);
 
 -- Sample data for cmsplusmain.cms_payment_method
 INSERT INTO cmsplusmain.cms_payment_method (payment_method_info_id, cms_account_number, cms_account_owner, cms_account_bank, cms_owner_birth)
@@ -101,40 +101,6 @@ VALUES
     (28, '2929292929292', '박해준', '004', '2012-06-06'),
     (29, '3030303030303', '박정민', '088', '2013-07-07'),
     (30, '3131313131313', '양세종', '004', '2014-08-08');
-
--- Sample data for cmsplusmain.payment_method_info_seq
-INSERT INTO cmsplusmain.payment_method_info_seq (next_val)
-VALUES
-    (31),
-    (32),
-    (33),
-    (34),
-    (35),
-    (36),
-    (37),
-    (38),
-    (39),
-    (40),
-    (41),
-    (42),
-    (43),
-    (44),
-    (45),
-    (46),
-    (47),
-    (48),
-    (49),
-    (50),
-    (51),
-    (52),
-    (53),
-    (54),
-    (55),
-    (56),
-    (57),
-    (58),
-    (59),
-    (60);
 
 -- Sample data for cmsplusmain.payment_type_info
 INSERT INTO cmsplusmain.payment_type_info (deleted, created_datetime, deleted_datetime, modified_datetime, payment_type_info_id)
@@ -306,41 +272,6 @@ VALUES
     (0, NOW(), NULL, NOW(), 29, 29, 29, NULL, 'BUYER'),
     (0, NOW(), NULL, NOW(), 30, 30, 30, NULL, 'VIRTUAL');
 
-
--- Sample data for cmsplusmain.payment_type_info_seq
-INSERT INTO cmsplusmain.payment_type_info_seq (next_val)
-VALUES
-    (31),
-    (32),
-    (33),
-    (34),
-    (35),
-    (36),
-    (37),
-    (38),
-    (39),
-    (40),
-    (41),
-    (42),
-    (43),
-    (44),
-    (45),
-    (46),
-    (47),
-    (48),
-    (49),
-    (50),
-    (51),
-    (52),
-    (53),
-    (54),
-    (55),
-    (56),
-    (57),
-    (58),
-    (59),
-    (60);
-
 -- Sample data for cmsplusmain.setting_simpconsent
 INSERT INTO cmsplusmain.setting_simpconsent (deleted, created_datetime, deleted_datetime, modified_datetime, setting_simpconsent_id)
 VALUES
@@ -444,38 +375,38 @@ VALUES
     (0, NOW(), NULL, NOW(), 30, 30, '0212345707', '01012345707', 'user30', 'Dept30', '홍현희', 'user30@example.com', 'password30', 'ROLE_VENDOR');
 
 -- Sample data for cmsplusmain.member
-INSERT INTO cmsplusmain.member (deleted, member_auto_billing, member_auto_invoice_send, member_enroll_date, created_datetime, deleted_datetime, member_id, modified_datetime, vendor_id, member_home_phone, member_phone, member_address, member_name, member_email, member_memo, member_invoice_send_method, member_status)
+INSERT INTO cmsplusmain.member (deleted, member_auto_billing, member_auto_invoice_send, member_enroll_date, created_datetime, deleted_datetime, member_id, modified_datetime, vendor_id, member_home_phone, member_phone, zipcode, address, address_detail, member_name, member_email, member_memo, member_invoice_send_method, member_status)
 VALUES
-    (0, 1, 1, '2020-01-01', NOW(), NULL, 1, NOW(), 1, '0212345678', '01012345678', '서울시 강남구', '박준형', 'member1@example.com', 'memo1', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-02', NOW(), NULL, 2, NOW(), 1, '0212345679', '01012345679', '서울시 강북구', '최수현', 'member2@example.com', 'memo2', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-03', NOW(), NULL, 3, NOW(), 1, '0212345680', '01012345680', '서울시 서초구', '정우성', 'member3@example.com', 'memo3', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-04', NOW(), NULL, 4, NOW(), 1, '0212345681', '01012345681', '서울시 송파구', '이정재', 'member4@example.com', 'memo4', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-05', NOW(), NULL, 5, NOW(), 1, '0212345682', '01012345682', '서울시 강동구', '박보검', 'member5@example.com', 'memo5', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-06', NOW(), NULL, 6, NOW(), 1, '0212345683', '01012345683', '서울시 중구', '송중기', 'member6@example.com', 'memo6', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-07', NOW(), NULL, 7, NOW(), 1, '0212345684', '01012345684', '서울시 종로구', '강동원', 'member7@example.com', 'memo7', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-08', NOW(), NULL, 8, NOW(), 1, '0212345685', '01012345685', '서울시 용산구', '원빈', 'member8@example.com', 'memo8', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-09', NOW(), NULL, 9, NOW(), 1, '0212345686', '01012345686', '서울시 마포구', '현빈', 'member9@example.com', 'memo9', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-10', NOW(), NULL, 10, NOW(), 1, '0212345687', '01012345687', '서울시 은평구', '이민호', 'member10@example.com', 'memo10', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-11', NOW(), NULL, 11, NOW(), 1, '0212345688', '01012345688', '서울시 서대문구', '김수현', 'member11@example.com', 'memo11', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-12', NOW(), NULL, 12, NOW(), 1, '0212345689', '01012345689', '서울시 동작구', '주원', 'member12@example.com', 'memo12', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-13', NOW(), NULL, 13, NOW(), 1, '0212345690', '01012345690', '서울시 관악구', '차은우', 'member13@example.com', 'memo13', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-14', NOW(), NULL, 14, NOW(), 1, '0212345691', '01012345691', '서울시 금천구', '류준열', 'member14@example.com', 'memo14', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-15', NOW(), NULL, 15, NOW(), 1, '0212345692', '01012345692', '서울시 양천구', '유아인', 'member15@example.com', 'memo15', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-16', NOW(), NULL, 16, NOW(), 1, '0212345693', '01012345693', '서울시 구로구', '이동욱', 'member16@example.com', 'memo16', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-17', NOW(), NULL, 17, NOW(), 1, '0212345694', '01012345694', '서울시 영등포구', '김우빈', 'member17@example.com', 'memo17', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-18', NOW(), NULL, 18, NOW(), 1, '0212345695', '01012345695', '서울시 강서구', '정해인', 'member18@example.com', 'memo18', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-19', NOW(), NULL, 19, NOW(), 1, '0212345696', '01012345696', '서울시 노원구', '송강호', 'member19@example.com', 'memo19', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-20', NOW(), NULL, 20, NOW(), 1, '0212345697', '01012345697', '서울시 도봉구', '정우', 'member20@example.com', 'memo20', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-21', NOW(), NULL, 21, NOW(), 1, '0212345698', '01012345698', '서울시 성북구', '김강우', 'member21@example.com', 'memo21', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-22', NOW(), NULL, 22, NOW(), 1, '0212345699', '01012345699', '서울시 광진구', '조인성', 'member22@example.com', 'memo22', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-23', NOW(), NULL, 23, NOW(), 1, '0212345700', '01012345700', '서울시 중랑구', '이종석', 'member23@example.com', 'memo23', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-24', NOW(), NULL, 24, NOW(), 1, '0212345701', '01012345701', '서울시 성동구', '서강준', 'member24@example.com', 'memo24', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-25', NOW(), NULL, 25, NOW(), 1, '0212345702', '01012345702', '서울시 강북구', '이동건', 'member25@example.com', 'memo25', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-26', NOW(), NULL, 26, NOW(), 1, '0212345703', '01012345703', '서울시 은평구', '주지훈', 'member26@example.com', 'memo26', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-27', NOW(), NULL, 27, NOW(), 1, '0212345704', '01012345704', '서울시 종로구', '김희원', 'member27@example.com', 'memo27', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-28', NOW(), NULL, 28, NOW(), 1, '0212345705', '01012345705', '서울시 용산구', '박해준', 'member28@example.com', 'memo28', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-29', NOW(), NULL, 29, NOW(), 1, '0212345706', '01012345706', '서울시 중구', '박정민', 'member29@example.com', 'memo29', 'EMAIL', 'ENABLED'),
-    (0, 1, 1, '2020-01-30', NOW(), NULL, 30, NOW(), 1, '0212345707', '01012345707', '서울시 동대문구', '양세종', 'member30@example.com', 'memo30', 'SMS', 'DISABLED');
+    (0, 1, 1, '2020-01-02', NOW(), NULL, 2, NOW(), 1, '0212345679', '01012345679', '12345', '서울시 강남구', '상세주소1', '최수현', 'member2@example.com', 'memo2', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-01', NOW(), NULL, 1, NOW(), 1, '0212345678', '01012345678', '12346', '서울시 강북구', '상세주소2', '박준형', 'member1@example.com', 'memo1', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-03', NOW(), NULL, 3, NOW(), 1, '0212345680', '01012345680', '12347', '서울시 서초구', '상세주소3', '정우성', 'member3@example.com', 'memo3', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-04', NOW(), NULL, 4, NOW(), 1, '0212345681', '01012345681', '12348', '서울시 송파구', '상세주소4', '이정재', 'member4@example.com', 'memo4', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-05', NOW(), NULL, 5, NOW(), 1, '0212345682', '01012345682', '12349', '서울시 강동구', '상세주소5', '박보검', 'member5@example.com', 'memo5', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-06', NOW(), NULL, 6, NOW(), 1, '0212345683', '01012345683', '12350', '서울시 중구', '상세주소6', '송중기', 'member6@example.com', 'memo6', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-07', NOW(), NULL, 7, NOW(), 1, '0212345684', '01012345684', '12351', '서울시 종로구', '상세주소7', '강동원', 'member7@example.com', 'memo7', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-08', NOW(), NULL, 8, NOW(), 1, '0212345685', '01012345685', '12352', '서울시 용산구', '상세주소8', '원빈', 'member8@example.com', 'memo8', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-09', NOW(), NULL, 9, NOW(), 1, '0212345686', '01012345686', '12353', '서울시 마포구', '상세주소9', '현빈', 'member9@example.com', 'memo9', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-10', NOW(), NULL, 10, NOW(), 1, '0212345687', '01012345687', '12354', '서울시 은평구', '상세주소10', '이민호', 'member10@example.com', 'memo10', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-11', NOW(), NULL, 11, NOW(), 1, '0212345688', '01012345688', '12355', '서울시 서대문구', '상세주소11', '김수현', 'member11@example.com', 'memo11', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-12', NOW(), NULL, 12, NOW(), 1, '0212345689', '01012345689', '12356', '서울시 동작구', '상세주소12', '주원', 'member12@example.com', 'memo12', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-13', NOW(), NULL, 13, NOW(), 1, '0212345690', '01012345690', '12357', '서울시 관악구', '상세주소13', '차은우', 'member13@example.com', 'memo13', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-14', NOW(), NULL, 14, NOW(), 1, '0212345691', '01012345691', '12358', '서울시 금천구', '상세주소14', '류준열', 'member14@example.com', 'memo14', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-15', NOW(), NULL, 15, NOW(), 1, '0212345692', '01012345692', '12359', '서울시 양천구', '상세주소15', '유아인', 'member15@example.com', 'memo15', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-16', NOW(), NULL, 16, NOW(), 1, '0212345693', '01012345693', '12360', '서울시 구로구', '상세주소16', '이동욱', 'member16@example.com', 'memo16', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-17', NOW(), NULL, 17, NOW(), 1, '0212345694', '01012345694', '12361', '서울시 영등포구', '상세주소17', '김우빈', 'member17@example.com', 'memo17', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-18', NOW(), NULL, 18, NOW(), 1, '0212345695', '01012345695', '12362', '서울시 강서구', '상세주소18', '정해인', 'member18@example.com', 'memo18', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-19', NOW(), NULL, 19, NOW(), 1, '0212345696', '01012345696', '12363', '서울시 노원구', '상세주소19', '송강호', 'member19@example.com', 'memo19', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-20', NOW(), NULL, 20, NOW(), 1, '0212345697', '01012345697', '12364', '서울시 도봉구', '상세주소20', '정우', 'member20@example.com', 'memo20', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-21', NOW(), NULL, 21, NOW(), 1, '0212345698', '01012345698', '12365', '서울시 성북구', '상세주소21', '김강우', 'member21@example.com', 'memo21', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-22', NOW(), NULL, 22, NOW(), 1, '0212345699', '01012345699', '12366', '서울시 광진구', '상세주소22', '조인성', 'member22@example.com', 'memo22', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-23', NOW(), NULL, 23, NOW(), 1, '0212345700', '01012345700', '12367', '서울시 중랑구', '상세주소23', '이종석', 'member23@example.com', 'memo23', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-24', NOW(), NULL, 24, NOW(), 1, '0212345701', '01012345701', '12368', '서울시 성동구', '상세주소24', '서강준', 'member24@example.com', 'memo24', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-25', NOW(), NULL, 25, NOW(), 1, '0212345702', '01012345702', '12369', '서울시 강북구', '상세주소25', '이동건', 'member25@example.com', 'memo25', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-26', NOW(), NULL, 26, NOW(), 1, '0212345703', '01012345703', '12370', '서울시 은평구', '상세주소26', '주지훈', 'member26@example.com', 'memo26', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-27', NOW(), NULL, 27, NOW(), 1, '0212345704', '01012345704', '12371', '서울시 종로구', '상세주소27', '김희원', 'member27@example.com', 'memo27', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-28', NOW(), NULL, 28, NOW(), 1, '0212345705', '01012345705', '12372', '서울시 용산구', '상세주소28', '박해준', 'member28@example.com', 'memo28', 'SMS', 'DISABLED'),
+    (0, 1, 1, '2020-01-29', NOW(), NULL, 29, NOW(), 1, '0212345706', '01012345706', '12373', '서울시 중구', '상세주소29', '박정민', 'member29@example.com', 'memo29', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-30', NOW(), NULL, 30, NOW(), 1, '0212345707', '01012345707', '12374', '서울시 동대문구', '상세주소30', '양세종', 'member30@example.com', 'memo30', 'SMS', 'DISABLED');
 
 -- Sample data for cmsplusmain.contract
 INSERT INTO cmsplusmain.contract (contract_day, contract_end_date, contract_start_date, deleted, contract_id, created_datetime, deleted_datetime, member_id, modified_datetime, payment_id, vendor_id, contract_name)
