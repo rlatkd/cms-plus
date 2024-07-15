@@ -4,7 +4,9 @@ import java.util.regex.Pattern;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AccountNumberValidator implements ConstraintValidator<AccountNumber, String> {
 
 	private static final Pattern ACCOUNT_NUMBER_PATTERN = Pattern.compile(

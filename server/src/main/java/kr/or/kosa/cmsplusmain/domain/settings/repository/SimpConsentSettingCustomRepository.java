@@ -10,6 +10,7 @@ import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import org.springframework.stereotype.Repository;
 
 
+
 @Repository
 public class SimpConsentSettingCustomRepository extends BaseCustomRepository<SimpConsentSetting> {
 
