@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: cmsplus-main
@@ -30,6 +33,30 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+
+
+#  kafka:
+#    producer:
+#      bootstrap-servers: localhost:9092
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+setting:
+  kafka:
+    bootstrapServers: host.docker.internal:29092, host.docker.internal:29093, host.docker.internal:29094 # 카프카 브로커 서버 주소
+    topic1: sms-topic # 카프카 토픽
+    partition: 3 # 카프카 파티션 갯수
+    replication: 3 # 카프카 레플리카 갯수
+
+#  config:
+#    import: kafka.yml
+#  kafka:
+#    producer:
+#      bootstrap-servers: kafka:9092
+#      acks: all
+#      # acks=0: 가장 빠름, 메시지 손실 가능성 큼
+#      # acks=1: 조금 느림, 파티션의 leader가 메시지를 받았는지 확인, 메시지 손실 가능성 적음
 
 logging:
   level:
