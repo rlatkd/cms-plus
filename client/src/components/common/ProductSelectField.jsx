@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Checkbox from '@/components/common/CheckBox';
+import Checkbox from '@/components/common/inputs/CheckBox';
 
 const ProductSelectField = ({ label, required, options, onChange, selectedOptions, ...props }) => {
   const [isOpen, setIsOpen] = useState(false);

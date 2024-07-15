@@ -1,4 +1,4 @@
-import Input from '@/components/common/Input';
+import Input from '@/components/common/inputs/Input';
 
 const AccountInfo = () => {
   return (

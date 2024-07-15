@@ -1,7 +1,7 @@
 import SimpConsentQrUrlModal from '@/components/vendor/modal/SimpConsentQrUrlModal';
 import { useState } from 'react';
 import ProductSelectField from '@/components/common/ProductSelectField';
-import Checkbox from '@/components/common/CheckBox';
+import Checkbox from '@/components/common/inputs/CheckBox';
 
 const SettingSimpConsentPage = () => {
   const [isShowModal, setIsShowModal] = useState(false);
@@ -74,6 +74,7 @@ const SettingSimpConsentPage = () => {
                   ))}
                 </div>
               </div>
+              []
             </div>
             <hr className='my-6 border-gray-400' />
 

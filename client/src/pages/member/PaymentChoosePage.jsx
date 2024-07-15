@@ -1,8 +1,8 @@
-import NextButton from '@/components/common/StatusNextButton';
-import PreviousButton from '@/components/common/StatusPreButton';
 import { useStatusStore } from '@/stores/useStatusStore';
 import useStatusStepper from '@/hooks/useStatusStepper';
 import { useState } from 'react';
+import PreviousButton from '@/components/common/buttons/StatusPreButton';
+import NextButton from '@/components/common/buttons/StatusNextButton';
 
 const PaymentChoosePage = () => {
   const start = 0;
