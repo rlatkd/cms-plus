@@ -46,6 +46,9 @@ jobs:
         run: npm install
         working-directory: client
 
+      - name: Inject env
+        run: echo "${{ secrets.FE_ENV_DEV }}" > client/.env
+
       - name: Npm Build
         run: npm run build
         working-directory: client
