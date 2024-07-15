@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class HttpUrlValidator implements ConstraintValidator<HttpUrl, String> {
 
 	private static final Pattern USERNAME_PATTERN = Pattern.compile(
-		"^\\d{2,3}-?\\d{3,4}-?\\d{4}$"
+	"^(https?|ftp)://[^\s/$.?#].[^\s]*$"
 	);
 
 	@Override

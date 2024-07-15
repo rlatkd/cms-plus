@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.member.controller;
 
+import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
@@ -54,8 +55,11 @@ public class MemberController {
      * 회원 목록 조회
      * */
     @PostMapping("/members")
-    public void createMember(@RequestBody MemberCreateReq memberCreateReq) {
+    public void createMember(@RequestBody @Valid MemberCreateReq memberCreateReq) {
         Long vendorId = 1L;
-        memberService.createMember(vendorId);
+        memberService.createMember(vendorId, memberCreateReq);
     }
+
+
+
 }

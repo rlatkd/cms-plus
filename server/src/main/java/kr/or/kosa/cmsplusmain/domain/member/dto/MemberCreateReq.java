@@ -7,11 +7,17 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.Memo;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.member.entity.MemberStatus;
 import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
+@Getter
 public class MemberCreateReq {
 
     @NotNull
@@ -32,9 +38,7 @@ public class MemberCreateReq {
     @Email
     private String memberEmail; // 회원 이메일
 
-    //TODO
-    //은아가 정의한거 확인해보기
-    private String memberAddress; // 회원 주소
+    private Address memberAddress; // 회원 주소
 
     @Memo
     private String memberMemo; // 회원 메모
@@ -51,4 +55,21 @@ public class MemberCreateReq {
     private PaymentCreateReq paymentCreateReq;   // 결제정보
 
     private ContractCreateReq contractCreateReq; // 계약정보
+
+    public Member toEntity(Long vendorId) {
+        return Member.builder()
+                .vendor(Vendor.of(vendorId))
+                .status(MemberStatus.DISABLED)
+                .name(memberName)
+                .email(memberEmail)
+                .phone(memberPhone)
+                .homePhone(memberHomePhone)
+                .address(memberAddress)
+                .memo(memberMemo)
+                .enrollDate(memberEnrollDate)
+                .invoiceSendMethod(invoiceSendMethod)
+                .autoInvoiceSend(autoInvoiceSend)
+                .autoBilling(autoBilling)
+                .build();
+    }
 }

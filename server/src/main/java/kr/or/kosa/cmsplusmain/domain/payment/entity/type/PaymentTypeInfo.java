@@ -1,13 +1,8 @@
 package kr.or.kosa.cmsplusmain.domain.payment.entity.type;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.Comment;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import lombok.AccessLevel;
@@ -21,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class PaymentTypeInfo extends BaseEntity {
 
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "payment_type_info_id")
 	private Long id;
 }

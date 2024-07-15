@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.payment.dto.method;
 import java.time.LocalDate;
 
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Bank;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,5 +22,14 @@ public class CMSMethodReq extends PaymentMethodInfoReq{
         this.accountNumber = accountNumber;
         this.accountOwner = accountOwner;
         this.accountOwnerBirth = accountOwnerBirth;
+    }
+
+    public CmsPaymentMethod toEntity () {
+        return CmsPaymentMethod.builder()
+                .bank(this.bank)
+                .accountNumber(this.accountNumber)
+                .accountOwner(this.accountOwner)
+                .accountOwnerBirth(this.accountOwnerBirth)
+                .build();
     }
 }
