@@ -35,12 +35,6 @@ logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
 
-
-coolsms:
-  api-key: NCS6FSXZJNQ2W4VB
-  api-secret: PW7L7IUM5REUVNL0HYKANDIL7XSLBRHK
-  sender-number: 01026270378
-
 cloud:
   aws:
     s3:

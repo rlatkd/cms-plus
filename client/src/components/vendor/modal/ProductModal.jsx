@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import BaseModal from '@/components/common/BaseModal';
-import { createProduct } from '@/apis/product';
+import { createProduct, deleteProduct, updateProduct } from '@/apis/product';
 import InputWeb from '@/components/common/inputs/InputWeb';
 
 const ProductModal = ({
@@ -15,29 +15,6 @@ const ProductModal = ({
   const [productMemo, setProductMemo] = useState('');
   const [contractNumber, setContractNumber] = useState('');
 
-  const handleCreateProduct = async () => {
-    const productData = {
-      productName,
-      productPrice,
-      productMemo,
-    };
-
-    try {
-      await createProduct(productData);
-      // alert('상품을 등록했습니다.');
-      setIsShowModal(false);
-      refreshProductList(); // 등록 후 상품 목록 리렌더링
-    } catch (err) {
-      alert('상품 등록에 실패했습니다.');
-      console.error('axiosProductDetail => ', err.response.data);
-    }
-  };
-
-  // 공백입력 막기
-  const handleKeyDown = e => {
-    e.key === ' ' && e.preventDefault();
-  };
-
   // 모달이 열릴 때마다 초기 상태 설정
   useEffect(() => {
     if (modalTitle === '상품 등록') {
@@ -51,10 +28,55 @@ const ProductModal = ({
     }
   }, [isShowModal, modalTitle, productDetailData]);
 
-  const handleDelete = () => {
-    const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
-    if (isConfirmed) {
+  // 상품 등록 이벤트핸들러
+  const handleCreateProduct = async () => {
+    const productData = {
+      productName,
+      productPrice,
+      productMemo,
+    };
+
+    try {
+      await createProduct(productData);
+      alert('상품을 등록했습니다.');
+      setIsShowModal(false); // 상품 등록 후 모달 닫기
+      refreshProductList(); // 등록 후 상품 목록 리렌더링
+    } catch (err) {
+      alert('상품 등록에 실패했습니다.');
+      console.error('axiosProductCreate => ', err.response.data);
+    }
+  };
+
+  // 상품 수정 이벤트핸들러
+  const handleUpdateProduct = async productId => {
+    const productData = {
+      productPrice,
+      productMemo,
+    };
+
+    try {
+      await updateProduct(productDetailData.productId, productData);
+      alert('상품을 수정했습니다.');
       setIsShowModal(false);
+      refreshProductList();
+    } catch (err) {
+      alert('상품 수정에 실패했습니다.');
+      console.error('axiosProductUpdate => ', err.response.data);
+    }
+  };
+
+  const handleDeleteProduct = async () => {
+    const isConfirmed = window.confirm('정말 삭제하시겠습니까?'); // 고도화 필요
+    if (isConfirmed) {
+      try {
+        await deleteProduct(productDetailData.productId);
+        alert('상품을 삭제했습니다.');
+        setIsShowModal(false);
+        refreshProductList();
+      } catch (err) {
+        alert('상품 삭제에 실패했습니다.');
+        console.error('axiosProductDelete => ', err.response.data);
+      }
     }
   };
 
@@ -155,10 +177,12 @@ const ProductModal = ({
               </button>
               <button
                 className='bg-mint text-white px-7 py-2 rounded-md hover:bg-mint_hover h-10 w-28'
-                onClick={handleDelete}>
+                onClick={handleDeleteProduct}>
                 <span>삭제</span>
               </button>
-              <button className='bg-mint text-white px-10 py-2 rounded-md hover:bg-mint_hover flex flex-row items-center w-36 justify-center'>
+              <button
+                className='bg-mint text-white px-10 py-2 rounded-md hover:bg-mint_hover flex flex-row items-center w-36 justify-center'
+                onClick={handleUpdateProduct}>
                 <span>수정</span>
               </button>
             </>

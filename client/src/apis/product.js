@@ -49,7 +49,7 @@ export const updateProduct = async (productId, productData) => {
 };
 
 // 상품 삭제
-export const DeleteProduct = async productId => {
+export const deleteProduct = async productId => {
   try {
     const res = await publicAxios.delete(`/v1/vendor/product/${productId}`);
     return res;
