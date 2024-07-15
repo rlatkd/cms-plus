@@ -208,7 +208,7 @@ const ProductListPage = () => {
           className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${endPage >= totalPages ? 'invisible' : 'bg-white border border-white'}`}
           onClick={() => handlePageGroupChange('next')}
           disabled={endPage >= totalPages}>
-          {'이후'}&nbsp;&nbsp;&nbsp;{'>'}
+          {'다음'}&nbsp;&nbsp;&nbsp;{'>'}
         </button>
       </div>
     );
