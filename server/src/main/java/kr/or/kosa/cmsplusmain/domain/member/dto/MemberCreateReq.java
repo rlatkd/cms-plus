@@ -6,13 +6,10 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Memo;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
-<<<<<<< HEAD
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
-=======
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.entity.MemberStatus;
->>>>>>> refs/heads/dev
 import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
@@ -57,9 +54,6 @@ public class MemberCreateReq {
 
     private PaymentCreateReq paymentCreateReq;   // 결제정보
 
-<<<<<<< HEAD
-    private ContractCreateReq contractCreateReq; // 계약정보
-=======
     private ContractCreateReq contractCreateReq; // 계약정보
 
     public Member toEntity(Long vendorId) {
@@ -78,5 +72,4 @@ public class MemberCreateReq {
                 .autoBilling(autoBilling)
                 .build();
     }
->>>>>>> refs/heads/dev
 }
