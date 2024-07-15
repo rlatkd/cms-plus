@@ -57,6 +57,24 @@ public class BillingController {
 	}
 
 	/*
+	* 청구 실시간 결제
+	* */
+	@GetMapping("payment/{billingId}")
+	public void payRealtimeBilling(@PathVariable Long billingId) {
+		Long vendorId = 1L;
+		billingService.payBilling(vendorId, billingId);
+	}
+
+	/*
+	* 청구 결제 취소
+	* */
+	@GetMapping("payment/{billingId}/cancel")
+	public void cancelPay(@PathVariable Long billingId) {
+		Long vendorId = 1L;
+		billingService.cancelPayBilling(vendorId, billingId);
+	}
+
+	/*
 	 * 청구목록 조회
 	 * */
 	@GetMapping

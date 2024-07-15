@@ -51,4 +51,19 @@ public class Payment extends BaseEntity {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "payment_method_info_id")
 	private PaymentMethodInfo paymentMethodInfo;
+
+	/*
+	* 실시간 결제 가능 여부
+	* */
+	public boolean canPayRealtime() {
+		return paymentMethod != null && paymentMethod.getCanPayRealtime();
+	}
+
+	/*
+	* 결제 취소 가능 여부
+	* */
+	public boolean canCancel() {
+		return paymentType == PaymentType.BUYER
+			|| paymentMethod.getCanCancel();
+	}
 }

@@ -42,6 +42,8 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 
 	/*
 	 * 정렬 조건 생성
+	 *
+	 * TODO 각자의 레포지토리에서 하는게 좋을듯?
 	 * */
 	protected Optional<OrderSpecifier<?>> buildOrderSpecifier(PageReq pageReq) {
 		if (pageReq == null || !StringUtils.hasText(pageReq.getOrderBy())) {
@@ -92,7 +94,7 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return (order.equals(Order.ASC)) ? path.asc() : path.desc();
 	}
 
-
+	// TODO 각자 레포지토리로 이동
 	protected BooleanExpression productVendorIdEq(Long vendorId) {
 		if (vendorId == null) {
 			return null;

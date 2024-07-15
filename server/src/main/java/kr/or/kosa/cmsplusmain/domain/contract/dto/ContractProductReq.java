@@ -10,15 +10,17 @@ import lombok.Getter;
 
 @Getter
 public class ContractProductReq {
-	@NotNull private Long productId;	// 상품 ID
+	@NotNull
+	private Long productId;				// 상품 ID
 	@ProductPrice @NotNull
 	private Integer price;				// 계약 상품 가격
 	@ProductQuantity @NotNull
 	private Integer quantity;			// 계약 상품 수량
 
-	public ContractProduct toEntity() {
+	public ContractProduct toEntity(String name) {
 		return ContractProduct.builder()
 			.product(Product.of(productId))
+			.name(name)
 			.price(price)
 			.quantity(quantity)
 			.build();

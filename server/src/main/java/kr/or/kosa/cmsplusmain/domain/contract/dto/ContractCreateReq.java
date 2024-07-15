@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.validation.constraints.NotNull;
+import kr.or.kosa.cmsplusmain.domain.base.validator.Day;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
-import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractDay;
 import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -26,14 +26,14 @@ public class ContractCreateReq {
 	@NotNull
 	private LocalDate contractEndDate;					// 계약 종료일
 
-	@ContractDay @NotNull
+	@Day
+	@NotNull
 	private Integer contractDay;						// 계약 약정일
 
 	@NotNull
 	private List<ContractProductReq> contractProducts;	// 계약상품 목록
 
 	public Contract toEntity( Long vendorId, Member member, Payment payment) {
-
 		return Contract.builder()
 				.contractName(contractName)
 				.contractStartDate(contractStartDate)

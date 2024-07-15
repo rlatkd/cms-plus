@@ -25,7 +25,6 @@ import lombok.Setter;
 
 @Comment("계약 - 상품 중계테이블. 상품 변동에 영향을 받지 않는다.")
 @Entity
-@Table(name = "contract_product")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContractProduct extends BaseEntity {
@@ -46,8 +45,8 @@ public class ContractProduct extends BaseEntity {
 	private Product product;
 
 	@Comment("계약_상품 이름")
-	@Column(name = "contract_product_name")
-	@ProductName
+	@Column(name = "contract_product_name", nullable = false, updatable = false)
+	@ProductName @NotNull
 	private String name;
 
 	@Comment("계약_상품 가격")
