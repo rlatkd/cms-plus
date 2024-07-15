@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import jakarta.validation.constraints.NotNull;
@@ -45,9 +46,9 @@ public class ContractCreateReq {
 				.build();
 	}
 
-	public List<ContractProduct> toProductEntities(Contract contract) {
+	public List<ContractProduct> toProductEntities(Contract contract, Map<Long, String> idToName) {
 		return contractProducts.stream()
-				.map(contractProduct -> contractProduct.toEntity(contract))
+				.map(contractProduct -> contractProduct.toEntity(contract, idToName.get(contractProduct.getProductId())))
 				.collect(Collectors.toList());
 	}
 }
