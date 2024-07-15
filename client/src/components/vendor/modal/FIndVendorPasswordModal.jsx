@@ -72,7 +72,7 @@ const FindVendoPasswordModal = ({
                 ${
                   vendorPasswordFormData.phonePassword !== null &&
                   vendorPasswordFormData.phonePassword.length > 0
-                    ? 'bg-mint hover:bg-mint_hover'
+                    ? 'bg-mint hover:bg-mint_hover transition-all duration-200'
                     : 'bg-btn_disa'
                 }  `}>
             인증번호 받기
@@ -88,7 +88,8 @@ const FindVendoPasswordModal = ({
           onKeyDown={handleKeyDown}
         />
         <button
-          className='font-700 bg-mint px-4 py-3  text-white rounded-xl  hover:bg-mint_hover'
+          className='font-700 bg-mint px-4 py-3  text-white rounded-xl  
+                    hover:bg-mint_hover  transition-all duration-200'
           onClick={handleMoveResetPassword}>
           비밀번호 찾기
         </button>

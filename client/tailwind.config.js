@@ -13,6 +13,7 @@ export default {
         ipt_disa: '#F1F1F1', // 입력창 비활성화
         essential: '#FF0000', // 필수정보 별태그
         btn_disa: '#C4C4C4', // 버튼 비활성화
+        negative: '#F14141', // 취소, 실패 버튼
       },
 
       screens: {
@@ -44,6 +45,7 @@ export default {
         'dash-sub': '0px 1px 6px 0px #DADBDC', // 서브 대시보드 그림자
         sidebars: '0 1px 3.5px 0 rgba(218, 219, 220, 1)', // 사이드바 아이콘 그림자
         modal: '0 3px 10px rgba(209, 209, 209, 1)',
+        dialog: '0 0 15px rgba(0, 0, 0, 0.1)', // alert, confirm
       },
 
       fontWeight: {

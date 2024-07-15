@@ -145,7 +145,7 @@ const SignupForm = () => {
               className={`ml-3  w-32 rounded-lg text-white text-sm font-700 h-46
                 ${
                   vendorFormData.username !== null && vendorFormData.username.length > 4
-                    ? 'bg-mint hover:bg-mint_hover'
+                    ? 'bg-mint hover:bg-mint_hover transition-all duration-200 '
                     : 'bg-btn_disa'
                 }  `}
               onClick={handleCheckUsername}>
@@ -244,7 +244,7 @@ const SignupForm = () => {
         </div>
         <button
           className={`px-6 py-3 rounded-lg text-white text-sm font-700 absolute right-6 bottom-8 cursor-pointer
-            ${isSignupBtnActive() ? 'bg-mint hover:bg-mint_hover' : 'bg-btn_disa '}`}
+            ${isSignupBtnActive() ? 'bg-mint hover:bg-mint_hover transition-all duration-200' : 'bg-btn_disa '}`}
           onClick={handleSubmit}>
           아이디 만들기
         </button>
