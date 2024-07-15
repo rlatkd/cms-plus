@@ -1,4 +1,3 @@
-import { getMemberList } from '@/apis/member';
 import { useContext } from 'react';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';

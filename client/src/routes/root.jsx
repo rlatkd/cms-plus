@@ -1,13 +1,10 @@
-import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
-import LazyComponentWrapper from '@/pages/utils/LazyComponentWrapper';
 import vendorRoute from './vendorRoute';
 import memberRoute from './memberRoute';
-
-const Login = lazy(() => import('@/pages/LoginPage')); // 로그인
-const Signup = lazy(() => import('@/pages/SignupPage')); // 회원가입
-const VendorIndex = lazy(() => import('@/pages/vendor/VenIndexPage')); // 고객 중첩 라우팅
-const MemberIndex = lazy(() => import('@/pages/member/MemIndexPage')); // 회원 중첩 라우팅
+import Login from '@/pages/LoginPage'; // 로그인
+import Signup from '@/pages/SignupPage'; // 회원가입
+import VendorIndex from '@/pages/vendor/VenIndexPage'; // 고객 중첩 라우팅
+import MemberIndex from '@/pages/member/MemIndexPage'; // 회원 중첩 라우팅
 
 const root = createBrowserRouter([
   {
@@ -16,20 +13,20 @@ const root = createBrowserRouter([
   },
   {
     path: 'login',
-    element: <LazyComponentWrapper component={Login} />,
+    element: <Login />,
   },
   {
     path: 'signup',
-    element: <LazyComponentWrapper component={Signup} />,
+    element: <Signup />,
   },
   {
     path: 'vendor',
-    element: <LazyComponentWrapper component={VendorIndex} />,
+    element: <VendorIndex />,
     children: vendorRoute(),
   },
   {
     path: 'member',
-    element: <LazyComponentWrapper component={MemberIndex} />,
+    element: <MemberIndex />,
     children: memberRoute(),
   },
 ]);
