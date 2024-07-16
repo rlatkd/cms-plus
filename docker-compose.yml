@@ -46,8 +46,6 @@ services:
       #카프카 토픽 레플리카 갯수
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-      #카프카 토픽이름/파티션 수/레플리카 수
-      #KAFKA_CREATE_TOPICS: "kafka-elk:1:1"
     ports:
       - 9092:9092
     volumes:
@@ -57,7 +55,7 @@ services:
     restart: unless-stopped
   
 
-
+######클러스터링 용 예시 지우지 마세요######
 
   # zookeeper:
   #   container_name: zookeeper

@@ -20,11 +20,11 @@ public class MessagingController {
 
     private final MessagingService messagingService;
 
-    @PostMapping("/sms")
-    public String sendSms(@RequestBody List<MessageDto> messages) {
-        messagingService.sendSms(messages);
-        return "[sms 전송 성공]";
-    }
+//    @PostMapping("/sms")
+//    public String sendSms(@RequestBody List<MessageDto> messages) {
+//        messagingService.sendSms(messages);
+//        return "[sms 전송 성공]";
+//    }
 
     @PostMapping("/email")
     public String sendEmail(@RequestBody MessageDto message) {

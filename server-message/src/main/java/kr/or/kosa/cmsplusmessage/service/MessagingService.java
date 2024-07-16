@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
 import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.MultipleDetailMessageSentResponse;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,19 +47,23 @@ public class MessagingService {
     }
 
     // 컨트롤러에서 호출할 메서드
-    public void sendSms(List<MessageDto> messages) {
-        ArrayList<Message> messageList = new ArrayList<>();
+//    public void sendSms(List<MessageDto> messages) {
+//        ArrayList<Message> messageList = new ArrayList<>();
+//
+//        for (MessageDto messageDto : messages) {
+//            Message message = new Message();
+//            message.setFrom(smsPhone); // 발신번호(내 번호)
+//            message.setTo(messageDto.getPhoneNumber()); // 수신번호
+//            message.setText(messageDto.getText()); // 수신내용
+//            messageList.add(message);
+//        }
+//
+//        sendMany(messageList);
+//    }
 
-        for (MessageDto messageDto : messages) {
-            Message message = new Message();
-            message.setFrom(smsPhone); // 발신번호(내 번호)
-            message.setTo(messageDto.getPhoneNumber()); // 수신번호
-            message.setText(messageDto.getText()); // 수신내용
-            messageList.add(message);
-        }
 
-        sendMany(messageList);
-    }
+
+
 
     // 대량 sms용 메서드(쿨에스엠에스에서 제공)
     private MultipleDetailMessageSentResponse sendMany(ArrayList<Message> messageList) {
@@ -103,6 +109,20 @@ public class MessagingService {
 
     }
 
+    public SingleMessageSentResponse sendSms(MessageDto messageDto) {
+
+            Message message = new Message();
+            message.setFrom(smsPhone);
+            message.setTo(messageDto.getPhoneNumber());
+            message.setText(messageDto.getText());
+            SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
+
+            return response;
+
+
+
+    }
+
 
 
 
@@ -127,9 +147,7 @@ public class MessagingService {
 
     private void handleSmsMessage(MessageDto messageDto) {
         log.error("[SMS 메시지 소비됨]: {}", messageDto.toString());
-        /*
-        * TODO 여기서 SMS 서비스에 연동하면 됨
-        * */
+       sendSms(messageDto);
     }
 
     private void handleEmailMessage(MessageDto messageDto) {
