@@ -34,8 +34,8 @@ public class MessageService {
 	}
 
 
-	public void sendSms(String email, String message) {
-		log.info("SMS 발송: {}\n{}",  email, message);
+	public void sendSms(String phone, String message) {
+		log.info("SMS 발송: {}\n{}",  phone, message);
 	}
 
 	public void sendEmail(String email, String message) {
