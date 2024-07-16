@@ -43,8 +43,7 @@ public class MemberService {
      * */
     public PageRes<MemberListItemRes> searchMembers(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
 
-        int countMemberListItem = memberCustomRepository.countAllMemberByVendor(vendorId);
-
+        int countMemberListItem = memberCustomRepository.countAllMemberByVendor(vendorId, memberSearch);
 
         List<MemberListItemRes> memberListItemRes = memberCustomRepository
                 .findAllMemberByVendor(vendorId, memberSearch, pageable)
@@ -59,7 +58,7 @@ public class MemberService {
     *  회원 상세 - 기본정보
     * */
     public MemberDetail findMemberDetailById(Long vendorId, Long memberId) {
-
+        System.out.println("memberId : " + memberId);
         // 회원 정보 조회
         Member member = memberCustomRepository.findMemberDetailById(vendorId, memberId)
                         .orElseThrow(() -> new EntityNotFoundException("회원 ID 없음(" + memberId + ")"));

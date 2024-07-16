@@ -166,7 +166,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * */
 	public int findBillingStandardByMemberId(Long vendorId, Long memberId){
 		Long res = jpaQueryFactory
-			.select(member.id.countDistinct())
+			.select(billing.id.countDistinct())
 			.from(billing)
 			.join(billing.contract, contract)
 			.where(
@@ -206,7 +206,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				.join(billing.contract, contract)
 				.where(
 						contract.vendor.id.eq(vendorId),
-						member.id.eq(memberId),
+						contract.member.id.eq(memberId),
 						contractNotDel(),
 						billingProductNotDel()
 				)
