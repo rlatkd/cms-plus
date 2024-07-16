@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import registerManyUser from '@/assets/registerManyUser.svg';
 import registerUser from '@/assets/registerUser.svg';
-import { getMemberList } from '@/apis/member';
+import { getMemberDetail, getMemberList } from '@/apis/member';
 
 const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
@@ -94,6 +94,12 @@ const MemberListPage = () => {
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
 
+  // 회원 상세 조회 페이지 이동
+  const MoveMemberDetail = async memberId => {
+    console.log(memberId);
+    navigate(`detail/${memberId}`);
+  };
+
   useEffect(() => {
     axiosMemberList(currentPage);
   }, [currentPage]);
@@ -139,6 +145,7 @@ const MemberListPage = () => {
         currentPage={currentPage}
         handleChangeSearch={handleChangeSearch}
         handlehClickSearch={handlehClickSearch}
+        onRowClick={item => MoveMemberDetail(item.memberId)}
       />
 
       <PagiNation

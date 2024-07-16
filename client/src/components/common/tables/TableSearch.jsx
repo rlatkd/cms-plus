@@ -18,6 +18,7 @@ const TableSearch = ({ search, handleChangeSearch, handlehClickSearch }) => {
               value={searchItem.value}
               onChange={e => {
                 handleChangeSearch(searchItem.key, e.target.value);
+                handlehClickSearch();
               }}>
               <option value=''>선택</option>
               {searchItem.options &&
