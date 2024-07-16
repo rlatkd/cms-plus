@@ -1,4 +1,4 @@
-import { privateAxios, publicAxios } from '.';
+import { privateAxios } from '.';
 
 // 상품 등록
 export const createProduct = async productData => {
@@ -14,7 +14,6 @@ export const createProduct = async productData => {
 // 상품 목록 조회
 export const getProductList = async (searchParams = {}) => {
   try {
-    console.log(searchParams);
     const res = await privateAxios.get('/v1/vendor/product', {
       params: {
         ...searchParams,

@@ -8,31 +8,42 @@ const TableSearch = ({ search, handleChangeSearch, handlehClickSearch }) => {
       {search.map((searchItem, idx) => (
         <td
           key={idx}
-          className={`text-left py-4 flex items-center justify-center border-b border-ipt_border  
+          className={`py-4 flex items-center justify-center border-b border-ipt_border   
           ${searchItem.key === 'checkbox' || searchItem.key === 'order' ? 'w-16' : `${searchItem.width}`} `}>
           {searchItem.type === 'hidden' ? (
             <div />
           ) : searchItem.type === 'select' ? (
-            <select
-              className='px-3  w-9/12 border border-text_black rounded-md '
-              value={searchItem.value}
-              onChange={e => {
-                handleChangeSearch(searchItem.key, e.target.value);
-                handlehClickSearch();
-              }}>
-              <option value=''>선택</option>
-              {searchItem.options &&
-                searchItem.options.map((option, idx) => (
-                  <option key={idx} value={option}>
-                    {option}
-                  </option>
-                ))}
-            </select>
+            <div className='relative w-9/12 flex items-center  '>
+              <select
+                className='block appearance-none px-3 py-1 w-full border border-text_black rounded-md  
+                        focus:border-text_black focus:outline-none focus:ring-1 focus:ring-text_black sm:text-sm'
+                value={searchItem.value}
+                onChange={e => {
+                  handleChangeSearch(searchItem.key, e.target.value);
+                  handlehClickSearch();
+                }}>
+                <option value=''>선택</option>
+                {searchItem.options &&
+                  searchItem.options.map((option, idx) => (
+                    <option key={idx} value={option}>
+                      {option}
+                    </option>
+                  ))}
+              </select>
+              <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text_grey'>
+                <svg
+                  className='fill-text_grey h-6 w-6'
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 20 20'>
+                  <path d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' />
+                </svg>
+              </div>
+            </div>
           ) : (
-            <div className='relative w-9/12 flex items-center '>
+            <div className='relative w-9/12 flex items-center  '>
               <input
                 className='px-3 py-1 w-full border border-text_black rounded-md 
-                        focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
+                        focus:border-text_black focus:outline-none focus:ring-1 focus:ring-text_black sm:text-sm'
                 type={searchItem.type}
                 value={searchItem.value}
                 onChange={e => handleChangeSearch(searchItem.key, e.target.value)}
