@@ -3,7 +3,7 @@ import TableRow from './TableRow';
 import TableCol from './TableCol';
 import TableSearch from './TableSearch';
 
-const Table = ({ cols, search, items, handleSearchChange, show, onRowClick, onSearchClick }) => {
+const Table = ({ cols, search, items, handleSearchChange, onRowClick, onSearchClick }) => {
   const [selection, setSelection] = useState([]);
   const itemKey = cols[0];
 
@@ -33,18 +33,20 @@ const Table = ({ cols, search, items, handleSearchChange, show, onRowClick, onSe
   };
 
   return (
-    <table className=' w-full '>
+    <table className='w-full'>
       <TableCol
         cols={cols}
         isSelectedAll={isSelectedAll}
         handleClickCheckBoxAll={handleClickCheckBoxAll}
       />
       <tbody>
-        <TableSearch
-          search={search}
-          handleSearchChange={handleSearchChange}
-          onSearchClick={onSearchClick}
-        />
+        {search && (
+          <TableSearch
+            search={search}
+            handleSearchChange={handleSearchChange}
+            onSearchClick={onSearchClick}
+          />
+        )}
         {items.map((item, idx) => (
           <TableRow
             key={idx}

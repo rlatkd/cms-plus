@@ -1,72 +1,77 @@
-// 페이지 버튼 렌더링 함수
+import Arrow from '@/assets/Arrow';
+
+const buttonBaseStyle = 'mx-1 rounded-lg font-700 text-text_black flex items-center justify-center';
+
 const PagiNation = ({
   currentPage,
   setCurrentPage,
   totalPages,
   pageGroup,
   setPageGroup,
-  page,
-  setPage,
+  buttonCount,
 }) => {
-  const startPage = pageGroup * 5 + 1;
-  const endPage = Math.min(startPage + 4, totalPages);
-  const buttons = [];
+  const startPage = pageGroup * buttonCount + 1;
+  const endPage = Math.min(startPage + buttonCount - 1, totalPages);
 
   // 페이지 변경 이벤트핸들러
   const handlePageChange = newPage => {
-    if (newPage !== currentPage) {
-      setCurrentPage(newPage);
-      setPage(newPage);
-    }
+    if (newPage === currentPage) return;
+
+    setCurrentPage(newPage);
   };
 
-  // 페이지 그룹 변경 이벤트핸들러
-  const handlePageGroupChange = direction => {
-    if (direction === 'next') {
-      setPageGroup(prev => prev + 1);
-      setPage((pageGroup + 1) * 5 + 1);
-      setCurrentPage((pageGroup + 1) * 5 + 1);
-    } else if (direction === 'prev' && pageGroup > 0) {
-      setPageGroup(prev => prev - 1);
-      setPage((pageGroup - 1) * 5 + 1);
-      setCurrentPage((pageGroup - 1) * 5 + 1);
-    }
+  // 이전 페이지 그룹 변경 이벤트핸들러
+  const handlePrevPageGroup = () => {
+    if (pageGroup < 0) return;
+
+    setPageGroup(prev => prev - 1);
+    setCurrentPage((pageGroup - 1) * buttonCount + 1);
   };
 
-  // 동적으로 css 함수 로직 개선 필요 (밑에 return div로 옮기고 싶음)
-  for (let i = startPage; i <= endPage; i++) {
-    buttons.push(
-      <button
-        key={i}
-        className={`mx-1 px-3 py-1 border rounded-lg w-8 h-8 flex items-center justify-center ${i === page ? 'bg-mint hover:bg-mint_hover text-white' : 'bg-white border border-white'}`}
-        onClick={() => handlePageChange(i)}>
-        {i}
-      </button>
-    );
-  }
+  // 다음 페이지 그룹 변경 이벤트핸들러
+  const handleNextPageGroup = () => {
+    setPageGroup(prev => prev + 1);
+    setCurrentPage((pageGroup + 1) * buttonCount + 1);
+  };
 
   return (
-    <div className='flex items-center'>
-      {/* 이전 버튼 */}
-      <button
-        key='prev'
-        className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${pageGroup === 0 ? 'invisible' : 'bg-white border border-white'}`}
-        onClick={() => handlePageGroupChange('prev')}
-        disabled={pageGroup === 0}>
-        {'<'}&nbsp;&nbsp;&nbsp;{'이전'}
-      </button>
+    <div className='flex justify-center h-full items-end'>
+      <div className='flex items-center'>
+        {/* 이전 버튼 */}
+        <button
+          key='prev'
+          className={`${buttonBaseStyle} h-8 ${pageGroup === 0 && 'invisible'} `}
+          onClick={handlePrevPageGroup}
+          disabled={pageGroup === 0}>
+          <Arrow rotation={'-90'} />
+          <span className='mx-1  hover:border-b border-text_black '>이전</span>
+        </button>
 
-      {/* 1,2,3,4,5 버튼 영역 */}
-      <div className='flex justify-center'>{buttons}</div>
+        {/* 1,2,3,4,5 버튼 영역 */}
+        <div className='flex justify-around'>
+          {Array.from({ length: endPage - startPage + 1 }, (_, idx) => {
+            const pageNum = startPage + idx;
+            return (
+              <button
+                key={pageNum}
+                className={`${buttonBaseStyle} w-8 h-8  ${pageNum === currentPage ? 'text-white bg-mint hover:bg-mint_hover ' : 'hover:border border-text_black'}`}
+                onClick={() => handlePageChange(pageNum)}>
+                {pageNum}
+              </button>
+            );
+          })}
+        </div>
 
-      {/* 다음 버튼 */}
-      <button
-        key='next'
-        className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${endPage >= totalPages ? 'invisible' : 'bg-white border border-white'}`}
-        onClick={() => handlePageGroupChange('next')}
-        disabled={endPage >= totalPages}>
-        {'다음'}&nbsp;&nbsp;&nbsp;{'>'}
-      </button>
+        {/* 다음 버튼 */}
+        <button
+          key='next'
+          className={`${buttonBaseStyle} h-8 ${endPage >= totalPages && 'invisible'} `}
+          onClick={handleNextPageGroup}
+          disabled={endPage >= totalPages}>
+          <span className='mx-1 hover:border-b border-text_black '>다음</span>
+          <Arrow rotation={'90'} />
+        </button>
+      </div>
     </div>
   );
 };

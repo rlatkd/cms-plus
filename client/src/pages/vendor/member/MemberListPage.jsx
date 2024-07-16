@@ -1,3 +1,6 @@
+import MoveButton from '@/components/common/buttons/MoveButton';
+import PagiNation from '@/components/common/PagiNation';
+import SortSelect from '@/components/common/selects/SortSelect';
 import Table from '@/components/common/tables/Table';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -144,6 +147,19 @@ const initialSearch = [
 
 const MemberListPage = () => {
   const [search, setSearch] = useState(initialSearch);
+  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
+  const [page, setPage] = useState(1); // 현재 표시할 페이지 번호 - 페이지 라우팅되는 변수와 페이징을 통해 api parameter에 영향을 주는 변수 분리
+  const navigate = useNavigate();
+
+  // SortSelect를 위한 값들
+  const [selectedOption, setSelectedOption] = useState('');
+  const Options = [
+    { value: 'option1', label: 'Option 1' },
+    { value: 'option2', label: 'Option 2' },
+    { value: 'option3', label: 'Option 3' },
+  ];
 
   const handleSearchChange = (key, value) => {
     setSearch(prev =>
@@ -153,42 +169,56 @@ const MemberListPage = () => {
     );
   };
 
-  // 검색 API 들어갈 함수
-  const show = () => {
-    console.log(search);
-  };
-
-  const navigate = useNavigate();
-
-  // id값은 추후 변경
-  const handleGoDetail = () => {
-    navigate('detail/1');
-  };
-
   const handleGoRegister = () => {
     navigate('register');
   };
+
   return (
-    <div className='primary-dashboard h-full w-full flex flex-col overflow-auto'>
-      <div>
-        <button
-          className='w-56 rounded-lg bg-mint p-3 font-bold text-white'
-          onClick={handleGoDetail}>
-          임시 회원 상세 이동
-        </button>
-        <button
-          className='w-56 rounded-lg bg-mint p-3 font-bold text-white'
-          onClick={handleGoRegister}>
-          임시 회원 등록
-        </button>
+    <div className='primary-dashboard flex flex-col h-1500  desktop:h-full '>
+      <div className='flex justify-between pt-2 pb-4 w-full'>
+        <div className='flex items-center '>
+          <img
+            className='bg-mint h-7 w-7 p-2 rounded-md ml-1 mr-3'
+            src='/src/assets/user.svg'
+            alt='user'
+          />
+          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <SortSelect
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
+            options={Options}
+          />
+        </div>
+
+        <div>
+          <div className='flex'>
+            <MoveButton
+              imgSrc='/src/assets/registerManyUser.svg'
+              buttonText='대량 회원 등록'
+              onClick={handleGoRegister}
+            />
+            <MoveButton
+              imgSrc='/src/assets/registerUser.svg'
+              buttonText='회원 등록'
+              onClick={handleGoRegister}
+            />
+          </div>
+        </div>
       </div>
-      <Table
-        cols={cols}
-        search={search}
-        items={items}
-        handleSearchChange={handleSearchChange}
-        show={show}
-      />
+      <Table cols={cols} search={search} items={items} handleSearchChange={handleSearchChange} />
+
+      {/* 페이지네이션*/}
+      <div className='flex justify-center h-full items-end'>
+        <PagiNation
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          pageGroup={pageGroup}
+          setPageGroup={setPageGroup}
+          page={page}
+          setPage={setPage}
+        />
+      </div>
     </div>
   );
 };

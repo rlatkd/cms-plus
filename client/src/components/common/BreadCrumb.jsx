@@ -28,44 +28,23 @@ const BreadCrumb = () => {
     }
   };
 
-  // const breadCrumbMenu = (route, idx) => {
-  //   if (route.children) {
-  //     for (const child of route.children) {
-  //       if (currentPaths.length === 1) {
-  //         setCurrentRoutes(prevState => ({
-  //           ...prevState,
-  //           name: [...prevState.name, child.name],
-  //         }));
-  //         return;
-  //       } else if (child.path.includes(currentPaths[idx])) {
-  //         setCurrentRoutes(prevState => ({
-  //           ...prevState,
-  //           name: [...prevState.name, child.name],
-  //         }));
-  //         breadCrumbMenu(child, idx + 1);
-  //         return;
-  //       }
-  //     }
-  //   }
-  // };
-
   const breadCrumbMenu = (route, idx) => {
-    if (route.children) {
-      for (const child of route.children) {
-        if (currentPaths.length === 1) {
-          setCurrentRoutes(prevState => ({
-            ...prevState,
-            name: [...prevState.name, child.name],
-          }));
-          return;
-        } else if (child.path.includes(currentPaths[idx])) {
-          setCurrentRoutes(prevState => ({
-            ...prevState,
-            name: [...prevState.name, child.name],
-          }));
+    if (!route.children) return;
+
+    for (const child of route.children) {
+      const isSinglePath = currentPaths.length === 1;
+      const isMatchingPath = child.path.includes(currentPaths[idx]);
+
+      if (isSinglePath || isMatchingPath) {
+        setCurrentRoutes(prevState => ({
+          ...prevState,
+          name: [...prevState.name, child.name],
+        }));
+
+        if (!isSinglePath) {
           breadCrumbMenu(child, idx + 1);
-          return;
         }
+        return;
       }
     }
   };
@@ -73,12 +52,11 @@ const BreadCrumb = () => {
   useEffect(() => {
     const route = breadCrumbTitle();
     breadCrumbMenu(route, 1);
-    console.log(currentRoutes.name);
   }, [location]);
 
   return (
     <div className='h-14 flex flex-col'>
-      <div className='flex items-center text-text_grey mb-2'>
+      <div className='flex items-center text-text_grey text-15 mb-2'>
         <div className='mr-3'>{currentRoutes.icon}</div>
         {currentRoutes.name.map((name, idx) => (
           <div className='flex' key={idx}>
