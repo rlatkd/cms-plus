@@ -3,10 +3,6 @@ const SortSelect = ({ selectedOption, setSelectedOption, options }) => {
     setSelectedOption(event.target.value);
   };
 
-  const handleReset = () => {
-    setSelectedOption('');
-  };
-
   return (
     <div className='relative flex items-center'>
       <div className='relative mr-3'>
@@ -15,9 +11,7 @@ const SortSelect = ({ selectedOption, setSelectedOption, options }) => {
           onChange={handleChange}
           className='block appearance-none text-xs text-text_grey border border-text_grey 
                       rounded-md px-4 py-2 pr-10 cursor-pointer focus:outline-none'>
-          <option value='' disabled>
-            카테고리별 정렬
-          </option>
+          <option value=''>No 오름차순</option>
           {options.map((option, index) => (
             <option key={index} value={option.value}>
               {option.label}
@@ -33,12 +27,6 @@ const SortSelect = ({ selectedOption, setSelectedOption, options }) => {
           </svg>
         </div>
       </div>
-      <img
-        className='w-5 h-5 cursor-pointer'
-        src='/src/assets/reset.svg'
-        alt='reset'
-        onClick={handleReset}
-      />
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import searchIcon from '@/assets/search.svg';
+import calender from '@/assets/calender.svg';
+import triangle from '@/assets/triangle.svg';
 
 const TableSearch = ({ search, handleSearchChange, onSearchClick }) => {
   return (
@@ -7,8 +9,10 @@ const TableSearch = ({ search, handleSearchChange, onSearchClick }) => {
         <td
           key={idx}
           className={`text-left py-4 flex items-center border-b border-ipt_border 
-          ${searchItem.key === 'checkbox' || searchItem.key === 'No' ? 'w-16' : 'flex-1'}`}>
-          {searchItem.type === 'select' ? (
+          ${searchItem.key === 'checkbox' || searchItem.key === 'order' ? 'w-16' : 'flex-1'}`}>
+          {searchItem.type === 'hidden' ? (
+            <div />
+          ) : searchItem.type === 'select' ? (
             <select
               className='w-10/12 h-full px-3 border border-text_black rounded-md '
               value={searchItem.value}
@@ -23,8 +27,6 @@ const TableSearch = ({ search, handleSearchChange, onSearchClick }) => {
                   </option>
                 ))}
             </select>
-          ) : searchItem.type === 'hidden' ? (
-            <div />
           ) : (
             <div className='relative w-10/12 h-full flex items-center '>
               <input
@@ -34,13 +36,19 @@ const TableSearch = ({ search, handleSearchChange, onSearchClick }) => {
                 value={searchItem.value}
                 onChange={e => handleSearchChange(searchItem.key, e.target.value)}
               />
-              {idx > 1 && ( // 2번 컬럼부터 돋보기 버튼 보이게
-                <button
-                  className='absolute right-2 top-1/2 transform -translate-y-1/2'
-                  onClick={onSearchClick}>
-                  <img src={searchIcon} alt='search' className='w-5 h-5' />
-                </button>
-              )}
+              <button
+                className='absolute right-2 top-1/2 transform -translate-y-1/2'
+                onClick={onSearchClick}>
+                <img
+                  src={
+                    (searchItem.type === 'text' && searchIcon) ||
+                    (searchItem.type === 'calendar' && calender) ||
+                    (searchItem.type === 'num' && triangle)
+                  }
+                  alt='search'
+                  className='w-5 h-5'
+                />
+              </button>
             </div>
           )}
         </td>

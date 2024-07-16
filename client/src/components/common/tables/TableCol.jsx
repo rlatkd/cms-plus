@@ -12,9 +12,9 @@ const TableCol = ({ cols, isSelectedAll, handleClickCheckBoxAll }) => (
       {cols.map((col, idx) => (
         <th
           key={idx}
-          className={` ${col === 'No' ? 'w-16 pl-2' : 'flex-1'} 
+          className={` ${col.key === 'order' ? 'w-16 pl-2' : 'flex-1'} 
               text-left font-900  `}>
-          {col}
+          {col.label}
         </th>
       ))}
     </tr>

@@ -7,18 +7,24 @@ import ProductModal from '@/components/vendor/modal/ProductModal';
 import { validateField } from '@/utils/validators';
 import { useCallback, useEffect, useState } from 'react';
 
-// 상품 목록 조회 컬럼
-const cols = ['No', '상품명', '금액', '계약수', '생성일', '비고'];
+const cols = [
+  { key: 'order', label: 'No.' },
+  { key: 'productName', label: '상품명' },
+  { key: 'productPrice', label: '금액' },
+  { key: 'contractNumber', label: '계약수' },
+  { key: 'productCreatedDate', label: '생성일' },
+  { key: 'productMemo', label: '비고' },
+];
 
-// 상품 조건 설정
+// Type : hidden, text, num, calendar, select
 const initialSearch = [
   { key: 'checkbox', type: 'hidden', value: '' },
-  { key: 'No', type: 'hidden', value: '' },
-  { key: '상품명', type: 'text', value: '' },
-  { key: '금액', type: 'text', value: '' },
-  { key: '계약수', type: 'text', value: '' },
-  { key: '생성일', type: 'text', value: '' },
-  { key: '비고', type: 'text', value: '' },
+  { key: 'order', type: 'hidden', value: '' },
+  { key: 'productName', type: 'text', value: '' },
+  { key: 'productPrice', type: 'num', value: '' },
+  { key: 'contractNumber', type: 'num', value: '' },
+  { key: 'productCreatedDate', type: 'calendar', value: '' },
+  { key: 'productMemo', type: 'text', value: '' },
 ];
 
 const ProductListPage = () => {
@@ -26,7 +32,7 @@ const ProductListPage = () => {
   const [modalTitle, setModalTitle] = useState(''); // 모달 제목
   const [productList, setProductList] = useState([]); // 상품 목록
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
-  const [search, setSearch] = useState(initialSearch); // 상품 조건
+  const [search, setSearch] = useState(initialSearch.slice(2)); // 상품 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
   const [isValid, setIsValid] = useState(true); // 유효성 flag
 
@@ -51,16 +57,7 @@ const ProductListPage = () => {
     async (searchParams = {}, page = currentPage) => {
       try {
         const res = await getProductList({ size: 10, page: page, ...searchParams });
-        const formattedData = res.data.content.map((data, index) => ({
-          No: (page - 1) * 10 + index + 1,
-          상품명: data.productName,
-          금액: data.productPrice,
-          계약수: data.contractNumber,
-          생성일: data.productCreatedDate,
-          비고: data.productMemo || '',
-          productId: data.productId,
-        }));
-        setProductList(formattedData);
+        setProductList(res.data.content);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosProductList => ', err.response.data);
@@ -105,20 +102,10 @@ const ProductListPage = () => {
   const validateSearchParams = () => {
     for (const searchProduct of search) {
       if (searchProduct.value) {
-        const keyMapping = {
-          상품명: 'productName',
-          금액: 'productPrice',
-          계약수: 'contractNumber',
-          생성일: 'productCreatedDate',
-          비고: 'productMemo',
-        };
-        const paramKey = keyMapping[searchProduct.key];
-        if (paramKey) {
-          if (!validateField(paramKey, searchProduct.value)) {
-            alert(`[${searchProduct.key}]은(는) 숫자만 입력할 수 있습니다.`);
-            setIsValid(false);
-            return false;
-          }
+        if (!validateField(searchProduct.key, searchProduct.value)) {
+          alert(`[${searchProduct.key}]은(는) 숫자만 입력할 수 있습니다.`);
+          setIsValid(false);
+          return false;
         }
       }
     }
@@ -132,17 +119,7 @@ const ProductListPage = () => {
     const searchParams = { size: 10 };
     search.forEach(searchProduct => {
       if (searchProduct.value) {
-        const keyMapping = {
-          상품명: 'productName',
-          금액: 'productPrice',
-          계약수: 'contractNumber',
-          생성일: 'productCreatedDate',
-          비고: 'productMemo',
-        };
-        const paramKey = keyMapping[searchProduct.key];
-        if (paramKey) {
-          searchParams[paramKey] = searchProduct.value;
-        }
+        searchParams[searchProduct.key] = searchProduct.value;
       }
     });
 
@@ -182,8 +159,9 @@ const ProductListPage = () => {
 
       <Table
         cols={cols}
-        search={search}
-        items={productList}
+        search={initialSearch}
+        rows={productList}
+        currentPage={currentPage}
         handleSearchChange={handleSearchChange}
         onRowClick={item => handleDetailModalOpen(item.productId)}
         onSearchClick={handleSearchClick}
