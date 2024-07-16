@@ -63,7 +63,9 @@ const ProductListPage = () => {
     async (searchParams = {}, page = currentPage) => {
       try {
         const res = await getProductList({ size: 10, page: page, ...searchParams });
-        setProductList(res.data.content);
+        const transformedData = transformProductListItem(res.data.content);
+
+        setProductList(transformedData);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosProductList => ', err.response.data);
@@ -71,6 +73,20 @@ const ProductListPage = () => {
     },
     [currentPage]
   );
+
+  // 상품 데이터 값 정제
+  const transformProductListItem = data => {
+    // 데이터 변환
+    return data.map(product => {
+      const { productPrice, contractNumber } = product;
+
+      return {
+        ...product,
+        productPrice: `${productPrice}원`,
+        contractNumber: `${contractNumber}건`,
+      };
+    });
+  };
 
   // 검색 변경 핸들러
   const handleChangeSearch = (key, value) => {

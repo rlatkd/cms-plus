@@ -27,7 +27,7 @@ const SortSelect = ({ setOrder, setOrderBy, selectOptions, axiosList, currentSea
           onChange={handleChangeOption}
           className='block appearance-none text-xs text-text_grey border border-text_grey 
                       rounded-md px-4 py-2 pr-10 cursor-pointer focus:outline-none'>
-          <option value='No'>No 오름차순</option>
+          <option value='No'>번호순</option>
           {selectOptions.map((option, index) => (
             <option key={index} value={option.label}>
               {option.label}
