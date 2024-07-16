@@ -2,55 +2,48 @@ import MoveButton from '@/components/common/buttons/MoveButton';
 import PagiNation from '@/components/common/PagiNation';
 import SortSelect from '@/components/common/selects/SortSelect';
 import Table from '@/components/common/tables/Table';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import registerManyUser from '@/assets/registerManyUser.svg';
 import registerUser from '@/assets/registerUser.svg';
-
-const rows = [
-  {
-    memberName: '박준형',
-    memberPhone: '01012345678',
-    memberEmail: 'member1@example.com',
-    memberEnrollDate: '2020-01-01',
-    contractPrice: 10000,
-    contractCount: 1,
-  },
-  {
-    memberName: '박민석',
-    memberPhone: '01099999999',
-    memberEmail: 'microsoft123@gmail.com',
-    memberEnrollDate: '2013-05-29',
-    contractPrice: 900000,
-    contractCount: 14,
-  },
-  // 다른 항목들 추가
-];
+import { getMemberList } from '@/apis/member';
 
 const cols = [
-  { key: 'order', label: 'No.' },
-  { key: 'memberName', label: '회원이름' },
-  { key: 'memberPhone', label: '휴대전화' },
-  { key: 'memberEmail', label: '이메일' },
-  { key: 'memberEnrollDate', label: '회원등록일' },
-  { key: 'contractPrice', label: '계약금액합' },
-  { key: 'contractCount', label: '계약건수' },
+  { key: 'order', label: 'No.', width: 'w-1/12' },
+  { key: 'memberName', label: '회원이름', width: 'w-2/12' },
+  { key: 'memberPhone', label: '휴대전화', width: 'w-2/12' },
+  { key: 'memberEmail', label: '이메일', width: 'w-3/12' },
+  { key: 'memberEnrollDate', label: '회원등록일', width: 'w-2/12' },
+  { key: 'contractPrice', label: '계약금액합', width: 'w-2/12' },
+  { key: 'contractCount', label: '계약건수', width: 'w-1/12' },
 ];
 
 // Type : hidden, text, num, calendar, select
 const initialSearch = [
-  { key: 'checkbox', type: 'hidden', value: '' },
-  { key: 'order', type: 'hidden', value: '' },
-  { key: 'memberName', type: 'text', value: '' },
-  { key: 'memberPhone', type: 'text', value: '' },
-  { key: 'memberEmail', type: 'text', value: '' },
-  { key: 'memberEnrollDate', type: 'calendar', value: '' },
-  { key: 'contractPrice', type: 'num', value: '' },
-  { key: 'contractCount', type: 'num', value: '' },
+  { key: 'checkbox', type: 'hidden', value: '', width: 'w-1/12' },
+  { key: 'order', type: 'hidden', value: '', width: 'w-1/12' },
+  { key: 'memberName', type: 'text', value: '', width: 'w-2/12' },
+  { key: 'memberPhone', type: 'text', value: '', width: 'w-2/12' },
+  { key: 'memberEmail', type: 'text', value: '', width: 'w-3/12' },
+  { key: 'memberEnrollDate', type: 'calendar', value: '', width: 'w-2/12' },
+  { key: 'contractPrice', type: 'num', value: '', width: 'w-2/12' },
+  { key: 'contractCount', type: 'num', value: '', width: 'w-1/12' },
+];
+
+const selectOptions = [
+  { label: '계약금액 많은순', orderBy: 'contractPrice', order: 'DESC' },
+  { label: '계약금액 적은순', orderBy: 'contractPrice', order: 'ASC' },
+  { label: '계약 많은순', orderBy: 'contractCount', order: 'DESC' },
+  { label: '계약 적은순', orderBy: 'contractCount', order: 'ASC' },
 ];
 
 const MemberListPage = () => {
-  const [search, setSearch] = useState(initialSearch);
+  const [memberList, setMemberList] = useState([]); // 회원 목록
+  const [search, setSearch] = useState(initialSearch); // 검색 조건
+  const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
+
+  const [order, setOrder] = useState(''); // 정렬 방향
+  const [orderBy, setOrderBy] = useState(''); // 정렬 항목
 
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
@@ -59,26 +52,51 @@ const MemberListPage = () => {
 
   const navigate = useNavigate();
 
-  // SortSelect를 위한 값들
-  const [selectedOption, setSelectedOption] = useState('');
-  const Options = [
-    { value: '계약금액 많은순', label: '계약금액 많은순' },
-    { value: '계약금액 적은순', label: '계약금액 적은순' },
-    { value: '계약 많은순', label: '계약 많은순' },
-    { value: '계약 적은순', label: '계약 적은순' },
-  ];
+  // 회원 목록 조회
+  const axiosMemberList = useCallback(
+    async (searchParams = {}, page = currentPage) => {
+      try {
+        const res = await getMemberList({
+          size: 10,
+          page: page,
+          ...searchParams,
+        });
+        setMemberList(res.data.content);
+        setTotalPages(res.data.totalPage || 1);
+      } catch (err) {
+        console.error('axiosMemberList => ', err.response.data);
+      }
+    },
+    [currentPage]
+  );
 
-  const handleSearchChange = (key, value) => {
-    setSearch(prev =>
-      prev.map(searchItem =>
-        searchItem.key === key ? { ...searchItem, value: value } : searchItem
-      )
+  // 검색 변경 핸들러
+  const handleChangeSearch = (key, value) => {
+    const updatedSearch = search.map(searchItem =>
+      searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );
+
+    let searchParams = { size: 10, order: order, orderBy: orderBy };
+    updatedSearch.forEach(searchMember => {
+      if (searchMember.value) {
+        searchParams[searchMember.key] = searchMember.value;
+      }
+    });
+
+    setSearch(updatedSearch);
+    setCurrentSearchParams(searchParams);
   };
 
-  const handleGoRegister = () => {
-    navigate('register');
+  // 검색 클릭 이벤트 핸들러
+  const handlehClickSearch = async () => {
+    axiosMemberList(currentSearchParams);
+    setCurrentPage(1); // 검색 후 현재 페이지 초기화
+    setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
+
+  useEffect(() => {
+    axiosMemberList(currentPage);
+  }, [currentPage]);
 
   return (
     <div className='primary-dashboard flex flex-col h-1500  desktop:h-full '>
@@ -91,9 +109,11 @@ const MemberListPage = () => {
           />
           <p className='text-text_black font-700 mr-5'>총 24건</p>
           <SortSelect
-            selectedOption={selectedOption}
-            setSelectedOption={setSelectedOption}
-            options={Options}
+            setOrder={setOrder}
+            setOrderBy={setOrderBy}
+            selectOptions={selectOptions}
+            currentSearchParams={currentSearchParams}
+            axiosList={axiosMemberList}
           />
         </div>
 
@@ -102,18 +122,23 @@ const MemberListPage = () => {
             <MoveButton
               imgSrc={registerManyUser}
               buttonText='대량 회원 등록'
-              onClick={handleGoRegister}
+              onClick={() => navigate('register')}
             />
-            <MoveButton imgSrc={registerUser} buttonText='회원 등록' onClick={handleGoRegister} />
+            <MoveButton
+              imgSrc={registerUser}
+              buttonText='회원 등록'
+              onClick={() => navigate('register')}
+            />
           </div>
         </div>
       </div>
       <Table
         cols={cols}
-        rows={rows}
+        rows={memberList}
         search={search}
         currentPage={currentPage}
-        handleSearchChange={handleSearchChange}
+        handleChangeSearch={handleChangeSearch}
+        handlehClickSearch={handlehClickSearch}
       />
 
       <PagiNation

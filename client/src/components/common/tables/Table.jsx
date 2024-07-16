@@ -8,9 +8,9 @@ const Table = ({
   search,
   rows,
   currentPage,
-  handleSearchChange,
+  handleChangeSearch,
   onRowClick,
-  onSearchClick,
+  handlehClickSearch,
 }) => {
   const [selection, setSelection] = useState([]);
   const itemKey = cols[0];
@@ -51,8 +51,8 @@ const Table = ({
         {search && (
           <TableSearch
             search={search}
-            handleSearchChange={handleSearchChange}
-            onSearchClick={onSearchClick}
+            handleChangeSearch={handleChangeSearch}
+            handlehClickSearch={handlehClickSearch}
           />
         )}
         {rows.map((row, index) => (

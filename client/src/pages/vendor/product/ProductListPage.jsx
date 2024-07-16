@@ -8,31 +8,39 @@ import { validateField } from '@/utils/validators';
 import { useCallback, useEffect, useState } from 'react';
 
 const cols = [
-  { key: 'order', label: 'No.' },
-  { key: 'productName', label: '상품명' },
-  { key: 'productPrice', label: '금액' },
-  { key: 'contractNumber', label: '계약수' },
-  { key: 'productCreatedDate', label: '생성일' },
-  { key: 'productMemo', label: '비고' },
+  { key: 'order', label: 'No.', width: 'w-1/12' },
+  { key: 'productName', label: '상품명', width: 'w-3/12' },
+  { key: 'productPrice', label: '금액', width: 'w-3/12' },
+  { key: 'contractNumber', label: '계약수', width: 'w-3/12' },
+  { key: 'productCreatedDate', label: '생성일', width: 'w-3/12' },
+  { key: 'productMemo', label: '비고', width: 'w-3/12' },
 ];
 
 // Type : hidden, text, num, calendar, select
 const initialSearch = [
-  { key: 'checkbox', type: 'hidden', value: '' },
-  { key: 'order', type: 'hidden', value: '' },
-  { key: 'productName', type: 'text', value: '' },
-  { key: 'productPrice', type: 'num', value: '' },
-  { key: 'contractNumber', type: 'num', value: '' },
-  { key: 'productCreatedDate', type: 'calendar', value: '' },
-  { key: 'productMemo', type: 'text', value: '' },
+  { key: 'checkbox', type: 'hidden', value: '', width: 'w-1/12' },
+  { key: 'order', type: 'hidden', value: '', width: 'w-1/12' },
+  { key: 'productName', type: 'text', value: '', width: 'w-3/12' },
+  { key: 'productPrice', type: 'num', value: '', width: 'w-3/12' },
+  { key: 'contractNumber', type: 'num', value: '', width: 'w-3/12' },
+  { key: 'productCreatedDate', type: 'calendar', value: '', width: 'w-3/12' },
+  { key: 'productMemo', type: 'text', value: '', width: 'w-3/12' },
 ];
+
+// // SortSelect를 위한 값들
+// const [selectedOption, setSelectedOption] = useState('');
+// const Options = [
+//   { value: 'option1', label: 'Option 1' },
+//   { value: 'option2', label: 'Option 2' },
+//   { value: 'option3', label: 'Option 3' },
+// ];
 
 const ProductListPage = () => {
   const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
   const [modalTitle, setModalTitle] = useState(''); // 모달 제목
   const [productList, setProductList] = useState([]); // 상품 목록
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
-  const [search, setSearch] = useState(initialSearch.slice(2)); // 상품 조건
+  const [search, setSearch] = useState(initialSearch); // 상품 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
   const [isValid, setIsValid] = useState(true); // 유효성 flag
 
@@ -40,14 +48,6 @@ const ProductListPage = () => {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
   const buttonCount = 5;
-
-  // SortSelect를 위한 값들
-  const [selectedOption, setSelectedOption] = useState('');
-  const Options = [
-    { value: 'option1', label: 'Option 1' },
-    { value: 'option2', label: 'Option 2' },
-    { value: 'option3', label: 'Option 3' },
-  ];
 
   // 상품 목록 조회 함수
   // axiosProductLists는 useEffect 훅 내부에서 사용하고 있기 때문에
@@ -90,7 +90,8 @@ const ProductListPage = () => {
   };
 
   // 조건 변경 핸들러
-  const handleSearchChange = (key, value) => {
+  const handleChangeSearch = (key, value) => {
+    console.log(key, value);
     setSearch(prev =>
       prev.map(searchProduct =>
         searchProduct.key === key ? { ...searchProduct, value: value } : searchProduct
@@ -114,7 +115,7 @@ const ProductListPage = () => {
   };
 
   // 검색 클릭 이벤트 핸들러
-  const handleSearchClick = async () => {
+  const handlehClickSearch = async () => {
     if (!validateSearchParams()) return;
     const searchParams = { size: 10 };
     search.forEach(searchProduct => {
@@ -139,11 +140,11 @@ const ProductListPage = () => {
             alt='user'
           />
           <p className='text-text_black font-700 mr-5'>총 24건</p>
-          <SortSelect
+          {/* <SortSelect
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
             options={Options}
-          />
+          /> */}
         </div>
 
         <div>
@@ -159,12 +160,12 @@ const ProductListPage = () => {
 
       <Table
         cols={cols}
-        search={initialSearch}
+        search={search}
         rows={productList}
         currentPage={currentPage}
-        handleSearchChange={handleSearchChange}
+        handleChangeSearch={handleChangeSearch}
         onRowClick={item => handleDetailModalOpen(item.productId)}
-        onSearchClick={handleSearchClick}
+        handlehClickSearch={handlehClickSearch}
       />
 
       {/* 페이지네이션*/}

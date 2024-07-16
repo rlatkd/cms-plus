@@ -24,7 +24,7 @@ const RadioGroup = ({ label, name, options, selectedOption, onChange, required =
               <div
                 className={`mr-2 flex h-4 w-4 items-center justify-center rounded-full border bg-white ${selectedOption === option.value ? 'border-teal-400' : 'border-gray-300'}`}>
                 {selectedOption === option.value && (
-                  <div className='h-2 w-2 rounded-full bg-teal-400'></div>
+                  <div className='h-2 w-2 rounded-full bg-teal-400' />
                 )}
               </div>
               <span className='text-sm text-gray-700'>{option.label}</span>
