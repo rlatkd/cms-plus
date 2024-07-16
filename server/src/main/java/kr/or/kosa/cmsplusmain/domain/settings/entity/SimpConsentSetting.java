@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -44,28 +45,25 @@ public class SimpConsentSetting extends BaseEntity {
 	@Column(name = "setting_simpconsent_id")
 	private Long id;
 
-	@Setter
-	@OneToOne(mappedBy = "simpConsentSetting", fetch = FetchType.LAZY, optional = false)
-	@NotNull
-	private Vendor vendor;
-
 	/*간편동의 설정 결제수단*/
 	@ElementCollection(targetClass = PaymentMethod.class, fetch = FetchType.LAZY)
 	@CollectionTable(name = "simpconsent_vendor_auto_payment_method")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "simpconsent_auto_payment_method")
+	@Builder.Default
 	private Set<PaymentMethod> simpConsentPayments =
 		new HashSet<>(List.of(PaymentMethod.CMS, PaymentMethod.CARD));
 
 	/*간편동의 설정 상품*/
 
 	// TODO: 고객 아이디 생성시 기본 상품 추가??
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinTable(name = "simpconsent_vendor_product",
 		joinColumns = @JoinColumn(name = "setting_simpconsent_id"),
 		inverseJoinColumns = @JoinColumn(name = "product_id")
 	)
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
+	@Builder.Default
 	private Set<Product> simpConsentProducts = new HashSet<>();
 
 	//TODO 설정 수정 삭제 메서드 구현
