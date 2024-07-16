@@ -7,12 +7,12 @@ import {
   faMoneyBillWave,
   faChartLine,
 } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getMonthBillingInfo, getStatInfo, getTopInfo } from '@/apis/dashboard';
 
-const formatNumber = (num) => {
+const formatNumber = num => {
   if (!num) return '0';
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 const Stats = ({ statInfo }) => (
@@ -33,7 +33,7 @@ const Stats = ({ statInfo }) => (
       icon={faMoneyBillWave}
       title='청구 현황'
       value={`₩${statInfo.totalBillingPrice}`}
-      subStat={`완납: ₩${statInfo.totalPaidPrice} | 미납: ₩${statInfo.totalNotPaidPrice}`}
+      subStat={`완납: ₩${formatNumber(statInfo.totalPaidPrice)} | 미납: ₩${formatNumber(statInfo.totalNotPaidPrice)}`}
     />
     <StatItem
       icon={faChartLine}
@@ -48,7 +48,7 @@ const StatItem = ({ icon, title, value, subStat }) => (
   <div className='bg-white rounded-xl shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg'>
     <div className='flex items-center mb-4'>
       <div className='text-blue-500 text-2xl mr-4'>
-        <FontAwesomeIcon icon={icon} />
+        <FontAwesomeIcon icon={icon} color='#4FD1C5' />
       </div>
       <h3 className='text-sm font-medium text-gray-600'>{title}</h3>
     </div>
@@ -57,23 +57,29 @@ const StatItem = ({ icon, title, value, subStat }) => (
   </div>
 );
 
-const BillingSummary = ({ billingInfo }) => (
+const BillingSummary = ({ billingInfo, month }) => (
   <div className='bg-white rounded-xl shadow-md p-6'>
-    <h2 className='text-xl font-bold mb-4 text-gray-800'>이번 달 청구 현황</h2>
+    <h2 className='text-xl font-bold mb-4 text-gray-800'>{month}월 청구 현황</h2>
     <div className='space-y-4'>
       <div>
         <p className='text-sm font-medium text-gray-500 mb-1'>총 청구액</p>
-        <p className='text-2xl font-bold text-blue-600'>₩{formatNumber(billingInfo.totalBillingPrice)}</p>
+        <p className='text-2xl font-bold text-blue-600'>
+          ₩{formatNumber(billingInfo.totalBillingPrice)}
+        </p>
       </div>
       <div className='grid grid-cols-2 gap-4'>
         <div>
           <p className='text-sm font-medium text-gray-500 mb-1'>완납</p>
-          <p className='text-lg font-semibold text-green-600'>₩{formatNumber(billingInfo.paidBillingPrice)}</p>
+          <p className='text-lg font-semibold text-green-600'>
+            ₩{formatNumber(billingInfo.paidBillingPrice)}
+          </p>
           <p className='text-xs text-gray-400'>76%</p>
         </div>
         <div>
           <p className='text-sm font-medium text-gray-500 mb-1'>미납</p>
-          <p className='text-lg font-semibold text-red-600'>₩{formatNumber(billingInfo.nonPaidBillingPrice)}</p>
+          <p className='text-lg font-semibold text-red-600'>
+            ₩{formatNumber(billingInfo.nonPaidBillingPrice)}
+          </p>
           <p className='text-xs text-gray-400'>24%</p>
         </div>
       </div>
@@ -81,16 +87,40 @@ const BillingSummary = ({ billingInfo }) => (
         <p className='text-sm font-medium text-gray-500 mb-2'>청구 건수</p>
         <div className='grid grid-cols-2 gap-4'>
           <div>
-            <p className='text-sm text-gray-600'>총 청구: <span className='font-semibold'>{formatNumber(billingInfo.totalBillingAmount)}건</span></p>
-            <p className='text-sm text-gray-600'>완납: <span className='font-semibold text-green-600'>{formatNumber(billingInfo.paidBillingAmount)}건</span></p>
+            <p className='text-sm text-gray-600'>
+              총 청구:{' '}
+              <span className='font-semibold'>
+                {formatNumber(billingInfo.totalBillingAmount)}건
+              </span>
+            </p>
+            <p className='text-sm text-gray-600'>
+              완납:{' '}
+              <span className='font-semibold text-green-600'>
+                {formatNumber(billingInfo.paidBillingAmount)}건
+              </span>
+            </p>
           </div>
           <div>
-            <p className='text-sm text-gray-600'>수납대기: <span className='font-semibold text-yellow-600'>{formatNumber(billingInfo.waitBillingAmount)}건</span></p>
-            <p className='text-sm text-gray-600'>미납: <span className='font-semibold text-red-600'>{formatNumber(billingInfo.nonPaidBillingAmount)}건</span></p>
+            <p className='text-sm text-gray-600'>
+              수납대기:{' '}
+              <span className='font-semibold text-yellow-600'>
+                {formatNumber(billingInfo.waitBillingAmount)}건
+              </span>
+            </p>
+            <p className='text-sm text-gray-600'>
+              미납:{' '}
+              <span className='font-semibold text-red-600'>
+                {formatNumber(billingInfo.nonPaidBillingAmount)}건
+              </span>
+            </p>
           </div>
           <div>
-          <p className='text-sm text-gray-600'>생성: <span className='font-semibold text-yellow-600'>{formatNumber(billingInfo.createdBillingAmount)}건</span></p>
-            
+            <p className='text-sm text-gray-600'>
+              생성:{' '}
+              <span className='font-semibold text-yellow-600'>
+                {formatNumber(billingInfo.createdBillingAmount)}건
+              </span>
+            </p>
           </div>
         </div>
       </div>
@@ -98,7 +128,7 @@ const BillingSummary = ({ billingInfo }) => (
   </div>
 );
 
-const Calendar = mEvents => (
+const Calendar = (mEvents, mEventClick, ref, onNext, onPrev) => (
   <div className='bg-white rounded-xl shadow-md p-6'>
     <FullCalendar
       plugins={[dayGridPlugin]}
@@ -108,9 +138,21 @@ const Calendar = mEvents => (
       headerToolbar={{
         left: '',
         center: 'title',
-        right: '',
+        right: 'mPrev mNext',
       }}
       events={mEvents}
+      eventClick={mEventClick}
+      ref={ref}
+      customButtons={{
+        mNext: {
+          text: '>',
+          click: onNext,
+        },
+        mPrev: {
+          text: '<',
+          click: onPrev,
+        },
+      }}
     />
   </div>
 );
@@ -121,23 +163,33 @@ const TopMembers = ({ topFive }) => (
     <table className='w-full'>
       <thead>
         <tr className='bg-gray-50'>
-          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>회원명</th>
-          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>총 계약액</th>
-          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>계약 수</th>
+          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+            회원명
+          </th>
+          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+            총 계약액
+          </th>
+          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+            계약 수
+          </th>
         </tr>
       </thead>
       <tbody className='bg-white divide-y divide-gray-200'>
-        {topFive && topFive.map((mem, idx) => (
-          <TableRow
-            key={idx}
-            data={[mem.memberName, `₩${formatNumber(mem.totalContractPrice)}`, formatNumber(mem.contractCount)]}
-          />
-        ))}
+        {topFive &&
+          topFive.map((mem, idx) => (
+            <TableRow
+              key={idx}
+              data={[
+                mem.memberName,
+                `₩${formatNumber(mem.totalContractPrice)}`,
+                formatNumber(mem.contractCount),
+              ]}
+            />
+          ))}
       </tbody>
     </table>
   </div>
 );
-
 
 const RecentContracts = ({ contracts }) => (
   <div className='bg-white rounded-xl shadow-md p-6'>
@@ -145,24 +197,33 @@ const RecentContracts = ({ contracts }) => (
     <table className='w-full'>
       <thead>
         <tr className='bg-gray-50'>
-          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>계약일</th>
-          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>회원명</th>
-          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>계약액</th>
-          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>기간</th>
+          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+            계약일
+          </th>
+          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+            회원명
+          </th>
+          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+            계약액
+          </th>
+          <th className='p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+            기간
+          </th>
         </tr>
       </thead>
       <tbody className='bg-white divide-y divide-gray-200'>
-        {contracts && contracts.map((contract, idx) => (
-          <TableRow
-            key={idx}
-            data={[
-              contract.contractStartDate,
-              contract.memberName,
-              `₩${formatNumber(contract.totalContractPrice)}`,
-              `${contract.contractMonth} 개월`,
-            ]}
-          />
-        ))}
+        {contracts &&
+          contracts.map((contract, idx) => (
+            <TableRow
+              key={idx}
+              data={[
+                contract.contractStartDate,
+                contract.memberName,
+                `₩${formatNumber(contract.totalContractPrice)}`,
+                `${contract.contractMonth} 개월`,
+              ]}
+            />
+          ))}
       </tbody>
     </table>
   </div>
@@ -182,6 +243,22 @@ const DashBoardPage = () => {
   const [statInfo, setStatInfo] = useState({});
   const [billingInfo, setBillingInfo] = useState({});
   const [topFive, setTopFive] = useState({});
+  const [date, setDate] = useState(new Date());
+
+  const calendarRef = useRef();
+
+  const calendarGoNext = () => {
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.next();
+    setDate(calendarApi.getDate());
+  };
+
+  const calendarGoPrev = () => {
+    console.log('prev clicked');
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.prev();
+    setDate(calendarApi.getDate());
+  };
 
   // 일별 청구 달력 event 변환
   const convertToCalendarEvents = billingInfo => {
@@ -196,30 +273,42 @@ const DashBoardPage = () => {
     });
   };
 
+  //TODO 이벤트 클릭시 하루 청구 상세 조회
+  const handleCalendarEventClicked = async info => {
+    const date = info.event.start;
+    if (date) {
+      // const res = await getStatInfo(year, month);
+      // modal open with data
+    }
+  };
+
   useEffect(() => {
-    const fetchStatInfo = async (year, month) => {
-      const res = await getStatInfo(year, month);
-      setStatInfo(res.data);
-    };
-
-    const fetchBillingInfo = async (year, month) => {
-      const res = await getMonthBillingInfo(year, month);
-      setBillingInfo(res.data);
-    };
-
-    const fetchTopFiveInfo = async () => {
-      const res = await getTopInfo();
-      setTopFive(res.data);
-    };
-
     const date = new Date();
     const curYear = date.getFullYear();
     const curMonth = date.getMonth() + 1;
 
-    fetchStatInfo(curYear, curMonth);
-    fetchBillingInfo(curYear, curMonth);
-    fetchTopFiveInfo();
+    const fetchData = async () => {
+      const [statRes, topRes] = await Promise.all([getStatInfo(curYear, curMonth), getTopInfo()]);
+
+      setStatInfo(statRes.data);
+      setTopFive(topRes.data);
+    };
+
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    const curMonth = date.getMonth() + 1;
+    const curYear = date.getFullYear();
+
+    const fetchMonthBillingInfo = async () => {
+      const res = await getMonthBillingInfo(curYear, curMonth);
+      console.log('billinginfo', res);
+      setBillingInfo(res.data);
+    };
+
+    fetchMonthBillingInfo();
+  }, [date]);
 
   return (
     <div className='bg-gray-100 min-h-screen py-8'>
@@ -227,9 +316,33 @@ const DashBoardPage = () => {
         <Stats statInfo={statInfo} />
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>
           <div className='lg:col-span-3'>
-            <Calendar events={convertToCalendarEvents(billingInfo)} />
+            <div className='bg-white rounded-xl shadow-md p-6'>
+              <FullCalendar
+                plugins={[dayGridPlugin]}
+                initialView='dayGridMonth'
+                height={'auto'}
+                showNonCurrentDates={true}
+                headerToolbar={{
+                  left: '',
+                  center: 'title',
+                  right: 'mPrev mNext',
+                }}
+                events={convertToCalendarEvents(billingInfo)}
+                ref={calendarRef}
+                customButtons={{
+                  mNext: {
+                    text: '>',
+                    click: function() {calendarGoNext()},
+                  },
+                  mPrev: {
+                    text: '<',
+                    click: function() {calendarGoPrev()},
+                  },
+                }}
+              />
+            </div>
           </div>
-          <BillingSummary billingInfo={billingInfo} />
+          <BillingSummary billingInfo={billingInfo} month={date.getMonth() + 1}/>
         </div>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           <TopMembers topFive={topFive.topFiveMemberRes} />
