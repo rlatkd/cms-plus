@@ -30,9 +30,6 @@ public class MemberDetail {
 
 
     public static MemberDetail fromEntity(Member member,int billingCount, Long totalBillingPrice){
-
-        List<Contract> contracts = member.getContracts();
-
         return MemberDetail.builder()
                 .memberId(member.getId())
                 .memberName(member.getName())
@@ -44,7 +41,7 @@ public class MemberDetail {
                 .memberEnrollDate(member.getEnrollDate())
                 .createdDateTime(member.getCreatedDateTime())
                 .modifiedDateTime(member.getModifiedDateTime())
-                .contractCount(contracts.size())
+                .contractCount(member.getContractNum())
                 .billingCount(billingCount)
                 .totalBillingPrice(totalBillingPrice)
                 .build();
