@@ -1,6 +1,8 @@
 package kr.or.kosa.cmsplusmessage.service;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import kr.or.kosa.cmsplusmessage.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,9 @@ import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
@@ -22,21 +27,21 @@ import java.util.List;
 @Slf4j
 public class MessagingService {
 
-    @Value("${coolsms.api.key}")
-    private String smsApiKey;
-    @Value("${coolsms.api.secret}")
-    private String smsApiSecret;
-    @Value("${coolsms.api.domain}")
+    @Value("${sms.key}")
+    private String smsKey;
+    @Value("${sms.secret}")
+    private String smsSecret;
+    @Value("${sms.domain}")
     private String smsDomain;
-    @Value("${coolsms.api.phone}")
+    @Value("${sms.phone}")
     private String smsPhone;
 
-    private DefaultMessageService messageService;
+    private DefaultMessageService messageService; // coolsms
 
     // 의존성 주입 후 초기화 - bean이 여러번 초기화되는 것을 방지
     @PostConstruct
     public void init() { // 최초에 쿨에스엠에스 서비스에 내 정보를 매핑시켜야함
-        this.messageService = new DefaultMessageService(smsApiKey, smsApiSecret, smsDomain);
+        this.messageService = new DefaultMessageService(smsKey, smsSecret, smsDomain);
     }
 
     // 컨트롤러에서 호출할 메서드
@@ -46,7 +51,7 @@ public class MessagingService {
         for (MessageDto messageDto : messages) {
             Message message = new Message();
             message.setFrom(smsPhone); // 발신번호(내 번호)
-            message.setTo(messageDto.getPhone()); // 수신번호
+            message.setTo(messageDto.getPhoneNumber()); // 수신번호
             message.setText(messageDto.getText()); // 수신내용
             messageList.add(message);
         }
@@ -70,6 +75,41 @@ public class MessagingService {
 
 
 
+
+
+
+
+
+    @Value("${email.emailAddress}")
+    private String emailAddress;
+
+    // 이메일 대량은 한 번에 100건, 하루 500건
+    private final JavaMailSender mailSender;
+
+    public String sendEmail(MessageDto messageDto) throws MailException {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
+            helper.setTo(messageDto.getEmailAddress()); // 메일 보낼 곳
+            helper.setFrom(emailAddress); // 메일 보내는 곳
+            helper.setSubject("보낼 이메일 제목"); // 메일 제목
+            helper.setText(messageDto.getText()); // 메일 내용
+            mailSender.send(message); //
+            return "[email 전송 성공]";
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return "[email 전송 실패]";
+        }
+
+    }
+
+
+
+
+
+
+
+
     private MessageDto messageDto;
 
     @KafkaListener(topics = "message-topic",groupId = "message-group",containerFactory = "kafkaListenerContainerFactory")
@@ -83,6 +123,8 @@ public class MessagingService {
 
     }
 
+
+
     private void handleSmsMessage(MessageDto messageDto) {
         log.error("[SMS 메시지 소비됨]: {}", messageDto.toString());
         /*
@@ -92,9 +134,7 @@ public class MessagingService {
 
     private void handleEmailMessage(MessageDto messageDto) {
         log.error("[EMAIL 메시지 소비됨]: {}", messageDto.toString());
-        /*
-         * TODO 여기서 EMAIL 서비스에 연동하면 됨
-         * */
+        sendEmail(messageDto);
     }
 
 }

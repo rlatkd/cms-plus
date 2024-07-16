@@ -10,7 +10,8 @@ import lombok.ToString;
 public class MessageDto {
 
     private String type;
-    private String phone;
+    private String phoneNumber;
+    private String emailAddress;
     private String text;
 
 }

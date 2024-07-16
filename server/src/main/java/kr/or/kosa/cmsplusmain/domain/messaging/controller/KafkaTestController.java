@@ -1,7 +1,8 @@
 package kr.or.kosa.cmsplusmain.domain.messaging.controller;
 
-import kr.or.kosa.cmsplusmain.domain.messaging.dto.KafkaTestDto;
-import kr.or.kosa.cmsplusmain.domain.messaging.service.MessageService;
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.messaging.service.MessagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,20 +11,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/kafkatest")
 public class KafkaTestController {
 
-    private final MessageService messageService;
+    private final MessagingService messagingService;
 
     String topic = "message-topic";
 
-    @PostMapping
-    public String kafkaTest(@RequestBody KafkaTestDto kafkaTestDto) {
-
-        messageService.send(topic, kafkaTestDto);
-
-        return "success";
-
+    @PostMapping("/sms")
+    public String sendSms(@RequestBody SmsMessageDto smsMessageDto) {
+        messagingService.send(topic, smsMessageDto);
+        return "success sms";
     }
 
-
-    // phone, email, 기타등등(카톡아이디)
+    @PostMapping("/email")
+    public String sendEmail(@RequestBody EmailMessageDto emailMessageDto) {
+        messagingService.send(topic, emailMessageDto);
+        return "success email";
+    }
 
 }

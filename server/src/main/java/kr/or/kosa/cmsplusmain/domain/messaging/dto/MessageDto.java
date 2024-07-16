@@ -4,15 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @ToString
-public class KafkaTestDto {
+public abstract class MessageDto { // sms, email은 이걸 상속해서 각자 타입에 맞는 핸드폰번호, email주소를 주입해야함
 
     private String type;
-    private String phone;
     private String text;
 
 }
