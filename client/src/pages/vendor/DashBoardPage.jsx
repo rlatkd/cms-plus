@@ -7,7 +7,7 @@ import {
   faMoneyBillWave,
   faChartLine,
 } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getMonthBillingInfo, getStatInfo, getTopInfo } from '@/apis/dashboard';
 
 const formatNumber = (num) => {
