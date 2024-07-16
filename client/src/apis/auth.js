@@ -28,7 +28,7 @@ export const deleteLogout = async () => {
     const res = await publicAxios.delete('/v1/vendor/auth/logout');
     return res;
   } catch (err) {
-    console.log('로그아웃 실패', err.response.data);
+    console.error('로그아웃 실패', err.response.data);
     throw err;
   }
 };
@@ -52,7 +52,7 @@ export const postRefreshToken = async () => {
     const res = await publicAxios.post('/v1/vendor/auth/refresh');
     return res;
   } catch (err) {
-    console.log('리프레쉬 토큰 재발급 실패', err.response.data);
+    console.error('리프레쉬 토큰 재발급 실패', err.response.data);
     throw err;
   }
 };

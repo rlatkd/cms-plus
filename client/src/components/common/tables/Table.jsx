@@ -3,7 +3,15 @@ import TableRow from './TableRow';
 import TableCol from './TableCol';
 import TableSearch from './TableSearch';
 
-const Table = ({ cols, search, items, handleSearchChange, show, onRowClick, onSearchClick }) => {
+const Table = ({
+  cols,
+  search,
+  rows,
+  currentPage,
+  handleSearchChange,
+  onRowClick,
+  onSearchClick,
+}) => {
   const [selection, setSelection] = useState([]);
   const itemKey = cols[0];
 
@@ -21,7 +29,7 @@ const Table = ({ cols, search, items, handleSearchChange, show, onRowClick, onSe
   // 모든 체크박스 선택
   const handleClickCheckBoxAll = e => {
     if (e.target.checked) {
-      const allCheckedSelection = items.map(item => item[itemKey]);
+      const allCheckedSelection = rows.map(item => item[itemKey]);
       setSelection(allCheckedSelection);
     } else {
       setSelection([]);
@@ -29,27 +37,31 @@ const Table = ({ cols, search, items, handleSearchChange, show, onRowClick, onSe
   };
 
   const isSelectedAll = () => {
-    return selection.length === items.length;
+    return selection.length === rows.length;
   };
 
   return (
-    <table className=' w-full '>
+    <table className='w-full h-full'>
       <TableCol
         cols={cols}
         isSelectedAll={isSelectedAll}
         handleClickCheckBoxAll={handleClickCheckBoxAll}
       />
       <tbody>
-        <TableSearch
-          search={search}
-          handleSearchChange={handleSearchChange}
-          onSearchClick={onSearchClick}
-        />
-        {items.map((item, idx) => (
+        {search && (
+          <TableSearch
+            search={search}
+            handleSearchChange={handleSearchChange}
+            onSearchClick={onSearchClick}
+          />
+        )}
+        {rows.map((row, index) => (
           <TableRow
-            key={idx}
-            item={item}
+            key={index}
+            index={index}
+            row={row}
             cols={cols}
+            currentPage={currentPage}
             itemKey={itemKey}
             selection={selection}
             handleClickCheckBox={handleClickCheckBox}

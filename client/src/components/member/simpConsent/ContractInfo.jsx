@@ -1,6 +1,6 @@
 import React from 'react';
 import Input from '@/components/common/inputs/Input';
-import SelectField from '@/components/common/SelectField';
+import SelectField from '@/components/common/selects/SelectField';
 import ProductItem from '@/components/common/ProductItem';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 

@@ -42,8 +42,7 @@ const LoginForm = () => {
     try {
       const res = await postLogin(data);
       console.log('!----로그인 성공----!'); // 삭제예정
-      const accessToken = res.data.accessToken;
-      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('access_token', res.data.accessToken);
       navigate('/vendor/dashboard');
     } catch (err) {
       console.error('axiosJoin => ', err.response.data);
