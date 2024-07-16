@@ -446,9 +446,9 @@ VALUES
 INSERT INTO cmsplusmain.billing (billing_date, billing_contract_day, deleted, billing_id, contract_id, created_datetime, deleted_datetime, modified_datetime, billing_invoice_message, billing_type, billing_status)
 VALUES
     ('2023-01-15', 15, 0, 1, 1, NOW(), NULL, NOW(), '청구서 메시지 1', 'REGULAR', 'CREATED'),
-    ('2023-02-15', 15, 0, 2, 2, NOW(), NULL, NOW(), '청구서 메시지 2', 'REGULAR', 'CREATED'),
+    ('2023-02-15', 15, 0, 2, 2, NOW(), NULL, NOW(), '청구서 메시지 2', 'REGULAR', 'NON_PAID'),
     ('2023-03-15', 15, 0, 3, 3, NOW(), NULL, NOW(), '청구서 메시지 3', 'REGULAR', 'CREATED'),
-    ('2023-04-15', 15, 0, 4, 4, NOW(), NULL, NOW(), '청구서 메시지 4', 'REGULAR', 'CREATED'),
+    ('2023-04-15', 15, 0, 4, 4, NOW(), NULL, NOW(), '청구서 메시지 4', 'REGULAR', 'PAID'),
     ('2023-05-15', 15, 0, 5, 5, NOW(), NULL, NOW(), '청구서 메시지 5', 'REGULAR', 'CREATED'),
     ('2023-06-15', 15, 0, 6, 6, NOW(), NULL, NOW(), '청구서 메시지 6', 'REGULAR', 'CREATED'),
     ('2023-07-15', 15, 0, 7, 7, NOW(), NULL, NOW(), '청구서 메시지 7', 'REGULAR', 'CREATED'),
