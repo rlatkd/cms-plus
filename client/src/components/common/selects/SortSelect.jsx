@@ -1,19 +1,36 @@
-const SortSelect = ({ selectedOption, setSelectedOption, options }) => {
-  const handleChange = event => {
-    setSelectedOption(event.target.value);
+const SortSelect = ({ setOrder, setOrderBy, selectOptions, axiosList, currentSearchParams }) => {
+  const handleChangeOption = async event => {
+    const selectedOption = selectOptions.find(option => option.label === event.target.value);
+
+    if (event.target.value === 'No') {
+      setOrder('');
+      setOrderBy('');
+      await axiosList({
+        ...currentSearchParams,
+        order: '',
+        orderBy: '',
+      });
+    } else if (selectedOption) {
+      setOrder(selectedOption.order);
+      setOrderBy(selectedOption.orderBy);
+      await axiosList({
+        ...currentSearchParams,
+        order: selectedOption.order,
+        orderBy: selectedOption.orderBy,
+      });
+    }
   };
 
   return (
     <div className='relative flex items-center'>
       <div className='relative mr-3'>
         <select
-          value={selectedOption}
-          onChange={handleChange}
+          onChange={handleChangeOption}
           className='block appearance-none text-xs text-text_grey border border-text_grey 
                       rounded-md px-4 py-2 pr-10 cursor-pointer focus:outline-none'>
-          <option value=''>No 오름차순</option>
-          {options.map((option, index) => (
-            <option key={index} value={option.value}>
+          <option value='No'>No 오름차순</option>
+          {selectOptions.map((option, index) => (
+            <option key={index} value={option.label}>
               {option.label}
             </option>
           ))}

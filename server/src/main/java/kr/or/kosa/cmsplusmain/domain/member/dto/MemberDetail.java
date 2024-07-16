@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.member.dto;
 
-import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import lombok.Builder;
@@ -8,7 +7,6 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Builder

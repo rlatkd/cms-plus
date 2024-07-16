@@ -3,10 +3,14 @@ package kr.or.kosa.cmsplusmain.domain.member.repository;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
+import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
 import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
@@ -64,15 +68,32 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     /*
      * 전체 회원 수
      * */
-    public int countAllMemberByVendor(Long vendorId) {
-        Long res = jpaQueryFactory
-            .select(member.id.count())
-            .from(member)
-            .where(
-                    member.vendor.id.eq(vendorId),
-                    memberNotDel()
-            )
-            .fetchOne();
+    public int countAllMemberByVendor(Long vendorId, MemberSearchReq memberSearch) {
+        JPQLQuery<Long> subquery = JPAExpressions
+                .select(member.id)
+                .from(member)
+                .leftJoin(member.contracts, contract).on(contract.deleted.isFalse())
+                .leftJoin(contract.contractProducts, contractProduct).on(contractProduct.deleted.isFalse())
+                .where(
+                        member.vendor.id.eq(vendorId),
+                        memberNotDel(),
+
+                        memberNameContains(memberSearch.getMemberName()),
+                        memberPhoneContains(memberSearch.getMemberPhone()),
+                        memberEmailContains(memberSearch.getMemberEmail()),
+                        memberEnrollDateEq(memberSearch.getMemberEnrollDate())
+                )
+                .groupBy(member.id)
+                .having(
+                        contractNumberLoe(memberSearch.getContractCount()),
+                        contractPriceLoeInGroup(memberSearch.getContractPrice())
+                );
+
+        Long res = jpaQueryFactory.select(member.id.count())
+                .from(member)
+                .where(member.id.in(subquery))
+                .fetchOne();
+
         return (res != null) ? res.intValue() : 0;
     }
 

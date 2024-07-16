@@ -8,16 +8,18 @@ const Table = ({
   search,
   rows,
   currentPage,
-  handleSearchChange,
+  handleChangeSearch,
   onRowClick,
-  onSearchClick,
+  handlehClickSearch,
 }) => {
   const [selection, setSelection] = useState([]);
-  const itemKey = cols[0];
+  const itemKey = cols[0].key;
 
   // 체크박스 하나 선택
   const handleClickCheckBox = value => {
     let newSelection = [...selection];
+
+    console.log('selection', selection);
     if (newSelection.includes(value)) {
       newSelection = newSelection.filter(item => item !== value);
     } else {
@@ -29,7 +31,7 @@ const Table = ({
   // 모든 체크박스 선택
   const handleClickCheckBoxAll = e => {
     if (e.target.checked) {
-      const allCheckedSelection = rows.map(item => item[itemKey]);
+      const allCheckedSelection = rows.map(item => item);
       setSelection(allCheckedSelection);
     } else {
       setSelection([]);
@@ -51,8 +53,8 @@ const Table = ({
         {search && (
           <TableSearch
             search={search}
-            handleSearchChange={handleSearchChange}
-            onSearchClick={onSearchClick}
+            handleChangeSearch={handleChangeSearch}
+            handlehClickSearch={handlehClickSearch}
           />
         )}
         {rows.map((row, index) => (
