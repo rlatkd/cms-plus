@@ -249,7 +249,7 @@ public class StatRepository {
 			.select(new QMonthBillingQueryRes(
 					billing.billingDate,
 					billing.billingStatus,
-					billing.id.countDistinct().intValue(),
+					billing.id.count().intValue(),
 					billingProduct.price.longValue().multiply(billingProduct.quantity).sum()
 				)
 			)
@@ -262,6 +262,22 @@ public class StatRepository {
 				billing.billingDate.year().eq(year)
 			)
 			.groupBy(billing.billingDate, billing.billingStatus, billing.id)
+			.fetch();
+	}
+
+	/*
+	* 특정 날의 청구 상세 목록
+	* */
+	public List<Billing> findBillingsByDay(Long vendorId, LocalDate date) {
+		return queryFactory
+			.selectFrom(billing)
+			.leftJoin(billing.billingProducts, billingProduct)
+			.on(billingProduct.deleted.isFalse()).fetchJoin()
+			.join(billing.contract, contract)
+			.where(
+				contract.vendor.id.eq(vendorId),
+				billing.billingDate.eq(date)
+			)
 			.fetch();
 	}
 

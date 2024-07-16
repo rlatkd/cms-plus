@@ -12,7 +12,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
+import kr.or.kosa.cmsplusmain.domain.statics.dto.DayBillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.DayBillingRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.RecentFiveContractRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.StatInfoRes;
@@ -125,6 +128,8 @@ public class StatService {
 	public MonthBillingInfoRes getMonthBillingInfo(Long vendorId, int year, int month) {
 		List<MonthBillingQueryRes> monthBillingQueryRes = statRepository.findBillingsByMonth(vendorId, year, month);
 
+		System.out.println("month: " + monthBillingQueryRes);
+
 		// 상태별 그룹핑
 		Map<BillingStatus, List<MonthBillingQueryRes>> statusToRes = monthBillingQueryRes.stream()
 			.collect(Collectors.groupingBy(MonthBillingQueryRes::getBillingStatus));
@@ -162,6 +167,18 @@ public class StatService {
 				statusToRes.get(BillingStatus.NON_PAID).size(),
 				dayBillingResList);
 	}
+
+	// public DayBillingDetailRes getDayBillingDetail(Long vendorId, LocalDate date) {
+	// 	List<Billing> billings = statRepository.findBillingsByDay(vendorId, date);
+	//
+	// 	// 상태별 그룹핑
+	// 	Map<BillingStatus, List<Billing>> statusToRes = billings.stream()
+	// 		.collect(Collectors.groupingBy(Billing::getBillingStatus));
+	// 	Arrays.stream(BillingStatus.values()).forEach(bs ->
+	// 		statusToRes.computeIfAbsent(bs, k -> new ArrayList<>())
+	// 	);
+	//
+	// }
 
 	private Long calcBillingPrice(List<MonthBillingQueryRes> monthBillingQueryRes) {
 		return monthBillingQueryRes.stream()
