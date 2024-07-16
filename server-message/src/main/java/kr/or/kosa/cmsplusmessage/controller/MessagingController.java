@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/messaging")
+@RequestMapping("/api/v1/messagingtest")
 @RequiredArgsConstructor
 public class MessagingController {
 
     private final MessagingService messagingService;
 
+    //
     @PostMapping("/sms")
     public String sendSms(@RequestBody List<MessageDto> messages) {
         messagingService.sendSms(messages);

@@ -9,9 +9,10 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class KafkaTestDto implements Serializable {
+public class KafkaTestDto {
 
+    private String type;
     private String phone;
-    private String message;
+    private String text;
 
 }

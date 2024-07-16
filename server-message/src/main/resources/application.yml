@@ -6,11 +6,13 @@ spring:
     name: cmsplusmessage
   kafka:
     consumer:
-      group-id: kafka-test-group
+#      group-id: sms-group
       bootstrap-servers: localhost:9092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: '*'
       # auto-offset-reset
       # latest(default): ?? ??? offset??
       # earliest: ?? ?? offset??(consumer???? ?? ??? / producer???? ?? ?? ??)

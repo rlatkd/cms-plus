@@ -12,10 +12,12 @@ public class KafkaTestController {
 
     private final MessageService messageService;
 
+    String topic = "message-topic";
+
     @PostMapping
     public String kafkaTest(@RequestBody KafkaTestDto kafkaTestDto) {
 
-        messageService.send(kafkaTestDto);
+        messageService.send(topic, kafkaTestDto);
 
         return "success";
 

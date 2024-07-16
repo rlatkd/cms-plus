@@ -8,10 +8,11 @@ import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.response.MultipleDetailMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,8 +70,31 @@ public class MessagingService {
 
 
 
+    private MessageDto messageDto;
 
+    @KafkaListener(topics = "message-topic",groupId = "message-group",containerFactory = "kafkaListenerContainerFactory")
+    public void consumeMessage(ConsumerRecord<String, MessageDto> consumerRecord) {
+        messageDto = consumerRecord.value();
+        if ("sms".equals(messageDto.getType())) { // TYPE이 sms일 때 sms로직으로 가게
+            handleSmsMessage(messageDto);
+        } else if ("email".equals(messageDto.getType())) { // TYPE이 email일 때 email로직으로 가게
+            handleEmailMessage(messageDto);
+        }
 
+    }
 
+    private void handleSmsMessage(MessageDto messageDto) {
+        log.error("[SMS 메시지 소비됨]: {}", messageDto.toString());
+        /*
+        * TODO 여기서 SMS 서비스에 연동하면 됨
+        * */
+    }
+
+    private void handleEmailMessage(MessageDto messageDto) {
+        log.error("[EMAIL 메시지 소비됨]: {}", messageDto.toString());
+        /*
+         * TODO 여기서 EMAIL 서비스에 연동하면 됨
+         * */
+    }
 
 }

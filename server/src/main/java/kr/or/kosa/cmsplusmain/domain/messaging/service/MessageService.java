@@ -18,19 +18,26 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MessageService {
 
-	@Autowired
-	SetProperties setProperties;
+//	@Autowired
+//	SetProperties setProperties;
+//
+//	@Autowired
+//	private KafkaTemplate<String, String> kafkaTemplate;
+//
+//	public void send(KafkaTestDto kafkaTestDto) {
+//		Message<String> message = MessageBuilder
+//				.withPayload(kafkaTestDto.toString())
+//				.setHeader(KafkaHeaders.TOPIC, setProperties.getTopic1())
+//				.build();
+//
+//		kafkaTemplate.send(message);
+//	}
 
-	@Autowired
-	private KafkaTemplate<String, String> kafkaTemplate;
+	private final KafkaTemplate<String, KafkaTestDto> kafkaTemplate;
 
-	public void send(KafkaTestDto kafkaTestDto) {
-		Message<String> message = MessageBuilder
-				.withPayload(kafkaTestDto.toString())
-				.setHeader(KafkaHeaders.TOPIC, setProperties.getTopic1())
-				.build();
-
-		kafkaTemplate.send(message);
+	public void send(String topic, KafkaTestDto kafkaTestDto) {
+		log.error("[토픽]={} [페이로드]={}", topic, kafkaTestDto);
+		kafkaTemplate.send(topic, kafkaTestDto);
 	}
 
 
