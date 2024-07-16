@@ -6,6 +6,8 @@ import Table from '@/components/common/tables/Table';
 import ProductModal from '@/components/vendor/modal/ProductModal';
 import { validateField } from '@/utils/validators';
 import { useCallback, useEffect, useState } from 'react';
+import addItem from '@/assets/addItem.svg';
+import Item from '@/assets/Item';
 
 const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
@@ -138,11 +140,9 @@ const ProductListPage = () => {
     <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center '>
-          <img
-            className='bg-mint h-7 w-7 p-1 rounded-md ml-1 mr-3'
-            src='/src/assets/item.svg'
-            alt='user'
-          />
+          <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
+            <Item fill='#4FD1C5' stroke='#ffffff' />
+          </div>
           <p className='text-text_black font-700 mr-5'>총 24건</p>
           <SortSelect
             setOrder={setOrder}
@@ -156,8 +156,9 @@ const ProductListPage = () => {
         <div>
           <div className='flex'>
             <MoveButton
-              imgSrc='/src/assets/addItem.svg'
+              imgSrc={addItem}
               buttonText='상품 등록'
+              color='mint'
               onClick={handleCreateModalOpen}
             />
           </div>

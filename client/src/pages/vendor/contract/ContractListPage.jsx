@@ -6,9 +6,10 @@ import { getContractList } from '@/apis/contract.js';
 import PagiNation from '@/components/common/PagiNation';
 import SortSelect from '@/components/common/selects/SortSelect';
 import MoveButton from '@/components/common/buttons/MoveButton';
-import registerUser from '@/assets/registerUser.svg';
 import file from '@/assets/file.svg';
 import sign from '@/assets/sign.svg';
+import user from '@/assets/user.svg';
+import File from '@/assets/File';
 
 const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
@@ -74,7 +75,7 @@ const ContractListPage = () => {
 
   const navigate = useNavigate();
 
-  // 회원 목록 조회
+  // 계약 목록 조회
   const axiosContractList = useCallback(
     async (searchParams = {}, page = currentPage) => {
       try {
@@ -137,7 +138,7 @@ const ContractListPage = () => {
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
 
-  // 회원 상세 조회 페이지 이동
+  // 계약 상세 조회 페이지 이동
   const MoveContractDetail = async contractId => {
     console.log(contractId);
     navigate(`detail/${contractId}`);
@@ -151,11 +152,9 @@ const ContractListPage = () => {
     <div className='primary-dashboard flex flex-col h-1500 desktop:h-full'>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center '>
-          <img
-            className='bg-mint h-7 w-7 p-2 rounded-md ml-1 mr-3'
-            src='/src/assets/user.svg'
-            alt='user'
-          />
+          <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
+            <File fill='#ffffff' />
+          </div>
           <p className='text-text_black font-700 mr-5'>총 24건</p>
           <SortSelect
             setOrder={setOrder}
@@ -168,21 +167,16 @@ const ContractListPage = () => {
 
         <div>
           <div className='flex'>
-            <MoveButton
-              imgSrc={sign}
-              color={'white'}
-              buttonText='간편 서명 동의'
-              onClick={() => setIsShowModal(true)}
-            />
+            <MoveButton imgSrc={sign} color='white' buttonText='간편 서명 동의' />
             <MoveButton
               imgSrc={file}
-              color={'mint'}
+              color='mint'
               buttonText='신규 회원 계약 등록'
               onClick={() => navigate('/vendor/members/register')}
             />
             <MoveButton
               imgSrc={file}
-              color={'mint'}
+              color='mint'
               buttonText='기존 회원 계약 등록'
               onClick={() => setIsShowModal(true)}
             />
@@ -210,6 +204,7 @@ const ContractListPage = () => {
       />
       <MemberChooseModal
         isShowModal={isShowModal}
+        icon={user}
         setIsShowModal={setIsShowModal}
         modalTitle={'회원선택'}
       />

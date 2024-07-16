@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import registerManyUser from '@/assets/registerManyUser.svg';
 import registerUser from '@/assets/registerUser.svg';
 import { getMemberList } from '@/apis/member';
+import User from '@/assets/User';
 
 const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
@@ -108,11 +109,9 @@ const MemberListPage = () => {
     <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center '>
-          <img
-            className='bg-mint h-7 w-7 p-2 rounded-md ml-1 mr-3'
-            src='/src/assets/user.svg'
-            alt='user'
-          />
+          <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
+            <User fill='#ffffff' />
+          </div>
           <p className='text-text_black font-700 mr-5'>총 24건</p>
           <SortSelect
             setOrder={setOrder}
@@ -127,11 +126,13 @@ const MemberListPage = () => {
           <div className='flex'>
             <MoveButton
               imgSrc={registerManyUser}
+              color='mint'
               buttonText='대량 회원 등록'
               onClick={() => navigate('register')}
             />
             <MoveButton
               imgSrc={registerUser}
+              color='mint'
               buttonText='회원 등록'
               onClick={() => navigate('register')}
             />
