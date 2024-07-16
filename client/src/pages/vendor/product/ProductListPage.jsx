@@ -28,20 +28,24 @@ const initialSearch = [
 ];
 
 // // SortSelect를 위한 값들
-// const [selectedOption, setSelectedOption] = useState('');
-// const Options = [
-//   { value: 'option1', label: 'Option 1' },
-//   { value: 'option2', label: 'Option 2' },
-//   { value: 'option3', label: 'Option 3' },
-// ];
+const selectOptions = [
+  { label: '높은 가격순', orderBy: 'productPrice', order: 'DESC' },
+  { label: '낮은 가격순', orderBy: 'productPrice', order: 'ASC' },
+  { label: '계약 많은순', orderBy: 'productCount', order: 'DESC' },
+  { label: '계약 적은순', orderBy: 'productCount', order: 'ASC' },
+];
 
 const ProductListPage = () => {
-  const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
-  const [modalTitle, setModalTitle] = useState(''); // 모달 제목
   const [productList, setProductList] = useState([]); // 상품 목록
-  const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
   const [search, setSearch] = useState(initialSearch); // 상품 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
+  const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
+
+  const [order, setOrder] = useState(''); // 정렬 방향
+  const [orderBy, setOrderBy] = useState(''); // 정렬 항목
+
+  const [modalTitle, setModalTitle] = useState(''); // 모달 제목
+  const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
   const [isValid, setIsValid] = useState(true); // 유효성 flag
 
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
@@ -66,37 +70,21 @@ const ProductListPage = () => {
     [currentPage]
   );
 
-  // 페이지 진입 시 상품 목록 조회
-  useEffect(() => {
-    axiosProductList(currentSearchParams, currentPage);
-  }, [currentPage, currentSearchParams, axiosProductList]);
-
-  // 상품 등록 모달 열기용 이벤트핸들러
-  const handleCreateModalOpen = () => {
-    setModalTitle('상품 등록');
-    setIsShowModal(true);
-  };
-
-  // 상품 상세조회 모달 열기용 이벤트핸들러
-  const handleDetailModalOpen = async productId => {
-    setModalTitle('상품 상세 정보');
-    try {
-      const res = await getProductDetail(productId);
-      setProductDetailData(res.data);
-      setIsShowModal(true);
-    } catch (err) {
-      console.error('axiosProductDetail => ', err.response.data);
-    }
-  };
-
-  // 조건 변경 핸들러
+  // 검색 변경 핸들러
   const handleChangeSearch = (key, value) => {
-    console.log(key, value);
-    setSearch(prev =>
-      prev.map(searchProduct =>
-        searchProduct.key === key ? { ...searchProduct, value: value } : searchProduct
-      )
+    const updatedSearch = search.map(searchItem =>
+      searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );
+
+    let searchParams = { size: 10, order: order, orderBy: orderBy };
+    updatedSearch.forEach(searchMember => {
+      if (searchMember.value) {
+        searchParams[searchMember.key] = searchMember.value;
+      }
+    });
+
+    setSearch(updatedSearch);
+    setCurrentSearchParams(searchParams);
   };
 
   // 검색 안에 입력값 유효성 검사
@@ -117,18 +105,34 @@ const ProductListPage = () => {
   // 검색 클릭 이벤트 핸들러
   const handlehClickSearch = async () => {
     if (!validateSearchParams()) return;
-    const searchParams = { size: 10 };
-    search.forEach(searchProduct => {
-      if (searchProduct.value) {
-        searchParams[searchProduct.key] = searchProduct.value;
-      }
-    });
-
-    setCurrentSearchParams(searchParams);
+    axiosProductList(currentSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
     setIsValid(true); // 검색 후 유효성 flag 초기화
   };
+
+  // 상품 등록 모달 열기용 이벤트핸들러
+  const handleCreateModalOpen = () => {
+    setModalTitle('상품 등록');
+    setIsShowModal(true);
+  };
+
+  // 상품 상세조회 모달 열기용 이벤트핸들러
+  const handleDetailModalOpen = async productId => {
+    setModalTitle('상품 상세 정보');
+    try {
+      const res = await getProductDetail(productId);
+      setProductDetailData(res.data);
+      setIsShowModal(true);
+    } catch (err) {
+      console.error('axiosProductDetail => ', err.response.data);
+    }
+  };
+
+  // 페이지 진입 시 상품 목록 조회
+  useEffect(() => {
+    axiosProductList(currentPage);
+  }, [currentPage]);
 
   return (
     <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
@@ -140,11 +144,13 @@ const ProductListPage = () => {
             alt='user'
           />
           <p className='text-text_black font-700 mr-5'>총 24건</p>
-          {/* <SortSelect
-            selectedOption={selectedOption}
-            setSelectedOption={setSelectedOption}
-            options={Options}
-          /> */}
+          <SortSelect
+            setOrder={setOrder}
+            setOrderBy={setOrderBy}
+            selectOptions={selectOptions}
+            currentSearchParams={currentSearchParams}
+            axiosList={axiosProductList}
+          />
         </div>
 
         <div>
@@ -164,8 +170,8 @@ const ProductListPage = () => {
         rows={productList}
         currentPage={currentPage}
         handleChangeSearch={handleChangeSearch}
-        onRowClick={item => handleDetailModalOpen(item.productId)}
         handlehClickSearch={handlehClickSearch}
+        onRowClick={item => handleDetailModalOpen(item.productId)}
       />
 
       {/* 페이지네이션*/}

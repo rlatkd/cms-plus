@@ -1,7 +1,6 @@
 const SortSelect = ({ setOrder, setOrderBy, selectOptions, axiosList, currentSearchParams }) => {
   const handleChangeOption = async event => {
     const selectedOption = selectOptions.find(option => option.label === event.target.value);
-
     if (event.target.value === 'No') {
       setOrder('');
       setOrderBy('');

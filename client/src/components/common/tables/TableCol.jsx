@@ -13,7 +13,7 @@ const TableCol = ({ cols, isSelectedAll, handleClickCheckBoxAll }) => (
         <th
           key={idx}
           className={`flex justify-center  ${col.key === 'order' ? 'w-16 pl-2' : `${col.width}`} 
-             font-900`}>
+            font-900`}>
           {col.label}
         </th>
       ))}

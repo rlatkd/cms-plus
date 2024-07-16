@@ -39,7 +39,7 @@ const Table = ({
   };
 
   const isSelectedAll = () => {
-    return selection.length === rows.length;
+    return selection.length != 0 && selection.length === rows.length;
   };
 
   return (

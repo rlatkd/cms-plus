@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import registerManyUser from '@/assets/registerManyUser.svg';
 import registerUser from '@/assets/registerUser.svg';
-import { getMemberDetail, getMemberList } from '@/apis/member';
+import { getMemberList } from '@/apis/member';
 
 const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
@@ -105,7 +105,7 @@ const MemberListPage = () => {
   }, [currentPage]);
 
   return (
-    <div className='primary-dashboard flex flex-col h-1500  desktop:h-full '>
+    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center '>
           <img
