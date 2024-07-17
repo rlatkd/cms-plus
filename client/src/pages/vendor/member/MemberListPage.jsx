@@ -11,6 +11,7 @@ import User from '@/assets/User';
 import { formatPhone } from '@/utils/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/memberElement';
+import MemberExcelModal from '@/components/vendor/modal/MemberExcelModal';
 
 const MemberListPage = () => {
   const [memberList, setMemberList] = useState([]); // 회원 목록
