@@ -1,10 +1,10 @@
 import { convertMember, uploadMembers } from '@/apis/member';
 import BaseModal from '@/components/common/BaseModal';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip';
-import { FaExclamationCircle, FaUpload, FaSave } from 'react-icons/fa';
+import { FaExclamationCircle, FaUpload, FaSave, FaDownload } from 'react-icons/fa';
 
 const headers = [
   { name: '회원명', key: 'memberName', required: true },
@@ -23,12 +23,18 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-const { alertWidth: alertCompWidth } = useContext(AlertWdithContext);
+  const { alertWidth: alertCompWidth } = useContext(AlertWdithContext);
 
-const onAlertClick = async (msg) => {
-  const result = await alertCompWidth(msg);
-  console.log('onAlertWidthClick : ', result);
-};
+  useEffect(() => {
+    setData([]);
+    setFile(null);
+    setErrors([]);
+  }, [isShowModal]);
+
+  const onAlertClick = async msg => {
+    const result = await alertCompWidth(msg);
+    console.log('onAlertWidthClick : ', result);
+  };
 
   const handleFileChange = e => {
     setFile(e.target.files[0]);
@@ -91,8 +97,10 @@ const onAlertClick = async (msg) => {
       <div className='bg-white p-8 rounded-lg w-full h-full flex flex-col'>
         <div className='mb-6 flex items-center justify-between'>
           <div className='flex items-center flex-1'>
-            <label htmlFor='file-upload' className='cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-full inline-flex items-center transition duration-300 ease-in-out'>
-              <FaUpload className="mr-2" />
+            <label
+              htmlFor='file-upload'
+              className='cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-full inline-flex items-center transition duration-300 ease-in-out'>
+              <FaUpload className='mr-2' />
               파일 선택
               <input
                 id='file-upload'
@@ -102,32 +110,36 @@ const onAlertClick = async (msg) => {
                 accept='.xlsx, .xls'
               />
             </label>
-            <span className="ml-3 text-sm text-gray-600">{file ? file.name : '선택된 파일 없음'}</span>
+            <span className='ml-3 text-sm text-gray-600'>
+              {file ? file.name : '선택된 파일 없음'}
+            </span>
           </div>
-          {file && (data.length <= 0 ? (
-            <button
-              onClick={handleUpload}
-              className='ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center'
-              disabled={isLoading}>
-              <FaUpload className="mr-2" />
-              업로드
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              className='bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-full transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 flex items-center'>
-              <FaSave className="mr-2" />
-              등록
-            </button>
-          ))}
+          <div>
+            <div className='container flex justify-between'>
+              <a className='ml-4 flex items-center underline mr-5'
+                href={'../../../../default_excel.xlsx'} 
+                download="회원등록양식.xlsx"
+              >양식 다운로드</a>
+              {file &&
+                (data.length <= 0 ? (
+                  <button
+                    onClick={handleUpload}
+                    className='ml-4 bg-mint hover:bg-mint_hover text-white font-bold py-2 px-8 rounded-full transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center'
+                    disabled={isLoading}>
+                    <FaUpload className='mr-2' />
+                    업로드
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    className='bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-full transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 flex items-center'>
+                    <FaSave className='mr-2' />
+                    등록
+                  </button>
+                ))}
+            </div>
+          </div>
         </div>
-
-        {isLoading && (
-          <div className='text-center mb-4'>
-            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto'></div>
-            <p className='mt-2 text-gray-600'>업로드 중...</p>
-          </div>
-        )}
 
         <div className='flex-1 overflow-hidden'>
           <div className='overflow-x-auto overflow-y-auto h-full shadow-md rounded-lg'>
@@ -152,13 +164,18 @@ const onAlertClick = async (msg) => {
                         <td key={cellIndex} className='px-6 py-4 whitespace-nowrap'>
                           <div className='flex items-center'>
                             {errors && errors.length > 0 && cellIndex === 0 && (
-                              <div className="mr-2">
+                              <div className='mr-2'>
                                 <FaExclamationCircle
-                                  className="text-red-500 cursor-help"
+                                  className='text-red-500 cursor-help'
                                   data-tooltip-id={`error-${rowIndex}`}
                                   data-tooltip-html={errors[rowIndex].replace('\n', '<br>')}
                                 />
-                                <Tooltip id={`error-${rowIndex}`} place="top" type="error" effect="solid" />
+                                <Tooltip
+                                  id={`error-${rowIndex}`}
+                                  place='top'
+                                  type='error'
+                                  effect='solid'
+                                />
                               </div>
                             )}
                             <input
@@ -174,13 +191,19 @@ const onAlertClick = async (msg) => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={headers.length} className='px-6 py-4 text-center text-gray-500'>
-                      데이터가 없습니다. 엑셀 파일을 업로드해주세요.
-                    </td>
+                      <td colSpan={headers.length} className='px-6 py-4 text-center text-gray-500'>
+                        데이터가 없습니다. 엑셀 파일을 업로드해주세요.
+                      </td>
                   </tr>
                 )}
               </tbody>
             </table>
+            {isLoading && (
+                      <div className='text-center mb-4'>
+                        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto'></div>
+                        <p className='mt-2 text-gray-600'>업로드 중...</p>
+                      </div>
+                    )}
           </div>
         </div>
       </div>
