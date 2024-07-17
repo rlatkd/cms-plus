@@ -169,6 +169,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.select(member.id.countDistinct())
 			.from(billing)
 			.join(billing.contract, contract)
+				.join(contract.member, member)
 			.where(
 					contract.vendor.id.eq(vendorId),
 					contract.member.id.eq(memberId),
@@ -204,6 +205,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				.from(billingProduct)
 				.join(billingProduct.billing, billing)
 				.join(billing.contract, contract)
+					.join(contract.member, member)
 				.where(
 						contract.vendor.id.eq(vendorId),
 						member.id.eq(memberId),

@@ -58,6 +58,18 @@ const ContractInfo = () => {
         </h3>
       </div>
 
+      <Input
+        label='계약명'
+        name='contractName'
+        type='text'
+        required
+        placeholder='최대 20자'
+        className='pb-6'
+        // value={localData.cardNumber}
+        // onChange={handleInputChange}
+        // onBlur={handleBlur}
+      />
+
       <SelectField
         label='상품'
         required
@@ -112,8 +124,8 @@ const ContractInfo = () => {
         label='약정일'
         required
         options={[...Array(31)].map((_, i) => ({ value: i + 1, label: `${i + 1}일` }))}
-        value={userData.paymentDay}
-        onChange={e => setUserData({ paymentDay: parseInt(e.target.value) })}
+        value={userData.contractDay}
+        onChange={e => setUserData({ contractDay: parseInt(e.target.value) })}
       />
     </div>
   );

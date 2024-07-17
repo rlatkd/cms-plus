@@ -41,11 +41,15 @@ const Signature = () => {
       const formData = new FormData();
       formData.append('file', blob, 'signature.png');
 
-      const response = await axios.post('http://localhost:8080/api/v1/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        'http://localhost:8080/api/v1/simple-consent/sign',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
       setUploadStatus('업로드 성공!');
       return response.data.fileUrl; // 서버에서 반환된 파일 URL

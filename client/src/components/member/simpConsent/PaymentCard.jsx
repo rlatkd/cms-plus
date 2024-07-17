@@ -8,7 +8,7 @@ const PaymentCard = () => {
     cardNumber: userData.cardNumber,
     expiryDate: userData.expiryDate,
     cardHolder: userData.cardHolder,
-    cardBirthDate: userData.cardBirthDate,
+    cardOwnerBirth: userData.cardBirthDate,
   });
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const PaymentCard = () => {
       cardNumber: userData.cardNumber,
       expiryDate: userData.expiryDate,
       cardHolder: userData.cardHolder,
-      cardBirthDate: userData.cardBirthDate,
+      cardOwnerBirth: userData.cardBirthDate,
     });
   }, [userData]);
 
@@ -68,7 +68,7 @@ const PaymentCard = () => {
           name='cardBirthDate'
           type='text'
           required
-          placeholder='생년월일 6자리'
+          placeholder='생년월일 8자리(-)'
           value={localData.cardBirthDate}
           onChange={handleInputChange}
           onBlur={handleBlur}

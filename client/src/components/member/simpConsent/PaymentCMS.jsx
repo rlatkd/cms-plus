@@ -31,7 +31,7 @@ const PaymentCMS = () => {
     setLocalData({
       bank: userData.bank,
       accountHolder: userData.accountHolder,
-      accountBirthDate: userData.accountBirthDate,
+      accountOwnerBirth: userData.accountBirthDate,
       accountNumber: userData.accountNumber,
     });
   }, [userData]);
