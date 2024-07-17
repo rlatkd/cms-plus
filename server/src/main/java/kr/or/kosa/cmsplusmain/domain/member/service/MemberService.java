@@ -162,7 +162,7 @@ public class MemberService {
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.joining("\n"));
 
-        if (validate.isEmpty()) {
+        if (!validate.isEmpty()) {
             validation += "\n";
         }
 

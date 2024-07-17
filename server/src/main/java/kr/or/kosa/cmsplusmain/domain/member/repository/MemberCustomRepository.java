@@ -138,8 +138,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             .selectOne()
             .from(member)
             .where(
-                memberPhoneEq(phone),
-                memberEmailEq(email),
+                memberPhoneEq(phone).or(memberEmailEq(email)),
                 memberNotDel()
             )
             .fetchOne();
