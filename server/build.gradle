@@ -75,6 +75,13 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.session:spring-session-data-redis'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    // yml 값 매핑하여 java 코드에서 객체로 사용
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
 }
 
 test {
