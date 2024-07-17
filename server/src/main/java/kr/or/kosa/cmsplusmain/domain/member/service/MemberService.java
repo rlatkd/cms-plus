@@ -7,6 +7,8 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -34,6 +36,8 @@ public class MemberService {
 
     private final PaymentService paymentService;
     private final ContractService contractService;
+    private final ContractRepository contractRepository;
+    private final ContractProductRepository contractProductRepository;
 
     /*
      * 회원 목록 조회
@@ -112,6 +116,10 @@ public class MemberService {
 
     /*
      * 회원 수정 - 기본 정보
+     *
+     * 총 발생 쿼리수: 3회
+     * 내용 :
+     *    회원 존재여부 확인, 회원 상세 조회, 회원 정보 업데이트
      * */
     @Transactional
     public void updateMember(Long vendorId, Long memberId, MemberUpdateReq memberUpdateReq) {
@@ -130,10 +138,26 @@ public class MemberService {
     }
 
     /*
+     * 회원 수정 - 청구 정보
+     *
+     * */
+    @Transactional
+    public void updateMemberBilling(Long vendorId, Long memberId, MemberBillingUpdateReq memberBillingUpdateReq){
+        // 고객의 회원 여부 확인
+        validateMemberUser(vendorId, memberId);
+
+        // 회원의 청구 정보 수정
+        Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
+        member.setInvoiceSendMethod(memberBillingUpdateReq.getInvoiceSendMethod());
+        member.setAutoInvoiceSend(memberBillingUpdateReq.isAutoInvoiceSend());
+        member.setAutoBilling(memberBillingUpdateReq.isAutoBilling());
+    }
+
+    /*
      * 회원 ID 존재여부
      * 회원이 현재 로그인 고객의 회원인지 여부
      * */
-    public void validateMemberUser(Long vendorId, Long memberId) {
+    private void validateMemberUser(Long vendorId, Long memberId) {
         if(!memberCustomRepository.isExistMemberById(memberId, vendorId)) {
             throw new EntityNotFoundException("회원 ID 없음(" + memberId + ")");
         }

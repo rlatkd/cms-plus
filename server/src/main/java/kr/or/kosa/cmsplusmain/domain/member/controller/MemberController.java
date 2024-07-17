@@ -27,7 +27,7 @@ public class MemberController {
      * */
     @GetMapping("/members")
     public PageRes<MemberListItemRes> getMemberList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, MemberSearchReq memberSearch, PageReq pageable) {
-        Long vendorId = 1L;
+        Long vendorId = userDetails.getId();
         return memberService.searchMembers(vendorId, memberSearch, pageable);
     }
 
@@ -36,8 +36,8 @@ public class MemberController {
      * */
     @GetMapping("/members/{memberId}")
     public MemberDetail getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId) {
-        Long vendorId = 1L;
-        return memberService.findMemberDetailById(vendorId, memberId);
+       Long vendorId = userDetails.getId();
+       return memberService.findMemberDetailById(vendorId, memberId);
     }
 
     /*
@@ -45,7 +45,7 @@ public class MemberController {
      * */
     @GetMapping("/members/contracts/{memberId}")
     public SortPageDto.Res<MemberContractListItemDto> getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId , PageReq pageable) {
-        Long vendorId = 1L;
+        Long vendorId = userDetails.getId();
         return memberService.findContractListItemByMemberId(vendorId, memberId, pageable);
     }
 
@@ -54,7 +54,7 @@ public class MemberController {
      * */
     @PostMapping("/members")
     public void createMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @RequestBody @Valid MemberCreateReq memberCreateReq) {
-        Long vendorId = 1L;
+        Long vendorId = userDetails.getId();
         memberService.createMember(vendorId, memberCreateReq);
     }
 
@@ -63,12 +63,16 @@ public class MemberController {
      * */
     @PutMapping("/members/{memberId}")
     public void updateMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @RequestBody @Valid MemberUpdateReq memberUpdateReq, @PathVariable Long memberId) {
-
-
         Long vendorId = userDetails.getId();
         memberService.updateMember(vendorId,memberId, memberUpdateReq);
     }
 
-
-
+    /*
+     * 회원 수정 - 청구 정보
+     * */
+    @PutMapping("/members/billing/{memberId}")
+    public void updateMemberBilling(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @RequestBody @Valid MemberBillingUpdateReq memberBillingUpdateReq, @PathVariable Long memberId) {
+        Long vendorId = userDetails.getId();
+        memberService.updateMemberBilling(vendorId, memberId, memberBillingUpdateReq);
+    }
 }

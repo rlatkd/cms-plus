@@ -378,7 +378,7 @@ VALUES
 INSERT INTO cmsplusmain.member (deleted, member_auto_billing, member_auto_invoice_send, member_enroll_date, created_datetime, deleted_datetime, member_id, modified_datetime, vendor_id, member_home_phone, member_phone, zipcode, address, address_detail, member_name, member_email, member_memo, member_invoice_send_method, member_status)
 VALUES
     (0, 1, 1, '2020-01-02', NOW(), NULL, 2, NOW(), 1, '0212345679', '01012345679', '12345', '서울시 강남구', '상세주소1', '최수현', 'member2@example.com', 'memo2', 'SMS', 'DISABLED'),
-    (0, 1, 1, '2020-01-01', NOW(), NULL, 1, NOW(), 1, '0212345678', '01012345678', '12346', '서울시 강북구', '상세주소2', '박준형', 'member1@example.com', 'memo1', 'EMAIL', 'ENABLED'),
+    (0, 1, 1, '2020-01-01', NOW(), NULL, 1, NOW(), 1, '02-1234-5678', '010-1234-5678', '12346', '서울시 강북구', '상세주소2', '박준형', 'member1@example.com', 'memo1', 'EMAIL', 'ENABLED'),
     (0, 1, 1, '2020-01-03', NOW(), NULL, 3, NOW(), 1, '0212345680', '01012345680', '12347', '서울시 서초구', '상세주소3', '정우성', 'member3@example.com', 'memo3', 'EMAIL', 'ENABLED'),
     (0, 1, 1, '2020-01-04', NOW(), NULL, 4, NOW(), 1, '0212345681', '01012345681', '12348', '서울시 송파구', '상세주소4', '이정재', 'member4@example.com', 'memo4', 'SMS', 'DISABLED'),
     (0, 1, 1, '2020-01-05', NOW(), NULL, 5, NOW(), 1, '0212345682', '01012345682', '12349', '서울시 강동구', '상세주소5', '박보검', 'member5@example.com', 'memo5', 'EMAIL', 'ENABLED'),

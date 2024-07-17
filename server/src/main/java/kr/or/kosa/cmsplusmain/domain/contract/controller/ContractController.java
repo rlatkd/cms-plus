@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.contract.controller;
 
+import kr.or.kosa.cmsplusmain.domain.contract.dto.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -11,10 +12,6 @@ import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import lombok.RequiredArgsConstructor;
 
@@ -67,8 +64,8 @@ public class ContractController {
 	 * TODO 생성 -> 수정으로 수정하기
 	 * */
 	@PutMapping("/{contractId}")
-	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractCreateReq contractCreateReq) {
+	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractUpdateReq contractUpdateReq) {
 		Long vendorId = 1L;
-		contractService.updateContract(vendorId, contractId, contractCreateReq);
+		contractService.updateContract(vendorId, contractId, contractUpdateReq);
 	}
 }
