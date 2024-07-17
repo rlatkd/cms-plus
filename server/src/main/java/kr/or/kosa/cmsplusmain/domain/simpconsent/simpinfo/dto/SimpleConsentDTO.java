@@ -90,7 +90,7 @@ public class SimpleConsentDTO {
 
     public PaymentCreateReq toPaymentCreateReq() {
         AutoTypeReq paymentTypeInfoReq = AutoTypeReq.builder()
-                .consentImgUrl(signatureUrl)
+                .signImgUrl(signatureUrl)
                 .simpleConsentReqDateTime(LocalDateTime.now())
                 .build();
 

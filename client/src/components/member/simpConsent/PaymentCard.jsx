@@ -5,18 +5,18 @@ import { useUserDataStore } from '@/stores/useUserDataStore';
 const PaymentCard = () => {
   const { userData, setUserData } = useUserDataStore();
   const [localData, setLocalData] = useState({
-    cardNumber: userData.cardNumber,
-    expiryDate: userData.expiryDate,
-    cardHolder: userData.cardHolder,
-    cardOwnerBirth: userData.cardBirthDate,
+    cardNumber: userData.cardNumber || '',
+    expiryDate: userData.expiryDate || '',
+    cardHolder: userData.cardHolder || '',
+    cardOwnerBirth: userData.cardOwnerBirth || '',
   });
 
   useEffect(() => {
     setLocalData({
-      cardNumber: userData.cardNumber,
-      expiryDate: userData.expiryDate,
-      cardHolder: userData.cardHolder,
-      cardOwnerBirth: userData.cardBirthDate,
+      cardNumber: userData.cardNumber || '',
+      expiryDate: userData.expiryDate || '',
+      cardHolder: userData.cardHolder || '',
+      cardOwnerBirth: userData.cardOwnerBirth || '',
     });
   }, [userData]);
 
@@ -65,11 +65,11 @@ const PaymentCard = () => {
         />
         <Input
           label='생년월일'
-          name='cardBirthDate'
+          name='cardOwnerBirth'
           type='text'
           required
-          placeholder='생년월일 8자리(-)'
-          value={localData.cardBirthDate}
+          placeholder='YYYY-MM-DD (예: 1990-01-01)'
+          value={localData.cardOwnerBirth}
           onChange={handleInputChange}
           onBlur={handleBlur}
         />

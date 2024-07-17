@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '@/components/common/inputs/Input';
 import SelectField from '@/components/common/SelectField';
 import ProductItem from '@/components/common/ProductItem';
@@ -6,45 +6,94 @@ import { useUserDataStore } from '@/stores/useUserDataStore';
 
 const ContractInfo = () => {
   const { userData, setUserData } = useUserDataStore();
+  const [localData, setLocalData] = useState({
+    contractName: userData.contractName,
+    selectedProduct: userData.selectedProduct,
+    items: userData.items,
+    startDate: userData.startDate,
+    endDate: userData.endDate,
+    contractDay: userData.contractDay,
+  });
+
+  useEffect(() => {
+    setLocalData({
+      contractName: userData.contractName,
+      selectedProduct: userData.selectedProduct,
+      items: userData.items,
+      startDate: userData.startDate,
+      endDate: userData.endDate,
+      contractDay: userData.contractDay,
+    });
+  }, [userData]);
+
+  const productOptions = [
+    { value: '', label: '상품을 선택해주세요' },
+    { value: '10', label: '상품 10(3,000원)' },
+    { value: '20', label: '상품 20(4,000원)' },
+  ];
+
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setLocalData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleBlur = e => {
+    const { name, value } = e.target;
+    setUserData({ [name]: value });
+  };
 
   const handleProductChange = e => {
-    const newProduct = e.target.value;
-    setUserData({ selectedProduct: newProduct });
-    if (!userData.items.some(item => item.name === newProduct)) {
-      setUserData({
-        items: [
-          ...userData.items,
-          { name: newProduct, quantity: 1, price: newProduct.includes('3,000') ? 3000 : 4000 },
-        ],
-      });
+    const productId = e.target.value;
+    if (productId) {
+      const selectedProduct = productOptions.find(option => option.value === productId);
+      const newProduct = {
+        productId: parseInt(productId),
+        productName: selectedProduct.label.split('(')[0],
+        price: selectedProduct.label.includes('3,000') ? 3000 : 4000,
+        quantity: 1,
+      };
+
+      if (!localData.items.some(item => item.productId === newProduct.productId)) {
+        setLocalData(prev => ({
+          ...prev,
+          selectedProduct: productId,
+          items: [...prev.items, newProduct],
+        }));
+        setUserData({
+          selectedProduct: productId,
+          items: [...localData.items, newProduct],
+        });
+      }
+    } else {
+      setLocalData(prev => ({ ...prev, selectedProduct: '' }));
+      setUserData({ selectedProduct: '' });
     }
   };
 
   const updateQuantity = (index, change) => {
-    const newItems = [...userData.items];
+    const newItems = [...localData.items];
     newItems[index].quantity = Math.max(1, newItems[index].quantity + change);
+    setLocalData(prev => ({ ...prev, items: newItems }));
     setUserData({ items: newItems });
   };
 
   const removeItem = index => {
-    setUserData({ items: userData.items.filter((_, i) => i !== index) });
+    const newItems = localData.items.filter((_, i) => i !== index);
+    setLocalData(prev => ({ ...prev, items: newItems }));
+    setUserData({ items: newItems });
   };
 
-  // const totalPrice = userData.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  const handleDateChange = (e, field) => {
+    const newDate = e.target.value;
+    setLocalData(prev => ({ ...prev, [field]: newDate }));
+    setUserData({ [field]: newDate });
 
-  const handleStartDateChange = e => {
-    const newStartDate = e.target.value;
-    setUserData({ startDate: newStartDate });
-    if (new Date(newStartDate) > new Date(userData.endDate)) {
-      setUserData({ endDate: newStartDate });
-    }
-  };
-
-  const handleEndDateChange = e => {
-    const newEndDate = e.target.value;
-    setUserData({ endDate: newEndDate });
-    if (new Date(newEndDate) < new Date(userData.startDate)) {
-      setUserData({ startDate: newEndDate });
+    if (field === 'startDate' && new Date(newDate) > new Date(localData.endDate)) {
+      setLocalData(prev => ({ ...prev, endDate: newDate }));
+      setUserData({ endDate: newDate });
+    } else if (field === 'endDate' && new Date(newDate) < new Date(localData.startDate)) {
+      setLocalData(prev => ({ ...prev, startDate: newDate }));
+      setUserData({ startDate: newDate });
     }
   };
 
@@ -63,25 +112,22 @@ const ContractInfo = () => {
         name='contractName'
         type='text'
         required
-        placeholder='최대 20자'
+        placeholder='최대 20자리'
         className='pb-6'
-        // value={localData.cardNumber}
-        // onChange={handleInputChange}
-        // onBlur={handleBlur}
+        value={localData.contractName}
+        onChange={handleInputChange}
+        onBlur={handleBlur}
       />
 
       <SelectField
         label='상품'
         required
-        options={[
-          { value: '상품명1(3,000원)', label: '상품명1(3,000원)' },
-          { value: '상품명2(4,000원)', label: '상품명2(4,000원)' },
-        ]}
-        value={userData.selectedProduct}
+        options={productOptions}
+        value={localData.selectedProduct}
         onChange={handleProductChange}
       />
 
-      {userData.items.map((item, index) => (
+      {localData.items.map((item, index) => (
         <ProductItem
           key={index}
           item={item}
@@ -90,7 +136,9 @@ const ContractInfo = () => {
         />
       ))}
 
-      <div className='mb-4 text-right text-sm font-semibold'>합계: {userData.totalPrice}원</div>
+      <div className='mb-4 text-right text-sm font-semibold'>
+        합계: {localData.items.reduce((sum, item) => sum + item.quantity * item.price, 0)}원
+      </div>
 
       <div className='mb-4'>
         <label className='mb-1 block text-sm font-medium text-gray-700'>
@@ -102,8 +150,8 @@ const ContractInfo = () => {
         <div className='flex w-full items-center'>
           <Input
             type='date'
-            value={userData.startDate}
-            onChange={handleStartDateChange}
+            value={localData.startDate}
+            onChange={e => handleDateChange(e, 'startDate')}
             min='2024-01-01'
             max='2024-12-31'
             className='flex-1'
@@ -111,9 +159,9 @@ const ContractInfo = () => {
           <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
           <Input
             type='date'
-            value={userData.endDate}
-            onChange={handleEndDateChange}
-            min={userData.startDate}
+            value={localData.endDate}
+            onChange={e => handleDateChange(e, 'endDate')}
+            min={localData.startDate}
             max='2024-12-31'
             className='flex-1'
           />
@@ -124,8 +172,12 @@ const ContractInfo = () => {
         label='약정일'
         required
         options={[...Array(31)].map((_, i) => ({ value: i + 1, label: `${i + 1}일` }))}
-        value={userData.contractDay}
-        onChange={e => setUserData({ contractDay: parseInt(e.target.value) })}
+        value={localData.contractDay}
+        onChange={e => {
+          const value = parseInt(e.target.value);
+          setLocalData(prev => ({ ...prev, contractDay: value }));
+          setUserData({ contractDay: value });
+        }}
       />
     </div>
   );

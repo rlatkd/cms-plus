@@ -8,8 +8,8 @@ const PaymentInfo = () => {
   const { userData, setUserData, clearPaymentInfo } = useUserDataStore();
 
   const paymentOptions = [
-    { label: '카드', value: 'card' },
-    { label: '실시간 CMS', value: 'cms' },
+    { label: '카드', value: 'CARD' },
+    { label: '실시간 CMS', value: 'CMS' },
   ];
 
   const handlePaymentMethodChange = value => {
@@ -34,7 +34,7 @@ const PaymentInfo = () => {
         onChange={handlePaymentMethodChange}
         required={true}
       />
-      {userData.paymentMethod === 'card' ? <PaymentCard /> : <PaymentCMS />}
+      {userData.paymentMethod === 'CARD' ? <PaymentCard /> : <PaymentCMS />}
     </>
   );
 };

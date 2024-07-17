@@ -91,9 +91,11 @@ const Signature = () => {
   };
 
   const productNames =
-    userData.items.length > 1
-      ? `${userData.items[0].name} 외 ${userData.items.length - 1}`
-      : userData.items[0].name;
+    userData.items && userData.items.length > 0
+      ? userData.items.length > 1
+        ? `${userData.items[0].productName} 외 ${userData.items.length - 1}`
+        : userData.items[0].productName
+      : '상품 정보 없음';
 
   const formatDate = dateString => {
     const date = new Date(dateString);
@@ -104,24 +106,28 @@ const Signature = () => {
   };
 
   const bankNameMap = {
-    shinhan: '신한은행',
-    kb: '국민은행',
-    woori: '우리은행',
-    ibk: '기업은행',
-    suhyup: '수협은행',
-    nh: 'NH농협은행',
-    busan: '부산은행',
-    hana: '하나은행',
-    gwangju: '광주은행',
-    post: '우체국',
-    im: 'iM뱅크',
-    knb: '경남은행',
+    SHINHAN: '신한은행',
+    KB: '국민은행',
+    WOORI: '우리은행',
+    IBK: '기업은행',
+    SUHYUP: '수협은행',
+    NH: 'NH농협은행',
+    BUSAN: '부산은행',
+    HANA: '하나은행',
+    GWANGJU: '광주은행',
+    POST: '우체국',
+    IM: 'iM뱅크',
+    KNB: '경남은행',
   };
 
   const paymentInfo =
-    userData.paymentMethod === 'card'
-      ? `카드 ${userData.cardNumber.slice(-4).padStart(16, '*')}`
-      : `${bankNameMap[userData.bank] || userData.bank} ${userData.accountNumber.slice(-4).padStart(userData.accountNumber.length, '*')}`;
+    userData.paymentMethod === 'CARD'
+      ? userData.cardNumber
+        ? `카드 ${userData.cardNumber.slice(-4).padStart(16, '*')}`
+        : '카드 정보 없음'
+      : userData.bank && userData.accountNumber
+        ? `${bankNameMap[userData.bank] || userData.bank} ${userData.accountNumber.slice(-4).padStart(userData.accountNumber.length, '*')}`
+        : '계좌 정보 없음';
 
   return (
     <div className='relative bg-white p-1'>
@@ -139,7 +145,7 @@ const Signature = () => {
           label='기간'
           value={`${formatDate(userData.startDate)}~${formatDate(userData.endDate)}`}
         />
-        <InfoRow label='약정일' value={`${userData.paymentDay}일`} />
+        <InfoRow label='약정일' value={`${userData.contractDay}일`} />
         <InfoRow label='결제수단' value={paymentInfo} />
       </div>
       <div className='mb-4 mt-8'>

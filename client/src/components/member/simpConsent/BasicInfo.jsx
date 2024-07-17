@@ -5,8 +5,8 @@ import AddressInput from '@/components/common/inputs/AddressInput';
 const BasicInfo = ({ userData, setUserData }) => {
   const [localData, setLocalData] = useState({
     name: userData.name,
-    mobile: userData.mobile,
     phone: userData.phone,
+    homePhone: userData.homePhone,
     email: userData.email,
     zipcode: userData.zipcode,
     address: userData.address,
@@ -16,8 +16,8 @@ const BasicInfo = ({ userData, setUserData }) => {
   useEffect(() => {
     setLocalData({
       name: userData.name,
-      mobile: userData.mobile,
       phone: userData.phone,
+      homePhone: userData.homePhone,
       email: userData.email,
       zipcode: userData.zipcode,
       address: userData.address,
@@ -63,20 +63,20 @@ const BasicInfo = ({ userData, setUserData }) => {
         />
         <Input
           label='휴대전화'
-          name='mobile'
+          name='phone'
           type='tel'
           required
           placeholder="'-' 없이, 최대 12자리"
-          value={localData.mobile}
+          value={localData.phone}
           onChange={handleChange}
           onBlur={handleBlur}
         />
         <Input
           label='유선전화'
-          name='phone'
+          name='homePhone'
           type='tel'
           placeholder="'-' 없이, 최대 12자리"
-          value={localData.phone}
+          value={localData.homePhone}
           onChange={handleChange}
           onBlur={handleBlur}
         />
