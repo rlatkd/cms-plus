@@ -3,10 +3,11 @@ package kr.or.kosa.cmsplusmain.domain.member.controller;
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final PaymentService paymentService;
 
     /*
      * 회원 목록 조회
@@ -35,7 +37,7 @@ public class MemberController {
      * 회원 상세 - 기본 정보 조회
      * */
     @GetMapping("/members/{memberId}")
-    public MemberDetail getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId) {
+    public MemberDetail getMemberDetail(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId) {
        Long vendorId = userDetails.getId();
        return memberService.findMemberDetailById(vendorId, memberId);
     }
@@ -44,7 +46,7 @@ public class MemberController {
      * 회원 상세 - 계약 리스트 조회
      * */
     @GetMapping("/members/contracts/{memberId}")
-    public SortPageDto.Res<MemberContractListItemDto> getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId , PageReq pageable) {
+    public PageRes<MemberContractListItemRes> getMemberContractList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @PathVariable Long memberId , PageReq pageable) {
         Long vendorId = userDetails.getId();
         return memberService.findContractListItemByMemberId(vendorId, memberId, pageable);
     }
@@ -74,5 +76,14 @@ public class MemberController {
     public void updateMemberBilling(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @RequestBody @Valid MemberBillingUpdateReq memberBillingUpdateReq, @PathVariable Long memberId) {
         Long vendorId = userDetails.getId();
         memberService.updateMemberBilling(vendorId, memberId, memberBillingUpdateReq);
+    }
+
+    /*
+     * 회원 수정 - 결제 정보
+     * */
+    @PutMapping("/members/payment/{contractId}")
+    public void updateMemberPayment(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @RequestBody @Valid PaymentUpdateReq paymentUpdateReq, @PathVariable Long contractId) {
+        Long vendorId = userDetails.getId();
+        paymentService.updatePayment(vendorId, contractId, paymentUpdateReq);
     }
 }

@@ -3,9 +3,8 @@ package kr.or.kosa.cmsplusmain.domain.member.service;
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
@@ -76,18 +75,17 @@ public class MemberService {
     /*
     * 회원 상세 - 계약리스트
     * */
-    public SortPageDto.Res<MemberContractListItemDto> findContractListItemByMemberId(Long vendorId, Long memberId, PageReq pageable) {
+    public PageRes<MemberContractListItemRes> findContractListItemByMemberId(Long vendorId, Long memberId, PageReq pageable) {
 
         int countAllContractListItemByMemberId = contractCustomRepository.countContractListItemByMemberId(vendorId, memberId);
-        int totalPages = (int) Math.ceil((double) countAllContractListItemByMemberId / pageable.getSize());
 
-        List<MemberContractListItemDto> memberContractListItemDtos = contractCustomRepository
+        List<MemberContractListItemRes> memberContractListItemRes = contractCustomRepository
                 .findContractListItemByMemberId(vendorId, memberId, pageable)
                 .stream()
-                .map(MemberContractListItemDto::fromEntity)
+                .map(MemberContractListItemRes::fromEntity)
                 .toList();
 
-        return new SortPageDto.Res<>(totalPages, memberContractListItemDtos);
+        return new PageRes<>(countAllContractListItemByMemberId,pageable.getSize(), memberContractListItemRes);
     }
 
     /*
@@ -143,6 +141,7 @@ public class MemberService {
      * */
     @Transactional
     public void updateMemberBilling(Long vendorId, Long memberId, MemberBillingUpdateReq memberBillingUpdateReq){
+
         // 고객의 회원 여부 확인
         validateMemberUser(vendorId, memberId);
 

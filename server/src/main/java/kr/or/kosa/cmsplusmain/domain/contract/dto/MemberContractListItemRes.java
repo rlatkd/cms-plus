@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MemberContractListItemDto {
+public class MemberContractListItemRes {
     private final Long contractId;                                    // 계약 ID
     private final String contractName;
     private final LocalDate contractStartDate;
@@ -18,13 +18,13 @@ public class MemberContractListItemDto {
     private final List<ContractProductRes> contractProducts;
     private final Long contractPrice ;
 
-    public static MemberContractListItemDto fromEntity(Contract contract) {
+    public static MemberContractListItemRes fromEntity(Contract contract) {
         final List<ContractProductRes> contractProductResList = contract.getContractProducts()
                 .stream()
                 .map(ContractProductRes::fromEntity)
                 .toList();
 
-        return MemberContractListItemDto.builder()
+        return MemberContractListItemRes.builder()
                 .contractId(contract.getId())
                 .contractName(contract.getContractName())
                 .contractStartDate(contract.getContractStartDate())

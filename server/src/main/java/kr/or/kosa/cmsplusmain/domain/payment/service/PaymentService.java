@@ -1,10 +1,16 @@
 package kr.or.kosa.cmsplusmain.domain.payment.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.*;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.*;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.*;
 import kr.or.kosa.cmsplusmain.domain.payment.repository.*;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +21,7 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
@@ -29,6 +36,9 @@ public class PaymentService {
 	private final CardPaymentMethodRepository cardPaymentMethodRepository;
 	private final CmsPaymentMethodRepository cmsPaymentMethodRepository;
 	private final PaymentRepository paymentRepository;
+	private final ContractRepository contractRepository;
+//	private final ContractService contractService;
+	private final PaymentCustomRepository paymentCustomRepository;
 
 	public PaymentTypeInfoRes getPaymentTypeInfo(Payment payment) {
 		PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
@@ -81,6 +91,9 @@ public class PaymentService {
 		return paymentMethodInfoRes;
 	}
 
+	/*
+	 * 회원 등록 - 결제 정보
+	 * */
 	@Transactional
 	public Payment createPayment(PaymentCreateReq paymentCreateReq) {
 
@@ -106,6 +119,30 @@ public class PaymentService {
 				.build();
 
 		return paymentRepository.save(payment);
+	}
+
+	/*
+	 * 회원 수정 - 결제 정보
+	 * */
+	@Transactional
+	public void updatePayment(Long vendorId, Long contractId,  PaymentUpdateReq paymentUpdateReq){
+
+		//TODO
+		//contractService를 호출 하는 순간 "순환 의존성" 문제가 생긴다 왜 샌기는걸지 알아보자.
+
+		// 고객의 계약 여부 확인
+//		contractService.validateContractUser(contractId, vendorId);
+		Contract contract = contractRepository.findById(contractId).orElseThrow(IllegalArgumentException::new);
+
+		// 고객의 결제 여부 확인
+		Long paymentId = contract.getPayment().getId();
+		validatePaymentUser(paymentId);
+		Payment payment = paymentRepository.findById(paymentId).orElseThrow(IllegalArgumentException::new);
+
+		/*--  원래 결제 테이블의 결제 타입  --*/
+		// 격제 방식 분류
+		PaymentType paymentType = payment.getPaymentType();
+
 	}
 
 	/*
@@ -161,6 +198,9 @@ public class PaymentService {
 		return paymentMethodInfo;
 	}
 
+	/*
+	 * 가상 계좌 랜덤 생성
+	 */
 	private static String generateRandomAccountNumber(int length) {
 		StringBuilder accountNumber = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
@@ -168,4 +208,14 @@ public class PaymentService {
 		}
 		return accountNumber.toString();
 	}
+
+	/*
+	 * 결제 ID 존재여부
+	 * */
+	private void validatePaymentUser(Long paymentId) {
+		if(!paymentCustomRepository.isExistPaymentId(paymentId)) {
+			throw new EntityNotFoundException("결제 ID 없음("+paymentId + ")");
+		}
+	}
+
 }
