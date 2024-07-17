@@ -104,7 +104,7 @@ const onAlertClick = async (msg) => {
             </label>
             <span className="ml-3 text-sm text-gray-600">{file ? file.name : '선택된 파일 없음'}</span>
           </div>
-          {data.length <= 0 ? (
+          {file && (data.length <= 0 ? (
             <button
               onClick={handleUpload}
               className='ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center'
@@ -119,7 +119,7 @@ const onAlertClick = async (msg) => {
               <FaSave className="mr-2" />
               등록
             </button>
-          )}
+          ))}
         </div>
 
         {isLoading && (
