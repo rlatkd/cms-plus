@@ -10,73 +10,42 @@ import addItem from '@/assets/addItem.svg';
 import card from '@/assets/card.svg';
 import send from '@/assets/send.svg';
 import Card from '@/assets/Card';
-
-const cols = [
-  { key: 'order', label: 'No.', width: 'w-1/12' },
-  { key: 'memberName', label: '회원이름', width: 'w-2/12' },
-  { key: 'memberPhone', label: '휴대전화', width: 'w-2/12' },
-  { key: 'billingProducts', label: '상품', width: 'w-2/12' },
-  { key: 'billingPrice', label: '청구금액', width: 'w-2/12' },
-  { key: 'billingDate', label: '결제일(약정일)', width: 'w-2/12' },
-  { key: 'paymentType', label: '계약방식', width: 'w-2/12' },
-  { key: 'billingStatus', label: '청구상태', width: 'w-2/12' },
-];
-
-// Type : hidden, text, num, calendar, select
-const initialSearch = [
-  { key: 'checkbox', type: 'hidden', value: '', width: 'w-1/12' },
-  { key: 'order', type: 'hidden', value: '', width: 'w-1/12' },
-  { key: 'memberName', type: 'text', value: '', width: 'w-2/12' },
-  { key: 'memberPhone', type: 'text', value: '', width: 'w-2/12' },
-  { key: 'billingProducts', type: 'text', value: '', width: 'w-2/12' },
-  { key: 'billingPrice', type: 'num', value: '', width: 'w-2/12' },
-  { key: 'billingDate', type: 'calendar', value: '', width: 'w-2/12' },
-  {
-    key: 'paymentType',
-    type: 'select',
-    value: '',
-    width: 'w-2/12',
-    options: ['자동결제', '납부자결제', '가상계좌'],
-  },
-  {
-    key: 'billingStatus',
-    type: 'select',
-    value: '',
-    width: 'w-2/12',
-    options: ['청구생성', '수납대기', '완납', '미납'],
-  },
-];
-
-const selectOptions = [
-  { label: '계약금액 많은순', orderBy: 'contractPrice', order: 'DESC' },
-  { label: '계약금액 적은순', orderBy: 'contractPrice', order: 'ASC' },
-];
+import { formatPhone } from '@/utils/formatPhone';
+import useDebounce from '@/hooks/useDebounce';
+import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billingElement';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
-  const [isShowModal, setIsShowModal] = useState(false);
-
-  const [order, setOrder] = useState(''); // 정렬 방향
-  const [orderBy, setOrderBy] = useState(''); // 정렬 항목
+  const [currentorder, setCurrentOrder] = useState(''); // 정렬 방향
+  const [currentorderBy, setCurrentOrderBy] = useState(''); // 정렬 항목
 
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
   const buttonCount = 5; // 버튼 갯수
 
+  const [isShowModal, setIsShowModal] = useState(false);
+
   const navigate = useNavigate();
 
   // 청구 목록 조회
   const axiosBillingList = useCallback(
-    async (searchParams = {}, page = currentPage) => {
+    async (
+      searchParams = {},
+      order = currentorder,
+      orderBy = currentorderBy,
+      page = currentPage
+    ) => {
       try {
         const res = await getBillingList({
-          size: 10,
-          page: page,
           ...searchParams,
+          order: order,
+          orderBy: orderBy,
+          page: page,
+          size: 10,
         });
         const transformedData = transformBillingListItem(res.data.content);
         setBillingList(transformedData);
@@ -92,16 +61,17 @@ const BillingListPage = () => {
   const transformBillingListItem = data => {
     // 데이터 변환
     return data.map(billing => {
-      const { billingPrice, billingProducts, paymentType, billingStatus } = billing;
+      const { billingPrice, billingProducts, paymentType, billingStatus, memberPhone } = billing;
       const firstProduct = billingProducts[0];
       const additionalProductsCount = billingProducts.length - 1;
 
       return {
         ...billing,
-        billingPrice: `${billingPrice}원`,
+        billingPrice: `${billingPrice.toLocaleString()}원`,
         billingProducts: `${firstProduct.name} + ${additionalProductsCount}`,
         paymentType: paymentType.title,
         billingStatus: billingStatus.title,
+        memberPhone: formatPhone(memberPhone),
       };
     });
   };
@@ -112,7 +82,7 @@ const BillingListPage = () => {
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );
 
-    let searchParams = { size: 10, order: order, orderBy: orderBy };
+    let searchParams = {};
     updatedSearch.forEach(searchMember => {
       if (searchMember.value) {
         searchParams[searchMember.key] = searchMember.value;
@@ -124,8 +94,8 @@ const BillingListPage = () => {
   };
 
   // 검색 클릭 이벤트 핸들러
-  const handlehClickSearch = async () => {
-    axiosBillingList(currentSearchParams);
+  const handleClickSearch = async () => {
+    axiosBillingList(debouncedSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
@@ -136,8 +106,15 @@ const BillingListPage = () => {
     navigate(`detail/${billingId}`);
   };
 
+  // 디바운스 커스텀훅
+  const debouncedSearchParams = useDebounce(currentSearchParams, 500);
+
   useEffect(() => {
-    axiosBillingList(currentPage);
+    handleClickSearch();
+  }, [debouncedSearchParams]);
+
+  useEffect(() => {
+    axiosBillingList(currentSearchParams, currentorder, currentorderBy, currentPage);
   }, [currentPage]);
 
   return (
@@ -149,8 +126,8 @@ const BillingListPage = () => {
           </div>
           <p className='text-text_black font-700 mr-5'>총 24건</p>
           <SortSelect
-            setOrder={setOrder}
-            setOrderBy={setOrderBy}
+            setCurrentOrder={setCurrentOrder}
+            setCurrentOrderBy={setCurrentOrderBy}
             selectOptions={selectOptions}
             currentSearchParams={currentSearchParams}
             axiosList={axiosBillingList}
@@ -177,7 +154,7 @@ const BillingListPage = () => {
         search={search}
         currentPage={currentPage}
         handleChangeSearch={handleChangeSearch}
-        handlehClickSearch={handlehClickSearch}
+        handleClickSearch={handleClickSearch}
         onRowClick={item => MoveBillingDetail(item.contractId)}
       />
 

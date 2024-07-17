@@ -8,34 +8,8 @@ import { validateField } from '@/utils/validators';
 import { useCallback, useEffect, useState } from 'react';
 import addItem from '@/assets/addItem.svg';
 import Item from '@/assets/Item';
-
-const cols = [
-  { key: 'order', label: 'No.', width: 'w-1/12' },
-  { key: 'productName', label: '상품명', width: 'w-3/12' },
-  { key: 'productPrice', label: '금액', width: 'w-3/12' },
-  { key: 'contractNumber', label: '계약수', width: 'w-3/12' },
-  { key: 'productCreatedDate', label: '생성일', width: 'w-3/12' },
-  { key: 'productMemo', label: '비고', width: 'w-3/12' },
-];
-
-// Type : hidden, text, num, calendar, select
-const initialSearch = [
-  { key: 'checkbox', type: 'hidden', value: '', width: 'w-1/12' },
-  { key: 'order', type: 'hidden', value: '', width: 'w-1/12' },
-  { key: 'productName', type: 'text', value: '', width: 'w-3/12' },
-  { key: 'productPrice', type: 'num', value: '', width: 'w-3/12' },
-  { key: 'contractNumber', type: 'num', value: '', width: 'w-3/12' },
-  { key: 'productCreatedDate', type: 'calendar', value: '', width: 'w-3/12' },
-  { key: 'productMemo', type: 'text', value: '', width: 'w-3/12' },
-];
-
-// // SortSelect를 위한 값들
-const selectOptions = [
-  { label: '높은 가격순', orderBy: 'productPrice', order: 'DESC' },
-  { label: '낮은 가격순', orderBy: 'productPrice', order: 'ASC' },
-  { label: '계약 많은순', orderBy: 'productCount', order: 'DESC' },
-  { label: '계약 적은순', orderBy: 'productCount', order: 'ASC' },
-];
+import useDebounce from '@/hooks/useDebounce';
+import { cols, initialSearch, selectOptions } from '@/utils/tableElements/productElement';
 
 const ProductListPage = () => {
   const [productList, setProductList] = useState([]); // 상품 목록
@@ -43,26 +17,37 @@ const ProductListPage = () => {
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
 
-  const [order, setOrder] = useState(''); // 정렬 방향
-  const [orderBy, setOrderBy] = useState(''); // 정렬 항목
-
-  const [modalTitle, setModalTitle] = useState(''); // 모달 제목
-  const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
-  const [isValid, setIsValid] = useState(true); // 유효성 flag
+  const [currentorder, setCurrentOrder] = useState(''); // 정렬 방향
+  const [currentorderBy, setCurrentOrderBy] = useState(''); // 정렬 항목
 
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
   const buttonCount = 5;
 
+  const [modalTitle, setModalTitle] = useState(''); // 모달 제목
+  const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
+  const [isValid, setIsValid] = useState(true); // 유효성 flag
+
   // 상품 목록 조회 함수
   // axiosProductLists는 useEffect 훅 내부에서 사용하고 있기 때문에
   // 종속성 배열에 포함시키고 useCallback으로 함수 재생성 방지
   // 의도하지 않은 렌더링 에러 방지
   const axiosProductList = useCallback(
-    async (searchParams = {}, page = currentPage) => {
+    async (
+      searchParams = {},
+      order = currentorder,
+      orderBy = currentorderBy,
+      page = currentPage
+    ) => {
       try {
-        const res = await getProductList({ size: 10, page: page, ...searchParams });
+        const res = await getProductList({
+          ...searchParams,
+          order: order,
+          orderBy: orderBy,
+          page: page,
+          size: 10,
+        });
         const transformedData = transformProductListItem(res.data.content);
 
         setProductList(transformedData);
@@ -82,8 +67,8 @@ const ProductListPage = () => {
 
       return {
         ...product,
-        productPrice: `${productPrice}원`,
-        contractNumber: `${contractNumber}건`,
+        productPrice: `${productPrice.toLocaleString()}원`,
+        contractNumber: `${contractNumber.toLocaleString()}건`,
       };
     });
   };
@@ -94,7 +79,7 @@ const ProductListPage = () => {
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );
 
-    let searchParams = { size: 10, order: order, orderBy: orderBy };
+    let searchParams = {};
     updatedSearch.forEach(searchMember => {
       if (searchMember.value) {
         searchParams[searchMember.key] = searchMember.value;
@@ -121,9 +106,10 @@ const ProductListPage = () => {
   };
 
   // 검색 클릭 이벤트 핸들러
-  const handlehClickSearch = async () => {
+  const handleClickSearch = async () => {
     if (!validateSearchParams()) return;
-    axiosProductList(currentSearchParams);
+    console.log('debouncedSearchParams => ', debouncedSearchParams);
+    axiosProductList(debouncedSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
     setIsValid(true); // 검색 후 유효성 flag 초기화
@@ -147,9 +133,16 @@ const ProductListPage = () => {
     }
   };
 
+  // 디바운스 커스텀훅
+  const debouncedSearchParams = useDebounce(currentSearchParams, 500);
+
+  useEffect(() => {
+    handleClickSearch();
+  }, [debouncedSearchParams]);
+
   // 페이지 진입 시 상품 목록 조회
   useEffect(() => {
-    axiosProductList(currentPage);
+    axiosProductList(currentSearchParams, currentorder, currentorderBy, currentPage);
   }, [currentPage]);
 
   return (
@@ -161,8 +154,8 @@ const ProductListPage = () => {
           </div>
           <p className='text-text_black font-700 mr-5'>총 24건</p>
           <SortSelect
-            setOrder={setOrder}
-            setOrderBy={setOrderBy}
+            setCurrentOrder={setCurrentOrder}
+            setCurrentOrderBy={setCurrentOrderBy}
             selectOptions={selectOptions}
             currentSearchParams={currentSearchParams}
             axiosList={axiosProductList}
@@ -187,7 +180,7 @@ const ProductListPage = () => {
         rows={productList}
         currentPage={currentPage}
         handleChangeSearch={handleChangeSearch}
-        handlehClickSearch={handlehClickSearch}
+        handleClickSearch={handleClickSearch}
         onRowClick={item => handleDetailModalOpen(item.productId)}
       />
 

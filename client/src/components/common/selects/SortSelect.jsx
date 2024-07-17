@@ -1,22 +1,20 @@
-const SortSelect = ({ setOrder, setOrderBy, selectOptions, axiosList, currentSearchParams }) => {
+const SortSelect = ({
+  setCurrentOrder,
+  setCurrentOrderBy,
+  selectOptions,
+  axiosList,
+  currentSearchParams,
+}) => {
   const handleChangeOption = async event => {
     const selectedOption = selectOptions.find(option => option.label === event.target.value);
     if (event.target.value === 'No') {
-      setOrder('');
-      setOrderBy('');
-      await axiosList({
-        ...currentSearchParams,
-        order: '',
-        orderBy: '',
-      });
+      setCurrentOrder('');
+      setCurrentOrderBy('');
+      await axiosList(currentSearchParams, '', '');
     } else if (selectedOption) {
-      setOrder(selectedOption.order);
-      setOrderBy(selectedOption.orderBy);
-      await axiosList({
-        ...currentSearchParams,
-        order: selectedOption.order,
-        orderBy: selectedOption.orderBy,
-      });
+      setCurrentOrder(selectedOption.order);
+      setCurrentOrderBy(selectedOption.orderBy);
+      await axiosList(currentSearchParams, selectedOption.order, selectedOption.orderBy);
     }
   };
 
