@@ -1,12 +1,17 @@
 package kr.or.kosa.cmsplusmain.domain.member.controller;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
+import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
+import kr.or.kosa.cmsplusmain.domain.excel.service.ExcelHandler;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
@@ -14,8 +19,10 @@ import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -24,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final ExcelHandler<MemberExcelDto> excelHandler = new ExcelHandler<>();
 
     /*
      * 회원 목록 조회
@@ -61,6 +69,23 @@ public class MemberController {
         memberService.createMember(vendorId, memberCreateReq);
     }
 
+    /*
+    * 회원 엑셀 -> json 변환
+    * */
+    @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public List<MemberExcelDto> conventMembersByExcel(MultipartFile file) {
+        return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
+    }
 
 
+    /*
+    * 회원 대량 등록
+    *
+    * 실패 목록 리턴
+    * */
+    @PostMapping(value = "/upload")
+    public List<ExcelErrorRes<MemberExcelDto>> saveMembersByExcel(@RequestBody List<MemberExcelDto> memberExcelList) {
+        Long vendorId = 1L;
+        return memberService.uploadMembersByExcel(vendorId, memberExcelList);
+    }
 }
