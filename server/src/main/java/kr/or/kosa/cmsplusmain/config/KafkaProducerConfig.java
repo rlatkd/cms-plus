@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.config;
 
 import kr.or.kosa.cmsplusmain.domain.messaging.dto.MessageDto;
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.TestDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -30,4 +31,37 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.ACKS_CONFIG, "0"); // 가장 빠른 큐잉
         return new DefaultKafkaProducerFactory<>(props);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Bean
+    public KafkaTemplate<String, TestDto> kafkaTemplate2() {
+        return new KafkaTemplate<>(producerFactory2());
+    }
+
+    @Bean
+    public ProducerFactory<String, TestDto> producerFactory2() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(ProducerConfig.ACKS_CONFIG, "0"); // 가장 빠른 큐잉
+        return new DefaultKafkaProducerFactory<>(props);
+    }
+
+
+
+
 }

@@ -2,8 +2,10 @@ package kr.or.kosa.cmsplusmain.domain.messaging.controller;
 
 import kr.or.kosa.cmsplusmain.domain.messaging.dto.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.messaging.dto.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.TestDto;
 import kr.or.kosa.cmsplusmain.domain.messaging.service.MessagingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,6 +15,7 @@ public class KafkaTestController {
 
     private final MessagingService messagingService;
     String messagingTopic = "messaging-topic";
+    String paymentTopic = "payment-topic";
 
     @PostMapping("/sms")
     public String sendSms(@RequestBody SmsMessageDto smsMessageDto) {
@@ -25,5 +28,17 @@ public class KafkaTestController {
         messagingService.send(messagingTopic, emailMessageDto);
         return "success email";
     }
+
+
+
+
+    // 테스트
+    @PostMapping("/payment")
+    public String test(@RequestBody TestDto testDto) {
+        messagingService.test(paymentTopic, testDto);
+        return "success test";
+    }
+
+
 
 }
