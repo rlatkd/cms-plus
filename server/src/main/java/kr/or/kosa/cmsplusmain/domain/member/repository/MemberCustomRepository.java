@@ -115,6 +115,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     /*
      * 회원 존재 여부 판단
      * */
+    @Deprecated
     public boolean idExistMemberByPhone(Long vendorId, String phone) {
         Integer fetchOne = jpaQueryFactory
             .selectOne()
@@ -129,6 +130,23 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         return fetchOne != null;
     }
 
+    /*
+    * 회원 존재 여부 판단 번호와 이메일
+    * */
+    public boolean canSaveMember(String phone, String email) {
+        Integer res = jpaQueryFactory
+            .selectOne()
+            .from(member)
+            .where(
+                memberPhoneEq(phone),
+                memberEmailEq(email),
+                memberNotDel()
+            )
+            .fetchOne();
+
+        return res == null;
+    }
+
     public Optional<Member> findMemberByPhone(Long vendorId, String phone) {
         return Optional.ofNullable(
             jpaQueryFactory
@@ -139,6 +157,14 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
                         memberNotDel()
                 )
                 .fetchOne());
+    }
+
+    private BooleanExpression memberEmailEq(String email) {
+        return StringUtils.hasText(email) ?  member.email.eq(email) : null;
+    }
+
+    private BooleanExpression memberPhoneEq(String phone) {
+        return StringUtils.hasText(phone) ? member.phone.eq(phone) : null;
     }
 
     private BooleanExpression memberEmailContains(String memberEmail) {

@@ -7,6 +7,7 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
+import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.excel.service.ExcelHandler;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
@@ -19,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,18 +73,19 @@ public class MemberController {
     * 회원 엑셀 -> json 변환
     * */
     @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public List<MemberExcelDto> getExcelResult(MultipartFile file) {
+    public List<MemberExcelDto> conventMembersByExcel(MultipartFile file) {
         return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
     }
 
 
     /*
     * 회원 대량 등록
+    *
+    * 실패 목록 리턴
     * */
     @PostMapping(value = "/upload")
-    public void getExcelResult(@RequestBody List<MemberExcelDto> memberExcelList) {
-        System.out.println(memberExcelList.toString());
+    public List<ExcelErrorRes<MemberExcelDto>> saveMembersByExcel(@RequestBody List<MemberExcelDto> memberExcelList) {
         Long vendorId = 1L;
-        memberService.uploadMembersByExcel(vendorId, memberExcelList);
+        return memberService.uploadMembersByExcel(vendorId, memberExcelList);
     }
 }
