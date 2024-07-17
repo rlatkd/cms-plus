@@ -5,10 +5,7 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
+import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
@@ -56,9 +53,20 @@ public class MemberController {
      * 회원 목록 조회
      * */
     @PostMapping("/members")
-    public void createMember(@RequestBody @Valid MemberCreateReq memberCreateReq) {
+    public void createMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @RequestBody @Valid MemberCreateReq memberCreateReq) {
         Long vendorId = 1L;
         memberService.createMember(vendorId, memberCreateReq);
+    }
+
+    /*
+     * 회원 수정 - 기본 정보
+     * */
+    @PutMapping("/members/{memberId}")
+    public void updateMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @RequestBody @Valid MemberUpdateReq memberUpdateReq, @PathVariable Long memberId) {
+
+
+        Long vendorId = userDetails.getId();
+        memberService.updateMember(vendorId,memberId, memberUpdateReq);
     }
 
 
