@@ -1,6 +1,7 @@
 import { convertMember, uploadMembers } from '@/apis/member';
 import BaseModal from '@/components/common/BaseModal';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip';
 import { FaExclamationCircle, FaUpload, FaSave } from 'react-icons/fa';
@@ -21,6 +22,13 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
   const [data, setData] = useState([]);
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+const { alertWidth: alertCompWidth } = useContext(AlertWdithContext);
+
+const onAlertClick = async (msg) => {
+  const result = await alertCompWidth(msg);
+  console.log('onAlertWidthClick : ', result);
+};
 
   const handleFileChange = e => {
     setFile(e.target.files[0]);
@@ -56,7 +64,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
       if (errors.data.length > 0) {
         setData(errors.data.map(e => e.notSaved));
         setErrors(errors.data.map(e => e.message));
-        alert(
+        onAlertClick(
           `총: ${data.length} 성공: ${data.length - errors.data.length} 실패: ${errors.data.length}`
         );
         return;
@@ -68,7 +76,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
       setIsShowModal(false);
     } catch (error) {
       console.error('Error submitting data:', error);
-      alert('회원 정보 등록 중 오류가 발생했습니다.');
+      onAlertClick('회원 정보 등록 중 오류가 발생했습니다.');
     }
   };
 
