@@ -12,18 +12,17 @@ import org.springframework.web.bind.annotation.*;
 public class KafkaTestController {
 
     private final MessagingService messagingService;
-
-    String topic = "message-topic";
+    String messagingTopic = "messaging-topic";
 
     @PostMapping("/sms")
     public String sendSms(@RequestBody SmsMessageDto smsMessageDto) {
-        messagingService.send(topic, smsMessageDto);
+        messagingService.send(messagingTopic, smsMessageDto);
         return "success sms";
     }
 
     @PostMapping("/email")
     public String sendEmail(@RequestBody EmailMessageDto emailMessageDto) {
-        messagingService.send(topic, emailMessageDto);
+        messagingService.send(messagingTopic, emailMessageDto);
         return "success email";
     }
 

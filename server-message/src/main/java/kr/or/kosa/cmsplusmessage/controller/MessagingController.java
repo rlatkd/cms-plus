@@ -26,10 +26,10 @@ public class MessagingController {
 //        return "[sms 전송 성공]";
 //    }
 
-    @PostMapping("/email")
-    public String sendEmail(@RequestBody MessageDto message) {
-        messagingService.sendEmail(message);
-        return "[이메일 전송 성공]";
-    }
+//    @PostMapping("/email")
+//    public String sendEmail(@RequestBody MessageDto message) {
+//        messagingService.sendEmail(message);
+//        return "[이메일 전송 성공]";
+//    }
 
 }

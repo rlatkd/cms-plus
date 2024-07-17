@@ -1,9 +1,12 @@
 package kr.or.kosa.cmsplusmessage.service;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import kr.or.kosa.cmsplusmessage.dto.EmailMessageDto;
 import kr.or.kosa.cmsplusmessage.dto.MessageDto;
+import kr.or.kosa.cmsplusmessage.dto.SmsMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
@@ -92,14 +95,14 @@ public class MessagingService {
     // 이메일 대량은 한 번에 100건, 하루 500건
     private final JavaMailSender mailSender;
 
-    public String sendEmail(MessageDto messageDto) throws MailException {
+    public String sendEmail(EmailMessageDto emailMessageDto) throws MailException {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
-            helper.setTo(messageDto.getEmailAddress()); // 메일 보낼 곳
+            helper.setTo(emailMessageDto.getEmailAddress()); // 메일 보낼 곳
             helper.setFrom(emailAddress); // 메일 보내는 곳
             helper.setSubject("보낼 이메일 제목"); // 메일 제목
-            helper.setText(messageDto.getText()); // 메일 내용
+            helper.setText(emailMessageDto.getText()); // 메일 내용
             mailSender.send(message); //
             return "[email 전송 성공]";
         } catch (MessagingException e) {
@@ -109,12 +112,12 @@ public class MessagingService {
 
     }
 
-    public SingleMessageSentResponse sendSms(MessageDto messageDto) {
+    public SingleMessageSentResponse sendSms(SmsMessageDto smsMessageDto) {
 
             Message message = new Message();
             message.setFrom(smsPhone);
-            message.setTo(messageDto.getPhoneNumber());
-            message.setText(messageDto.getText());
+            message.setTo(smsMessageDto.getPhoneNumber());
+            message.setText(smsMessageDto.getText());
             SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
 
             return response;
@@ -130,29 +133,25 @@ public class MessagingService {
 
 
 
-    private MessageDto messageDto;
 
-    @KafkaListener(topics = "message-topic",groupId = "message-group",containerFactory = "kafkaListenerContainerFactory")
+
+    @KafkaListener(topics = "messaging-topic", groupId = "messaging-group", containerFactory = "kafkaListenerContainerFactory")
     public void consumeMessage(ConsumerRecord<String, MessageDto> consumerRecord) {
-        messageDto = consumerRecord.value();
-        if ("sms".equals(messageDto.getType())) { // TYPE이 sms일 때 sms로직으로 가게
-            handleSmsMessage(messageDto);
-        } else if ("email".equals(messageDto.getType())) { // TYPE이 email일 때 email로직으로 가게
-            handleEmailMessage(messageDto);
+        MessageDto messageDto = consumerRecord.value();
+        switch (messageDto.getMethod()) {
+            case SMS -> handleSmsMessage((SmsMessageDto) messageDto);
+            case EMAIL -> handleEmailMessage((EmailMessageDto) messageDto);
         }
-
     }
 
-
-
-    private void handleSmsMessage(MessageDto messageDto) {
-        log.error("[SMS 메시지 소비됨]: {}", messageDto.toString());
-       sendSms(messageDto);
+    private void handleSmsMessage(SmsMessageDto smsMessageDto) {
+        log.error("[SMS 메시지 소비됨]: {}", smsMessageDto.toString());
+       sendSms(smsMessageDto);
     }
 
-    private void handleEmailMessage(MessageDto messageDto) {
-        log.error("[EMAIL 메시지 소비됨]: {}", messageDto.toString());
-        sendEmail(messageDto);
+    private void handleEmailMessage(EmailMessageDto emailMessageDto) {
+        log.error("[EMAIL 메시지 소비됨]: {}", emailMessageDto.toString());
+        sendEmail(emailMessageDto);
     }
 
 }

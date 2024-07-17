@@ -20,17 +20,5 @@ public class MessagingService {
 		kafkaTemplate.send(topic, messageDto);
 	}
 
-	public void sendEmailMessage(String topic, MessageDto messageDto) {
-		log.error("[토픽]={} [페이로드]={}", topic, messageDto);
-		kafkaTemplate.send(topic, messageDto);
-	}
 
-
-	public void sendSms(String phone, String message) {
-		log.info("SMS 발송: {}\n{}",  phone, message);
-	}
-
-	public void sendEmail(String email, String message) {
-		log.info("EMAIL 발송: {}\n{}", email, message);
-	}
 }
