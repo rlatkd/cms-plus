@@ -50,7 +50,8 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "member_status", nullable = false)
 	@NotNull
-	private MemberStatus status;
+	@Builder.Default
+	private MemberStatus status = MemberStatus.ENABLED;
 
 	@Comment("회원 이름")
 	@Column(name = "member_name", nullable = false, length = 40)
@@ -111,18 +112,21 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "member_invoice_send_method", nullable = false)
 	@NotNull
+	@Builder.Default
 	@Setter
-	private MessageSendMethod invoiceSendMethod;
+	private MessageSendMethod invoiceSendMethod = MessageSendMethod.EMAIL;
 
 	@Comment("회원 청구서 자동 발송 여부")
 	@Column(name = "member_auto_invoice_send", nullable = false)
 	@Setter
-	private boolean autoInvoiceSend;
+	@Builder.Default
+	private boolean autoInvoiceSend = true;
 
 	@Comment("회원 청구 자동 생성 여부")
 	@Column(name = "member_auto_billing", nullable = false)
 	@Setter
-	private boolean autoBilling;
+	@Builder.Default
+	private boolean autoBilling = true;
 
 	/*
 	 * 계약금액합
