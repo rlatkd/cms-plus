@@ -6,7 +6,7 @@ const Card = props => (
     </g>
     <defs>
       <clipPath id='clip0_487_3802'>
-        <rect width='15' height='15' fill='white' transform='translate(0.0546875 0.5)' />
+        <rect width='16' height='16' fill='white' transform='translate(0.0546875 0.5)' />
       </clipPath>
     </defs>
   </svg>

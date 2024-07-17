@@ -10,9 +10,9 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { getMonthBillingInfo, getStatInfo, getTopInfo } from '@/apis/dashboard';
 
-const formatNumber = (num) => {
+const formatNumber = num => {
   if (!num) return '0';
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 const Stats = ({ statInfo }) => (
@@ -229,7 +229,7 @@ const DashBoardPage = () => {
     totalPaidPrice: 0,
     totalNotPaidPrice: 0,
     billingPriceGrowth: 0,
-    memberGrowth: 0
+    memberGrowth: 0,
   });
   const [billingInfo, setBillingInfo] = useState({});
   const [topFive, setTopFive] = useState({});
@@ -300,7 +300,7 @@ const DashBoardPage = () => {
   }, [date]);
 
   return (
-    <div className='bg-gray-100 min-h-screen py-8'>
+    <div className='min-h-screen py-8'>
       <div className='container mx-auto px-4'>
         <Stats statInfo={statInfo} />
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>

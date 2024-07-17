@@ -1,23 +1,20 @@
-const SortSelect = ({ setOrder, setOrderBy, selectOptions, axiosList, currentSearchParams }) => {
+const SortSelect = ({
+  setCurrentOrder,
+  setCurrentOrderBy,
+  selectOptions,
+  axiosList,
+  currentSearchParams,
+}) => {
   const handleChangeOption = async event => {
     const selectedOption = selectOptions.find(option => option.label === event.target.value);
-
     if (event.target.value === 'No') {
-      setOrder('');
-      setOrderBy('');
-      await axiosList({
-        ...currentSearchParams,
-        order: '',
-        orderBy: '',
-      });
+      setCurrentOrder('');
+      setCurrentOrderBy('');
+      await axiosList(currentSearchParams, '', '');
     } else if (selectedOption) {
-      setOrder(selectedOption.order);
-      setOrderBy(selectedOption.orderBy);
-      await axiosList({
-        ...currentSearchParams,
-        order: selectedOption.order,
-        orderBy: selectedOption.orderBy,
-      });
+      setCurrentOrder(selectedOption.order);
+      setCurrentOrderBy(selectedOption.orderBy);
+      await axiosList(currentSearchParams, selectedOption.order, selectedOption.orderBy);
     }
   };
 
@@ -28,7 +25,7 @@ const SortSelect = ({ setOrder, setOrderBy, selectOptions, axiosList, currentSea
           onChange={handleChangeOption}
           className='block appearance-none text-xs text-text_grey border border-text_grey 
                       rounded-md px-4 py-2 pr-10 cursor-pointer focus:outline-none'>
-          <option value='No'>No 오름차순</option>
+          <option value='No'>번호순</option>
           {selectOptions.map((option, index) => (
             <option key={index} value={option.label}>
               {option.label}

@@ -1,4 +1,4 @@
-import { privateAxios, publicAxios } from '.';
+import { privateAxios } from '.';
 
 // 상품 등록
 export const createProduct = async productData => {

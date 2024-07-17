@@ -31,7 +31,7 @@ const SettingSimpConsentPage = () => {
   };
 
   return (
-    <div className='relative h-full w-full rounded-xl border border-red-500 p-6 shadow-dash-board'>
+    <div className='relative h-full w-full  p-6 shadow-dash-board primary-dashboard'>
       <div className='mx-8 my-8 flex h-[90%] flex-col border border-blue-500'>
         <h2 className='mb-8 text-xl font-bold'>간편서명동의 설정</h2>
 
