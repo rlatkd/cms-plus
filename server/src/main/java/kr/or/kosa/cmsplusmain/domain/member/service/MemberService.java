@@ -1,6 +1,9 @@
 package kr.or.kosa.cmsplusmain.domain.member.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
@@ -8,6 +11,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
+import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
@@ -24,7 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -118,15 +125,49 @@ public class MemberService {
     /*
     * 회원 엑셀로 대량 등록
     * */
-    @Transactional
-    public void uploadMembersByExcel(Long vendorId, List<MemberExcelDto> memberList) {
+    @Transactional()
+    public List<ExcelErrorRes<MemberExcelDto>> uploadMembersByExcel(Long vendorId, List<MemberExcelDto> memberList) {
         Vendor vendor = Vendor.of(vendorId);
 
-        // 엔티티 변환
-        List<Member> members = memberList.stream()
-            .map(dto -> dto.toEntity(vendor))
-            .toList();
+        List<ExcelErrorRes<MemberExcelDto>> errors = new ArrayList<>();
 
-        memberRepository.saveAll(members);
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+        // 엔티티 변환
+        // 변환 중 오류난 것들 따로 다시 리턴
+        for (MemberExcelDto memberExcelDto : memberList) {
+            Member member = memberExcelDto.toEntity(vendor);
+            String errorMsg = getErrorMessage(member, validator);
+
+            if (errorMsg == null) {
+                memberRepository.save(member);
+            } else {
+                ExcelErrorRes<MemberExcelDto> errorRes = ExcelErrorRes.<MemberExcelDto>builder()
+                    .notSaved(memberExcelDto)
+                    .message(errorMsg)
+                    .build();
+
+                errors.add(errorRes);
+            }
+        }
+
+        return errors;
+    }
+
+    private String getErrorMessage(Member member, Validator validator) {
+        Set<ConstraintViolation<Member>> validate = validator.validate(member);
+        boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
+
+        String validation = validate.stream()
+            .map(ConstraintViolation::getMessage)
+            .collect(Collectors.joining("\n"));
+
+        if (validate.isEmpty()) {
+            validation += "\n";
+        }
+
+        String duplicated = canSave ? "" : "휴대번호 혹은 이메일이 중복되었습니다.";
+
+        return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }
 }
