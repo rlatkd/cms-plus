@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import registerManyUser from '@/assets/registerManyUser.svg';
 import registerUser from '@/assets/registerUser.svg';
 import { getMemberDetail, getMemberList } from '@/apis/member';
+import MemberExcelModal from '@/components/vendor/modal/MemberExcelModal';
 
 const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
@@ -49,6 +50,8 @@ const MemberListPage = () => {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
   const buttonCount = 5; // 버튼 갯수
+
+  const [isShowExcelModal, setIsShowExcelModal] = useState(false);  // 대량 회원 등록
 
   const navigate = useNavigate();
 
@@ -128,7 +131,7 @@ const MemberListPage = () => {
             <MoveButton
               imgSrc={registerManyUser}
               buttonText='대량 회원 등록'
-              onClick={() => navigate('register')}
+              onClick={() => setIsShowExcelModal(true)}
             />
             <MoveButton
               imgSrc={registerUser}
@@ -155,6 +158,14 @@ const MemberListPage = () => {
         pageGroup={pageGroup}
         setPageGroup={setPageGroup}
         buttonCount={buttonCount}
+      />
+      <MemberExcelModal
+             isShowModal={isShowExcelModal}
+             setIsShowModal={setIsShowExcelModal}
+             // TODO 아이콘 변경 필요
+             icon='/src/assets/user.svg'
+             modalTitle={'대량 회원 등록'}
+             axiosMemberList={axiosMemberList}
       />
     </div>
   );
