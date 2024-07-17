@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -76,8 +77,8 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 고객의 전체 계약 수 (검색 조건 반영된 계약 수)
 	 * */
 	public int countAllBillings(Long vendorId, BillingSearchReq search) {
-		Long count = jpaQueryFactory
-			.select(billing.id.countDistinct())
+		JPQLQuery<Long> subQuery = jpaQueryFactory
+			.select(billing.id)
 			.from(billing)
 
 			.join(billing.contract, contract)
@@ -99,8 +100,14 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.having(
 				productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
 				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
-			)
+			);
 
+		Long count = jpaQueryFactory
+			.select(billing.id.countDistinct())
+			.from(billing)
+			.where(
+				billing.id.in(subQuery)
+			)
 			.fetchOne();
 
 		return (count != null) ? count.intValue() : 0;

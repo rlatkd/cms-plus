@@ -11,6 +11,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -77,8 +78,8 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	* 전체 계약 수
 	* */
 	public int countAllContracts(Long vendorId, ContractSearchReq search) {
-		Long count = jpaQueryFactory
-			.select(contract.id.countDistinct())
+		JPQLQuery<Long> subQuery = jpaQueryFactory
+			.select(contract.id)
 			.from(contract)
 
 			.join(contract.member, member)
@@ -101,7 +102,12 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 			.having(
 				productNameContainsInGroup(search.getProductName()),
 				contractPriceLoeInGroup(search.getContractPrice())
-			)
+			);
+
+		Long count = jpaQueryFactory
+			.select(contract.id.countDistinct())
+			.from(contract)
+			.where(contract.id.in(subQuery))
 			.fetchOne();
 
 		return (count != null) ? count.intValue() : 0;
