@@ -3,9 +3,8 @@ package kr.or.kosa.cmsplusmain.domain.billing.service;
 import java.util.List;
 import java.util.Map;
 
-import kr.or.kosa.cmsplusmain.domain.messaging.dto.EmailMessageDto;
-import kr.or.kosa.cmsplusmain.domain.messaging.dto.MessageDto;
-import kr.or.kosa.cmsplusmain.domain.messaging.dto.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +27,8 @@ import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
-import kr.or.kosa.cmsplusmain.domain.messaging.service.MessagingService;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +44,7 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	private final ProductCustomRepository productCustomRepository;
-	private final MessagingService messagingService;
+	private final KafkaMessagingService kafkaMessagingService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
 	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
@@ -106,13 +105,12 @@ public class BillingService {
 	private void sendInvoiceMessage(String message, Member member) {
 		// 청구서 링크 발송
 		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
-		String topic = "message-topic";
 
 		switch (sendMethod) {
 			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
-							messagingService.send(topic, smsMessageDto); }
+							kafkaMessagingService.produceMessaging(smsMessageDto); }
 			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
-							messagingService.send(topic, emailMessageDto); }
+							kafkaMessagingService.produceMessaging(emailMessageDto); }
 		}
 	}
 

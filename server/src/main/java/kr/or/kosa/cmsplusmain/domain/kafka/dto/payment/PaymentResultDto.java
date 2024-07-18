@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.payment.dto;
+package kr.or.kosa.cmsplusmain.domain.kafka.dto.payment;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +10,6 @@ import lombok.ToString;
 public class PaymentResultDto {
 
     private Long billingId;
-    private String result;
+    private Boolean result;
 
 }

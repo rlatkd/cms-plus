@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.messaging;
+package kr.or.kosa.cmsplusmain.domain.kafka;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-@ConfigurationProperties("setting.kafka") // yml 값 가져와서 해당 클래스의 각 값에 매핑
+//@ConfigurationProperties("setting.kafka") // yml 값 가져와서 해당 클래스의 각 값에 매핑
 public class SetProperties {
 
     private final List<String> bootstrapServers;

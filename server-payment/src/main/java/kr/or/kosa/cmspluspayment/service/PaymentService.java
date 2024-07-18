@@ -1,21 +1,15 @@
 package kr.or.kosa.cmspluspayment.service;
 
-
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import kr.or.kosa.cmspluspayment.dto.PaymentDto;
 import kr.or.kosa.cmspluspayment.dto.PaymentResultDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-
 
 @Service
 @RequiredArgsConstructor
@@ -23,48 +17,31 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class PaymentService {
 
-
-
-
-    @KafkaListener(topics = "payment-topic", groupId = "payment-group", containerFactory = "kafkaListenerContainerFactory")
-    public void consumeMessage(ConsumerRecord<String, PaymentDto> consumerRecord) {
-        PaymentDto paymentDto = consumerRecord.value();
-        log.error("[테스트 ㄱㄱ]: {}", paymentDto.toString());
-
-        if (checkResult(paymentDto).equals("SUCCESS")) {
-            try {
-
-                PaymentResultDto paymentResultDto = new PaymentResultDto();
-                paymentResultDto.setBillingId(1L);
-                paymentResultDto.setResult("SUCCESS");
-                log.error(paymentResultDto.toString());
-                kafkaTemplate.send(resultTopic, paymentResultDto);
-
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-
-
-
-        }
-
-
-    }
-
-
-    public String checkResult(PaymentDto paymentDto) {
-
-        return "SUCCESS";
-    }
-
+    @Value("${kafkaTopic.paymentResultTopic}")
+    private String paymentResultTopic;
     private final KafkaTemplate<String, PaymentResultDto> kafkaTemplate;
 
-    String resultTopic = "payment-result-topic";
-
-    public void sendResult(String topic, PaymentResultDto paymentResult) {
-        log.error("[토픽]={} [페이로드]={}", topic, paymentResult);
+    // 결제서버<-메인서버; 결제정보 받음
+    @KafkaListener(topics = "payment-topic", groupId = "payment-group", containerFactory = "kafkaListenerContainerFactory")
+    public void consumeMessage(ConsumerRecord<String, PaymentDto> consumerRecord) {
+        PaymentDto paymentDto = consumerRecord.value(); // 받은 결제정보 데이터
+        PaymentResultDto paymentResultDto = new PaymentResultDto(); // 보낼 결제결과 데이터
+        try {
+            if (Integer.parseInt(paymentDto.getNumber()) % 2 == 0) {
+                paymentResultDto.setBillingId(paymentDto.getBillingId());
+                paymentResultDto.setResult(true);
+                kafkaTemplate.send(paymentResultTopic, paymentResultDto); // 결제서버->메인서버; 결제결과 전달
+            } else {
+                // 청구 상태 로직을 보면, 우린 결제 성공만 생각하면 됨
+                // paymentResultDto.setResult(false);
+                log.error("유효하지 않은 결제");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
 
     }
+
 
 
 //    private final FirebaseMessaging firebaseMessaging;

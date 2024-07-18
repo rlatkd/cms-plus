@@ -1,7 +1,7 @@
 package kr.or.kosa.cmsplusmain.config;
 
 
-import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentResultDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentResultDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
