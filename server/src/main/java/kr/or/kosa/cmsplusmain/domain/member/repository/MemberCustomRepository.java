@@ -163,14 +163,15 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
      */
     public boolean isExistMemberById(Long memberId, Long vendorId) {
         Integer res = jpaQueryFactory
-                .selectOne()
-                .from(member)
-                .where(
-                    member.id.eq(memberId),
-                    member.vendor.id.eq(vendorId)
-                )
-                .fetchOne();
+            .selectOne()
+            .from(member)
+            .where(
+                member.id.eq(memberId),
+                member.vendor.id.eq(vendorId)
+            )
+            .fetchOne();
         return res != null;
+    }
     private BooleanExpression memberEmailEq(String email) {
         return StringUtils.hasText(email) ?  member.email.eq(email) : null;
     }

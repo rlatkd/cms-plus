@@ -1,4 +1,4 @@
--- use cmsplusmain;
+use cmsplusmain;
 
 -- -- Sample data for cmsplusmain.payment_method_info
 -- INSERT INTO cmsplusmain.payment_method_info (deleted, created_datetime, deleted_datetime, modified_datetime, payment_method_info_id)
@@ -1293,4 +1293,3 @@
 -- #     (28, '89012345678901', '004', '김영철'),
 -- #     (29, '90123456789012', '088', '장도연'),
 -- #     (30, '01234567890123', '004', '홍현희');
--- >>>>>>> dev
