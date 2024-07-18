@@ -15,3 +15,14 @@ export const getBillingList = async (searchParams = {}) => {
     throw err;
   }
 };
+
+// 청구 상세 조회
+export const getBillingDetail = async (billingId) => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/billing/${billingId}`);
+    return res;
+  } catch (err) {
+    console.log('청구 상세 조회 실패 => ', err.response);
+    throw err;
+  }
+};
