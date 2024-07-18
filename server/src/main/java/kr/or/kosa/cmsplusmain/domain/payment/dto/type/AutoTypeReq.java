@@ -11,19 +11,22 @@ import lombok.Getter;
 @Getter
 public class AutoTypeReq extends PaymentTypeInfoReq {
 	private final String consentImgUrl;
-
-	//TODO
-	//간편동의 요청시간 필드에대한 상의가 필요
+	private final String signImgUrl;
+	private final LocalDateTime simpleConsentReqDateTime;
 
 	@Builder
-	public AutoTypeReq(String consentImgUrl, LocalDateTime simpleConsentReqDateTime ) {
+	public AutoTypeReq(String consentImgUrl, String signImgUrl, LocalDateTime simpleConsentReqDateTime) {
 		super(PaymentType.AUTO);
 		this.consentImgUrl = consentImgUrl;
+		this.signImgUrl = signImgUrl;
+		this.simpleConsentReqDateTime = simpleConsentReqDateTime;
 	}
 
 	public AutoPaymentType toEntity() {
 		return AutoPaymentType.builder()
 				.consentImgUrl(this.consentImgUrl)
+				.signImgUrl(this.signImgUrl)
+				.simpleConsentReqDateTime(this.simpleConsentReqDateTime)
 				.build();
 	}
 }

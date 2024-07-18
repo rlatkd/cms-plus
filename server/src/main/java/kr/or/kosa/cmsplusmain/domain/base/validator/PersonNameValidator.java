@@ -8,12 +8,8 @@ import jakarta.validation.ConstraintValidatorContext;
 public class PersonNameValidator implements ConstraintValidator<PersonName, String> {
 
 	private static final Pattern NAME_PATTERN = Pattern.compile(
-		"^[가-힣a-zA-Z]{1,40}$"
+		"^[가-힣a-zA-Z0-9]{1,40}$"
 	);
-
-	@Override
-	public void initialize(PersonName constraintAnnotation) {
-	}
 
 	@Override
 	public boolean isValid(String personName, ConstraintValidatorContext context) {

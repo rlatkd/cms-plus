@@ -3,6 +3,9 @@ package kr.or.kosa.cmsplusmain.domain.billing.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.MessageDto;
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.SmsMessageDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,9 +106,13 @@ public class BillingService {
 	private void sendInvoiceMessage(String message, Member member) {
 		// 청구서 링크 발송
 		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+		String topic = "message-topic";
+
 		switch (sendMethod) {
-			case SMS -> messagingService.sendSms(member.getPhone(), message);
-			case EMAIL -> messagingService.sendEmail(member.getEmail(), message);
+			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+							messagingService.send(topic, smsMessageDto); }
+			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+							messagingService.send(topic, emailMessageDto); }
 		}
 	}
 

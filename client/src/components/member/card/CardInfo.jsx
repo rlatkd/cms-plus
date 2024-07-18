@@ -1,4 +1,4 @@
-import { Input } from 'postcss';
+import Input from '@/components/common/inputs/Input';
 
 const CardInfo = () => {
   return (

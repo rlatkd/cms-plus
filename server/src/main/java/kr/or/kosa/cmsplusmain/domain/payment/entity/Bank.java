@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Bank implements BaseEnum {
-	SINHAN("088", "신한은행"), KOOKMIN("004", "국민은행");
+	SHINHAN("088", "신한은행"), KOOKMIN("004", "국민은행");
 
 	private final String code;
 	private final String title;

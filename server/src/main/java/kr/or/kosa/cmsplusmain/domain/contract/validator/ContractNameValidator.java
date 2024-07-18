@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class ContractNameValidator implements ConstraintValidator<ContractName, String> {
 
 	private static final Pattern NAME_PATTERN = Pattern.compile(
-		"^[가-힣a-zA-Z]{1,40}$"
+		"^[가-힣a-zA-Z0-9]{1,40}$"
 	);
 
 	@Override

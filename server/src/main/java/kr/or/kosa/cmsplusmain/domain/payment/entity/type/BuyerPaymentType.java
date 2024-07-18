@@ -26,8 +26,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BuyerPaymentType extends PaymentTypeInfo {
 
+	// TODO transaction 전파 안됨??
 	@Comment("납부자결제 - 설정된 가능 결제수단")
-	@ElementCollection(targetClass = PaymentMethod.class, fetch = FetchType.LAZY)
+	@ElementCollection(targetClass = PaymentMethod.class, fetch = FetchType.EAGER)
 	@CollectionTable(name = "buyer_payment_method")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "buyer_payment_method")

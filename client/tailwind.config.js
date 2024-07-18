@@ -38,6 +38,7 @@ export default {
         580: '580px',
         640: '640px', // 모바일 max-width
         680: '680px',
+        1200: '1200px',
         1500: '1500px', // 브라우저 max-height
         2400: '2400px', // 브라우저 max-width
       },

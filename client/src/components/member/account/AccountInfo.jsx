@@ -13,7 +13,7 @@ const AccountInfo = () => {
         <form className='space-y-4'>
           <Input
             label='은행'
-            name='cardNumber'
+            name='bankNumber'
             type='text'
             required
             placeholder='신한은행'

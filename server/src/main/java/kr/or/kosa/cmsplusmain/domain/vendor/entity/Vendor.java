@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.vendor.entity;
 
 import org.hibernate.annotations.Comment;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -101,7 +102,7 @@ public class Vendor extends BaseEntity {
 
 	/* 간편동의 설정 */
 	// TODO: 고객 아이디 만들기 시 최초 설정 값 지녀야함
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "setting_simpconset_id")
 	private SimpConsentSetting simpConsentSetting;
 

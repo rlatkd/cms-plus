@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.payment.entity;
 
+import jakarta.persistence.CascadeType;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
@@ -38,7 +39,7 @@ public class Payment extends BaseEntity {
 	private PaymentType paymentType;
 
 	@Comment("결제방식 정보")
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "payment_type_info_id")
 	private PaymentTypeInfo paymentTypeInfo;
 
@@ -48,7 +49,7 @@ public class Payment extends BaseEntity {
 	private PaymentMethod paymentMethod;
 
 	@Comment("결제수단 정보")
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "payment_method_info_id")
 	private PaymentMethodInfo paymentMethodInfo;
 

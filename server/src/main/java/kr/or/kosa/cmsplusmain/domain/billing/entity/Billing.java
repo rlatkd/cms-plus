@@ -78,6 +78,7 @@ public class Billing extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "billing_status", nullable = false)
 	@NotNull
+	@Setter
 	private BillingStatus billingStatus = BillingStatus.CREATED;
 
 	@Comment("청구서 메시지")
@@ -189,6 +190,9 @@ public class Billing extends BaseEntity {
 	* 청구 결제일 수정
 	* */
 	public void setBillingDate(LocalDate billingDate) {
+		if (this.billingDate.equals(billingDate)) {
+			return;
+		}
 		// 청구의 결제일은 청구서 발송 전 상태에서만 수정 가능하다.
 		if (!billingStatus.equals(BillingStatus.CREATED)) {
 			throw new UpdateBillingDateException();

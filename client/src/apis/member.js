@@ -11,6 +11,30 @@ export const createMember = async memberData => {
   }
 };
 
+// 회원 엑셀 -> json
+export const convertMember = async formData => {
+  try {
+    const res = await privateAxios.post('/v1/vendor/management/convert', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res;
+  } catch (err) {
+    console.error('회원 엑셀 -> json 실패', err.response);
+    throw err;
+  }
+};
+
+// 회원 json -> 저장
+export const uploadMembers = async members => {
+  try {
+    const res = await privateAxios.post('/v1/vendor/management/upload', members);
+    return res;
+  } catch (err) {
+    console.error('회원 json -> 저장 실패', err.response);
+    throw err;
+  }
+};
+
 // 회원 목록 조회
 export const getMemberList = async (searchParams = {}) => {
   try {
