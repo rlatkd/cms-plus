@@ -72,10 +72,10 @@ public class RandomGenerator {
 	}
 
 	public String generateRandomPhone() {
-		return String.format("010-%04d-%04d", random.nextInt(10000), random.nextInt(10000));
+		return String.format("010%04d%04d", random.nextInt(10000), random.nextInt(10000));
 	}
 
 	public String generateRandomHomePhone() {
-		return String.format("02-%04d-%04d", random.nextInt(10000), random.nextInt(10000));
+		return String.format("02%04d%04d", random.nextInt(10000), random.nextInt(10000));
 	}
 }
