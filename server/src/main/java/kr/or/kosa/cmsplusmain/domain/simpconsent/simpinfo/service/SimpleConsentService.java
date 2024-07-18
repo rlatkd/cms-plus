@@ -57,9 +57,9 @@ public class SimpleConsentService {
 
         contractService.createContract(vendorId, member, payment, contractDTO.toContractCreateReq());
 
-        int billingCount = billingCustomRepository.findBillingStandardByMemberId(vendorId, member.getId());
-        Long totalBillingPrice = billingCustomRepository.findBillingProductByMemberId(vendorId, member.getId());
+//        int billingCount = billingCustomRepository.findBillingStandardByMemberId(vendorId, member.getId());
+//        Long totalBillingPrice = billingCustomRepository.findBillingProductByMemberId(vendorId, member.getId());
 
-        return MemberDetail.fromEntity(member, billingCount, totalBillingPrice);
+        return MemberDetail.fromEntity(member, 0, 0L);
     }
 }
