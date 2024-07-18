@@ -1,7 +1,9 @@
+
+
 package kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.controller;
 
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
-import kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto.SimpleConsentDTO;
+import kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto.SimpleConsentRequestDTO;
 import kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.service.SimpleConsentService;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +24,18 @@ public class SimpleConsentController {
     @PostMapping
     public ResponseEntity<MemberDetail> processSimpleConsent(
             @AuthenticationPrincipal VendorUserDetailsDto userDetails,
-            @RequestBody SimpleConsentDTO simpleConsentDTO) {
+            @RequestBody SimpleConsentRequestDTO simpleConsentRequestDTO) {
         try {
             Long vendorId = 1L;
             //String vendorName = userDetails.getName();
 
             logger.info("Processing simple consent for vendor: (ID: {})", vendorId);
-            MemberDetail memberDetail = simpleConsentService.processSimpleConsent(vendorId, simpleConsentDTO);
+            MemberDetail memberDetail = simpleConsentService.processSimpleConsent(
+                    vendorId,
+                    simpleConsentRequestDTO.getMemberDTO(),
+                    simpleConsentRequestDTO.getPaymentDTO(),
+                    simpleConsentRequestDTO.getContractDTO()
+            );
             logger.info("Simple consent processed successfully for vendor: (ID: {})", vendorId);
             return ResponseEntity.ok(memberDetail);
         } catch (Exception e) {

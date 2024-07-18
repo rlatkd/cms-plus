@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
 import InfoRow from '@/components/common/InfoRow';
 import SignatureCanvas from 'react-signature-canvas';
 import { useUserDataStore } from '@/stores/useUserDataStore';
+import { uploadSignature } from '@/apis/signature';
 
 const Signature = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,31 +28,29 @@ const Signature = () => {
       const canvas = signatureRef.current.getCanvas();
       canvas.toBlob(blob => {
         const url = URL.createObjectURL(blob);
-        setUserData({ ...userData, signatureUrl: url, signatureBlob: blob });
+        setUserData({
+          contractDTO: {
+            ...userData.contractDTO,
+            signatureUrl: url,
+            signatureBlob: blob,
+          },
+        });
         closeModal();
       }, 'image/png');
     }
   };
 
-  const uploadSignature = async blob => {
+  const handleUploadSignature = async blob => {
     setIsUploading(true);
     setUploadStatus('업로드 중...');
     try {
       const formData = new FormData();
       formData.append('file', blob, 'signature.png');
 
-      const response = await axios.post(
-        'http://localhost:8080/api/v1/simple-consent/sign',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      const fileUrl = await uploadSignature(formData);
 
       setUploadStatus('업로드 성공!');
-      return response.data.fileUrl; // 서버에서 반환된 파일 URL
+      return fileUrl;
     } catch (error) {
       console.error('Error uploading signature:', error);
       setUploadStatus('업로드 실패. 다시 시도해주세요.');
@@ -63,9 +61,9 @@ const Signature = () => {
   };
 
   const saveSignatureAsPNG = async () => {
-    if (userData.signatureBlob) {
+    if (userData.contractDTO.signatureBlob) {
       try {
-        const fileUrl = await uploadSignature(userData.signatureBlob);
+        const fileUrl = await handleUploadSignature(userData.contractDTO.signatureBlob);
         if (fileUrl) {
           const link = document.createElement('a');
           link.href = fileUrl;
@@ -91,10 +89,10 @@ const Signature = () => {
   };
 
   const productNames =
-    userData.items && userData.items.length > 0
-      ? userData.items.length > 1
-        ? `${userData.items[0].productName} 외 ${userData.items.length - 1}`
-        : userData.items[0].productName
+    userData.contractDTO.items && userData.contractDTO.items.length > 0
+      ? userData.contractDTO.items.length > 1
+        ? `${userData.contractDTO.items[0].productName} 외 ${userData.contractDTO.items.length - 1}`
+        : userData.contractDTO.items[0].productName
       : '상품 정보 없음';
 
   const formatDate = dateString => {
@@ -121,12 +119,12 @@ const Signature = () => {
   };
 
   const paymentInfo =
-    userData.paymentMethod === 'CARD'
-      ? userData.cardNumber
-        ? `카드 ${userData.cardNumber.slice(-4).padStart(16, '*')}`
+    userData.paymentDTO.paymentMethod === 'CARD'
+      ? userData.paymentDTO.cardNumber
+        ? `카드 ${userData.paymentDTO.cardNumber.slice(-4).padStart(16, '*')}`
         : '카드 정보 없음'
-      : userData.bank && userData.accountNumber
-        ? `${bankNameMap[userData.bank] || userData.bank} ${userData.accountNumber.slice(-4).padStart(userData.accountNumber.length, '*')}`
+      : userData.paymentDTO.bank && userData.paymentDTO.accountNumber
+        ? `${bankNameMap[userData.paymentDTO.bank] || userData.paymentDTO.bank} ${userData.paymentDTO.accountNumber.slice(-4).padStart(userData.paymentDTO.accountNumber.length, '*')}`
         : '계좌 정보 없음';
 
   return (
@@ -140,12 +138,12 @@ const Signature = () => {
       </div>
       <div className='mb-4 space-y-2 border-b border-t py-3'>
         <InfoRow label='상품' value={productNames} />
-        <InfoRow label='합계금액' value={`${userData.totalPrice.toLocaleString()}원`} />
+        <InfoRow label='합계금액' value={`${userData.contractDTO.totalPrice.toLocaleString()}원`} />
         <InfoRow
           label='기간'
-          value={`${formatDate(userData.startDate)}~${formatDate(userData.endDate)}`}
+          value={`${formatDate(userData.contractDTO.startDate)}~${formatDate(userData.contractDTO.endDate)}`}
         />
-        <InfoRow label='약정일' value={`${userData.contractDay}일`} />
+        <InfoRow label='약정일' value={`${userData.contractDTO.contractDay}일`} />
         <InfoRow label='결제수단' value={paymentInfo} />
       </div>
       <div className='mb-4 mt-8'>
@@ -153,8 +151,12 @@ const Signature = () => {
         <button
           onClick={openModal}
           className='flex h-32 w-full items-center justify-center rounded-md border border-mint text-gray-400'>
-          {userData.signatureUrl ? (
-            <img src={userData.signatureUrl} alt='서명' className='h-full w-full object-contain' />
+          {userData.contractDTO.signatureUrl ? (
+            <img
+              src={userData.contractDTO.signatureUrl}
+              alt='서명'
+              className='h-full w-full object-contain'
+            />
           ) : (
             '서명하기'
           )}
@@ -190,7 +192,7 @@ const Signature = () => {
         </div>
       )}
 
-      {userData.signatureUrl && (
+      {userData.contractDTO.signatureUrl && (
         <div>
           <button
             onClick={saveSignatureAsPNG}

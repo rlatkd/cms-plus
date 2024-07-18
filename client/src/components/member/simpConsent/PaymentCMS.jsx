@@ -21,29 +21,48 @@ const bankOptions = [
 const PaymentCMS = () => {
   const { userData, setUserData } = useUserDataStore();
   const [localData, setLocalData] = useState({
-    bank: userData.bank,
-    accountHolder: userData.accountHolder,
-    accountOwnerBirth: userData.accountOwnerBirth,
-    accountNumber: userData.accountNumber,
+    bank: userData.paymentDTO.bank || '',
+    accountHolder: userData.paymentDTO.accountHolder || '',
+    accountOwnerBirth: userData.paymentDTO.accountOwnerBirth || '',
+    accountNumber: userData.paymentDTO.accountNumber || '',
   });
 
   useEffect(() => {
     setLocalData({
-      bank: userData.bank,
-      accountHolder: userData.accountHolder,
-      accountOwnerBirth: userData.accountBirthDate,
-      accountNumber: userData.accountNumber,
+      bank: userData.paymentDTO.bank || '',
+      accountHolder: userData.paymentDTO.accountHolder || '',
+      accountOwnerBirth: userData.paymentDTO.accountOwnerBirth || '',
+      accountNumber: userData.paymentDTO.accountNumber || '',
     });
-  }, [userData]);
+  }, [userData.paymentDTO]);
 
   const handleInputChange = e => {
     const { name, value } = e.target;
-    setLocalData(prev => ({ ...prev, [name]: value }));
+    if (name === 'accountOwnerBirth') {
+      const formattedValue = formatBirthDate(value);
+      setLocalData(prev => ({ ...prev, [name]: formattedValue }));
+    } else {
+      setLocalData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleBlur = e => {
     const { name, value } = e.target;
-    setUserData({ [name]: value });
+    setUserData({ paymentDTO: { ...userData.paymentDTO, [name]: value } });
+  };
+
+  const formatBirthDate = value => {
+    const cleaned = value.replace(/\D/g, '');
+    let formatted = cleaned;
+
+    if (cleaned.length > 4) {
+      formatted = `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`;
+    }
+    if (cleaned.length > 6) {
+      formatted = `${formatted.slice(0, 7)}-${formatted.slice(7)}`;
+    }
+
+    return formatted.slice(0, 10);
   };
 
   return (
@@ -67,16 +86,18 @@ const PaymentCMS = () => {
           value={localData.accountHolder}
           onChange={handleInputChange}
           onBlur={handleBlur}
+          maxLength={20}
         />
         <Input
           label='생년월일'
           name='accountOwnerBirth'
           type='text'
           required
-          placeholder='생년월일 6자리'
+          placeholder='YYYY-MM-DD (예: 1990-01-01)'
           value={localData.accountOwnerBirth}
           onChange={handleInputChange}
           onBlur={handleBlur}
+          maxLength={10}
         />
         <Input
           label='계좌번호'
@@ -87,6 +108,7 @@ const PaymentCMS = () => {
           value={localData.accountNumber}
           onChange={handleInputChange}
           onBlur={handleBlur}
+          maxLength={20}
         />
       </form>
 

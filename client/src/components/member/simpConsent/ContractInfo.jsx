@@ -7,24 +7,24 @@ import { useUserDataStore } from '@/stores/useUserDataStore';
 const ContractInfo = () => {
   const { userData, setUserData } = useUserDataStore();
   const [localData, setLocalData] = useState({
-    contractName: userData.contractName,
-    selectedProduct: userData.selectedProduct,
-    items: userData.items,
-    startDate: userData.startDate,
-    endDate: userData.endDate,
-    contractDay: userData.contractDay,
+    contractName: userData.contractDTO.contractName || '',
+    selectedProduct: userData.contractDTO.selectedProduct || '',
+    items: userData.contractDTO.items || [],
+    startDate: userData.contractDTO.startDate || '',
+    endDate: userData.contractDTO.endDate || '',
+    contractDay: userData.contractDTO.contractDay || 1,
   });
 
   useEffect(() => {
     setLocalData({
-      contractName: userData.contractName,
-      selectedProduct: userData.selectedProduct,
-      items: userData.items,
-      startDate: userData.startDate,
-      endDate: userData.endDate,
-      contractDay: userData.contractDay,
+      contractName: userData.contractDTO.contractName || '',
+      selectedProduct: userData.contractDTO.selectedProduct || '',
+      items: userData.contractDTO.items || [],
+      startDate: userData.contractDTO.startDate || '',
+      endDate: userData.contractDTO.endDate || '',
+      contractDay: userData.contractDTO.contractDay || 1,
     });
-  }, [userData]);
+  }, [userData.contractDTO]);
 
   const productOptions = [
     { value: '', label: '상품을 선택해주세요' },
@@ -39,7 +39,7 @@ const ContractInfo = () => {
 
   const handleBlur = e => {
     const { name, value } = e.target;
-    setUserData({ [name]: value });
+    setUserData({ contractDTO: { ...userData.contractDTO, [name]: value } });
   };
 
   const handleProductChange = e => {
@@ -54,19 +54,23 @@ const ContractInfo = () => {
       };
 
       if (!localData.items.some(item => item.productId === newProduct.productId)) {
+        const newItems = [...localData.items, newProduct];
         setLocalData(prev => ({
           ...prev,
           selectedProduct: productId,
-          items: [...prev.items, newProduct],
+          items: newItems,
         }));
         setUserData({
-          selectedProduct: productId,
-          items: [...localData.items, newProduct],
+          contractDTO: {
+            ...userData.contractDTO,
+            selectedProduct: productId,
+            items: newItems,
+          },
         });
       }
     } else {
       setLocalData(prev => ({ ...prev, selectedProduct: '' }));
-      setUserData({ selectedProduct: '' });
+      setUserData({ contractDTO: { ...userData.contractDTO, selectedProduct: '' } });
     }
   };
 
@@ -74,26 +78,26 @@ const ContractInfo = () => {
     const newItems = [...localData.items];
     newItems[index].quantity = Math.max(1, newItems[index].quantity + change);
     setLocalData(prev => ({ ...prev, items: newItems }));
-    setUserData({ items: newItems });
+    setUserData({ contractDTO: { ...userData.contractDTO, items: newItems } });
   };
 
   const removeItem = index => {
     const newItems = localData.items.filter((_, i) => i !== index);
     setLocalData(prev => ({ ...prev, items: newItems }));
-    setUserData({ items: newItems });
+    setUserData({ contractDTO: { ...userData.contractDTO, items: newItems } });
   };
 
   const handleDateChange = (e, field) => {
     const newDate = e.target.value;
     setLocalData(prev => ({ ...prev, [field]: newDate }));
-    setUserData({ [field]: newDate });
+    setUserData({ contractDTO: { ...userData.contractDTO, [field]: newDate } });
 
     if (field === 'startDate' && new Date(newDate) > new Date(localData.endDate)) {
       setLocalData(prev => ({ ...prev, endDate: newDate }));
-      setUserData({ endDate: newDate });
+      setUserData({ contractDTO: { ...userData.contractDTO, endDate: newDate } });
     } else if (field === 'endDate' && new Date(newDate) < new Date(localData.startDate)) {
       setLocalData(prev => ({ ...prev, startDate: newDate }));
-      setUserData({ startDate: newDate });
+      setUserData({ contractDTO: { ...userData.contractDTO, startDate: newDate } });
     }
   };
 
@@ -117,6 +121,7 @@ const ContractInfo = () => {
         value={localData.contractName}
         onChange={handleInputChange}
         onBlur={handleBlur}
+        maxLength={20}
       />
 
       <SelectField
@@ -176,7 +181,7 @@ const ContractInfo = () => {
         onChange={e => {
           const value = parseInt(e.target.value);
           setLocalData(prev => ({ ...prev, contractDay: value }));
-          setUserData({ contractDay: value });
+          setUserData({ contractDTO: { ...userData.contractDTO, contractDay: value } });
         }}
       />
     </div>
