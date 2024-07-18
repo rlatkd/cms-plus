@@ -48,9 +48,9 @@ const ProductListPage = () => {
           page: page,
           size: 10,
         });
-        const transformedData = transformProductListItem(res.data.content);
+        const transformdData = transformProductListItem(res.data.content);
 
-        setProductList(transformedData);
+        setProductList(transformdData);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosProductList => ', err.response.data);
@@ -59,9 +59,8 @@ const ProductListPage = () => {
     [currentPage]
   );
 
-  // 상품 데이터 값 정제
+  // 데이터 변환
   const transformProductListItem = data => {
-    // 데이터 변환
     return data.map(product => {
       const { productPrice, contractNumber } = product;
 

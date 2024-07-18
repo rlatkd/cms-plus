@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.contract.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.kosa.cmsplusmain.domain.contract.dto.*;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,6 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDetailRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractListItemRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
@@ -123,17 +119,16 @@ public class ContractService {
 	* 	존재여부 확인, 계약 조회, 계약상품 목록 조회(+? batch_size=100), 신규 계약상품 생성(*N), 계약이름 수정, 계약상품 삭제(*N)
 	* */
 	@Transactional
-	public void updateContract(Long vendorId, Long contractId, ContractCreateReq contractCreateReq) {
+	public void updateContract(Long vendorId, Long contractId, ContractUpdateReq contractUpdateReq) {
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorId);
 
 		// 계약 이름 수정
 		Contract contract = contractRepository.findById(contractId).orElseThrow();
-		contract.setContractName(contractCreateReq.getContractName());
+		contract.setContractName(contractUpdateReq.getContractName());
 
 		// 신규 계약상품
-		List<ContractProduct> newContractProducts = convertToContractProducts(contractCreateReq.getContractProducts());
-
+		List<ContractProduct> newContractProducts = convertToContractProducts(contractUpdateReq.getContractProducts());
 
 		// 계약상품목록 수정
 		updateContractProducts(contract, newContractProducts);
@@ -192,7 +187,7 @@ public class ContractService {
 	* 계약 ID 존재여부
 	* 계약이 현재 로그인 고객의 계약인지 여부
 	* */
-	private void validateContractUser(Long contractId, Long vendorId) {
+	public void validateContractUser(Long contractId, Long vendorId) {
 		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
 			throw new EntityNotFoundException("계약 ID 없음(" + contractId + ")");
 		}

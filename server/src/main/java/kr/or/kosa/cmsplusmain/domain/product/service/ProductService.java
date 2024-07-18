@@ -78,7 +78,7 @@ public class ProductService {
     }
 
     /*
-     * 상품 수정
+     * 상품 삭제
      * */
     @Transactional
     public void deleteProduct(Long vendorId,Long productId) {

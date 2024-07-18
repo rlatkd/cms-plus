@@ -1,4 +1,3 @@
-// TODO private으로 변경
 import { privateAxios } from '.';
 
 // 계약 목록 조회

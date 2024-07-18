@@ -35,8 +35,8 @@ const PagiNation = ({
   };
 
   return (
-    <div className='flex justify-center '>
-      <div className='flex items-center'>
+    <div className='flex justify-center p-2 '>
+      <div className='flex items-center '>
         {/* 이전 버튼 */}
         <button
           key='prev'

@@ -45,10 +45,10 @@
   }
 
   .primary-dashboard {
-    @apply rounded-xl bg-white p-6 shadow-dash-board;
+    @apply rounded-xl bg-white px-6 pt-6 pb-3 shadow-dash-board;
   }
 
   .sub-dashboard {
-    @apply rounded-lg bg-white p-6 shadow-dash-sub;
+    @apply rounded-lg bg-white pt-6 px-6 shadow-dash-sub;
   }
 }
