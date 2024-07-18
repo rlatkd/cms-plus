@@ -9,12 +9,12 @@ const SideBar = () => {
   const { sideBarMenus, toggle } = useSideBarActiveStore();
 
   return (
-    <div className='hidden h-full w-80  animate-slideOut desktop:block desktop:animate-slideIn py-6 pl-4 mr-8'>
+    <div className='hidden h-full w-72  py-6 pl-4 mr-4 sticky desktop:block desktop:animate-slideIn '>
       <div
-        className='mb-6 ml-3 mt-3 flex items-center cursor-pointer'
+        className='mb-7 ml-3 mt-3 flex items-center cursor-pointer'
         onClick={() => navigate('/vendor')}>
         <img src='/src/assets/tmplogo.svg' alt='logo' className='mx-2 h-6 w-6' />
-        <h1 className='text-lg font-800 text-text_black'>HYOSUNG CMS#</h1>
+        <h1 className='font-800 text-text_black'>HYOSUNG CMS#</h1>
       </div>
       <div className='border-gradient mb-5 border-b-2' />
       {vendorRoute().map((route, idx) => {
@@ -24,7 +24,7 @@ const SideBar = () => {
               <NavLink
                 to={route.path}
                 className={({ isActive }) =>
-                  `mb-3 flex cursor-pointer  ${isActive ? 'rounded-2xl bg-white shadow-sidebars' : 'bg-transparent'} px-3 py-2`
+                  `mb-2 flex cursor-pointer ${isActive ? 'rounded-xl bg-white shadow-sidebars' : 'bg-transparent'} px-3 py-2`
                 }>
                 {({ isActive }) => (
                   <div className='flex h-full w-full items-center justify-between'>
@@ -32,9 +32,18 @@ const SideBar = () => {
                       <div
                         className={`mr-4 flex h-9 w-9 items-center justify-center rounded-xl ${isActive ? 'bg-mint' : 'bg-white shadow-sidebars'}`}>
                         {React.cloneElement(route.icon, {
-                          className: 'h-4 w-4',
-                          fill: isActive ? '#ffffff' : '#4FD1C5',
-                          stroke: '#ffffff',
+                          className: 'h-6 w-4',
+                          fill:
+                            route.path === 'products'
+                              ? isActive
+                                ? '#4FD1C5'
+                                : '#ffffff'
+                              : isActive
+                                ? '#ffffff'
+                                : '#4FD1C5',
+
+                          stroke:
+                            route.path === 'products' ? (isActive ? '#ffffff' : '#4FD1C5') : ' ',
                         })}
                       </div>
                       <p
@@ -43,7 +52,7 @@ const SideBar = () => {
                       </p>
                     </div>
                     {/* {route.children && (
-                      <UpArrow className='mr-1 h-2 w-4' rotation={isActive ? 0 : 180} />
+                      <Arrow className='mr-1 h-2 w-4' rotation={isActive ? 0 : 180} />
                     )} */}
                   </div>
                 )}

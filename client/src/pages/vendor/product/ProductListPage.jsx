@@ -1,42 +1,32 @@
 import { getProductDetail, getProductList } from '@/apis/product';
+import MoveButton from '@/components/common/buttons/MoveButton';
+import PagiNation from '@/components/common/PagiNation';
+import SortSelect from '@/components/common/selects/SortSelect';
 import Table from '@/components/common/tables/Table';
 import ProductModal from '@/components/vendor/modal/ProductModal';
 import { validateField } from '@/utils/validators';
 import { useCallback, useEffect, useState } from 'react';
-
-// 상품 목록 조회 컬럼
-const cols = ['No', '상품명', '금액', '계약수', '생성일', '비고'];
-
-// 상품 조건 설정
-const initialSearch = [
-  { key: 'checkbox', type: 'hidden', value: '' },
-  { key: 'No', type: 'hidden', value: '' },
-  { key: '상품명', type: 'text', value: '' },
-  { key: '금액', type: 'text', value: '' },
-  {
-    key: '계약수',
-    type: 'text',
-    value: '',
-  },
-  { key: '생성일', type: 'text', value: '' },
-  { key: '비고', type: 'text', value: '' },
-];
+import addItem from '@/assets/addItem.svg';
+import Item from '@/assets/Item';
+import useDebounce from '@/hooks/useDebounce';
+import { cols, initialSearch, selectOptions } from '@/utils/tableElements/productElement';
 
 const ProductListPage = () => {
-  const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
-  const [modalTitle, setModalTitle] = useState(''); // 모달 제목
   const [productList, setProductList] = useState([]); // 상품 목록
-  const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
   const [search, setSearch] = useState(initialSearch); // 상품 조건
+  const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
+  const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
 
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
-
-  const [page, setPage] = useState(1); // 현재 표시할 페이지 번호 - 페이지 라우팅되는 변수와 페이징을 통해 api parameter에 영향을 주는 변수 분리
+  const [currentorder, setCurrentOrder] = useState(''); // 정렬 방향
+  const [currentorderBy, setCurrentOrderBy] = useState(''); // 정렬 항목
 
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
-  const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
+  const buttonCount = 5;
 
+  const [modalTitle, setModalTitle] = useState(''); // 모달 제목
+  const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
   const [isValid, setIsValid] = useState(true); // 유효성 flag
 
   // 상품 목록 조회 함수
@@ -44,19 +34,23 @@ const ProductListPage = () => {
   // 종속성 배열에 포함시키고 useCallback으로 함수 재생성 방지
   // 의도하지 않은 렌더링 에러 방지
   const axiosProductList = useCallback(
-    async (searchParams = {}, page = currentPage) => {
+    async (
+      searchParams = {},
+      order = currentorder,
+      orderBy = currentorderBy,
+      page = currentPage
+    ) => {
       try {
-        const res = await getProductList({ size: 9, page: page, ...searchParams });
-        const formattedData = res.data.content.map((data, index) => ({
-          No: (page - 1) * 9 + index + 1,
-          상품명: data.productName,
-          금액: data.productPrice,
-          계약수: data.contractNumber,
-          생성일: data.productCreatedDate,
-          비고: data.productMemo || '',
-          productId: data.productId,
-        }));
-        setProductList(formattedData);
+        const res = await getProductList({
+          ...searchParams,
+          order: order,
+          orderBy: orderBy,
+          page: page,
+          size: 10,
+        });
+        const transformedData = transformProductListItem(res.data.content);
+
+        setProductList(transformedData);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosProductList => ', err.response.data);
@@ -65,10 +59,61 @@ const ProductListPage = () => {
     [currentPage]
   );
 
-  // 페이지 진입 시 상품 목록 조회
-  useEffect(() => {
-    axiosProductList(currentSearchParams, currentPage);
-  }, [currentPage, currentSearchParams, axiosProductList]);
+  // 상품 데이터 값 정제
+  const transformProductListItem = data => {
+    // 데이터 변환
+    return data.map(product => {
+      const { productPrice, contractNumber } = product;
+
+      return {
+        ...product,
+        productPrice: `${productPrice.toLocaleString()}원`,
+        contractNumber: `${contractNumber.toLocaleString()}건`,
+      };
+    });
+  };
+
+  // 검색 변경 핸들러
+  const handleChangeSearch = (key, value) => {
+    const updatedSearch = search.map(searchItem =>
+      searchItem.key === key ? { ...searchItem, value: value } : searchItem
+    );
+
+    let searchParams = {};
+    updatedSearch.forEach(searchMember => {
+      if (searchMember.value) {
+        searchParams[searchMember.key] = searchMember.value;
+      }
+    });
+
+    setSearch(updatedSearch);
+    setCurrentSearchParams(searchParams);
+  };
+
+  // 검색 안에 입력값 유효성 검사
+  const validateSearchParams = () => {
+    for (const searchProduct of search) {
+      if (searchProduct.value) {
+        if (!validateField(searchProduct.key, searchProduct.value)) {
+          alert(`[${searchProduct.key}]은(는) 숫자만 입력할 수 있습니다.`);
+          setIsValid(false);
+          return false;
+        }
+      }
+    }
+    setIsValid(true);
+    return true;
+  };
+
+  // 검색 클릭 이벤트 핸들러
+  const handleClickSearch = async () => {
+    if (!validateSearchParams()) return;
+    console.log('debouncedSearchParams => ', debouncedSearchParams);
+    axiosProductList(debouncedSearchParams);
+    setCurrentPage(1); // 검색 후 현재 페이지 초기화
+    setPageGroup(0); // 검색 후 페이지 그룹 초기화
+    setIsValid(true); // 검색 후 유효성 flag 초기화
+  };
 
   // 상품 등록 모달 열기용 이벤트핸들러
   const handleCreateModalOpen = () => {
@@ -88,160 +133,72 @@ const ProductListPage = () => {
     }
   };
 
-  // 조건 변경 핸들러
-  const handleSearchChange = (key, value) => {
-    setSearch(prev =>
-      prev.map(searchProduct =>
-        searchProduct.key === key ? { ...searchProduct, value: value } : searchProduct
-      )
-    );
-  };
+  // 디바운스 커스텀훅
+  const debouncedSearchParams = useDebounce(currentSearchParams, 500);
 
-  // 검색 안에 입력값 유효성 검사
-  const validateSearchParams = () => {
-    for (const searchProduct of search) {
-      if (searchProduct.value) {
-        const keyMapping = {
-          상품명: 'productName',
-          금액: 'productPrice',
-          계약수: 'contractNumber',
-          생성일: 'productCreatedDate',
-          비고: 'productMemo',
-        };
-        const paramKey = keyMapping[searchProduct.key];
-        if (paramKey) {
-          if (!validateField(paramKey, searchProduct.value)) {
-            alert(`[${searchProduct.key}]은(는) 숫자만 입력할 수 있습니다.`);
-            setIsValid(false);
-            return false;
-          }
-        }
-      }
-    }
-    setIsValid(true);
-    return true;
-  };
+  useEffect(() => {
+    handleClickSearch();
+  }, [debouncedSearchParams]);
 
-  // 검색 클릭 이벤트 핸들러
-  const handleSearchClick = async () => {
-    if (!validateSearchParams()) return;
-    const searchParams = { size: 9 };
-    search.forEach(searchProduct => {
-      if (searchProduct.value) {
-        const keyMapping = {
-          상품명: 'productName',
-          금액: 'productPrice',
-          계약수: 'contractNumber',
-          생성일: 'productCreatedDate',
-          비고: 'productMemo',
-        };
-        const paramKey = keyMapping[searchProduct.key];
-        if (paramKey) {
-          searchParams[paramKey] = searchProduct.value;
-        }
-      }
-    });
-    setCurrentSearchParams(searchParams);
-    setCurrentPage(1); // 검색 후 현재 페이지 초기화
-    setPage(1); // 검색 후 표시할 페이지 초기화
-    setPageGroup(0); // 검색 후 페이지 그룹 초기화
-    setIsValid(true); // 검색 후 유효성 flag 초기화
-  };
-
-  // 페이지 변경 이벤트핸들러
-  const handlePageChange = newPage => {
-    if (!validateSearchParams()) return;
-    if (newPage !== currentPage) {
-      setCurrentPage(newPage);
-      setPage(newPage);
-    }
-  };
-
-  // 페이지 그룹 변경 이벤트핸들러
-  const handlePageGroupChange = direction => {
-    if (direction === 'next') {
-      setPageGroup(prev => prev + 1);
-      setPage((pageGroup + 1) * 5 + 1);
-      setCurrentPage((pageGroup + 1) * 5 + 1);
-    } else if (direction === 'prev' && pageGroup > 0) {
-      setPageGroup(prev => prev - 1);
-      setPage((pageGroup - 1) * 5 + 1);
-      setCurrentPage((pageGroup - 1) * 5 + 1);
-    }
-  };
-
-  // 페이지 버튼 렌더링 함수
-  const renderPageButtons = () => {
-    const startPage = pageGroup * 5 + 1;
-    const endPage = Math.min(startPage + 4, totalPages);
-    const buttons = [];
-
-    // 동적으로 css 함수 로직 개선 필요 (밑에 return div로 옮기고 싶음)
-    for (let i = startPage; i <= endPage; i++) {
-      buttons.push(
-        <button
-          key={i}
-          className={`mx-1 px-3 py-1 border rounded-lg w-8 h-8 flex items-center justify-center ${i === page ? 'bg-mint hover:bg-mint_hover text-white' : 'bg-white border border-white'}`}
-          onClick={() => handlePageChange(i)}>
-          {i}
-        </button>
-      );
-    }
-
-    return (
-      <div className='flex items-center'>
-        {/* 이전 버튼 */}
-        <button
-          key='prev'
-          className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${pageGroup === 0 ? 'invisible' : 'bg-white border border-white'}`}
-          onClick={() => handlePageGroupChange('prev')}
-          disabled={pageGroup === 0}>
-          {'<'}&nbsp;&nbsp;&nbsp;{'이전'}
-        </button>
-
-        {/* 1,2,3,4,5 버튼 영역 */}
-        <div className='flex justify-center'>{buttons}</div>
-
-        {/* 다음 버튼 */}
-        <button
-          key='next'
-          className={`mx-1 px-3 py-1 border rounded w-24 h-8 flex items-center justify-center ${endPage >= totalPages ? 'invisible' : 'bg-white border border-white'}`}
-          onClick={() => handlePageGroupChange('next')}
-          disabled={endPage >= totalPages}>
-          {'다음'}&nbsp;&nbsp;&nbsp;{'>'}
-        </button>
-      </div>
-    );
-  };
+  // 페이지 진입 시 상품 목록 조회
+  useEffect(() => {
+    axiosProductList(currentSearchParams, currentorder, currentorderBy, currentPage);
+  }, [currentPage]);
 
   return (
-    <div className='primary-dashboard h-full w-full flex flex-col overflow-hidden'>
-      <div className='flex justify-end'>
-        <button
-          className='rounded-lg bg-mint hover:bg-mint_hover p-3 font-bold text-white w-24'
-          onClick={handleCreateModalOpen}>
-          상품 등록
-        </button>
+    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
+      <div className='flex justify-between pt-2 pb-4 w-full'>
+        <div className='flex items-center '>
+          <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
+            <Item fill='#4FD1C5' stroke='#ffffff' />
+          </div>
+          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <SortSelect
+            setCurrentOrder={setCurrentOrder}
+            setCurrentOrderBy={setCurrentOrderBy}
+            selectOptions={selectOptions}
+            currentSearchParams={currentSearchParams}
+            axiosList={axiosProductList}
+          />
+        </div>
+
+        <div>
+          <div className='flex'>
+            <MoveButton
+              imgSrc={addItem}
+              buttonText='상품 등록'
+              color='mint'
+              onClick={handleCreateModalOpen}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className='flex-grow  mt-5'>
-        <Table
-          cols={cols}
-          search={search}
-          items={productList}
-          handleSearchChange={handleSearchChange}
-          onRowClick={item => handleDetailModalOpen(item.productId)}
-          onSearchClick={handleSearchClick}
-        />
-      </div>
+      <Table
+        cols={cols}
+        search={search}
+        rows={productList}
+        currentPage={currentPage}
+        handleChangeSearch={handleChangeSearch}
+        handleClickSearch={handleClickSearch}
+        onRowClick={item => handleDetailModalOpen(item.productId)}
+      />
 
       {/* 페이지네이션*/}
-      <div className='flex justify-center mt-5'>{renderPageButtons()}</div>
+      <PagiNation
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+        pageGroup={pageGroup}
+        setPageGroup={setPageGroup}
+        buttonCount={buttonCount}
+      />
 
       <ProductModal
         isShowModal={isShowModal}
         setIsShowModal={setIsShowModal}
         modalTitle={modalTitle}
+        icon='/src/assets/item.svg'
         productDetailData={productDetailData}
         refreshProductList={() => axiosProductList(currentSearchParams, currentPage)} // 모달에서 상품 등록 완료되면 추가된거 포함해서 상품 목록 다시 렌더링
       />

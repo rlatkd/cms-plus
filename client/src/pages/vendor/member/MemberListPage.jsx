@@ -1,193 +1,175 @@
+import MoveButton from '@/components/common/buttons/MoveButton';
+import PagiNation from '@/components/common/PagiNation';
+import SortSelect from '@/components/common/selects/SortSelect';
 import Table from '@/components/common/tables/Table';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-const cols = [
-  'No',
-  '회원이름',
-  '휴대전화',
-  '약정일',
-  '상품',
-  '계약금액',
-  '계약상태',
-  '간편동의여부',
-];
-
-const items = [
-  {
-    No: '1',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '2',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '3',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '3',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '3',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '3',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '3',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '3',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '3',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-  {
-    No: '3',
-    회원이름: '18.2.0',
-    휴대전화: '2013-05-29',
-    약정일: '2013-05-29',
-    상품: '2013-05-29',
-    계약금액: '2013-05-29',
-    계약상태: '2013-05-29',
-    간편동의여부: '2013-05-29',
-  },
-];
-
-const initialSearch = [
-  { key: 'checkbox', type: 'hidden', value: '' },
-  { key: 'No', type: 'hidden', value: '' },
-  { key: '회원이름', type: 'text', value: '' },
-  { key: '휴대전화', type: 'text', value: '' },
-  {
-    key: '약정일',
-    type: 'select',
-    value: '',
-    options: ['1일', '7일', '12일', '24일'],
-  },
-  { key: '상품', type: 'text', value: '' },
-  { key: '계약금액', type: 'number', value: '' },
-  {
-    key: '계약상태',
-    type: 'select',
-    value: '',
-    options: ['계약종료', '진행중', '대기중'],
-  },
-  {
-    key: '간편동의여부',
-    type: 'select',
-    value: '',
-    options: ['완료', '대기중'],
-  },
-];
+import registerManyUser from '@/assets/registerManyUser.svg';
+import registerUser from '@/assets/registerUser.svg';
+import { getMemberList } from '@/apis/member';
+import User from '@/assets/User';
+import { formatPhone } from '@/utils/formatPhone';
+import useDebounce from '@/hooks/useDebounce';
+import { cols, initialSearch, selectOptions } from '@/utils/tableElements/memberElement';
+import MemberExcelModal from '@/components/vendor/modal/MemberExcelModal';
 
 const MemberListPage = () => {
-  const [search, setSearch] = useState(initialSearch);
+  const [memberList, setMemberList] = useState([]); // 회원 목록
+  const [search, setSearch] = useState(initialSearch); // 검색 조건
+  const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
-  const handleSearchChange = (key, value) => {
-    setSearch(prev =>
-      prev.map(searchItem =>
-        searchItem.key === key ? { ...searchItem, value: value } : searchItem
-      )
-    );
-  };
+  const [currentorder, setCurrentOrder] = useState(''); // 정렬 방향
+  const [currentorderBy, setCurrentOrderBy] = useState(''); // 정렬 항목
 
-  // 검색 API 들어갈 함수
-  const show = () => {
-    console.log(search);
-  };
+  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
+  const buttonCount = 5; // 버튼 갯수
+
+  const [isShowExcelModal, setIsShowExcelModal] = useState(false);  // 대량 회원 등록
 
   const navigate = useNavigate();
 
-  // id값은 추후 변경
-  const handleGoDetail = () => {
-    navigate('detail/1');
+  // 회원 목록 조회
+  const axiosMemberList = useCallback(
+    async (
+      searchParams = {},
+      order = currentorder,
+      orderBy = currentorderBy,
+      page = currentPage
+    ) => {
+      try {
+        const res = await getMemberList({
+          ...searchParams,
+          order: order,
+          orderBy: orderBy,
+          page: page,
+          size: 10,
+        });
+        const transformedData = transformMemberListItem(res.data.content);
+        setMemberList(transformedData);
+        setTotalPages(res.data.totalPage || 1);
+      } catch (err) {
+        console.error('axiosMemberList => ', err.response.data);
+      }
+    },
+    [currentPage, currentorder, currentorderBy]
+  );
+
+  // 회원 데이터 값 정제
+  const transformMemberListItem = data => {
+    // 데이터 변환
+    return data.map(member => {
+      const { contractPrice, contractCount, memberPhone } = member;
+
+      return {
+        ...member,
+        contractPrice: `${contractPrice.toLocaleString()}원`,
+        contractCount: `${contractCount.toLocaleString()}건`,
+        memberPhone: formatPhone(memberPhone),
+      };
+    });
   };
 
-  const handleGoRegister = () => {
-    navigate('register');
+  // 검색 변경 핸들러
+  const handleChangeSearch = (key, value) => {
+    const updatedSearch = search.map(searchItem =>
+      searchItem.key === key ? { ...searchItem, value: value } : searchItem
+    );
+
+    let searchParams = {};
+    updatedSearch.forEach(searchMember => {
+      if (searchMember.value) {
+        searchParams[searchMember.key] = searchMember.value;
+      }
+    });
+
+    setSearch(updatedSearch);
+    setCurrentSearchParams(searchParams);
   };
+
+  // 검색 클릭 이벤트 핸들러
+  const handleClickSearch = async () => {
+    axiosMemberList(debouncedSearchParams);
+    setCurrentPage(1); // 검색 후 현재 페이지 초기화
+    setPageGroup(0); // 검색 후 페이지 그룹 초기화
+  };
+
+  // 회원 상세 조회 페이지 이동
+  const MoveMemberDetail = async memberId => {
+    console.log(memberId);
+    navigate(`detail/${memberId}`);
+  };
+
+  // 디바운스 커스텀훅
+  const debouncedSearchParams = useDebounce(currentSearchParams, 500);
+
+  useEffect(() => {
+    handleClickSearch();
+  }, [debouncedSearchParams]);
+
+  useEffect(() => {
+    axiosMemberList(currentSearchParams, currentorder, currentorderBy, currentPage);
+  }, [currentPage]);
+
   return (
-    <div className='primary-dashboard h-full w-full flex flex-col overflow-auto'>
-      <div>
-        <button
-          className='w-56 rounded-lg bg-mint p-3 font-bold text-white'
-          onClick={handleGoDetail}>
-          임시 회원 상세 이동
-        </button>
-        <button
-          className='w-56 rounded-lg bg-mint p-3 font-bold text-white'
-          onClick={handleGoRegister}>
-          임시 회원 등록
-        </button>
+    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
+      <div className='flex justify-between pt-2 pb-4 w-full'>
+        <div className='flex items-center '>
+          <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
+            <User fill='#ffffff' />
+          </div>
+          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <SortSelect
+            setCurrentOrder={setCurrentOrder}
+            setCurrentOrderBy={setCurrentOrderBy}
+            selectOptions={selectOptions}
+            currentSearchParams={currentSearchParams}
+            axiosList={axiosMemberList}
+          />
+        </div>
+        <div>
+          <div className='flex'>
+            <MoveButton
+              imgSrc={registerManyUser}
+              color='mint'
+              buttonText='대량 회원 등록'
+              onClick={() => setIsShowExcelModal(true)}
+            />
+            <MoveButton
+              imgSrc={registerUser}
+              color='mint'
+              buttonText='회원 등록'
+              onClick={() => navigate('register')}
+            />
+          </div>
+        </div>
       </div>
       <Table
         cols={cols}
+        rows={memberList}
         search={search}
-        items={items}
-        handleSearchChange={handleSearchChange}
-        show={show}
+        currentPage={currentPage}
+        handleChangeSearch={handleChangeSearch}
+        handleClickSearch={handleClickSearch}
+        onRowClick={item => MoveMemberDetail(item.memberId)}
+      />
+
+      <PagiNation
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+        pageGroup={pageGroup}
+        setPageGroup={setPageGroup}
+        buttonCount={buttonCount}
+      />
+      <MemberExcelModal
+             isShowModal={isShowExcelModal}
+             setIsShowModal={setIsShowExcelModal}
+             // TODO 아이콘 변경 필요
+             icon='/src/assets/user.svg'
+             modalTitle={'대량 회원 등록'}
+             axiosMemberList={axiosMemberList}
       />
     </div>
   );

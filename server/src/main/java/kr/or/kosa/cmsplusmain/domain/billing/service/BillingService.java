@@ -26,7 +26,7 @@ import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
-import kr.or.kosa.cmsplusmain.domain.messaging.service.MessageService;
+import kr.or.kosa.cmsplusmain.domain.messaging.service.MessagingService;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	private final ProductCustomRepository productCustomRepository;
-	private final MessageService messageService;
+	private final MessagingService messagingService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
 	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
@@ -104,8 +104,8 @@ public class BillingService {
 		// 청구서 링크 발송
 		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
 		switch (sendMethod) {
-			case SMS -> messageService.sendSms(member.getPhone(), message);
-			case EMAIL -> messageService.sendEmail(member.getEmail(), message);
+			case SMS -> messagingService.sendSms(member.getPhone(), message);
+			case EMAIL -> messagingService.sendEmail(member.getEmail(), message);
 		}
 	}
 

@@ -1,6 +1,6 @@
 import SimpConsentQrUrlModal from '@/components/vendor/modal/SimpConsentQrUrlModal';
 import { useState } from 'react';
-import ProductSelectField from '@/components/common/ProductSelectField';
+import ProductSelectField from '@/components/common/selects/ProductSelectField';
 import Checkbox from '@/components/common/inputs/CheckBox';
 
 const SettingSimpConsentPage = () => {

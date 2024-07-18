@@ -4,6 +4,7 @@ import { createProduct, deleteProduct, updateProduct } from '@/apis/product';
 import InputWeb from '@/components/common/inputs/InputWeb';
 
 const ProductModal = ({
+  icon,
   isShowModal,
   setIsShowModal,
   modalTitle,
@@ -91,6 +92,7 @@ const ProductModal = ({
       isShowModal={isShowModal}
       setIsShowModal={setIsShowModal}
       modalTitle={modalTitle}
+      icon={icon}
       height='h-640'
       width='w-640'>
       <div className='flex flex-col justify-between gap-1.5'>

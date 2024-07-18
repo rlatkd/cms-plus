@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.member.dto;
 
-import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import lombok.Builder;
@@ -8,7 +7,6 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Builder
@@ -30,9 +28,6 @@ public class MemberDetail {
 
 
     public static MemberDetail fromEntity(Member member,int billingCount, Long totalBillingPrice){
-
-        List<Contract> contracts = member.getContracts();
-
         return MemberDetail.builder()
                 .memberId(member.getId())
                 .memberName(member.getName())
@@ -44,7 +39,7 @@ public class MemberDetail {
                 .memberEnrollDate(member.getEnrollDate())
                 .createdDateTime(member.getCreatedDateTime())
                 .modifiedDateTime(member.getModifiedDateTime())
-                .contractCount(contracts.size())
+                .contractCount(member.getContractNum())
                 .billingCount(billingCount)
                 .totalBillingPrice(totalBillingPrice)
                 .build();

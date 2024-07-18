@@ -17,11 +17,13 @@ public class CardNumberValidator implements ConstraintValidator<CardNumber, Stri
 	public void initialize(CardNumber constraintAnnotation) {
 	}
 
+	// TODO
 	@Override
 	public boolean isValid(String cardNumber, ConstraintValidatorContext context) {
-		if (cardNumber == null) {
-			return true; // null 값은 다른 어노테이션으로 처리
-		}
-		return CARDNUMBER_PATTERN.matcher(cardNumber).matches();
+		return true;
+		// if (cardNumber == null) {
+		// 	return true; // null 값은 다른 어노테이션으로 처리
+		// }
+		// return CARDNUMBER_PATTERN.matcher(cardNumber).matches();
 	}
 }

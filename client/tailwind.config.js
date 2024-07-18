@@ -14,6 +14,7 @@ export default {
         essential: '#FF0000', // 필수정보 별태그
         btn_disa: '#C4C4C4', // 버튼 비활성화
         negative: '#F14141', // 취소, 실패 버튼
+        table_col: '#f4f5f6', // 테이블 컬럼색
       },
 
       screens: {
@@ -36,6 +37,7 @@ export default {
         580: '580px',
         640: '640px', // 모바일 max-width
         680: '680px',
+        1200: '1200px',
         1500: '1500px', // 브라우저 max-height
         2400: '2400px', // 브라우저 max-width
       },
@@ -46,6 +48,7 @@ export default {
         sidebars: '0 1px 3.5px 0 rgba(218, 219, 220, 1)', // 사이드바 아이콘 그림자
         modal: '0 3px 10px rgba(209, 209, 209, 1)',
         dialog: '0 0 15px rgba(0, 0, 0, 0.1)', // alert, confirm
+        column: '0 1px 2px rgba(0, 0, 0, 0.19)', // table column 그림자
       },
 
       fontWeight: {
