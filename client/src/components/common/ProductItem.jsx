@@ -2,7 +2,7 @@ import React from 'react';
 
 const ProductItem = ({ item, onUpdateQuantity, onRemove }) => (
   <div className='mb-2 flex items-center justify-between border-b pb-2 text-sm'>
-    <span>{item.name}</span>
+    <span>{item.productName}</span>
     <div className='flex items-center'>
       <div className='mr-2 flex items-center rounded-md border'>
         <button onClick={() => onUpdateQuantity(-1)} className='bg-gray-100 px-2 py-1'>

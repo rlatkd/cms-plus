@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import Main from '@/components/member/simpConsent/Main';
 import BasicInfo from '@/components/member/simpConsent/BasicInfo';
 import ContractInfo from '@/components/member/simpConsent/ContractInfo';
@@ -18,10 +19,55 @@ const SimpConsentPage = () => {
   const start = 0;
   const end = 6;
   const status = useStatusStore(state => state.status);
-  const { handleClickPrevious, handleClickNext } = useStatusStepper('simpconsent', start, end);
+  const setStatus = useStatusStore(state => state.setStatus);
+  const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
+    'simpconsent',
+    start,
+    end
+  );
 
   const userData = useUserDataStore(state => state.userData);
   const setUserData = useUserDataStore(state => state.setUserData);
+
+  const prepareData = data => {
+    return {
+      ...data,
+      contractDay: parseInt(data.contractDay, 10),
+      totalPrice: parseInt(data.totalPrice, 10),
+      signatureUrl: null, // 또는 적절한 이미지 데이터로 변경
+      signatureBlob: null, // 필요 없다면 제거
+    };
+  };
+
+  const handleClickNext = async () => {
+    if (status === 4) {
+      try {
+        setStatus(5); // Show loading
+        const preparedData = prepareData(userData);
+        const response = await axios.post(
+          'http://localhost:8080/api/v1/simple-consent',
+          preparedData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.status === 200) {
+          setStatus(6); // Show success
+        } else {
+          // Handle error
+          console.error('API request failed');
+          setStatus(4); // Go back to signature page
+        }
+      } catch (error) {
+        console.error('API request failed', error.response?.data || error.message);
+        setStatus(4); // Go back to signature page
+      }
+    } else {
+      originalHandleClickNext();
+    }
+  };
 
   const componentMap = {
     0: Main,

@@ -4,46 +4,65 @@ import SelectField from '@/components/common/selects/SelectField';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 
 const bankOptions = [
-  { value: 'shinhan', label: '신한은행' },
-  { value: 'kb', label: '국민은행' },
-  { value: 'woori', label: '우리은행' },
-  { value: 'ibk', label: '기업은행' },
-  { value: 'suhyup', label: '수협은행' },
-  { value: 'nh', label: 'NH농협은행' },
-  { value: 'busan', label: '부산은행' },
-  { value: 'hana', label: '하나은행' },
-  { value: 'gwangju', label: '광주은행' },
-  { value: 'post', label: '우체국' },
-  { value: 'im', label: 'iM뱅크' },
-  { value: 'knb', label: '경남은행' },
+  { value: 'SHINHAN', label: '신한은행' },
+  { value: 'KB', label: '국민은행' },
+  { value: 'WOORI', label: '우리은행' },
+  { value: 'IBK', label: '기업은행' },
+  { value: 'SUHYUP', label: '수협은행' },
+  { value: 'NH', label: 'NH농협은행' },
+  { value: 'BUSAN', label: '부산은행' },
+  { value: 'HANA', label: '하나은행' },
+  { value: 'GWANGJU', label: '광주은행' },
+  { value: 'POST', label: '우체국' },
+  { value: 'IM', label: 'iM뱅크' },
+  { value: 'KNB', label: '경남은행' },
 ];
 
 const PaymentCMS = () => {
   const { userData, setUserData } = useUserDataStore();
   const [localData, setLocalData] = useState({
-    bank: userData.bank,
-    accountHolder: userData.accountHolder,
-    accountBirthDate: userData.accountBirthDate,
-    accountNumber: userData.accountNumber,
+    bank: userData.paymentDTO.bank || '',
+    accountHolder: userData.paymentDTO.accountHolder || '',
+    accountOwnerBirth: userData.paymentDTO.accountOwnerBirth || '',
+    accountNumber: userData.paymentDTO.accountNumber || '',
   });
 
   useEffect(() => {
     setLocalData({
-      bank: userData.bank,
-      accountHolder: userData.accountHolder,
-      accountBirthDate: userData.accountBirthDate,
-      accountNumber: userData.accountNumber,
+      bank: userData.paymentDTO.bank || '',
+      accountHolder: userData.paymentDTO.accountHolder || '',
+      accountOwnerBirth: userData.paymentDTO.accountOwnerBirth || '',
+      accountNumber: userData.paymentDTO.accountNumber || '',
     });
-  }, [userData]);
+  }, [userData.paymentDTO]);
 
   const handleInputChange = e => {
     const { name, value } = e.target;
-    setLocalData(prev => ({ ...prev, [name]: value }));
+    if (name === 'accountOwnerBirth') {
+      const formattedValue = formatBirthDate(value);
+      setLocalData(prev => ({ ...prev, [name]: formattedValue }));
+    } else {
+      setLocalData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleBlur = e => {
     const { name, value } = e.target;
-    setUserData({ [name]: value });
+    setUserData({ paymentDTO: { ...userData.paymentDTO, [name]: value } });
+  };
+
+  const formatBirthDate = value => {
+    const cleaned = value.replace(/\D/g, '');
+    let formatted = cleaned;
+
+    if (cleaned.length > 4) {
+      formatted = `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`;
+    }
+    if (cleaned.length > 6) {
+      formatted = `${formatted.slice(0, 7)}-${formatted.slice(7)}`;
+    }
+
+    return formatted.slice(0, 10);
   };
 
   return (
@@ -67,16 +86,18 @@ const PaymentCMS = () => {
           value={localData.accountHolder}
           onChange={handleInputChange}
           onBlur={handleBlur}
+          maxLength={20}
         />
         <Input
           label='생년월일'
-          name='accountBirthDate'
+          name='accountOwnerBirth'
           type='text'
           required
-          placeholder='생년월일 6자리'
-          value={localData.accountBirthDate}
+          placeholder='YYYY-MM-DD (예: 1990-01-01)'
+          value={localData.accountOwnerBirth}
           onChange={handleInputChange}
           onBlur={handleBlur}
+          maxLength={10}
         />
         <Input
           label='계좌번호'
@@ -87,6 +108,7 @@ const PaymentCMS = () => {
           value={localData.accountNumber}
           onChange={handleInputChange}
           onBlur={handleBlur}
+          maxLength={20}
         />
       </form>
 

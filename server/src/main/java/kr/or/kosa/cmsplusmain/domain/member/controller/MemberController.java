@@ -61,7 +61,7 @@ public class MemberController {
     }
 
     /*
-     * 회원 목록 조회
+     * 회원 등록
      * */
     @PostMapping("/members")
     public void createMember(@RequestBody @Valid MemberCreateReq memberCreateReq) {
