@@ -26,7 +26,7 @@ const MemDetailDisplay = ({ memberData }) => {
         <div>
           <div className=' text-text_grey font-800'>전체 청구금액</div>
           <div className='text-2xl text-text_black font-700'>
-            {memberData.totalBillingPrice.toLocaleString()}원
+            {memberData.totalBillingPrice && memberData.totalBillingPrice.toLocaleString()}원
           </div>
         </div>
       </div>

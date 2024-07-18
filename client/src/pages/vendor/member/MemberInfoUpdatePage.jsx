@@ -33,7 +33,7 @@ const MemberInfoUpdatePage = () => {
   return (
     <div className='flex h-full w-full flex-col '>
       <div className='up-dashboard relative mb-5 h-1/5 w-full'>progressivee</div>
-      <div className='primary-dashboard flex flex-col pb-9 relative h-4/5 '>
+      <div className='primary-dashboard flex flex-col relative h-4/5 '>
         <div className='border-b border-ipt_border px-2 pt-1 pb-3'>
           <p className='text-text_black text-xl font-800'>기본정보</p>
         </div>

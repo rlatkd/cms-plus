@@ -16,17 +16,20 @@ const MemberRegisterPage = () => {
   const navigate = useNavigate();
 
   const componentMap = {
-    0: RegisterBasicInfo, // 기본정보
-    1: RegisterContractInfo, // 계약정보
-    2: RegisterPaymentInfo, // 결제정보
-    3: RegisterBillingInfo, // 청구정보
+    0: { title: '기본정보', component: RegisterBasicInfo }, // 기본정보
+    1: { title: '계약정보', component: RegisterContractInfo }, // 계약정보
+    2: { title: '결제정보', component: RegisterPaymentInfo }, // 결제정보
+    3: { title: '청구정보', component: RegisterBillingInfo }, // 청구정보
   };
 
-  const Content = componentMap[status] || (() => 'error');
+  const { title, component: Content } = componentMap[status] || {
+    title: 'error',
+    component: () => 'error',
+  };
 
   return (
-    <div className='w- flex h-full w-full flex-col'>
-      <div className='sub-dashboard relative mb-5 h-48 w-full'>
+    <div className='flex h-full w-full flex-col '>
+      <div className='up-dashboard relative mb-5 h-1/5 w-full'>
         progressivee
         <img
           src='/src/assets/close.svg'
@@ -35,10 +38,12 @@ const MemberRegisterPage = () => {
           onClick={() => navigate(-1)}
         />
       </div>
-      <div className='primary-dashboard relative h-full w-full'>
-        information
+      <div className='primary-dashboard flex flex-col pb-9 relative h-4/5 '>
+        <div className='border-b border-ipt_border px-2 pt-1 pb-3'>
+          <p className='text-text_black text-xl font-800'>{title}</p>
+        </div>
         <Content />
-        <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
+        <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between px-10 py-7 font-bold '>
           <PreviousButton
             onClick={handleClickPrevious}
             status={status}

@@ -35,6 +35,23 @@ export const useMemberStore = create(set => ({
       },
     })),
 
+  resetBasicInfo: () =>
+    set({
+      basicInfo: {
+        memberName: '',
+        memberPhone: '',
+        memberEnrollDate: '',
+        memberHomePhone: '',
+        memberEmail: '',
+        memberAddress: {
+          address: '',
+          addressDetail: '',
+          zipcode: '',
+        },
+        memberMemo: '',
+      },
+    }),
+
   // <---------- 청구정보 ---------->
   billingInfo: {
     invoiceSendMethod: '',

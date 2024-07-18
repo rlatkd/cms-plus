@@ -2,9 +2,10 @@ import InputWeb from '@/components/common/inputs/InputWeb';
 import TextArea from '../inputs/TextArea';
 import { useMemberStore } from '@/stores/useMemberStore';
 import { formatPhone, removeDashes } from '@/utils/formatPhone';
+import { useEffect } from 'react';
 
 const BasicInfoForm = ({ formType, disabled }) => {
-  const { basicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberStore();
+  const { basicInfo, resetBasicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberStore();
 
   // 사용자 입력값
   const handleChangeValue = e => {
@@ -29,6 +30,11 @@ const BasicInfoForm = ({ formType, disabled }) => {
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
   };
+
+  // 회원 등록일 경우 zustand를 비움
+  useEffect(() => {
+    if (formType === 'CREATE') resetBasicInfo();
+  }, []);
 
   return (
     <div className='flex h-full p-5'>
