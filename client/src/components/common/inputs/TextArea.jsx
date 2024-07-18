@@ -17,7 +17,7 @@ const TextArea = ({
       </label>
       <div className='relative '>
         <textarea
-          className={`${classTextarea} placeholder:text-text_grey text-black border resize-none h-64
+          className={`${classTextarea} placeholder:text-text_grey text-black border resize-none
                     ${disabled && 'bg-ipt_disa '} border-ipt_border focus:border-mint focus:outline-none 
                     focus:ring-mint focus:ring-1 placeholder:text-xs text-sm p-4  rounded-lg w-full`}
           id={id}

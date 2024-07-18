@@ -60,7 +60,7 @@ const ContractListPage = () => {
   // 데이터 변환
   const transformContractListItem = data => {
     return data.map(contract => {
-      const { contractDay, contractPrice, contractProducts, contractEnabled, memberPhone } =
+      const { contractDay, contractPrice, contractProducts, contractStatus, memberPhone } =
         contract;
       const firstProduct = contractProducts[0];
       const additionalProductsCount = contractProducts.length - 1;
@@ -70,7 +70,7 @@ const ContractListPage = () => {
         contractDay: `${contractDay}일`,
         contractPrice: `${contractPrice.toLocaleString()}원`,
         contractProducts: `${firstProduct.name} + ${additionalProductsCount}`,
-        contractEnabled: contractEnabled ? '진행중' : '계약종료',
+        contractStatus: contractStatus.title,
         paymentType: contract.paymentType.title,
         memberPhone: formatPhone(memberPhone),
       };
@@ -79,6 +79,7 @@ const ContractListPage = () => {
 
   // 검색 변경 핸들러
   const handleChangeSearch = (key, value) => {
+    console.log(key, ':', value);
     const updatedSearch = search.map(searchItem =>
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );

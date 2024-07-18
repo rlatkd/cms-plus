@@ -6,7 +6,7 @@ export const cols = [
   { key: 'contractProducts', label: '상품', width: 'w-2/12' },
   { key: 'contractPrice', label: '계약금액', width: 'w-2/12' },
   { key: 'paymentType', label: '결제방식', width: 'w-2/12' },
-  { key: 'contractEnabled', label: '계약상태', width: 'w-2/12' }, // 계약상태
+  { key: 'contractStatus', label: '계약상태', width: 'w-2/12' }, // 계약상태
 ];
 
 // Type : hidden, text, num, calendar, select
@@ -36,13 +36,13 @@ export const initialSearch = [
     ],
   },
   {
-    key: 'contractEnabled',
+    key: 'contractStatus',
     type: 'select',
     value: '',
     width: 'w-2/12',
     options: [
-      { key: true, value: '계약종료' },
-      { key: false, value: '진행중' },
+      { key: 'DISABLED', value: '계약종료' },
+      { key: 'ENABLED', value: '진행중' },
     ],
   },
 ];

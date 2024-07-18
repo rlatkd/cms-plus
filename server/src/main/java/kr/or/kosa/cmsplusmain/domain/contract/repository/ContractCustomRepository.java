@@ -9,6 +9,7 @@ import static kr.or.kosa.cmsplusmain.domain.payment.entity.type.QPaymentTypeInfo
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +53,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 				contractNotDel(),                                // 계약 소프트 삭제
 
 				contract.vendor.id.eq(vendorId),                // 고객 일치
-
+				contractStatusEq(search.getContractStatus()),
 				memberNameContains(search.getMemberName()),        // 회원 이름 포함
 				memberPhoneContains(search.getMemberPhone()),    // 회원 휴대번호 포함
 				contractDayEq(search.getContractDay()),         // 약정일 일치
@@ -184,5 +185,9 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 
 	private BooleanExpression paymentMethodEq(PaymentMethod paymentMethod) {
 		return (paymentMethod != null) ? payment.paymentMethod.eq(paymentMethod) : null;
+	}
+
+	private BooleanExpression contractStatusEq(ContractStatus contractStatus) {
+		return (contractStatus != null) ? contract.contractStatus.eq(contractStatus) : null;
 	}
 }

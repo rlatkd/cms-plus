@@ -26,6 +26,7 @@ const BreadCrumb = () => {
         return route;
       }
     }
+    return vendorRoute()[0];
   };
 
   const breadCrumbMenu = (route, idx) => {

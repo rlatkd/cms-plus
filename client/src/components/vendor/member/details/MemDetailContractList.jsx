@@ -43,7 +43,7 @@ const MemDetailContractList = () => {
         contractStartDate,
         contractEndDate,
         contractProducts,
-        contractEnabled,
+        contractStatus,
       } = contract;
       const firstProduct = contractProducts[0];
       const additionalProductsCount = contractProducts.length - 1;
@@ -54,7 +54,7 @@ const MemDetailContractList = () => {
         contractPrice: `${contractPrice.toLocaleString()}원`,
         contractProducts: `${firstProduct.name} + ${additionalProductsCount}`,
         contractPeriod: `${contractStartDate} ~ ${contractEndDate}`,
-        contractEnabled: contractEnabled ? '진행중' : '계약종료',
+        contractStatus: contractStatus.title,
         paymentType: contract.paymentType.title,
       };
     });

@@ -23,7 +23,8 @@ public class PaymentCustomRepository extends BaseCustomRepository<Payment> {
                 .selectOne()
                 .from(payment)
                 .where(
-                        payment.id.eq(paymentId)
+                        payment.id.eq(paymentId),
+                        payment.deleted.isFalse()
                 )
                 .fetchOne();
         return res != null;
