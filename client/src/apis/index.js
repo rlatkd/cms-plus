@@ -15,6 +15,16 @@ export const privateAxios = axios.create({
   },
 });
 
+// 테스트
+export const testAxios = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Access-Control-Allow-Origin': `${BASE_URL}`,
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${TOKEN}`,
+  },
+});
+
 // 개발전용
 export const UploadFileAxios = axios.create({
   baseURL: BASE_URL,
