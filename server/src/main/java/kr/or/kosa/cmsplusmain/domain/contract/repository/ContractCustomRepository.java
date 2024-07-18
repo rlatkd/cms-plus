@@ -4,11 +4,13 @@ import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.type.QBuyerPaymentType.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.type.QPaymentTypeInfo.*;
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;

@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import kr.or.kosa.cmsplusmain.SampleDataLoader;
 import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupReq;
@@ -26,6 +28,12 @@ import lombok.RequiredArgsConstructor;
 public class VendorController {
 	private final VendorService vendorService;
 	private final JWTUtil jwtUtil;
+	private final SampleDataLoader dataLoader;
+
+	@PostConstruct
+	public void init() {
+		dataLoader.init();
+	}
 
 	@PostMapping("/join")
 	public ResponseEntity<String> join(@RequestBody @Valid SignupReq signupReq) {
