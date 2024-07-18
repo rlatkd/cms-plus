@@ -1,11 +1,5 @@
 const RegisterBasicInfo = () => {
-  return (
-    <div>
-      RegisterBasicInfo
-      <br />
-      회원 등록 기본정보
-    </div>
-  );
+  return <div></div>;
 };
 
 export default RegisterBasicInfo;

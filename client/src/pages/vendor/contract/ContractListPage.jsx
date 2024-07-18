@@ -47,8 +47,8 @@ const ContractListPage = () => {
           page: page,
           size: 10,
         });
-        const transformedData = transformContractListItem(res.data.content);
-        setContractList(transformedData);
+        const transformdData = transformContractListItem(res.data.content);
+        setContractList(transformdData);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response.data);
@@ -57,9 +57,8 @@ const ContractListPage = () => {
     [currentPage]
   );
 
-  // 계약 데이터 값 정제
+  // 데이터 변환
   const transformContractListItem = data => {
-    // 데이터 변환
     return data.map(contract => {
       const { contractDay, contractPrice, contractProducts, contractEnabled, memberPhone } =
         contract;
@@ -119,8 +118,8 @@ const ContractListPage = () => {
   }, [currentPage]);
 
   return (
-    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full'>
-      <div className='flex justify-between pt-2 pb-4 w-full'>
+    <div className='primary-dashboard flex flex-col  h-1500 desktop:h-full'>
+      <div className='flex justify-between pt-2 pb-4 w-full '>
         <div className='flex items-center '>
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <File fill='#ffffff' />
@@ -172,6 +171,7 @@ const ContractListPage = () => {
         setPageGroup={setPageGroup}
         buttonCount={buttonCount}
       />
+
       <MemberChooseModal
         isShowModal={isShowModal}
         icon={user}

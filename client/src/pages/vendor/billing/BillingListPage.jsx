@@ -47,8 +47,8 @@ const BillingListPage = () => {
           page: page,
           size: 10,
         });
-        const transformedData = transformBillingListItem(res.data.content);
-        setBillingList(transformedData);
+        const transformdData = transformBillingListItem(res.data.content);
+        setBillingList(transformdData);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response.data);
@@ -57,9 +57,8 @@ const BillingListPage = () => {
     [currentPage]
   );
 
-  // 청구 데이터 값 정제
+  // 데이터 변환
   const transformBillingListItem = data => {
-    // 데이터 변환
     return data.map(billing => {
       const { billingPrice, billingProducts, paymentType, billingStatus, memberPhone } = billing;
       const firstProduct = billingProducts[0];

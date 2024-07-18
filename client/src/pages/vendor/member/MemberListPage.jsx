@@ -43,8 +43,8 @@ const MemberListPage = () => {
           page: page,
           size: 10,
         });
-        const transformedData = transformMemberListItem(res.data.content);
-        setMemberList(transformedData);
+        const transformdData = transformMemberListItem(res.data.content);
+        setMemberList(transformdData);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response.data);
@@ -53,9 +53,8 @@ const MemberListPage = () => {
     [currentPage, currentorder, currentorderBy]
   );
 
-  // 회원 데이터 값 정제
+  // 데이터 변환
   const transformMemberListItem = data => {
-    // 데이터 변환
     return data.map(member => {
       const { contractPrice, contractCount, memberPhone } = member;
 
