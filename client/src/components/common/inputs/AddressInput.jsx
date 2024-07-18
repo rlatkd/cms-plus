@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const AddressInput = ({ zipcode, address, addressDetail, onAddressChange }) => {
   const [localAddressDetail, setLocalAddressDetail] = useState(addressDetail);
+  const [localZipcode, setLocalZipcode] = useState(zipcode);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -15,8 +16,9 @@ const AddressInput = ({ zipcode, address, addressDetail, onAddressChange }) => {
   }, []);
 
   useEffect(() => {
+    setLocalZipcode(zipcode);
     setLocalAddressDetail(addressDetail);
-  }, [addressDetail]);
+  }, [zipcode, addressDetail]);
 
   const handleAddressSearch = () => {
     new window.daum.Postcode({
@@ -29,6 +31,14 @@ const AddressInput = ({ zipcode, address, addressDetail, onAddressChange }) => {
       width: '100%',
       height: '100%',
     }).open();
+  };
+
+  const handleZipcodeChange = e => {
+    setLocalZipcode(e.target.value);
+  };
+
+  const handleZipcodeBlur = () => {
+    onAddressChange('zipcode', localZipcode);
   };
 
   const handleAddressDetailChange = e => {
@@ -46,10 +56,11 @@ const AddressInput = ({ zipcode, address, addressDetail, onAddressChange }) => {
         <input
           type='text'
           name='zipcode'
-          value={zipcode}
+          value={localZipcode}
           className='flex-grow rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
           placeholder='우편번호'
-          readOnly
+          onChange={handleZipcodeChange}
+          onBlur={handleZipcodeBlur}
           autoComplete='postal-code'
         />
         <button

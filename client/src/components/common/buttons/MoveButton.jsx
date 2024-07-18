@@ -1,8 +1,11 @@
-const MoveButton = ({ imgSrc, buttonText, onClick }) => {
+const MoveButton = ({ imgSrc, color, buttonText, onClick }) => {
   return (
-    <div className=' flex justify-center items-center rounded-lg bg-white border border-mint hover:border-mint_hover mr-1'>
+    <div
+      className={`flex justify-center items-center rounded-lg border bg-white border-mint mr-1
+                ${color === 'mint' ? 'hover:border-mint_hover' : ''} `}>
       <button
-        className='flex items-center rounded-lg bg-mint py-2 px-5 font-700 text-white text-sm border border-white hover:bg-mint_hover transition-all duration-200'
+        className={`flex items-center rounded-lg py-2 px-4 text-sm border border-white transition-all duration-200
+                ${color === 'mint' ? 'bg-mint text-white font-700 hover:bg-mint_hover' : 'font-800 text-mint '} `}
         onClick={onClick}>
         <img className='mr-2 w-5 h-5' src={imgSrc} alt='button icon' />
         <p>{buttonText}</p>

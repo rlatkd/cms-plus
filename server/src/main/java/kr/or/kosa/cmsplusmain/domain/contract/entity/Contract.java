@@ -76,7 +76,7 @@ public class Contract extends BaseEntity {
 	private Integer contractDay;
 
 	@Comment("계약 결제정보")
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "payment_id")
 	@NotNull
 	private Payment payment;
@@ -101,8 +101,8 @@ public class Contract extends BaseEntity {
 	 * 계약 상품 추가
 	 * */
 	public void addContractProduct(ContractProduct contractProduct) {
-		contractProduct.setContract(this);
 		contractProducts.add(contractProduct);
+		contractProduct.setContract(this);
 	}
 
 	/*

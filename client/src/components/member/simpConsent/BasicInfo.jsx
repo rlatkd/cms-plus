@@ -4,26 +4,26 @@ import AddressInput from '@/components/common/inputs/AddressInput';
 
 const BasicInfo = ({ userData, setUserData }) => {
   const [localData, setLocalData] = useState({
-    name: userData.name,
-    mobile: userData.mobile,
-    phone: userData.phone,
-    email: userData.email,
-    zipcode: userData.zipcode,
-    address: userData.address,
-    addressDetail: userData.addressDetail,
+    name: userData.memberDTO.name || '',
+    phone: userData.memberDTO.phone || '',
+    homePhone: userData.memberDTO.homePhone || '',
+    email: userData.memberDTO.email || '',
+    zipcode: userData.memberDTO.zipcode || '',
+    address: userData.memberDTO.address || '',
+    addressDetail: userData.memberDTO.addressDetail || '',
   });
 
   useEffect(() => {
     setLocalData({
-      name: userData.name,
-      mobile: userData.mobile,
-      phone: userData.phone,
-      email: userData.email,
-      zipcode: userData.zipcode,
-      address: userData.address,
-      addressDetail: userData.addressDetail,
+      name: userData.memberDTO.name || '',
+      phone: userData.memberDTO.phone || '',
+      homePhone: userData.memberDTO.homePhone || '',
+      email: userData.memberDTO.email || '',
+      zipcode: userData.memberDTO.zipcode || '',
+      address: userData.memberDTO.address || '',
+      addressDetail: userData.memberDTO.addressDetail || '',
     });
-  }, [userData]);
+  }, [userData.memberDTO]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -32,12 +32,12 @@ const BasicInfo = ({ userData, setUserData }) => {
 
   const handleBlur = e => {
     const { name, value } = e.target;
-    setUserData({ [name]: value });
+    setUserData({ memberDTO: { ...userData.memberDTO, [name]: value } });
   };
 
   const handleAddressChange = (field, value) => {
     setLocalData(prev => ({ ...prev, [field]: value }));
-    setUserData({ [field]: value });
+    setUserData({ memberDTO: { ...userData.memberDTO, [field]: value } });
   };
 
   return (
@@ -60,35 +60,39 @@ const BasicInfo = ({ userData, setUserData }) => {
           value={localData.name}
           onChange={handleChange}
           onBlur={handleBlur}
+          maxLength={40}
         />
         <Input
           label='휴대전화'
-          name='mobile'
-          type='tel'
-          required
-          placeholder="'-' 없이, 최대 12자리"
-          value={localData.mobile}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
-        <Input
-          label='유선전화'
           name='phone'
           type='tel'
+          required
           placeholder="'-' 없이, 최대 12자리"
           value={localData.phone}
           onChange={handleChange}
           onBlur={handleBlur}
+          maxLength={13}
+        />
+        <Input
+          label='유선전화'
+          name='homePhone'
+          type='tel'
+          placeholder="'-' 없이, 최대 12자리"
+          value={localData.homePhone}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          maxLength={12}
         />
         <Input
           label='이메일'
           name='email'
           type='email'
           required
-          placeholder='cms@gmail.'
+          placeholder='cms@gmail.com'
           value={localData.email}
           onChange={handleChange}
           onBlur={handleBlur}
+          maxLength={50}
         />
         <AddressInput
           zipcode={localData.zipcode}

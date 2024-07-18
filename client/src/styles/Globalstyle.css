@@ -45,7 +45,7 @@
   }
 
   .primary-dashboard {
-    @apply rounded-xl bg-white p-5 shadow-dash-board;
+    @apply rounded-xl bg-white p-6 shadow-dash-board;
   }
 
   .sub-dashboard {

@@ -13,13 +13,14 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
+
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PaymentService {
 

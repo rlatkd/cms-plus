@@ -10,7 +10,7 @@ const Table = ({
   currentPage,
   handleChangeSearch,
   onRowClick,
-  handlehClickSearch,
+  handleClickSearch,
 }) => {
   const [selection, setSelection] = useState([]);
   const itemKey = cols[0].key;
@@ -39,7 +39,7 @@ const Table = ({
   };
 
   const isSelectedAll = () => {
-    return selection.length === rows.length;
+    return selection.length != 0 && selection.length === rows.length;
   };
 
   return (
@@ -54,7 +54,7 @@ const Table = ({
           <TableSearch
             search={search}
             handleChangeSearch={handleChangeSearch}
-            handlehClickSearch={handlehClickSearch}
+            handleClickSearch={handleClickSearch}
           />
         )}
         {rows.map((row, index) => (
