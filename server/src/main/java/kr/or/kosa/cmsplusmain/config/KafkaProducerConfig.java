@@ -17,6 +17,7 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
+    // SMS. EMAIL 메시징 서버에 보냄
     @Bean
     public KafkaTemplate<String, MessageDto> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
@@ -32,20 +33,9 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(props);
     }
 
+    //--------------------------------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // 결제데이터 결제서버에 보냄
     @Bean
     public KafkaTemplate<String, TestDto> kafkaTemplate2() {
         return new KafkaTemplate<>(producerFactory2());

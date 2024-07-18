@@ -5,11 +5,12 @@ import kr.or.kosa.cmsplusmain.domain.messaging.dto.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.messaging.dto.TestDto;
 import kr.or.kosa.cmsplusmain.domain.messaging.service.MessagingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/v1/kafkatest")
 public class KafkaTestController {
 
@@ -30,13 +31,11 @@ public class KafkaTestController {
     }
 
 
-
-
     // 테스트
     @PostMapping("/payment")
-    public String test(@RequestBody TestDto testDto) {
+    public void test(@RequestBody TestDto testDto) {
         messagingService.test(paymentTopic, testDto);
-        return "success test";
+        log.error("[결제 시작]: {}", testDto.toString());
     }
 
 

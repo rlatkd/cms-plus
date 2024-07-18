@@ -1,6 +1,7 @@
-package kr.or.kosa.cmspluspayment.config;
+package kr.or.kosa.cmsplusmain.config;
 
-import kr.or.kosa.cmspluspayment.dto.PaymentDto;
+
+import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentResultDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -16,10 +17,10 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    // 결제데이터 메인서버에서 받음
+    // 결제결과 결제서버에서 받음
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PaymentDto> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, PaymentDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, PaymentResultDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, PaymentResultDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
 
 //        factory.setBatchListener(true); // 카프카 배치 설정
@@ -30,12 +31,12 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, PaymentDto> consumerFactory() {
+    public ConsumerFactory<String, PaymentResultDto> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "payment-group");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "payment-result-group");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
@@ -45,7 +46,7 @@ public class KafkaConsumerConfig {
         // props.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, "1000"); // 최대 대기 시간 (밀리초)
 
         // false; 기본 생성자 호출 비활성화->불변 객체일 경우 성능 향상
-        JsonDeserializer<PaymentDto> jsonDeserializer = new JsonDeserializer<>(PaymentDto.class, false);
+        JsonDeserializer<PaymentResultDto> jsonDeserializer = new JsonDeserializer<>(PaymentResultDto.class, false);
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
     }
 
