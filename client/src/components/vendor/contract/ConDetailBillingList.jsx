@@ -25,18 +25,20 @@ const ConDetailBillingList = () => {
         size: 8,
       });
       console.log('!----계약 상세 - 청구리스트 조회 성공----!'); // 삭제예정
+      console.log(res.data.content);
       const transformdData = transformBillingListItem(res.data.content);
       setBillingList(transformdData);
       setTotalCount(res.data.totalCount);
       setTotalPages(res.data.totalPage || 1);
+
     } catch (err) {
-      console.error('axiosContractDetailMemberList => ', err.response.data);
+      console.error('axiosContractDetailBillingList => ', err);
     }
   };
 
   // 데이터 변환
-  const transformBillingListItem = data => {
-    return data.map(billing => {
+  const transformBillingListItem = items => {
+    return items.map(billing => {
       const {
         memberName,
         memberPhone,
@@ -49,7 +51,7 @@ const ConDetailBillingList = () => {
 
       
       const firstProduct = billingProducts[0];
-      const additionalProductsCount = contractProducts.length - 1;
+      const additionalProductsCount = billingProducts.length - 1;
 
       return {
         ...billing,
@@ -59,7 +61,7 @@ const ConDetailBillingList = () => {
         billingPrice: `${billingPrice.toLocaleString()}원`,
         billingDate: billingDate,
         paymentType: paymentType.title,
-        billingStatus: billingStatus
+        billingStatus: billingStatus.title
       };
     });
   };

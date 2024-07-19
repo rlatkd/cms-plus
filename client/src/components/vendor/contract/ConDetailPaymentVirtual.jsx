@@ -1,43 +1,33 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 
 const ConDetailPaymentVirtual = ({ contractData }) => {
-
-  const paymentType = contractData.paymentTypeInfo.paymentType.code;
-  console.log(paymentType);
+  const paymentTypeInfo = contractData.paymentTypeInfo;
 
   return (
     <>
       <div className='flex items-end mb-5 mt-3'>
         <InputWeb
-          id='paymentType'
-          label='결제방식'
-          placeholder=''
+          id='bank'
+          label='은행'
+          placeholder={paymentTypeInfo.bank.title}
           type='text'
-          classContainer='w-full mr-6'
-          disabled={true}
-        />
-        <InputWeb
-          id='contractDay'
-          label='약정일'
-          placeholder={contractData.contractDay}
-          type='text'
-          classContainer='w-full'
+          classContainer='w-1/2'
           disabled={true}
         />
       </div>
       <div className='flex items-end mb-5 '>
         <InputWeb
-          id='contractStartDate'
-          label='계약기간'
-          placeholder={`${contractData.contractStartDate}`}
+          id='accountOwner'
+          label='예금주'
+          placeholder={paymentTypeInfo.accountOwner}
           type='text'
           classContainer='w-full mr-3'
           disabled={true}
         />
         <InputWeb
-          id='contractEndDate'
-          label=''
-          placeholder={`${contractData.contractEndDate}`}
+          id='accountNumber'
+          label='계좌번호'
+          placeholder={paymentTypeInfo.accountNumber}
           type='text'
           classContainer='w-full'
           disabled={true}

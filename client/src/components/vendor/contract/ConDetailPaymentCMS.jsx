@@ -1,43 +1,42 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 
 const ConDetailPaymentCMS = ({ contractData }) => {
-
-  const paymentType = contractData.paymentTypeInfo.paymentType.code;
-  console.log(paymentType);
+  const paymentMethodInfo = contractData.paymentMethodInfo;
+  const paymentMethod = (paymentMethodInfo) ? paymentMethodInfo.paymentMethod : {title: '', code: ''};
 
   return (
     <>
       <div className='flex items-end mb-5 mt-3'>
         <InputWeb
           id='paymentType'
-          label='결제방식'
-          placeholder=''
+          label='결제수단'
+          placeholder={paymentMethod.title}
           type='text'
           classContainer='w-full mr-6'
           disabled={true}
         />
         <InputWeb
-          id='contractDay'
-          label='약정일'
-          placeholder={contractData.contractDay}
+          id='accountNumber'
+          label='계좌번호'
+          placeholder={paymentMethodInfo.accountNumber}
           type='text'
           classContainer='w-full'
           disabled={true}
         />
       </div>
       <div className='flex items-end mb-5 '>
-        <InputWeb
-          id='contractStartDate'
-          label='계약기간'
-          placeholder={`${contractData.contractStartDate}`}
+      <InputWeb
+          id='accountOwner'
+          label='소유주명'
+          placeholder={paymentMethodInfo.accountOwner}
           type='text'
-          classContainer='w-full mr-3'
+          classContainer='w-full mr-6'
           disabled={true}
         />
         <InputWeb
-          id='contractEndDate'
-          label=''
-          placeholder={`${contractData.contractEndDate}`}
+          id='accountOwnerBirth'
+          label='생년월일'
+          placeholder={paymentMethodInfo.accountOwnerBirth}
           type='text'
           classContainer='w-full'
           disabled={true}

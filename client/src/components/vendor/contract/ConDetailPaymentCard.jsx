@@ -18,9 +18,9 @@ const ConDetailPaymentCard = ({ contractData }) => {
           disabled={true}
         />
         <InputWeb
-          id='contractDay'
+          id='cardNumber'
           label='카드번호'
-          placeholder={contractData.contractDay}
+          placeholder={paymentMethodInfo.cardNumber}
           type='text'
           classContainer='w-full'
           disabled={true}
@@ -28,17 +28,17 @@ const ConDetailPaymentCard = ({ contractData }) => {
       </div>
       <div className='flex items-end mb-5 '>
         <InputWeb
-          id='contractStartDate'
-          label='계약기간'
-          placeholder={`${contractData.contractStartDate}`}
+          id='cardOwner'
+          label='소유주명'
+          placeholder={paymentMethodInfo.cardOwner}
           type='text'
           classContainer='w-full mr-3'
           disabled={true}
         />
         <InputWeb
-          id='contractEndDate'
-          label=''
-          placeholder={`${contractData.contractEndDate}`}
+          id='accountOwnerBirth'
+          label='생년월일'
+          placeholder={paymentMethodInfo.cardOwnerBirth}
           type='text'
           classContainer='w-full'
           disabled={true}

@@ -20,7 +20,9 @@ const ContractDetailPage = () => {
     "paymentTypeInfo": {
       "paymentType": {}
     },
-    "paymentMethodInfo": null
+    "paymentMethodInfo": null,
+    "totalBillingCount": 0,
+    "totalBillingPrice": 0
 });
 
 const [isLoading, setLoading] = useState(false);
