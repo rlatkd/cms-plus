@@ -91,6 +91,12 @@ public class Contract extends BaseEntity {
 	@NotNull
 	private LocalDate contractEndDate;
 
+	@Comment("계약 상태")
+	@Column(name = "contract_status", nullable = false)
+	@NotNull
+	@Builder.Default
+	private ContractStatus contractStatus = ContractStatus.ENABLED;
+
 	/* 계약한 상품 목록 */
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)

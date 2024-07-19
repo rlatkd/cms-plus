@@ -25,6 +25,19 @@ const InputWeb = ({
     }
   };
 
+  // 주소 찾기 입력창
+  const handleAddressSearch = () => {
+    if (disabled) return;
+    new window.daum.Postcode({
+      oncomplete: function (data) {
+        console.log('Selected address:', data);
+        document.querySelector('input[name=address_detail]').focus();
+      },
+      width: '100%',
+      height: '100%',
+    }).open();
+  };
+
   return (
     <div className={`${classContainer}`}>
       <label
@@ -55,10 +68,12 @@ const InputWeb = ({
           />
         )}
         {type === 'address' && (
-          <Search
-            classSearch='absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer w-6 h-6'
-            fill={'#C7CCD0'}
-          />
+          <div onClick={handleAddressSearch}>
+            <Search
+              classSearch='absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer w-6 h-6'
+              fill={'#C7CCD0'}
+            />
+          </div>
         )}
       </div>
     </div>

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class MemberContractListItemRes {
     private final List<ContractProductRes> contractProducts;
     private final Long contractPrice ;
     private final PaymentType paymentType;						      // 결제방식
-    private final Boolean contractEnabled;						      // 계약상태
+    private final ContractStatus contractStatus;						      // 계약상태
 
 
     public static MemberContractListItemRes fromEntity(Contract contract) {
@@ -40,7 +41,7 @@ public class MemberContractListItemRes {
                 .contractProducts(contractProductResList)
                 .contractPrice(contract.getContractPrice())
                 .paymentType(payment.getPaymentType())
-                .contractEnabled(contract.isEnabled())
+                .contractStatus(contract.getContractStatus())
                 .build();
     }
 

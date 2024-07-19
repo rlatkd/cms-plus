@@ -79,7 +79,7 @@ export const getMemberDetailContractList = async (memberId, searchParams = {}) =
 // 회원 수정
 export const updateMember = async (memberId, memberData) => {
   try {
-    const res = await privateAxios.put(`/v1/vendor/members/${memberId}`, memberData);
+    const res = await privateAxios.put(`/v1/vendor/management/members/${memberId}`, memberData);
     return res;
   } catch (err) {
     console.error('회원 수정 실패 => ', err.response.data);

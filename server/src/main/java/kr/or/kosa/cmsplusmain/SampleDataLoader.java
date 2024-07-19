@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +64,7 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-		generateSampleData(vendor, 100, 100, 100, 100);
+		generateSampleData(vendor, 10, 10, 10, 10);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
@@ -196,7 +197,9 @@ public class SampleDataLoader {
 	private Contract createContract(Member member, int index, List<Product> products) {
 		Payment payment = generatePayment();
 		LocalDate startDate = LocalDate.now().minusMonths(random.nextInt(12));
-		LocalDate endDate = startDate.plusYears(1);
+		LocalDate endDate = startDate.plusMonths(3);
+
+		ContractStatus status = (LocalDate.now().isAfter(endDate)) ? ContractStatus.DISABLED : ContractStatus.ENABLED;
 
 		Contract contract = Contract.builder()
 			.vendor(member.getVendor())
@@ -204,6 +207,7 @@ public class SampleDataLoader {
 			.contractName("계약" + (index + 1))
 			.contractDay(random.nextInt(28) + 1)
 			.payment(payment)
+			.contractStatus(status)
 			.contractStartDate(startDate)
 			.contractEndDate(endDate)
 			.build();

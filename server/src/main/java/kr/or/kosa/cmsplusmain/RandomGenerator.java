@@ -35,8 +35,8 @@ public class RandomGenerator {
 	public LocalDate generateRandomDate(LocalDate from, LocalDate to) {
 		Period period = Period.between(from, to);
 		return from
-			.plusMonths(random.nextInt(period.getMonths()))
-			.plusDays(random.nextInt(period.getDays()));
+			.plusMonths(random.nextInt((period.getMonths() < 0) ? period.getMonths() * -1 : period.getMonths()))
+			.plusDays(random.nextInt((period.getDays() < 0) ? period.getDays() * -1 : period.getDays()));
 	}
 
 	public BillingStatus getRandomBillingStatus(LocalDate billingDate) {

@@ -14,8 +14,8 @@ const NextButton = ({ onClick, status, type = '', end }) => {
 
   return (
     <button
-      className={`${type === 'memberRegister' ? 'w-28' : 'flex-1'} 
-                  ml-auto rounded-lg bg-mint text-white`}
+      className={` ${type === 'memberRegister' ? 'w-28' : 'flex-1'} 
+                  ml-auto rounded-lg bg-mint text-white transition-all duration-200 hover:bg-mint_hover`}
       onClick={onClick}>
       {buttonText}
     </button>

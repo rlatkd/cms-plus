@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import edit from '@/assets/edit.svg';
 import remove from '@/assets/remove.svg';
 import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
@@ -6,9 +6,11 @@ import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
 const MemDetailBasicInfo = () => {
   const navigate = useNavigate();
 
+  const memberId = useParams();
+
   // id값은 추후 변경
   const handleGoDetail = () => {
-    navigate('/vendor/members/update/1');
+    navigate(`/vendor/members/update/${memberId.id}`);
   };
 
   return (
@@ -33,7 +35,7 @@ const MemDetailBasicInfo = () => {
           </button>
         </div>
       </div>
-      <BasicInfoForm />
+      <BasicInfoForm formType='DETAIL' />
     </div>
   );
 };
