@@ -1,7 +1,7 @@
-package kr.or.kosa.cmsplusmain.domain.messaging.dto;
+package kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging;
 
 
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

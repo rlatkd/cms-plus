@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.messaging;
+package kr.or.kosa.cmsplusmain.domain.kafka;
 
 import lombok.Getter;
 
@@ -11,4 +11,5 @@ public enum MessageSendMethod {
 	MessageSendMethod(String title) {
 		this.title = title;
 	}
+
 }

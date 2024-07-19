@@ -10,7 +10,7 @@ import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.entity.MemberStatus;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.Getter;
