@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.payment.entity.type;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.DiscriminatorValue;
 import kr.or.kosa.cmsplusmain.domain.base.validator.BlobUrl;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Comment("결제방식 - 자동결제")
 @Entity
 @Getter
+@DiscriminatorValue(PaymentType.Const.AUTO)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AutoPaymentType extends PaymentTypeInfo {
 

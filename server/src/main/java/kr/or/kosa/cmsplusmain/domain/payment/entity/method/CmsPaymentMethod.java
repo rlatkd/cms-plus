@@ -17,6 +17,7 @@ import kr.or.kosa.cmsplusmain.domain.payment.validator.AccountNumber;
 
 @Comment("결제수단 - CMS")
 @Entity
+@DiscriminatorValue(PaymentMethod.Const.CMS)
 @Getter
 @Builder
 @AllArgsConstructor

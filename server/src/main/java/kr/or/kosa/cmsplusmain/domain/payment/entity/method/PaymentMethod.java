@@ -25,6 +25,15 @@ public enum PaymentMethod implements BaseEnum {
 		public static final String ACCOUNT = "ACCOUNT";
 	}
 
+	public static PaymentMethod fromCode(String code) {
+		for (PaymentMethod paymentMethod : PaymentMethod.values()) {
+			if (paymentMethod.getCode().equals(code)) {
+				return paymentMethod;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public String getCode() {
 		return name();
