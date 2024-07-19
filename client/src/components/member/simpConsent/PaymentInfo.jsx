@@ -8,13 +8,13 @@ const PaymentInfo = () => {
   const { userData, setUserData, clearPaymentInfo } = useUserDataStore();
 
   const paymentOptions = [
-    { label: '카드', value: 'card' },
-    { label: '실시간 CMS', value: 'cms' },
+    { label: '카드', value: 'CARD' },
+    { label: '실시간 CMS', value: 'CMS' },
   ];
 
   const handlePaymentMethodChange = value => {
     clearPaymentInfo(); // 결제 방법이 변경될 때 기존 결제 정보 초기화
-    setUserData({ paymentMethod: value });
+    setUserData({ paymentDTO: { ...userData.paymentDTO, paymentMethod: value } });
   };
 
   return (
@@ -30,11 +30,11 @@ const PaymentInfo = () => {
         label='결제수단'
         name='paymentMethod'
         options={paymentOptions}
-        selectedOption={userData.paymentMethod}
+        selectedOption={userData.paymentDTO.paymentMethod}
         onChange={handlePaymentMethodChange}
         required={true}
       />
-      {userData.paymentMethod === 'card' ? <PaymentCard /> : <PaymentCMS />}
+      {userData.paymentDTO.paymentMethod === 'CARD' ? <PaymentCard /> : <PaymentCMS />}
     </>
   );
 };

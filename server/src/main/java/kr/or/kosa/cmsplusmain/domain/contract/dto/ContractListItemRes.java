@@ -4,6 +4,7 @@ import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
@@ -21,7 +22,7 @@ public class ContractListItemRes {
 	private final List<ContractProductRes> contractProducts;        	// 계약 상품 목록
 	private final Long contractPrice;                                	// 계약금액
 	private final PaymentType paymentType;								// 결제방식
-	private final PaymentMethod paymentMethod;							// 결제수단
+	private final Boolean contractEnabled;								// 계약상태
 
 	public static ContractListItemRes fromEntity(Contract contract) {
 
@@ -43,7 +44,7 @@ public class ContractListItemRes {
 			.contractProducts(contractProductResList)
 			.contractPrice(contract.getContractPrice())
 			.paymentType(payment.getPaymentType())
-			.paymentMethod(payment.getPaymentMethod())
+			.contractEnabled(contract.isEnabled())
 			.build();
 	}
 }

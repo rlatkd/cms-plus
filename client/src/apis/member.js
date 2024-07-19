@@ -6,7 +6,7 @@ export const createMember = async memberData => {
     const res = await privateAxios.post('/v1/vendor/management/members', memberData);
     return res;
   } catch (err) {
-    console.error('회원 등록 실패', err.response);
+    console.error('회원 등록 실패 => ', err.response);
     throw err;
   }
 };
@@ -38,7 +38,6 @@ export const uploadMembers = async members => {
 // 회원 목록 조회
 export const getMemberList = async (searchParams = {}) => {
   try {
-    console.log(searchParams);
     const res = await privateAxios.get('/v1/vendor/management/members', {
       params: {
         ...searchParams,
@@ -46,7 +45,7 @@ export const getMemberList = async (searchParams = {}) => {
     });
     return res;
   } catch (err) {
-    console.error('회원 목록 조회 실패', err.response);
+    console.error('회원 목록 조회 실패 => ', err.response);
     throw err;
   }
 };
@@ -63,12 +62,16 @@ export const getMemberDetail = async memberId => {
 };
 
 // 회원 상세 조회 - 계약리스트
-export const getMemberDetailContractList = async memberId => {
+export const getMemberDetailContractList = async (memberId, searchParams = {}) => {
   try {
-    const res = await privateAxios.get(`/v1/vendor/management/members/contracts/${memberId}`);
+    const res = await privateAxios.get(`/v1/vendor/management/members/contracts/${memberId}`, {
+      params: {
+        ...searchParams,
+      },
+    });
     return res;
   } catch (err) {
-    console.error('회원 상세 - 계약리스트 조회 실패 => ', err.response.data);
+    console.error('회원 상세 - 계약리스트 조회 실패', err.response.data);
     throw err;
   }
 };

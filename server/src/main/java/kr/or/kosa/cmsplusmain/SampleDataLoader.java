@@ -61,7 +61,7 @@ public class SampleDataLoader {
 				"vendor1",
 				"테스트고객",
 				"testvendor@fms.com",
-				"010-1234-1234")
+				"01012341234")
 		);
 
 		generateSampleData(vendor, 100, 100, 100, 100);
@@ -307,7 +307,7 @@ public class SampleDataLoader {
 			.name(name)
 			.email(email)
 			.phone(phone)
-			.homePhone("02-1234-5678")
+			.homePhone("021235678")
 			.department("영업부")
 			.role(UserRole.ROLE_VENDOR)
 			.build();

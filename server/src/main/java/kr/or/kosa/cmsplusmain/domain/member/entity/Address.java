@@ -8,10 +8,11 @@ import lombok.Setter;
 
 @Embeddable
 @Getter @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Address {
     private String zipcode;
     private String address;
     private String addressDetail;
+
 }

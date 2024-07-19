@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +20,9 @@ public class ContractDetailRes {
 	private final LocalDateTime modifiedDateTime;                	// 계약 변경일시
 	private final List<ContractProductRes> contractProducts;    	// 계약 상품 목록
 	private final Long contractPrice;                            	// 계약금액
+
+	private final LocalDate contractStartDate;                		// 계약 시작일
+	private final LocalDate contractEndDate;                		// 계약 종료일
 
 	private final PaymentTypeInfoRes paymentTypeInfo;               // 결제방식
 	private final PaymentMethodInfoRes paymentMethodInfo;			// 결제수단
@@ -40,6 +44,8 @@ public class ContractDetailRes {
 			.modifiedDateTime(contract.getModifiedDateTime())
 			.contractProducts(contractProductResList)
 			.contractPrice(contract.getContractPrice())
+			.contractStartDate(contract.getContractStartDate())
+			.contractEndDate(contract.getContractEndDate())
 			.paymentTypeInfo(paymentTypeInfoRes)
 			.paymentMethodInfo(paymentMethodInfoRes)
 			.build();

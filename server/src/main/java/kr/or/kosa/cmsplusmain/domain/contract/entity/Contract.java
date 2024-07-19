@@ -137,6 +137,14 @@ public class Contract extends BaseEntity {
 	}
 
 	/*
+	* 계약 활성화 여부
+	* */
+	public boolean isEnabled() {
+		LocalDate curDate = LocalDate.now();
+		return curDate.isBefore(contractEndDate);
+	}
+
+	/*
 	 * id만 들고있는 빈 객체
 	 * */
 	public static Contract of(Long contractId) {

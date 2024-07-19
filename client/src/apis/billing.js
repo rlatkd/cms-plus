@@ -3,7 +3,6 @@ import { privateAxios } from '.';
 // 청구 목록 조회
 export const getBillingList = async (searchParams = {}) => {
   try {
-    console.log(searchParams);
     const res = await privateAxios.get('/v1/vendor/billing', {
       params: {
         ...searchParams,

@@ -3,6 +3,9 @@ package kr.or.kosa.cmsplusmain.domain.billing.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.MessageDto;
+import kr.or.kosa.cmsplusmain.domain.messaging.dto.SmsMessageDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,9 +106,13 @@ public class BillingService {
 	private void sendInvoiceMessage(String message, Member member) {
 		// 청구서 링크 발송
 		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+		String topic = "message-topic";
+
 		switch (sendMethod) {
-			case SMS -> messagingService.sendSms(member.getPhone(), message);
-			case EMAIL -> messagingService.sendEmail(member.getEmail(), message);
+			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+							messagingService.send(topic, smsMessageDto); }
+			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+							messagingService.send(topic, emailMessageDto); }
 		}
 	}
 
@@ -234,7 +241,7 @@ public class BillingService {
 	/*
 	* 청구 수정
 	*
-	* 총 발생 쿼리수: 6회
+	* 총 발생 쿼리수: 7회
 	* 내용:
 	* 	존재여부 확인, 청구 조회, 상품 이름 조회, 청구상품 목록 조회(+? batch_size=100),
 	* 	청구상품 생성(*N 청구상품 수만큼), 청구 수정,

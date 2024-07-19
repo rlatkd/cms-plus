@@ -44,7 +44,7 @@ const ChooseBank = ({billingInfo}) => {
         </div>
       </div>
 
-      <h4 className='text-sm text-gray-500 mb-2 font-semibold'>결제카드</h4>
+      <h4 className='text-sm text-gray-500 mb-2 font-semibold'>결제은행</h4>
       <div className='grid grid-cols-3 gap-2 mb-4'>
         {cardOptions.map((card, index) => (
           <button

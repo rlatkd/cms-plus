@@ -1,3 +1,4 @@
+import Search from '@/assets/Search';
 import { useRef, useState } from 'react';
 
 const InputWeb = ({
@@ -5,6 +6,7 @@ const InputWeb = ({
   label,
   required,
   disabled,
+  readOnly,
   type = 'text',
   placeholder,
   classContainer = '',
@@ -39,6 +41,7 @@ const InputWeb = ({
                     focus:ring-mint focus:ring-1 placeholder:text-xs text-sm p-4  rounded-lg w-full`}
           id={id}
           disabled={disabled}
+          readOnly={readOnly}
           type={type !== 'password' ? type : showPassword ? 'text' : 'password'}
           placeholder={placeholder}
           {...props}
@@ -49,6 +52,12 @@ const InputWeb = ({
             alt='Toggle password visibility'
             className='absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer w-6'
             onClick={handleTogglePassword}
+          />
+        )}
+        {type === 'address' && (
+          <Search
+            classSearch='absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer w-6 h-6'
+            fill={'#C7CCD0'}
           />
         )}
       </div>

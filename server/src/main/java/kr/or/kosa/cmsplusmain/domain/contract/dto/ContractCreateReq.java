@@ -13,9 +13,11 @@ import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class ContractCreateReq {
 
 	@ContractName @NotNull
@@ -34,7 +36,8 @@ public class ContractCreateReq {
 	@NotNull
 	private List<ContractProductReq> contractProducts;	// 계약상품 목록
 
-	public Contract toEntity( Long vendorId, Member member, Payment payment) {
+
+    public Contract toEntity( Long vendorId, Member member, Payment payment) {
 		return Contract.builder()
 				.contractName(contractName)
 				.contractStartDate(contractStartDate)
