@@ -24,35 +24,35 @@ const ConDetailBilling = ({ contractData, children }) => {
         <InputWeb
           id='autobilling'
           label='청구 자동 생성'
-          placeholder='수동'
+          value='수동'
           type='text'
           disabled={true}
         />
         <InputWeb
           id='autosend'
           label='청구서 자동 발송'
-          placeholder='수동'
+          value='수동'
           type='text'
           disabled={true}
         />
         <InputWeb
           id='memberPhone'
           label='납부자 업체연락처'
-          placeholder='010-1234-5678'
+          value='010-1234-5678'
           type='text'
           disabled={true}
         />
         <InputWeb
           id='memberEmail'
           label='납부자 이메일'
-          placeholder='hyosung123@gmail.com'
+          value='hyosung123@gmail.com'
           type='text'
           disabled={true}
         />
         <InputWeb
           id='sendMethod'
           label='청구서 발송 수단'
-          placeholder='휴대전화'
+          value='휴대전화'
           type='text'
           disabled={true}
         />

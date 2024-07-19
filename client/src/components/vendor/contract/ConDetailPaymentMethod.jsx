@@ -28,7 +28,7 @@ const ConDetailPaymentMethod = ({ contractData }) => {
           <InputWeb
           id='simpConsentInfo'
           label='간편동의여부'
-          placeholder={`${paymentTypeInfo.consentStatus.title} (${paymentTypeInfo.simpleConsentReqDateTime})`}
+          value={`${paymentTypeInfo.consentStatus.title} (${paymentTypeInfo.simpleConsentReqDateTime})`}
           type='text'
           classContainer='w-1/2'
           disabled={true}

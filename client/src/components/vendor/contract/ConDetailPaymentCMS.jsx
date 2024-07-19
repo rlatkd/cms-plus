@@ -10,7 +10,7 @@ const ConDetailPaymentCMS = ({ contractData }) => {
         <InputWeb
           id='paymentType'
           label='결제수단'
-          placeholder={paymentMethod.title}
+          value={paymentMethod.title}
           type='text'
           classContainer='w-full mr-6'
           disabled={true}
@@ -18,7 +18,7 @@ const ConDetailPaymentCMS = ({ contractData }) => {
         <InputWeb
           id='accountNumber'
           label='계좌번호'
-          placeholder={paymentMethodInfo.accountNumber}
+          value={paymentMethodInfo.accountNumber}
           type='text'
           classContainer='w-full'
           disabled={true}
@@ -28,7 +28,7 @@ const ConDetailPaymentCMS = ({ contractData }) => {
       <InputWeb
           id='accountOwner'
           label='소유주명'
-          placeholder={paymentMethodInfo.accountOwner}
+          value={paymentMethodInfo.accountOwner}
           type='text'
           classContainer='w-full mr-6'
           disabled={true}
@@ -36,7 +36,7 @@ const ConDetailPaymentCMS = ({ contractData }) => {
         <InputWeb
           id='accountOwnerBirth'
           label='생년월일'
-          placeholder={paymentMethodInfo.accountOwnerBirth}
+          value={paymentMethodInfo.accountOwnerBirth}
           type='text'
           classContainer='w-full'
           disabled={true}

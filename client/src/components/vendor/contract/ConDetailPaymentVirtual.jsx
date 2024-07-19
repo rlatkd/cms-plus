@@ -9,7 +9,7 @@ const ConDetailPaymentVirtual = ({ contractData }) => {
         <InputWeb
           id='bank'
           label='은행'
-          placeholder={paymentTypeInfo.bank.title}
+          value={paymentTypeInfo.bank.title}
           type='text'
           classContainer='w-1/2'
           disabled={true}
@@ -19,7 +19,7 @@ const ConDetailPaymentVirtual = ({ contractData }) => {
         <InputWeb
           id='accountOwner'
           label='예금주'
-          placeholder={paymentTypeInfo.accountOwner}
+          value={paymentTypeInfo.accountOwner}
           type='text'
           classContainer='w-full mr-3'
           disabled={true}
@@ -27,7 +27,7 @@ const ConDetailPaymentVirtual = ({ contractData }) => {
         <InputWeb
           id='accountNumber'
           label='계좌번호'
-          placeholder={paymentTypeInfo.accountNumber}
+          value={paymentTypeInfo.accountNumber}
           type='text'
           classContainer='w-full'
           disabled={true}

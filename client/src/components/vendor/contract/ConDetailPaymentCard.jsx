@@ -12,7 +12,7 @@ const ConDetailPaymentCard = ({ contractData }) => {
         <InputWeb
           id='paymentType'
           label='결제수단'
-          placeholder={paymentMethod.title}
+          value={paymentMethod.title}
           type='text'
           classContainer='w-full mr-6'
           disabled={true}
@@ -20,7 +20,7 @@ const ConDetailPaymentCard = ({ contractData }) => {
         <InputWeb
           id='cardNumber'
           label='카드번호'
-          placeholder={paymentMethodInfo.cardNumber}
+          value={paymentMethodInfo.cardNumber}
           type='text'
           classContainer='w-full'
           disabled={true}
@@ -30,7 +30,7 @@ const ConDetailPaymentCard = ({ contractData }) => {
         <InputWeb
           id='cardOwner'
           label='소유주명'
-          placeholder={paymentMethodInfo.cardOwner}
+          value={paymentMethodInfo.cardOwner}
           type='text'
           classContainer='w-full mr-3'
           disabled={true}
@@ -38,7 +38,7 @@ const ConDetailPaymentCard = ({ contractData }) => {
         <InputWeb
           id='accountOwnerBirth'
           label='생년월일'
-          placeholder={paymentMethodInfo.cardOwnerBirth}
+          value={paymentMethodInfo.cardOwnerBirth}
           type='text'
           classContainer='w-full'
           disabled={true}
