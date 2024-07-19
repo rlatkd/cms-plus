@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 const InputWeb = ({
   id,
   label,
+  labelEnabled = true,
   required,
   disabled,
   readOnly,
@@ -40,12 +41,14 @@ const InputWeb = ({
 
   return (
     <div className={`${classContainer}`}>
-      <label
-        className={`${classLabel} block text-text_black text-15 font-700 mb-2 ml-2 
+      {labelEnabled && (
+        <label
+          className={`${classLabel} block text-text_black text-15 font-700 mb-2 ml-2 
                     ${required ? "after:ml-1 after:text-red-500 after:content-['*']" : ''}`}
-        htmlFor={id}>
-        {label}
-      </label>
+          htmlFor={id}>
+          {label}
+        </label>
+      )}
       <div className='relative '>
         <input
           ref={inputRef}
