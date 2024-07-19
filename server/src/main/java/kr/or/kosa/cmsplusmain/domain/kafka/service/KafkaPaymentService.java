@@ -22,6 +22,8 @@ public class KafkaPaymentService {
     @Value("${kafkaTopic.paymentTopic}")
     private String paymentTopic;
     @Value("${kafkaTopic.paymentResultTopic}")
+    private String paymentResultTopic;
+
     private final KafkaTemplate<String, PaymentDto> kafkaTemplate;
     private final BillingRepository billingRepository;
 
