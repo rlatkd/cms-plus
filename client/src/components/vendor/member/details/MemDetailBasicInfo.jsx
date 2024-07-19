@@ -35,7 +35,7 @@ const MemDetailBasicInfo = () => {
           </button>
         </div>
       </div>
-      <BasicInfoForm formType='DETAIL' disabled={true} />
+      <BasicInfoForm formType='DETAIL' />
     </div>
   );
 };

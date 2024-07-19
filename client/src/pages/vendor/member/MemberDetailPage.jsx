@@ -18,7 +18,6 @@ const MemberDetailPage = () => {
     try {
       const res = await getMemberDetail(memberId.id);
       console.log('!----회원 상세 조회 성공----!'); // 삭제예정
-      console.log('data', res.data);
       setMemberInfo(res.data);
       setMemberBasicInfo({
         memberName: res.data.memberName,

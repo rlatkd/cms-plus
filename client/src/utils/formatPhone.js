@@ -1,3 +1,5 @@
+// 전화번호 포멧팅 함수
+
 export const formatPhone = phone => {
   if (!phone) return '';
 

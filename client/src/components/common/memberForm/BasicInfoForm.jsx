@@ -1,11 +1,12 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import TextArea from '../inputs/TextArea';
-import { useMemberStore } from '@/stores/useMemberStore';
 import { formatPhone, removeDashes } from '@/utils/formatPhone';
 import { useEffect } from 'react';
+import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 
-const BasicInfoForm = ({ formType, disabled }) => {
-  const { basicInfo, resetBasicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberStore();
+// formType : CREATE, UPDATE, DETAIL
+const BasicInfoForm = ({ formType }) => {
+  const { basicInfo, resetBasicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
 
   // 사용자 입력값
   const handleChangeValue = e => {
@@ -31,7 +32,10 @@ const BasicInfoForm = ({ formType, disabled }) => {
     e.key === ' ' && e.preventDefault();
   };
 
-  // 회원 등록일 경우 zustand를 비움
+  // formType : DETAIL일 경우 입력창 비활성화
+  const isDisabled = formType === 'DETAIL';
+
+  // formType : CREATE일 경우 basicInfo를 reset
   useEffect(() => {
     if (formType === 'CREATE') resetBasicInfo();
   }, []);
@@ -46,7 +50,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
           type='text'
           required
           value={basicInfo.memberName}
-          disabled={disabled}
+          disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
@@ -57,7 +61,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
           type='text'
           value={formatPhone(basicInfo.memberPhone)}
           required
-          disabled={disabled}
+          disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
@@ -68,7 +72,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
           type='text'
           value={basicInfo.memberEnrollDate}
           required
-          disabled={disabled}
+          disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
@@ -78,7 +82,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
           placeholder='ex) 02-432-7777'
           type='text'
           value={formatPhone(basicInfo.memberHomePhone)}
-          disabled={disabled}
+          disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
@@ -89,7 +93,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
           type='text'
           value={basicInfo.memberEmail}
           required
-          disabled={disabled}
+          disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
@@ -103,7 +107,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
             type='address'
             value={basicInfo.memberAddress.zipcode}
             classContainer='mr-5'
-            disabled={disabled}
+            disabled={isDisabled}
             readOnly
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
@@ -113,7 +117,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
             placeholder='주소'
             type='text'
             value={basicInfo.memberAddress.address}
-            disabled={disabled}
+            disabled={isDisabled}
             classContainer='w-full'
             readOnly
             onChange={handleChangeValue}
@@ -126,7 +130,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
           placeholder='상세 주소'
           type='text'
           value={basicInfo.memberAddress.addressDetail}
-          disabled={disabled}
+          disabled={isDisabled}
           classContainer='mb-3'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
@@ -135,7 +139,7 @@ const BasicInfoForm = ({ formType, disabled }) => {
         <TextArea
           id='memberMemo'
           label='메모'
-          disabled={disabled}
+          disabled={isDisabled}
           classTextarea='h-52'
           value={basicInfo.memberMemo}
           onChange={handleChangeValue}

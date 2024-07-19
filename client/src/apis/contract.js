@@ -3,7 +3,6 @@ import { privateAxios } from '.';
 // 계약 목록 조회
 export const getContractList = async (searchParams = {}) => {
   try {
-    console.log(searchParams);
     const res = await privateAxios.get('/v1/vendor/contract', {
       params: {
         ...searchParams,

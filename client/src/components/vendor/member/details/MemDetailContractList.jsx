@@ -4,6 +4,7 @@ import Table from '@/components/common/tables/Table';
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { cols } from '@/utils/tableElements/memberContractElement';
+import { formatProducts } from '@/utils/formatProducts';
 
 const MemDetailContractList = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록
@@ -45,14 +46,12 @@ const MemDetailContractList = () => {
         contractProducts,
         contractStatus,
       } = contract;
-      const firstProduct = contractProducts[0];
-      const additionalProductsCount = contractProducts.length - 1;
 
       return {
         ...contract,
         contractDay: `${contractDay}일`,
         contractPrice: `${contractPrice.toLocaleString()}원`,
-        contractProducts: `${firstProduct.name} + ${additionalProductsCount}`,
+        contractProducts: formatProducts(contractProducts),
         contractPeriod: `${contractStartDate} ~ ${contractEndDate}`,
         contractStatus: contractStatus.title,
         paymentType: contract.paymentType.title,

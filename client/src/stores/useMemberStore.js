@@ -1,57 +1,6 @@
 import { create } from 'zustand';
 
 export const useMemberStore = create(set => ({
-  // <---------- 기본정보 ---------->
-  basicInfo: {
-    memberName: '',
-    memberPhone: '',
-    memberEnrollDate: '',
-    memberHomePhone: '',
-    memberEmail: '',
-    memberAddress: {
-      address: '',
-      addressDetail: '',
-      zipcode: '',
-    },
-    memberMemo: '',
-  },
-
-  setBasicInfo: Data => set({ basicInfo: Data }),
-  setBasicInfoItem: data =>
-    set(state => ({
-      basicInfo: {
-        ...state.basicInfo,
-        ...data,
-      },
-    })),
-  setAddressInfoItem: data =>
-    set(state => ({
-      basicInfo: {
-        ...state.basicInfo,
-        memberAddress: {
-          ...state.basicInfo.memberAddress,
-          ...data,
-        },
-      },
-    })),
-
-  resetBasicInfo: () =>
-    set({
-      basicInfo: {
-        memberName: '',
-        memberPhone: '',
-        memberEnrollDate: '',
-        memberHomePhone: '',
-        memberEmail: '',
-        memberAddress: {
-          address: '',
-          addressDetail: '',
-          zipcode: '',
-        },
-        memberMemo: '',
-      },
-    }),
-
   // <---------- 청구정보 ---------->
   billingInfo: {
     invoiceSendMethod: '',
