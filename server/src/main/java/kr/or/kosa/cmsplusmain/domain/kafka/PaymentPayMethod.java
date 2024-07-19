@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum PaymentPayMethod {
     // 납부자결제(카드/계좌) | 가상계좌
-    CARD("CARD"), ACCOUNT("ACCOUNT"), VIRTUAL_ACCOUNT("VIRTUAL_ACCOUNT");
+    CARD("CARD"), ACCOUNT("ACCOUNT"), VIRTUAL("VIRTUAL");
 
     private final String title;
 
