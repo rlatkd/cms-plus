@@ -8,12 +8,16 @@ import PreviousButton from '@/components/common/buttons/StatusPreButton';
 
 import useStatusStepper from '@/hooks/useStatusStepper';
 import { useStatusStore } from '@/stores/useStatusStore';
+import { useInvoiceStore } from '@/stores/useInvoiceStore';
+import { requestCardPayment } from '@/apis/payment';
+import { useState } from 'react';
 
 const PaymentCardPage = () => {
   const start = 0;
   const end = 6;
   const status = useStatusStore(state => state.status);
   const { handleClickPrevious, handleClickNext } = useStatusStepper('card', start, end);
+  const invoiceInfo = useInvoiceStore(state => state.invoiceInfo);
 
   const componentMap = {
     3: ChooseCard, //카드사선택
@@ -23,12 +27,41 @@ const PaymentCardPage = () => {
   };
 
   const Content = componentMap[status] || (() => 'error');
+
+  console.log('[주스탄드 상태]: ', invoiceInfo);
+  console.log('주스탄드 청구ID', invoiceInfo.billingId);
+
+  // 현재 카드번호를 가져와서 주스탄드에 저장하는게 구현 안 되어있음
+  const number = '56293456234294'; // 이건 CardInfo에서 입력하고 주스탄드에 저장하고 주스탄드에서 가져와야함
+  const method = 'CARD'; // 이건 안 건드려도 됨
+
+  const paymentData = {
+    billingId: invoiceInfo.billingId,
+    method: method,
+    number: number,
+  };
+
+  const axiosCardPayment = async () => {
+    try {
+      const res = await requestCardPayment(paymentData);
+      console.log(res.data);
+    } catch (err) {
+      console.error('axiosVirtualAccountPayment => ', err.response.data);
+    }
+  };
+
   return (
     <>
       <Content />
       <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
         <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
-        <NextButton onClick={handleClickNext} type={'card'} status={status} end={end} />
+        <NextButton
+          onClick={handleClickNext}
+          type={'card'}
+          status={status}
+          end={end}
+          onPayment={axiosCardPayment}
+        />
       </div>
     </>
   );
