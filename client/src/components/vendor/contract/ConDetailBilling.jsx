@@ -57,7 +57,7 @@ const ConDetailBilling = ({ contractData, children }) => {
           disabled={true}
         />
       </div>
-      <div className='flex-row justify-between items-center border-b border-ipt_border px-2 pt-1 pb-3 mx-5'>
+      <div className='flex-row justify-between items-center px-2 pt-1 pb-3 mx-5'>
           <p className='text-text_black text-lg font-400 mb-2'>전체청구 / 합계금액</p>
           {/* TODO: 청구 정보로 변경 */}
           <p className='text-text_black text-xl font-800'>총 {contractData.contractProducts.length}건 / {contractData.contractPrice.toLocaleString()}원</p>
