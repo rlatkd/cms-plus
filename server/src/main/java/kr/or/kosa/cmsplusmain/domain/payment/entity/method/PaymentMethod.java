@@ -16,9 +16,11 @@ public enum PaymentMethod implements BaseEnum {
 	ACCOUNT("계좌", false, false);
 
 	private final String title;
-	@Getter @JsonIgnore
+	@Getter
+	@JsonIgnore
 	private final Boolean canCancel;		// 결제 취소 가능 여부
-	@Getter @JsonIgnore
+	@Getter
+	@JsonIgnore
 	private final Boolean canPayRealtime; 	// 실시간 결제 가능 여부
 
 	public static class Const {
