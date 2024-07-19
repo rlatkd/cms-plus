@@ -14,7 +14,7 @@ public class VirtualAccountPaymentDto extends PaymentDto {
 
     @JsonCreator
     public VirtualAccountPaymentDto(@JsonProperty("billingId") Long billingId, @JsonProperty("number") String number) {
-        super(billingId, PaymentPayMethod.VIRTUAL_ACCOUNT, number);
+        super(billingId, PaymentPayMethod.VIRTUAL, number);
     }
 
 }
