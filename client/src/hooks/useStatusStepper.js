@@ -2,10 +2,10 @@ import { useStatusStore } from '@/stores/useStatusStore';
 import { useNavigate } from 'react-router-dom';
 
 const CASES = {
-  PAYMENT: 'payment', // 납부자 청구서조회 페이지
+  BUYER: 'BUYER', // 납부자 청구서조회 페이지
   CARD: 'card', // 납부자 카드 결제 페이지
   ACCOUNT: 'account', // 납부자 계좌 결제 페이지
-  VIRTUAL: 'virtual', // 납부자 가상계좌 페이지
+  VIRTUAL: 'VIRTUAL', // 납부자 가상계좌 페이지
   MEMBERREGISTER: 'memberRegister', // 회원 등록 페이지
 };
 
@@ -39,13 +39,13 @@ const useStatusStepper = (type, start, end) => {
     }
     if (status === end) {
       reset();
-      // 삭제 예정
-      if (type !== 'simpconsent') {
-        navigate('/member/invoice/3');
-      }
+      // // 삭제 예정
+      // if (type !== 'simpconsent') {
+      //   navigate('/member/invoice/3');
+      // }
     }
     switch (type) {
-      case CASES.PAYMENT:
+      case CASES.BUYER:
         if (status === 1) navigate('/member/invoice/payment');
         break;
       case CASES.VIRTUAL:

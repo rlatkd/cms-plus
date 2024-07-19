@@ -15,6 +15,7 @@ import MemberExcelModal from '@/components/vendor/modal/MemberExcelModal';
 
 const MemberListPage = () => {
   const [memberList, setMemberList] = useState([]); // 회원 목록
+  const [memberListCount, setMemberListCount] = useState(); // 회원 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
@@ -26,7 +27,7 @@ const MemberListPage = () => {
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
   const buttonCount = 5; // 버튼 갯수
 
-  const [isShowExcelModal, setIsShowExcelModal] = useState(false);  // 대량 회원 등록
+  const [isShowExcelModal, setIsShowExcelModal] = useState(false); // 대량 회원 등록
 
   const navigate = useNavigate();
 
@@ -48,6 +49,7 @@ const MemberListPage = () => {
         });
         const transformdData = transformMemberListItem(res.data.content);
         setMemberList(transformdData);
+        setMemberListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response.data);
@@ -118,7 +120,7 @@ const MemberListPage = () => {
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <User fill='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <p className='text-text_black font-700 mr-5'>총 {memberListCount}건</p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}
@@ -163,12 +165,12 @@ const MemberListPage = () => {
         buttonCount={buttonCount}
       />
       <MemberExcelModal
-             isShowModal={isShowExcelModal}
-             setIsShowModal={setIsShowExcelModal}
-             // TODO 아이콘 변경 필요
-             icon='/src/assets/user.svg'
-             modalTitle={'대량 회원 등록'}
-             axiosMemberList={axiosMemberList}
+        isShowModal={isShowExcelModal}
+        setIsShowModal={setIsShowExcelModal}
+        // TODO 아이콘 변경 필요
+        icon='/src/assets/user.svg'
+        modalTitle={'대량 회원 등록'}
+        axiosMemberList={axiosMemberList}
       />
     </div>
   );

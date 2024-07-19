@@ -13,9 +13,11 @@ import Card from '@/assets/Card';
 import { formatPhone } from '@/utils/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billingElement';
+import { formatProducts } from '@/utils/formatProducts';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
+  const [billingListCount, setBillingListCount] = useState(); // 청구 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
@@ -49,6 +51,7 @@ const BillingListPage = () => {
         });
         const transformdData = transformBillingListItem(res.data.content);
         setBillingList(transformdData);
+        setBillingListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response.data);
@@ -61,13 +64,11 @@ const BillingListPage = () => {
   const transformBillingListItem = data => {
     return data.map(billing => {
       const { billingPrice, billingProducts, paymentType, billingStatus, memberPhone } = billing;
-      const firstProduct = billingProducts[0];
-      const additionalProductsCount = billingProducts.length - 1;
 
       return {
         ...billing,
         billingPrice: `${billingPrice.toLocaleString()}원`,
-        billingProducts: `${firstProduct.name} + ${additionalProductsCount}`,
+        billingProducts: formatProducts(billingProducts),
         paymentType: paymentType.title,
         billingStatus: billingStatus.title,
         memberPhone: formatPhone(memberPhone),
@@ -123,7 +124,7 @@ const BillingListPage = () => {
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <Card fill='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <p className='text-text_black font-700 mr-5'>총 {billingListCount}건</p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}

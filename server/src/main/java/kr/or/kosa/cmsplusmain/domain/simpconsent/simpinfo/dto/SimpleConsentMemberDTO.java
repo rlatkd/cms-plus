@@ -3,7 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.entity.MemberStatus;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.Builder;
 import lombok.Getter;

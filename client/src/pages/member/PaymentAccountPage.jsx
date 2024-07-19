@@ -8,15 +8,18 @@ import PreviousButton from '@/components/common/buttons/StatusPreButton';
 
 import { useStatusStore } from '@/stores/useStatusStore';
 import useStatusStepper from '@/hooks/useStatusStepper';
+import { useInvoiceStore } from '@/stores/useInvoiceStore';
 
 const PaymentAccountPage = () => {
   const start = 0;
   const end = 6;
   const status = useStatusStore(state => state.status);
   const { handleClickPrevious, handleClickNext } = useStatusStepper('account', start, end);
+  const invoiceInfo = useInvoiceStore((state) => state.invoiceInfo);
+
 
   const componentMap = {
-    3: ChooseBank, //은행선택
+    3: () => <ChooseBank billingInfo={invoiceInfo}/>, //은행선택
     4: AccountInfo, // 계좌정보 입력
     5: () => <Loading content={'결제중...'} />, // 결제로딩
     6: Success, // 입금완료

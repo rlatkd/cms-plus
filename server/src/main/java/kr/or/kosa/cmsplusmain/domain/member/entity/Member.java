@@ -6,7 +6,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;

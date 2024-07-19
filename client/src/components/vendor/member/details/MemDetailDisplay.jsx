@@ -17,7 +17,7 @@ const MemDetailDisplay = ({ memberData }) => {
         <img src={wallet} alt='wallet' className='bg-mint rounded-xl w-12 h-12 p-3 mr-4' />
         <div>
           <div className=' text-text_grey font-800'>전체 청구건</div>
-          <div className='text-2xl text-text_black font-700'>총{memberData.contractCount}건</div>
+          <div className='text-2xl text-text_black font-700'>총{memberData.billingCount}건</div>
         </div>
       </div>
 
@@ -26,7 +26,7 @@ const MemDetailDisplay = ({ memberData }) => {
         <div>
           <div className=' text-text_grey font-800'>전체 청구금액</div>
           <div className='text-2xl text-text_black font-700'>
-            {memberData.contractCount.toLocaleString()}원
+            {memberData.totalBillingPrice && memberData.totalBillingPrice.toLocaleString()}원
           </div>
         </div>
       </div>

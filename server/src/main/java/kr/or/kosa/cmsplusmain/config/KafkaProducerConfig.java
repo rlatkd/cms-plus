@@ -1,7 +1,7 @@
 package kr.or.kosa.cmsplusmain.config;
 
-import kr.or.kosa.cmsplusmain.domain.messaging.dto.MessageDto;
-import kr.or.kosa.cmsplusmain.domain.messaging.dto.TestDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -19,12 +19,12 @@ public class KafkaProducerConfig {
 
     // SMS. EMAIL 메시징 서버에 보냄
     @Bean
-    public KafkaTemplate<String, MessageDto> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, MessageDto> messagingKafkaTemplate() {
+        return new KafkaTemplate<>(messagingProducerFactory());
     }
 
     @Bean
-    public ProducerFactory<String, MessageDto> producerFactory() {
+    public ProducerFactory<String, MessageDto> messagingProducerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -37,12 +37,12 @@ public class KafkaProducerConfig {
 
     // 결제데이터 결제서버에 보냄
     @Bean
-    public KafkaTemplate<String, TestDto> kafkaTemplate2() {
-        return new KafkaTemplate<>(producerFactory2());
+    public KafkaTemplate<String, PaymentDto> paymentKafkaTemplate() {
+        return new KafkaTemplate<>(paymentProducerFactory());
     }
 
     @Bean
-    public ProducerFactory<String, TestDto> producerFactory2() {
+    public ProducerFactory<String, PaymentDto> paymentProducerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -50,8 +50,5 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.ACKS_CONFIG, "0"); // 가장 빠른 큐잉
         return new DefaultKafkaProducerFactory<>(props);
     }
-
-
-
 
 }

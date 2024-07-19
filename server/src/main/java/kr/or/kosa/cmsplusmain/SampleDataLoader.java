@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
@@ -23,7 +23,7 @@ import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
@@ -201,7 +201,9 @@ public class SampleDataLoader {
 	private Contract createContract(Member member, int index, List<Product> products) {
 		Payment payment = generatePayment();
 		LocalDate startDate = LocalDate.now().minusMonths(random.nextInt(12));
-		LocalDate endDate = startDate.plusYears(1);
+		LocalDate endDate = startDate.plusMonths(3);
+
+		ContractStatus status = (LocalDate.now().isAfter(endDate)) ? ContractStatus.DISABLED : ContractStatus.ENABLED;
 
 		Contract contract = Contract.builder()
 			.vendor(member.getVendor())
@@ -209,6 +211,7 @@ public class SampleDataLoader {
 			.contractName("계약" + (index + 1))
 			.contractDay(random.nextInt(28) + 1)
 			.payment(payment)
+			.contractStatus(status)
 			.contractStartDate(startDate)
 			.contractEndDate(endDate)
 			.build();
@@ -253,10 +256,8 @@ public class SampleDataLoader {
 
 	private PaymentMethod getRandomPaymentMethod(PaymentType paymentType) {
 		if (paymentType == PaymentType.AUTO) {
-			System.out.println("한번은 떠라!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			return random.nextBoolean() ? PaymentMethod.CARD : PaymentMethod.CMS;
 		} else {
-			System.out.println("두번은 떠라!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			return null;
 		}
 	}

@@ -1,12 +1,15 @@
 import billImage from '@/assets/billlogo.svg';
+import { useInvoiceStore } from '@/stores/useInvoiceStore';
 
 const Main = () => {
+  const invoiceInfo = useInvoiceStore((state) => state.invoiceInfo);
+  
   return (
     <div className='flex flex-col items-center justify-between h-screen bg-white p-3'>
       <div className='text-left w-full'>
         <h1 className='text-2xl font-bold text-teal-400 mb-4'>Hyosung CMS+</h1>
         <h3 className='font-semibold text-gray-700 text-base mb-8'>
-          아쿠르트에서 회원님께
+          아쿠르트에서 {invoiceInfo.memberName}님께
           <br />
           청구서를 보냈습니다.
         </h3>

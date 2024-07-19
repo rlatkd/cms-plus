@@ -13,9 +13,11 @@ import File from '@/assets/File';
 import { formatPhone } from '@/utils/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/contractElement';
+import { formatProducts } from '@/utils/formatProducts';
 
 const ContractListPage = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록
+  const [contractListCount, setContractListCount] = useState(); // 계약 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
@@ -47,8 +49,10 @@ const ContractListPage = () => {
           page: page,
           size: 10,
         });
+        console.log(res.data);
         const transformdData = transformContractListItem(res.data.content);
         setContractList(transformdData);
+        setContractListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response.data);
@@ -60,17 +64,15 @@ const ContractListPage = () => {
   // 데이터 변환
   const transformContractListItem = data => {
     return data.map(contract => {
-      const { contractDay, contractPrice, contractProducts, contractEnabled, memberPhone } =
+      const { contractDay, contractPrice, contractProducts, contractStatus, memberPhone } =
         contract;
-      const firstProduct = contractProducts[0];
-      const additionalProductsCount = contractProducts.length - 1;
 
       return {
         ...contract,
         contractDay: `${contractDay}일`,
         contractPrice: `${contractPrice.toLocaleString()}원`,
-        contractProducts: `${firstProduct.name} + ${additionalProductsCount}`,
-        contractEnabled: contractEnabled ? '진행중' : '계약종료',
+        contractProducts: formatProducts(contractProducts),
+        contractStatus: contractStatus.title,
         paymentType: contract.paymentType.title,
         memberPhone: formatPhone(memberPhone),
       };
@@ -79,6 +81,7 @@ const ContractListPage = () => {
 
   // 검색 변경 핸들러
   const handleChangeSearch = (key, value) => {
+    console.log(key, ':', value);
     const updatedSearch = search.map(searchItem =>
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );
@@ -124,7 +127,7 @@ const ContractListPage = () => {
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <File fill='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <p className='text-text_black font-700 mr-5'>총 {contractListCount}건</p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}

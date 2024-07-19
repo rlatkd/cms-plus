@@ -10,6 +10,6 @@ import lombok.ToString;
 public class PaymentResultDto {
 
     private Long billingId;
-    private String result;
+    private Boolean result;
 
 }
