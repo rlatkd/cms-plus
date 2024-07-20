@@ -44,6 +44,7 @@ public class KafkaPaymentService {
             if (paymentResultDto.getResult()) {
                 billing.setPaid();
             } else {
+
                 log.error("결제 실패");
             }
         } catch (EntityNotFoundException e) {

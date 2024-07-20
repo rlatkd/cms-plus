@@ -19,7 +19,7 @@ import lombok.ToString;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = AccountPaymentDto.class, name = "ACCOUNT"),
         @JsonSubTypes.Type(value = CardPaymentDto.class, name = "CARD"),
-        @JsonSubTypes.Type(value = VirtualAccountPaymentDto.class, name = "VIRTUAL_ACCOUNT")
+        @JsonSubTypes.Type(value = VirtualAccountPaymentDto.class, name = "VIRTUAL")
 })
 public abstract class PaymentDto { // 납부자결제(카드)-카드번호 | 납부자결제(계좌)-계좌번호 | 가상계좌-계좌번호
 

@@ -1,4 +1,4 @@
-const NextButton = ({ onClick, status, type = '', end }) => {
+const NextButton = ({ onClick, status, type = '', end, onPayment }) => {
   let buttonText = '다음';
 
   if (status === 0) {
@@ -12,11 +12,19 @@ const NextButton = ({ onClick, status, type = '', end }) => {
     buttonText = '확인';
   }
 
+  const handlePayment = async () => {
+    if (status === end - 2 && onPayment) {
+      await onPayment();
+      console.log('API호출');
+    }
+    onClick();
+  };
+
   return (
     <button
       className={` ${type === 'memberRegister' ? 'w-28' : 'flex-1'} 
                   ml-auto rounded-lg bg-mint text-white transition-all duration-200 hover:bg-mint_hover`}
-      onClick={onClick}>
+      onClick={handlePayment}>
       {buttonText}
     </button>
   );
