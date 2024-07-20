@@ -27,9 +27,10 @@ public class PaymentService {
         PaymentDto paymentDto = consumerRecord.value(); // 받은 결제정보 데이터
         PaymentResultDto paymentResultDto = new PaymentResultDto(); // 보낼 결제결과 데이터
         try {
-            if (Integer.parseInt(paymentDto.getNumber()) % 2 == 0) {
+            if (Long.parseLong(paymentDto.getNumber()) % 2 == 0) { // Long; 계좌/카드 번호 길어지면 integer로 변환 에러남
                 paymentResultDto.setBillingId(paymentDto.getBillingId());
                 paymentResultDto.setResult(true);
+                log.error("유효한 결제");
                 kafkaTemplate.send(paymentResultTopic, paymentResultDto); // 결제서버->메인서버; 결제결과 전달
             } else {
                 // 청구 상태 로직을 보면, 우린 결제 성공만 생각하면 됨
@@ -37,7 +38,7 @@ public class PaymentService {
                 log.error("유효하지 않은 결제");
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            e.printStackTrace();
         }
 
     }

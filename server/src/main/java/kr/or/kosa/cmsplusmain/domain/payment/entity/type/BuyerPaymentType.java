@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.DiscriminatorValue;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Comment("결제방식-납부자결제")
 @Entity
 @Getter
+@DiscriminatorValue(PaymentType.Const.BUYER)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BuyerPaymentType extends PaymentTypeInfo {
 

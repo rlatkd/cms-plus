@@ -9,6 +9,8 @@ import java.util.Random;
 import java.util.Set;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +42,9 @@ import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SampleDataLoader {
@@ -64,7 +68,7 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-		generateSampleData(vendor, 10, 10, 10, 10);
+		generateSampleData(vendor, 30, 30, 30, 30);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
@@ -272,12 +276,13 @@ public class SampleDataLoader {
 				.accountNumber(randomGenerator.generateRandomAccountNumber())
 				.accountOwner("가상계좌주인" + random.nextInt(100))
 				.build();
-			default -> throw new IllegalArgumentException("Unsupported PaymentType");
 		};
 	}
 
 	private PaymentMethodInfo generatePaymentMethodInfo(PaymentMethod paymentMethod) {
-		if (paymentMethod == null) return null;
+		if (paymentMethod == null) {
+			return null;
+		}
 		return switch (paymentMethod) {
 			case CARD -> CardPaymentMethod.builder()
 				.cardNumber(randomGenerator.generateRandomCardNumber())
@@ -293,7 +298,6 @@ public class SampleDataLoader {
 				.accountOwnerBirth(LocalDate.now().minusYears(20 + random.nextInt(40)))
 				.build();
 			case ACCOUNT ->
-				// Assuming ACCOUNT uses the same structure as CMS for this example
 				CmsPaymentMethod.builder()
 					.bank(randomGenerator.getRandomBank())
 					.accountNumber(randomGenerator.generateRandomAccountNumber())

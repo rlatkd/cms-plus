@@ -8,11 +8,17 @@ import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.*;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.*;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.*;
 import kr.or.kosa.cmsplusmain.domain.payment.repository.*;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
+import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.stereotype.Service;
 
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -23,8 +29,11 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+
+import com.querydsl.jpa.hibernate.HibernateUtil;
 
 @Slf4j
 @Service
@@ -43,51 +52,92 @@ public class PaymentService {
 
 	public PaymentTypeInfoRes getPaymentTypeInfo(Payment payment) {
 		PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
-		PaymentTypeInfoRes paymentTypeInfoRes = null;
 
-		if (paymentTypeInfo instanceof AutoPaymentType autoPaymentType) {
-			paymentTypeInfoRes = AutoTypeRes.builder()
-				.consentImgUrl(autoPaymentType.getConsentImgUrl())
-				.signImgUrl(autoPaymentType.getSignImgUrl())
-				.simpleConsentReqDateTime(autoPaymentType.getSimpleConsentReqDateTime())
-				.consentStatus(autoPaymentType.getConsentStatus())
-				.build();
+		// proxy 객체인 경우 자식 클래스로 캐스팅이 안된다.
+		// 프록시를 자식 객체로써 받아온다.
+		if (!Hibernate.isInitialized(paymentTypeInfo)) {
+			LazyInitializer lazyInitializer = HibernateProxy.extractLazyInitializer(paymentTypeInfo);
+			if (lazyInitializer != null) {
+				paymentTypeInfo = (PaymentTypeInfo) lazyInitializer.getImplementation();
+			} else {
+				throw new IllegalStateException("Provided payment type is not initialized");
+			}
 		}
-		else if (paymentTypeInfo instanceof BuyerPaymentType buyerPaymentType) {
-			paymentTypeInfoRes = BuyerTypeRes.builder()
-				.availableMethods(buyerPaymentType.getAvailableMethods())
-				.build();
-		}
-		else if (paymentTypeInfo instanceof VirtualAccountPaymentType virtualAccountPaymentType) {
-			paymentTypeInfoRes = VirtualAccountTypeRes.builder()
-				.bank(virtualAccountPaymentType.getBank())
-				.accountNumber(virtualAccountPaymentType.getAccountNumber())
-				.accountOwner(virtualAccountPaymentType.getAccountOwner())
-				.build();
-		}
+
+		PaymentType paymentType = paymentTypeInfo.getPaymentType();
+
+		PaymentTypeInfoRes paymentTypeInfoRes = switch (paymentType) {
+			case VIRTUAL -> {
+				VirtualAccountPaymentType virtualAccountPaymentType = (VirtualAccountPaymentType) paymentTypeInfo;
+				yield VirtualAccountTypeRes.builder()
+					.bank(virtualAccountPaymentType.getBank())
+					.accountNumber(virtualAccountPaymentType.getAccountNumber())
+					.accountOwner(virtualAccountPaymentType.getAccountOwner())
+					.build();
+			}
+			case BUYER -> {
+				BuyerPaymentType buyerPaymentType = (BuyerPaymentType) paymentTypeInfo;
+				yield BuyerTypeRes.builder()
+					.availableMethods(buyerPaymentType.getAvailableMethods())
+					.build();
+			}
+			case AUTO -> {
+				AutoPaymentType autoPaymentType = (AutoPaymentType) paymentTypeInfo;
+				yield AutoTypeRes.builder()
+					.consentImgUrl(autoPaymentType.getConsentImgUrl())
+					.signImgUrl(autoPaymentType.getSignImgUrl())
+					.simpleConsentReqDateTime(autoPaymentType.getSimpleConsentReqDateTime())
+					.consentStatus(autoPaymentType.getConsentStatus())
+					.build();
+			}
+		};
 
 		return paymentTypeInfoRes;
 	}
 
 	public PaymentMethodInfoRes getPaymentMethodInfo(Payment payment) {
 		PaymentMethodInfo paymentMethodInfo = payment.getPaymentMethodInfo();
-		PaymentMethodInfoRes paymentMethodInfoRes = null;
 
-		if (paymentMethodInfo instanceof CardPaymentMethod cardPaymentMethod) {
-			paymentMethodInfoRes = CardMethodRes.builder()
-				.cardNumber(cardPaymentMethod.getCardNumber())
-				.cardOwner(cardPaymentMethod.getCardOwner())
-				.cardOwnerBirth(cardPaymentMethod.getCardOwnerBirth())
-				.build();
+		// 결제수단은 자동결제방식의 경우에만 존재한다.
+		if (paymentMethodInfo == null) {
+			return null;
 		}
-		else if (paymentMethodInfo instanceof CmsPaymentMethod cmsPaymentMethod) {
-			paymentMethodInfoRes = CMSMethodRes.builder()
-				.bank(cmsPaymentMethod.getBank())
-				.accountOwner(cmsPaymentMethod.getAccountOwner())
-				.accountNumber(cmsPaymentMethod.getAccountNumber())
-				.accountOwnerBirth(cmsPaymentMethod.getAccountOwnerBirth())
-				.build();
+
+		// proxy 객체인 경우 자식 클래스로 캐스팅이 안된다.
+		// 프록시를 자식 객체로써 받아온다.
+		if (!Hibernate.isInitialized(paymentMethodInfo)) {
+			LazyInitializer lazyInitializer = HibernateProxy.extractLazyInitializer(paymentMethodInfo);
+			if (lazyInitializer != null) {
+				paymentMethodInfo = (PaymentMethodInfo) lazyInitializer.getImplementation();
+			} else {
+				throw new IllegalStateException("Provided payment method is not initialized");
+			}
 		}
+
+		PaymentMethod paymentMethod = paymentMethodInfo.getPaymentMethod();
+		PaymentMethodInfoRes paymentMethodInfoRes = switch (paymentMethod) {
+			case CARD -> {
+				CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) paymentMethodInfo;
+				yield CardMethodRes.builder()
+					.cardNumber(cardPaymentMethod.getCardNumber())
+					.cardOwner(cardPaymentMethod.getCardOwner())
+					.cardOwnerBirth(cardPaymentMethod.getCardOwnerBirth())
+					.cardMonth(cardPaymentMethod.getCardMonth())
+					.cardYear(cardPaymentMethod.getCardYear())
+					.build();
+			}
+			case CMS -> {
+				CmsPaymentMethod cmsPaymentMethod = (CmsPaymentMethod) paymentMethodInfo;
+				yield CMSMethodRes.builder()
+					.bank(cmsPaymentMethod.getBank())
+					.accountOwner(cmsPaymentMethod.getAccountOwner())
+					.accountNumber(cmsPaymentMethod.getAccountNumber())
+					.accountOwnerBirth(cmsPaymentMethod.getAccountOwnerBirth())
+					.build();
+
+			}
+			case ACCOUNT -> null;
+		};
 
 		return paymentMethodInfoRes;
 	}

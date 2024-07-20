@@ -220,6 +220,35 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				.fetchOne();
 	}
 
+	/*
+	* 계약의 청구 총 개수 및 금액
+	* */
+	public Long[] findBillingCntAndPriceByContract(Long contractId) {
+		List<Long> billingIds = jpaQueryFactory
+			.select(billing.id)
+			.from(billing)
+			.where(
+				billingNotDel(),
+				billing.contract.id.eq(contractId)
+			)
+			.fetch();
+
+		if (billingIds == null || billingIds.isEmpty()) {
+			return new Long[] {0L, 0L};
+		}
+
+		Long totalPrice = jpaQueryFactory
+			.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
+			.from(billingProduct)
+			.where(
+				billingProductNotDel(),
+				billingProduct.billing.id.in(billingIds)
+			)
+			.fetchOne();
+
+		return new Long[] {(long)billingIds.size(), totalPrice};
+	}
+
 	private BooleanExpression paymentTypeEq(PaymentType paymentType) {
 		return (paymentType != null) ? payment.paymentType.eq(paymentType) : null;
 	}

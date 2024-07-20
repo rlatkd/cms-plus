@@ -108,7 +108,12 @@ public class ContractService {
 		PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfo(payment);
 		PaymentMethodInfoRes paymentMethodInfoRes = paymentService.getPaymentMethodInfo(payment);
 
-		return ContractDetailRes.fromEntity(contract, paymentTypeInfoRes, paymentMethodInfoRes);
+		// 계약의 청구 개수 및 총액
+		Long[] totalCntAndPrice = billingCustomRepository.findBillingCntAndPriceByContract(contractId);
+
+		return ContractDetailRes.fromEntity(contract,
+			paymentTypeInfoRes, paymentMethodInfoRes,
+			totalCntAndPrice[0], totalCntAndPrice[1]);
 	}
 
 	/*
