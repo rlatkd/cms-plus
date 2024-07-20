@@ -10,8 +10,8 @@ import lombok.ToString;
 @ToString
 public class AccountPaymentDto extends PaymentDto {
 
-    public AccountPaymentDto(Long billingId, String number) {
-        super(billingId, PaymentPayMethod.ACCOUNT, number);
+    public AccountPaymentDto(Long billingId, String phoneNumber, String number) {
+        super(billingId, phoneNumber, PaymentPayMethod.ACCOUNT, number);
     }
 
 }

@@ -19,7 +19,7 @@ const PaymentVirtualPage = () => {
 
   const componentMap = {
     2: CheckVirtual, // 가상계좌 정보
-    3: () => <Loading content={'결제중...'} />, // 결제로딩
+    3: () => <Loading content={'결제중...'} />, // 결제로딩 대충 로딩하다가 success로 가도록 해야됨. 결제결과는 문자로 날라감
     4: Success, // 입금완료
   };
 
@@ -28,9 +28,11 @@ const PaymentVirtualPage = () => {
   // 현재 가상계좌번호를 가져와서 주스탄드에 저장하는게 구현 안 되어있음
   const number = '56293456234294';
   const method = 'VIRTUAL';
+  const phoneNumber = '01026270378'; // 테스트용 (실제로는 주스탄드에서 가져옴)
 
   const paymentData = {
     billingId: invoiceInfo.billingId,
+    phoneNumber: phoneNumber,
     method: method,
     number: number,
   };
