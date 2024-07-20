@@ -90,10 +90,12 @@ public class Billing extends BaseEntity {
 
 	@Comment("청구서 보낸시각")
 	@Column(name = "billing_invoice_send_datetime")
+	@Setter
 	private LocalDateTime invoiceSendDateTime;
 
 	@Comment("청구 결제된 시각")
 	@Column(name = "billing_paid_datetime")
+	@Setter
 	private LocalDateTime paidDateTime;
 
 	/* 청구 상품 목록 */
@@ -234,6 +236,9 @@ public class Billing extends BaseEntity {
 	* 결제된 시각 설정
 	* */
 	public void setPaid() {
+		if (billingStatus == BillingStatus.PAID) {
+			throw new PayBillingException("이미 결제된 청구입니다.");
+		}
 		billingStatus = BillingStatus.PAID;
 		paidDateTime = LocalDateTime.now();
 	}
@@ -254,6 +259,9 @@ public class Billing extends BaseEntity {
 	 * 청구 결제 취소 상태 변경
 	 * */
 	public void setPayCanceled() {
+		if (!canCancelPaid()) {
+			throw new PayBillingException("결제 취소가 불가능합니다.");
+		}
 		billingStatus = BillingStatus.WAITING_PAYMENT;
 		paidDateTime = null;
 	}

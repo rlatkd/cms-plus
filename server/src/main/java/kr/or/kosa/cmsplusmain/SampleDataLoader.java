@@ -109,6 +109,12 @@ public class SampleDataLoader {
 			billing.setBillingStatus(randomGenerator.getRandomBillingStatus(billingDate));
 			billing.setInvoiceMessage(randomGenerator.generateRandomInvoiceMessage());
 
+			// 청구 상태 여부에 따른 결제 시각 및 청구서 발송 시각 설정
+			switch (billing.getBillingStatus()) {
+				case PAID -> billing.setPaidDateTime(billingDate.atTime(random.nextInt(23), random.nextInt(59)));
+				case WAITING_PAYMENT, NON_PAID -> billing.setInvoiceSendDateTime(billingDate.atTime(random.nextInt(23), random.nextInt(59)));
+			}
+
 			billings.add(billing);
 		}
 		return billings;

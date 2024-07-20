@@ -253,7 +253,7 @@ public class BillingService {
 		// 결제일, 청구서 메시지 수정
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		billing.setBillingDate(billingUpdateReq.getBillingDate());
-		billing.setInvoiceMessage(billingUpdateReq.getInvoiceMemo());
+		billing.setInvoiceMessage(billingUpdateReq.getBillingMemo());
 
 		// 신규 청구상품
 		List<BillingProduct> newBillingProducts = convertToBillingProducts(billingUpdateReq.getBillingProducts());
