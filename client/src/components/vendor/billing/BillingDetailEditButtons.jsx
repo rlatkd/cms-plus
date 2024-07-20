@@ -1,21 +1,28 @@
-import edit from '@/assets/edit.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faSave } from '@fortawesome/free-solid-svg-icons';
 
 const BillingDetailEditButtons = ({ onSave, onCancel }) => {
+  const buttonClass = (isCancel = false) => `
+    flex justify-between items-center px-4 py-2 ml-4 
+    font-700 rounded-md border cursor-pointer
+    ${isCancel
+      ? 'text-negative border-negative hover:bg-negative hover:text-white'
+      : 'text-white bg-mint hover:bg-mint_hover'}
+  `;
+
   return (
     <>
       <button
-        className='flex justify-between items-center px-4 py-2 ml-4 text-mint
-font-700 rounded-md border border-mint cursor-pointer'
+        className={buttonClass(true)}
         onClick={onCancel}>
-        <img src={edit} alt='edit' className='mr-2 ' />
+        <FontAwesomeIcon icon={faTimes} className="mr-2" />
         <p>취소</p>
       </button>
       <button
-        className='flex justify-between items-center px-4 py-2 ml-4 text-mint
-font-700 rounded-md border border-mint cursor-pointer'
+        className={buttonClass()}
         onClick={onSave}>
-        <img src={edit} alt='edit' className='mr-2 ' />
-        <p>수정</p>
+        <FontAwesomeIcon icon={faSave} className="mr-2" />
+        <p>저장</p>
       </button>
     </>
   );

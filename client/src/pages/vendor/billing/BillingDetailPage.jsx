@@ -11,24 +11,9 @@ import BillingDetailButtons from '@/components/vendor/billing/BillingDetailButto
 
 const BillingDetailPage = () => {
   const [billingData, setBillingData] = useState({
-    memberId: 0,
-    memberName: '',
-    memberPhone: '',
-    contractId: 0,
-    paymentType: { title: '', code: '' },
-    paymentMethod: '',
-    billingId: 0,
-    billingName: '',
-    billingType: { title: '', code: '' },
-    billingStatus: { title: '', code: '' },
-    billingCreatedDate: '',
-    billingDate: '',
-    billingMemo: '',
-    billingProducts: [],
-    billingPrice: 0,
+    // ... (기존 상태 유지)
   });
   
-  // 청구 수정 정보
   const [billingReq, setBillingReq] = useState({
     billingProducts: [],
     billingDate: '',
@@ -36,17 +21,21 @@ const BillingDetailPage = () => {
   });
   const [editable, setEditable] = useState(false);
   const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);  // 로딩 상태 추가
 
   const { id: billingId } = useParams();
   const navigate = useNavigate();
 
   const fetchBillingDetail = useCallback(async () => {
+    setIsLoading(true);  // 데이터 로딩 시작
     try {
       const res = await getBillingDetail(billingId);
       setBillingData(res.data);
       setBillingReq(transformReqData(res.data));
     } catch (err) {
       console.error('Failed to fetch billing detail:', err);
+    } finally {
+      setIsLoading(false);  // 데이터 로딩 완료
     }
   }, [billingId]);
 
@@ -145,13 +134,20 @@ const BillingDetailPage = () => {
     setEditable(false);
   };
 
-  const handleBillingMemoChange = (memo) => {
+  const handleBillingMemoChange = memo => {
     setBillingReq(prev => ({ ...prev, billingMemo: memo }));
   };
+  const handleBillingDateChange = date => {
+    setBillingReq(prev => ({ ...prev, billingDate: date }));
+  };
 
-  const handleBillingProductChange = (products) => {
+  const handleBillingProductChange = products => {
     setBillingReq(prev => ({ ...prev, billingProducts: products }));
   };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+  }
 
   return (
     <div className='primary-dashboard w-full'>
@@ -168,7 +164,8 @@ const BillingDetailPage = () => {
           billingData={billingData}
           billingReq={billingReq}
           editable={editable}
-          onChange={handleBillingMemoChange}
+          onBillingMemoChange={handleBillingMemoChange}
+          onBillingDateChange={handleBillingDateChange}
         />
       </div>
 
