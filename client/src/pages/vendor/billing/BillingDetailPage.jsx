@@ -1,27 +1,22 @@
-import BillingDetailBilling from '@/components/vendor/billing/BillingDetailBilling';
+import { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getAllProductList } from '@/apis/product';
+import { deleteBilling, getBillingDetail, sendInvoice, updateBilling, cancelSendInvoice, payBilling, cancelPayBilling } from '@/apis/billing';
 import BillingDetailMember from '@/components/vendor/billing/BillingDetailMember';
 import BillingDetailPayment from '@/components/vendor/billing/BillingDetailPayment';
+import BillingDetailBilling from '@/components/vendor/billing/BillingDetailBilling';
 import BillingDetailProduct from '@/components/vendor/billing/BillingDetailProduct';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getBillingDetail } from '@/apis/billing';
-import edit from '@/assets/edit.svg';
-import remove from '@/assets/remove.svg';
 import BillingDetailEditButtons from '@/components/vendor/billing/BillingDetailEditButtons';
 import BillingDetailButtons from '@/components/vendor/billing/BillingDetailButtons';
 
-// 수정 취소시 원래대로 돌000아와야함
-
 const BillingDetailPage = () => {
-
-  // 청구 상세 정보
   const [billingData, setBillingData] = useState({
     memberId: 0,
     memberName: '',
     memberPhone: '',
     contractId: 0,
     paymentType: { title: '', code: '' },
-    paymentMethod: null,
+    paymentMethod: '',
     billingId: 0,
     billingName: '',
     billingType: { title: '', code: '' },
@@ -32,87 +27,131 @@ const BillingDetailPage = () => {
     billingProducts: [],
     billingPrice: 0,
   });
-
+  
   // 청구 수정 정보
   const [billingReq, setBillingReq] = useState({
     billingProducts: [],
     billingDate: '',
     billingMemo: ''
   });
-
-  // 수정 상태 여부
   const [editable, setEditable] = useState(false);
+  const [products, setProducts] = useState([]);
 
-  const billingId = useParams();
+  const { id: billingId } = useParams();
+  const navigate = useNavigate();
 
-  // 수정 저장
-  const onEditSave = () => {
-    // todo post
-    setEditable(false);
-  };
+  const fetchBillingDetail = useCallback(async () => {
+    try {
+      const res = await getBillingDetail(billingId);
+      setBillingData(res.data);
+      setBillingReq(transformReqData(res.data));
+    } catch (err) {
+      console.error('Failed to fetch billing detail:', err);
+    }
+  }, [billingId]);
 
-  const onEditCancel = () => {
-    setBillingReq(
-      {
-        billingProducts: [...(billingData.billingProducts)],
-        billingDate: `${billingData.billingDate}`,
-        billingMemo: `${billingData.billingMemo}`
-      }
-    );
-    setEditable(false);
-  }
-
-  const onBillingMemoChange = memo => {
-    setBillingReq(data => {
-      return {
-        ...data,
-        billingMemo: `${memo}`,
-      };
-    });
-  };
-
-  const onBillingProductChange = products => {
-    setBillingReq(data => {
-      return {
-        ...data,
-        billingProducts: [...products],
-      };
-    });
-  };
-
-  // 청구 상세 조회
-  // 청구 수정 정보 초기화
-  useEffect(() => {
-
-    // 수정 취소 시 원래 정보로 돌아오기 위해 수정정보 따로 객체 깊은복사
-    const transformReqData = (data) => {
-      return {
-          billingMemo: `${data.billingMemo}`,
-          billingDate: `${data.billingDate}`,
-          billingProducts: (data.billingProducts) ? data.billingProducts.map(product => {
-            return {
-              ...product,
-              name: `${product.name}`,
-            };            
-          }) : []
-      };
-    };
-
-    const axiosBillingDetail = async () => {
-      try {
-        const res = await getBillingDetail(billingId.id);
-        console.log('!----청구 상세 조회 성공----!');
-        console.log(res.data);
-        setBillingData(res.data);
-        setBillingReq(transformReqData(res.data));
-      } catch (err) {
-        console.error(err);
-        console.error('axiosBillingDetail => ', err.response.data);
-      }
-    };
-
-    axiosBillingDetail();
+  const fetchAllProducts = useCallback(async () => {
+    try {
+      const res = await getAllProductList();
+      setProducts(res.data);
+    } catch (err) {
+      console.error('Failed to fetch product list:', err);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchBillingDetail();
+    fetchAllProducts();
+  }, [fetchBillingDetail, fetchAllProducts]);
+
+  const transformReqData = (data) => ({
+    billingMemo: data.billingMemo,
+    billingDate: data.billingDate,
+    billingProducts: data.billingProducts?.map(product => ({
+      ...product,
+      name: product.name,
+    })) || []
+  });
+
+  const handleEditSave = async () => {
+    try {
+      await updateBilling(billingId, billingReq);
+      alert('청구가 수정되었습니다.');
+      setEditable(false);
+      fetchBillingDetail();
+    } catch (err) {
+      alert('청구 수정에 실패했습니다.');
+      console.error('Failed to update billing:', err);
+    }
+  };
+
+  const handleRemove = async () => {
+    try {
+      await deleteBilling(billingId);
+      alert('청구가 삭제되었습니다.');
+      navigate(-1);
+    } catch (err) {
+      alert('청구 삭제에 실패했습니다.');
+      console.error('Failed to delete billing:', err);
+    }
+  };
+
+  const handleSend = async () => {
+    try {
+      await sendInvoice(billingId);
+      alert('청구서가 발송되었습니다.');
+      fetchBillingDetail();
+    } catch (err) {
+      alert('청구서 발송에 실패했습니다.');
+      console.error('Failed to send invoice:', err);
+    }
+  };
+
+  const handleCancelSend = async () => {
+    try {
+      await cancelSendInvoice(billingId);
+      alert('청구서 발송이 취소되었습니다.');
+      fetchBillingDetail();
+    } catch (err) {
+      alert('청구서 발송 취소에 실패했습니다.');
+      console.error('Failed to cancel invoice send:', err);
+    }
+  };
+
+  const handlePay = async () => {
+    try {
+      await payBilling(billingId);
+      alert('청구가 결제되었습니다.');
+      fetchBillingDetail();
+    } catch (err) {
+      alert('청구 결제에 실패했습니다.');
+      console.error('Failed to pay billing:', err);
+    }
+  };
+
+  const handleCancelPay = async () => {
+    try {
+      await cancelPayBilling(billingId);
+      alert('청구 결제가 취소되었습니다.');
+      fetchBillingDetail();
+    } catch (err) {
+      alert('청구 결제 취소에 실패했습니다.');
+      console.error('Failed to cancel billing payment:', err);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setBillingReq(transformReqData(billingData));
+    setEditable(false);
+  };
+
+  const handleBillingMemoChange = (memo) => {
+    setBillingReq(prev => ({ ...prev, billingMemo: memo }));
+  };
+
+  const handleBillingProductChange = (products) => {
+    setBillingReq(prev => ({ ...prev, billingProducts: products }));
+  };
 
   return (
     <div className='primary-dashboard w-full'>
@@ -129,23 +168,40 @@ const BillingDetailPage = () => {
           billingData={billingData}
           billingReq={billingReq}
           editable={editable}
-          onChange={onBillingMemoChange}
+          onChange={handleBillingMemoChange}
         />
       </div>
 
       <div className='flex flex-col border-b border-ipt_border my-7 mx-4'>
         <BillingDetailProduct
           billingData={billingReq}
+          products={products}
           editable={editable}
-          onChange={onBillingProductChange}
+          onChange={handleBillingProductChange}
+          billingId={billingId}
         />
       </div>
 
       <div className='flex justify-end items-center px-2 pt-1 pb-3'>
         {editable ? (
-          <BillingDetailEditButtons onCancel={onEditCancel} onSave={onEditSave} />
+          <BillingDetailEditButtons onCancel={handleEditCancel} onSave={handleEditSave} />
         ) : (
-          <BillingDetailButtons onEdit={() => setEditable(true)} />
+          <BillingDetailButtons 
+            canUpdate={billingData.canBeUpdated}
+            canDelete={billingData.canBeDeleted}
+            canPay={billingData.canBePaid}
+            canSendInvoice={billingData.canSendInvoice}
+            canCancelInvoice={billingData.canCancelInvoice}
+            canPayCanceled={billingData.canPayCanceled}
+            invoiceSendTime={billingData.invoiceSendDateTime}
+            paidDateTime={billingData.paidDateTime}
+            onEdit={() => setEditable(true)} 
+            onRemove={handleRemove}
+            onSend={handleSend}
+            onCancelSend={handleCancelSend}
+            onPay={handlePay}
+            onCancelPay={handleCancelPay}
+          />
         )}
       </div>
     </div>

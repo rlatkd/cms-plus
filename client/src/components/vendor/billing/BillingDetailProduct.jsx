@@ -14,11 +14,8 @@ const cols = [
   { key: 'removeProduct', label: '', width: 'w-1/12' },
 ];
 
-const BillingDetailProduct = ({ billingData, editable, onChange: onBillingProductsChange }) => {
-  const [prodcuts, setProducts] = useState([]);
-
-  let billingProducts = billingData.billingProducts;
-  const billingId = useParams();
+const BillingDetailProduct = ({ billingData, products, editable, onChange: onBillingProductsChange, billingId }) => {
+  const billingProducts = billingData?.billingProducts || [];
 
   // select field option에는
   // 청구상품 형태로 상품들이 저장된다.
@@ -52,18 +49,6 @@ const BillingDetailProduct = ({ billingData, editable, onChange: onBillingProduc
         label: `${item.name} (${item.price.toLocaleString()}원)`,
       };
     });
-  };
-
-  // 전체 상품 목록
-  const axiosAllProductList = async () => {
-    try {
-      const res = await getAllProductList();
-      console.log('!----청구 상세 - 상품리스트 조회 성공----!'); // 삭제예정
-      console.log(res.data);
-      setProducts(res.data);
-    } catch (err) {
-      console.error('axiosContractDetailBillingList => ', err);
-    }
   };
 
   const calcBillingPrice = mBillingProducts => {
@@ -111,10 +96,6 @@ const BillingDetailProduct = ({ billingData, editable, onChange: onBillingProduc
     ]);
   };
 
-  useEffect(() => {
-    axiosAllProductList();
-  }, []);
-
   return (
     <>
       <div className='flex justify-between mb-5'>
@@ -122,10 +103,10 @@ const BillingDetailProduct = ({ billingData, editable, onChange: onBillingProduc
           <label className={`block text-text_black text-15 font-700 mb-2 ml-2 `}>상품 추가</label>
           <ProductSelectField2
             label={
-              prodcuts[0] &&
-              `${prodcuts[0].productName} (${prodcuts[0].productPrice.toLocaleString()}원)`
+              products[0] &&
+              `${products[0].productName} (${products[0].productPrice.toLocaleString()}원)`
             }
-            options={transformProductToOption(prodcuts)}
+            options={transformProductToOption(products)}
             selectedOptions={transformBillingProductToOption(billingProducts)}
             onChange={handleSelectedProductListChange}
             disabled={!editable}

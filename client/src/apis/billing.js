@@ -25,3 +25,69 @@ export const getBillingDetail = async (billingId) => {
     throw err;
   }
 };
+
+// 청구 수정
+export const updateBilling = async (billingId, billingReq) => {
+  try {
+    const res = await privateAxios.put(`/v1/vendor/billing/${billingId}`, billingReq);
+    return res;
+  } catch (err) {
+    console.log('청구 수정 실패 => ', err.response);
+    throw err;
+  }
+};
+
+// 청구 삭제
+export const deleteBilling = async billingId => {
+  try {
+    const res = await privateAxios.delete(`/v1/vendor/billing/${billingId}`);
+    return res;
+  } catch (err) {
+    console.error('청구 삭제 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 청구서 발송
+export const sendInvoice = async billingId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/billing/invoice/${billingId}`);
+    return res;
+  } catch (err) {
+    console.error('청구서 발송 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 청구서 발송취소
+export const cancelSendInvoice = async billingId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/billing/invoice/cancel/${billingId}`);
+    return res;
+  } catch (err) {
+    console.error('청구서 발송 취소 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 청구 실시간 결제
+export const payBilling = async billingId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/billing/payment/${billingId}`);
+    return res;
+  } catch (err) {
+    console.error('청구서 실시간 결제 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 청구 실시간 결제
+export const cancelPayBilling = async billingId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/billing/payment/${billingId}/cancel`);
+    return res;
+  } catch (err) {
+    console.error('청구서 실시간 결제취소 실패 => ', err.response.data);
+    throw err;
+  }
+};
