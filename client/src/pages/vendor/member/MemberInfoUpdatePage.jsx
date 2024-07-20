@@ -11,7 +11,7 @@ const MemberInfoUpdatePage = () => {
 
   const memberId = useParams();
 
-  // 회원 수정
+  // 기본 정보 수정 API
   const axiosMemberUpdate = async () => {
     try {
       console.log(memberId.id, basicInfo);
@@ -24,7 +24,7 @@ const MemberInfoUpdatePage = () => {
     }
   };
 
-  // 회원 수정 성공 Alert창
+  // 기본정보 수정 성공 Alert창
   const { alert: alertComp } = useContext(AlertContext);
   const onAlertClick = async () => {
     const result = await alertComp('회원정보가 수정되었습니다!');
