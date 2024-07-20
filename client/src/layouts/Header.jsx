@@ -12,7 +12,7 @@ const Header = () => {
     }
   }, [pathname]);
   return (
-    <div ref={mainRef} className='flex h-28 pt-9 pl-9 pb-3'>
+    <div ref={mainRef} className='flex h-[11vh] pt-9 pl-9 pb-3'>
       <BreadCrumb />
     </div>
   );

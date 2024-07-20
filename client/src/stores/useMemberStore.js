@@ -1,24 +1,6 @@
 import { create } from 'zustand';
 
 export const useMemberStore = create(set => ({
-  // <---------- 청구정보 ---------->
-  billingInfo: {
-    invoiceSendMethod: '',
-    autoInvoiceSend: false,
-    autoBilling: false,
-  },
-
-  setBillingInfo: Data => set({ billingInfo: Data }),
-
-  // <---------- 계약정보 ---------->
-  contractCreateReq: {
-    contractName: '',
-    contractStartDate: '',
-    contractEndDate: '',
-    contractDay: '',
-    contractProducts: [],
-  },
-
   // <---------- 결제 정보 - 가상계좌 ---------->
   paymentTypeInfoReq_Virtual: {
     paymentType: 'VIRTUAL',

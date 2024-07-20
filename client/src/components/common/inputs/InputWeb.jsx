@@ -40,18 +40,20 @@ const InputWeb = ({
 
   return (
     <div className={`${classContainer}`}>
-      <label
-        className={`${classLabel} block text-text_black text-15 font-700 mb-2 ml-2 
+      {label && (
+        <label
+          className={`${classLabel} block text-text_black text-15 font-700 mb-2 ml-2 
                     ${required ? "after:ml-1 after:text-red-500 after:content-['*']" : ''}`}
-        htmlFor={id}>
-        {label}
-      </label>
+          htmlFor={id}>
+          {label}
+        </label>
+      )}
       <div className='relative '>
         <input
           ref={inputRef}
           className={`${classInput} placeholder:text-text_grey text-black border
                     ${disabled && 'bg-ipt_disa '} border-ipt_border focus:border-mint focus:outline-none 
-                    focus:ring-mint focus:ring-1 placeholder:text-xs text-sm p-4  rounded-lg w-full`}
+                    focus:ring-mint focus:ring-1 placeholder:text-sm text-sm p-4  rounded-lg w-full`}
           id={id}
           disabled={disabled}
           readOnly={readOnly}

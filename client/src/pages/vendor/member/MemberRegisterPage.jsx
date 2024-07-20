@@ -28,8 +28,8 @@ const MemberRegisterPage = () => {
   };
 
   return (
-    <div className='flex h-full w-full flex-col '>
-      <div className='up-dashboard relative mb-5 h-1/5 w-full'>
+    <>
+      <div className='up-dashboard relative mb-4 w-full h-[18%]'>
         progressivee
         <img
           src='/src/assets/close.svg'
@@ -38,12 +38,12 @@ const MemberRegisterPage = () => {
           onClick={() => navigate(-1)}
         />
       </div>
-      <div className='primary-dashboard flex flex-col pb-9 relative h-4/5 '>
-        <div className='border-b border-ipt_border px-2 pt-1 pb-3'>
+      <div className='primary-dashboard flex flex-col relative h-[80%]'>
+        <div className='border-b border-ipt_border px-2 h-[40px] '>
           <p className='text-text_black text-xl font-800'>{title}</p>
         </div>
         <Content />
-        <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between px-10 py-7 font-bold '>
+        <div className='absolute bottom-0 left-0 flex h-[70px] w-full justify-between px-6 pb-5 font-800 '>
           <PreviousButton
             onClick={handleClickPrevious}
             status={status}
@@ -54,7 +54,7 @@ const MemberRegisterPage = () => {
           <NextButton onClick={handleClickNext} status={status} type={'memberRegister'} end={end} />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

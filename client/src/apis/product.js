@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { privateAxios, publicAxios, testAxios } from '.';
 
-
 // 상품 등록
 export const createProduct = async productData => {
   try {
@@ -58,6 +57,16 @@ export const deleteProduct = async productId => {
   } catch (err) {
     console.error('상품 삭제 실패 => ', err.response.data);
     throw err;
+  }
+};
+
+// 상품 목록 조회 임시
+export const getProductListTmp = async () => {
+  try {
+    const res = await privateAxios.get('/v1/vendor/product/tmp');
+    return res;
+  } catch (err) {
+    console.error(' 상품 목록 조회 임시 => ', err.response.data);
   }
 };
 
