@@ -1,33 +1,34 @@
-import InputWeb from "@/components/common/inputs/InputWeb";
+import InputWeb from '@/components/common/inputs/InputWeb';
+import { formatPhone } from '@/utils/formatPhone';
 
-const BillingDetailMember = () => {
+const BillingDetailMember = ({ billingData }) => {
   return (
-    <div className='flex flex-col border-b border-ipt_border my-5 mx-4'>
-        <p className='text-text_black text-xl font-800'>회원정보</p>
-        <div className="grid grid-cols-3 gap-4 my-8">
+    <>
+      <p className='text-text_black text-xl font-800'>회원정보</p>
+      <div className='grid grid-cols-4 gap-6 my-8'>
         <InputWeb
           id='memberId'
           label='회원번호'
-          value='00111'
+          value={String(billingData.memberId).padStart(8, '0')}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='memberName'
           label='회원명'
-          value='박민석'
+          value={billingData.memberName}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='memberPhone'
           label='휴대전화'
-          value='010-1234-5678'
+          value={formatPhone(billingData.memberPhone)}
           type='text'
           disabled={true}
         />
       </div>
-  </div>
+    </>
   );
 };
 

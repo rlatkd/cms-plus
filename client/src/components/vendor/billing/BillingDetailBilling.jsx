@@ -1,52 +1,48 @@
 import InputWeb from "@/components/common/inputs/InputWeb";
 import TextArea from "@/components/common/inputs/TextArea";
+import { formatId } from "@/utils/formatId";
 
-const BillingDetailBilling = () => {
+const BillingDetailBilling = ({ billingData, billingReq, editable, onChange: onBillingMemoChange, onBillingDateChange }) => {
   return (
-    <div className='flex flex-col border-ipt_border mx-4'>
+    <>
       <p className='text-text_black text-xl font-800'>청구정보</p>
-      <div className='grid grid-cols-3 gap-4 my-5'>
+      <div className='grid grid-cols-4 gap-6 my-5'>
         <InputWeb 
             id='billingId' 
             label='청구번호' 
-            value='00111' 
+            value={formatId(billingData.billingId)}
             type='text' 
             disabled={true} 
         />
         <InputWeb
             id='invoiceName' 
             label='청구서명' 
-            value='2024년 07월 청구서' 
+            value={billingData.billingName}
             type='text' 
             disabled={true} 
         />
-        <InputWeb 
-            id='createdDateTime' 
-            label='청구생성일' 
-            value='2024-07-01' 
-            type='text' 
-            disabled={true} 
-        />
-      </div>
-      <div className='grid grid-cols-3 gap-4 my-5'>
+        {/* TODO 달력 */}
         <InputWeb
             id='billingDate' 
             label='결제일' 
-            value='2024-01-11' 
+            value={billingReq.billingDate}
             type='text' 
-            disabled={true} 
+            disabled={!editable}
+            onChange={e => onBillingDateChange(e.target.value)} 
         />
+      </div>
+      <div className='grid grid-cols-4 gap-6 my-5'>
         <InputWeb 
             id='billingStatus' 
             label='수납상태' 
-            value='완납' 
+            value={billingData.billingStatus.title}
             type='text' 
             disabled={true} 
         />
         <InputWeb 
             id='billingType' 
             label='청구타입' 
-            value='추가청구' 
+            value={billingData.billingType.title} 
             type='text' 
             disabled={true} 
         />
@@ -54,12 +50,13 @@ const BillingDetailBilling = () => {
       <TextArea 
         id='billingMemo'
         label='청구서 메시지'
-        value='감사합니다.'
-        disabled={true}
+        value={billingReq.billingMemo}
+        disabled={!editable}
         classContainer='my-5 w-1/2'
         classTextarea='w-1/2 h-48'
+        onChange={e => onBillingMemoChange(e.target.value)}
       />
-    </div>
+    </>
   );
 };
 
