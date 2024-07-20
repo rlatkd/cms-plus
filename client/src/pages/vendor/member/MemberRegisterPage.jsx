@@ -29,21 +29,21 @@ const MemberRegisterPage = () => {
 
   return (
     <>
-      <div className='up-dashboard relative mb-4 w-full h-[18%]'>
+      <div className='up-dashboard relative mb-4 w-full desktop:h-[18%]'>
         progressivee
         <img
           src='/src/assets/close.svg'
           alt='back'
-          className='absolute right-6 top-6 cursor-pointer'
+          className='absolute right-6 top-6 cursor-pointer w-4 h-4'
           onClick={() => navigate(-1)}
         />
       </div>
-      <div className='primary-dashboard flex flex-col relative h-[80%]'>
-        <div className='border-b border-ipt_border px-2 h-[40px] '>
+      <div className='primary-dashboard flex flex-col relative h-[1000px] large_desktop:h-[80%] '>
+        <div className='flex items-center h-[50px] px-2 pb-[10px] border-b border-ipt_border'>
           <p className='text-text_black text-xl font-800'>{title}</p>
         </div>
         <Content />
-        <div className='absolute bottom-0 left-0 flex h-[70px] w-full justify-between px-6 pb-5 font-800 '>
+        <div className='absolute bottom-0 left-0 flex h-[70px] w-full justify-between px-7 pb-5 font-800 text-lg '>
           <PreviousButton
             onClick={handleClickPrevious}
             status={status}

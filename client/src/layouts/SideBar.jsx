@@ -9,7 +9,7 @@ const SideBar = () => {
   const { sideBarMenus, toggle } = useSideBarActiveStore();
 
   return (
-    <div className='hidden h-full w-72 py-6 pl-4 mr-4 sticky desktop:block desktop:animate-slideIn '>
+    <div className='hidden h-full w-72  py-6 pl-4 mr-4 sticky desktop:block desktop:animate-slideIn '>
       <div
         className='mb-7 ml-3 mt-3 flex items-center cursor-pointer'
         onClick={() => navigate('/vendor/dashboard')}>

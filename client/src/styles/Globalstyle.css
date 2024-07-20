@@ -39,8 +39,12 @@
     border-image-slice: 1;
   }
 
+  .table-dashboard {
+    @apply rounded-xl bg-white px-7 pt-6 pb-3 shadow-dash-board;
+  }
+
   .primary-dashboard {
-    @apply rounded-xl bg-white px-6 pt-6 pb-3 shadow-dash-board;
+    @apply rounded-xl bg-white px-7 py-[20px] shadow-dash-board;
   }
 
   .sub-dashboard {

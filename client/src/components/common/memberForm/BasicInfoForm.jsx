@@ -8,7 +8,6 @@ import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 const BasicInfoForm = ({ formType }) => {
   const { basicInfo, resetBasicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
 
-  // 사용자 입력값
   const handleChangeValue = e => {
     const { id, value } = e.target;
 
@@ -27,21 +26,21 @@ const BasicInfoForm = ({ formType }) => {
     }
   };
 
-  // 공백입력 막기
+  // <--------공백입력 불가-------->
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
   };
 
-  // formType : DETAIL일 경우 입력창 비활성화
+  // <--------formType : DETAIL일 경우 입력창 비활성화-------->
   const isDisabled = formType === 'DETAIL';
 
-  // formType : CREATE일 경우 basicInfo를 reset
+  // <--------formType : CREATE일 경우 basicInfo를 reset-------->
   useEffect(() => {
     if (formType === 'CREATE') resetBasicInfo();
   }, []);
 
   return (
-    <div className='flex h-full p-5'>
+    <div className='flex flex-col pt-5 px-2 desktop:flex-row desktop:h-[calc(100%-80px)] extra_desktop:h-[550px]'>
       <div className='flex flex-col justify-between flex-1 '>
         <InputWeb
           id='memberName'
@@ -98,7 +97,7 @@ const BasicInfoForm = ({ formType }) => {
           onKeyDown={handleKeyDown}
         />
       </div>
-      <div className='flex-1 ml-10'>
+      <div className='flex-1 desktop:ml-10'>
         <div className='flex items-end mb-5'>
           <InputWeb
             id='zipcode'

@@ -84,7 +84,7 @@ const ContractInfoForm = ({ formType }) => {
   }, []);
 
   return (
-    <div className='flex flex-col h-[calc(100%-110px)] px-3 pt-5 '>
+    <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>
       <div className='flex justify-between w-full mb-5 '>
         <ProductSelectFieldcopy
           label='상품추가'
@@ -108,7 +108,7 @@ const ContractInfoForm = ({ formType }) => {
         />
       </div>
 
-      <div className='relative flex flex-col h-full text-text_black overflow-y-auto scrollbar-custom '>
+      <div className='relative flex flex-col h-full text-text_black overflow-y-scroll scrollbar-custom border-b border-ipt_border ml-2'>
         <div className='sticky top-0 flex justify-between bg-white text-text_black font-800 border-b border-ipt_border pb-3'>
           <span className='w-1/5 text-center'>상품명</span>
           <span className='w-1/12 text-center'>상품금액</span>

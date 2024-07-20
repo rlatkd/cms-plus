@@ -6,13 +6,16 @@ const Header = () => {
   const { pathname } = useLocation();
   const mainRef = useRef(null);
 
+  // <--------라우팅 시 페이지 상단고정-------->
   useEffect(() => {
     if (mainRef.current) {
       mainRef.current.scrollIntoView();
     }
   }, [pathname]);
   return (
-    <div ref={mainRef} className='flex h-[11vh] pt-9 pl-9 pb-3'>
+    <div
+      ref={mainRef}
+      className='flex pt-9 pl-9 pb-3 h-[20%] desktop:h-[11vh] extra_desktop:h-[8vh]'>
       <BreadCrumb />
     </div>
   );
