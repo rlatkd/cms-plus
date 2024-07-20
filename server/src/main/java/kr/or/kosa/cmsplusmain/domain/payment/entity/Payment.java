@@ -65,6 +65,6 @@ public class Payment extends BaseEntity {
 	* */
 	public boolean canCancel() {
 		return paymentType == PaymentType.BUYER
-			|| paymentMethod.getCanCancel();
+			|| (paymentMethod != null && paymentMethod.getCanCancel());
 	}
 }

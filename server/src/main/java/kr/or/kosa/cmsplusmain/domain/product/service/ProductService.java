@@ -66,6 +66,20 @@ public class ProductService {
         return ProductDetailRes.fromEntity(product, contractNum);
     }
 
+    public List<ProductDto> getAllProducts(Long vendorId) {
+        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId).stream()
+            .map(ProductDto::fromEntity)
+            .toList();
+    }
+
+    @Deprecated
+    public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
+        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
+            .stream()
+            .map(product -> ProductListItemRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
+            .collect(Collectors.toList());
+    }
+
     /*
      * 상품 수정
      * */
@@ -92,13 +106,6 @@ public class ProductService {
         if (!productCustomRepository.isExistProductByUsername(productId, vendorId)) {
             throw new IllegalArgumentException("Not Owner");
         }
-    }
-
-    public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
-        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
-                .stream()
-                .map(product -> ProductListItemRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
-                .collect(Collectors.toList());
     }
 
 }
