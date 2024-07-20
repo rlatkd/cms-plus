@@ -23,7 +23,7 @@ const ProductSelectFieldcopy = ({
   const toggleOption = product => {
     const newSelectedOptions = selectedOptions.find(p => p.productId === product.productId)
       ? selectedOptions.filter(p => p.productId !== product.productId)
-      : [...selectedOptions, { ...product, quantity: 1 }];
+      : [{ ...product, quantity: 1 }, ...selectedOptions];
     onChange(newSelectedOptions);
   };
 

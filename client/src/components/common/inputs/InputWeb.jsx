@@ -1,5 +1,7 @@
 import Search from '@/assets/Search';
 import { useRef, useState } from 'react';
+import calender from '@/assets/calender.svg';
+import DatePicker from './DatePicker';
 
 const InputWeb = ({
   id,
@@ -15,9 +17,11 @@ const InputWeb = ({
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const inputRef = useRef(null);
 
-  // 비밀번호 표시 여부
+  // <------ 비밀번호 표시 여부 ------>
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
     if (inputRef.current) {
@@ -25,8 +29,8 @@ const InputWeb = ({
     }
   };
 
-  // 주소 찾기 입력창
-  const handleAddressSearch = () => {
+  // <------ 주소 찾기 입력창 ------>
+  const handleSearchAddress = () => {
     if (disabled) return;
     new window.daum.Postcode({
       oncomplete: function (data) {
@@ -36,6 +40,11 @@ const InputWeb = ({
       width: '100%',
       height: '100%',
     }).open();
+  };
+
+  // <------ DatePicker 열기/닫기 ------>
+  const handleToggleCalendar = () => {
+    setIsCalendarOpen(!isCalendarOpen);
   };
 
   return (
@@ -70,10 +79,30 @@ const InputWeb = ({
           />
         )}
         {type === 'address' && (
-          <div onClick={handleAddressSearch}>
+          <div onClick={handleSearchAddress}>
             <Search
               classSearch='absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer w-6 h-6'
               fill={'#C7CCD0'}
+            />
+          </div>
+        )}
+        {type === 'calendar' && (
+          <div onClick={handleToggleCalendar}>
+            <button
+              className='absolute right-2 top-1/2 transform -translate-y-1/2'
+              onClick={() => {
+                setSelectedDate('');
+                setIsCalendarOpen(!isCalendarOpen);
+              }}>
+              <img src={calender} alt='search' className='w-5 h-5' />
+            </button>
+            <DatePicker
+              selectedDate={selectedDate}
+              onDateChange={date => {
+                setSelectedDate(date);
+              }}
+              isOpen={isCalendarOpen}
+              onToggle={() => setIsCalendarOpen(!isCalendarOpen)}
             />
           </div>
         )}

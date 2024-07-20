@@ -32,7 +32,7 @@ const BillingInfoUpdatePage = () => {
     <>
       <div className='up-dashboard relative mb-4 w-full desktop:h-[18%]'>progressivee</div>
       <div className='primary-dashboard flex flex-col relative h-[1000px] large_desktop:h-[80%] '>
-        <div className='flex items-center h-[50px] px-2 pb-[10px] border-b border-ipt_border'>
+        <div className='flex items-center h-[50px] px-2 pb-[10px] '>
           <p className='text-text_black text-xl font-800'>기본정보</p>
         </div>
         <BillingInfoForm formType='UPDATE' />

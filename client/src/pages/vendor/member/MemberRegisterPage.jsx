@@ -39,7 +39,7 @@ const MemberRegisterPage = () => {
         />
       </div>
       <div className='primary-dashboard flex flex-col relative h-[1000px] large_desktop:h-[80%] '>
-        <div className='flex items-center h-[50px] px-2 pb-[10px] border-b border-ipt_border'>
+        <div className='flex items-center h-[50px] px-2 pb-[10px] '>
           <p className='text-text_black text-xl font-800'>{title}</p>
         </div>
         <Content />

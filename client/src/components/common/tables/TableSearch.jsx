@@ -2,7 +2,8 @@ import searchIcon from '@/assets/search.svg';
 import calender from '@/assets/calender.svg';
 import triangle from '@/assets/triangle.svg';
 import { useState } from 'react';
-import DatePicker from '../inputs/DatePicker';
+import DatePicker from '@/components/common/inputs/DatePicker';
+import Arrow from '@/assets/Arrow';
 
 const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
   const [selectedDate, setSelectedDate] = useState('');
@@ -34,13 +35,9 @@ const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
                     </option>
                   ))}
               </select>
+
               <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text_grey'>
-                <svg
-                  className='fill-text_grey h-6 w-6'
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 20 20'>
-                  <path d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' />
-                </svg>
+                <Arrow fill='#7B809A' />
               </div>
             </div>
           ) : searchItem.type === 'calendar' ? (

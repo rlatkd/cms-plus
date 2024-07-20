@@ -15,7 +15,7 @@ const Header = () => {
   return (
     <div
       ref={mainRef}
-      className='flex pt-9 pl-9 pb-3 h-[20%] desktop:h-[11vh] extra_desktop:h-[8vh]'>
+      className='flex pt-9 pl-9 pb-3 h-[20%] desktop:h-[11vh] extra_desktop:h-[10vh] '>
       <BreadCrumb />
     </div>
   );
