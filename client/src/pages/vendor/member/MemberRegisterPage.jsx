@@ -43,7 +43,7 @@ const MemberRegisterPage = () => {
           <p className='text-text_black text-xl font-800'>{title}</p>
         </div>
         <Content />
-        <div className='absolute bottom-0 left-0 flex h-[70px] w-full justify-between px-7 pb-5 font-800 text-lg '>
+        <div className='absolute bottom-0 left-0 flex h-[65px] w-full justify-between px-7 pb-5 font-800 text-lg '>
           <PreviousButton
             onClick={handleClickPrevious}
             status={status}

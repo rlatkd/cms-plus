@@ -1,10 +1,10 @@
+import BillingInfoForm from '@/components/common/memberForm/BillingInfoForm';
+
 const RegisterBillingInfo = () => {
   return (
-    <div>
-      RegisterBillingInfo
-      <br />
-      회원 등록 청구정보
-    </div>
+    <>
+      <BillingInfoForm formType='CREATE' />
+    </>
   );
 };
 

@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import InputWeb from '../inputs/InputWeb';
+import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
-import ProductSelectFieldcopy from '../selects/ProductSelectFieldcopy';
+import ProductSelectFieldcopy from '@/components/common/selects/ProductSelectFieldcopy';
 import Remove from '@/assets/Remove';
 import { getProductListTmp } from '@/apis/product';
-import Trash from '@/assets/Trash';
 
 // formType : CREATE, UPDATE
 const ContractInfoForm = ({ formType }) => {
@@ -24,6 +23,7 @@ const ContractInfoForm = ({ formType }) => {
   };
 
   const options = createOptions(productList, 'productName');
+  console.log(options);
 
   // <--------상품 목록을 contractProducts형식으로 변환-------->
   const mapContractProducts = products => {
@@ -74,7 +74,7 @@ const ContractInfoForm = ({ formType }) => {
     }
   };
 
-  // formType : CREATE일 경우 contractInfo를 reset
+  // <--------formType : CREATE일 경우 contractInfo를 reset-------->
   useEffect(() => {
     if (formType === 'CREATE') resetContractInfo();
   }, []);

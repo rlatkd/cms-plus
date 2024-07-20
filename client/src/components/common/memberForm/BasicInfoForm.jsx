@@ -26,15 +26,15 @@ const BasicInfoForm = ({ formType }) => {
     }
   };
 
-  // <--------공백입력 불가-------->
+  // <------ 공백입력 불가 ------>
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
   };
 
-  // <--------formType : DETAIL일 경우 입력창 비활성화-------->
+  // <------ formType : DETAIL일 경우 입력창 비활성화 ------>
   const isDisabled = formType === 'DETAIL';
 
-  // <--------formType : CREATE일 경우 basicInfo를 reset-------->
+  // <------ formType : CREATE일 경우 reset ------>
   useEffect(() => {
     if (formType === 'CREATE') resetBasicInfo();
   }, []);

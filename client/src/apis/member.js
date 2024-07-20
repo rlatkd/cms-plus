@@ -76,8 +76,8 @@ export const getMemberDetailContractList = async (memberId, searchParams = {}) =
   }
 };
 
-// 회원 수정
-export const updateMember = async (memberId, memberData) => {
+// 회원 수정 - 기본 정보
+export const updateMemberBaic = async (memberId, memberData) => {
   try {
     const res = await privateAxios.put(`/v1/vendor/management/members/${memberId}`, memberData);
     return res;

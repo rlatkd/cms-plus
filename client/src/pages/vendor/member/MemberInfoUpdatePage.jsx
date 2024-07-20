@@ -1,25 +1,25 @@
-import { updateMember } from '@/apis/member';
+import { updateMemberBaic } from '@/apis/member';
 import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
-import { useMemberStore } from '@/stores/useMemberStore';
+import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const MemberInfoUpdatePage = () => {
-  const { basicInfo } = useMemberStore();
+  const { basicInfo } = useMemberBasicStore();
   const navigate = useNavigate();
 
   const memberId = useParams();
 
   // <--------기본 정보 수정 API-------->
-  const axiosMemberUpdate = async () => {
+  const axiosUpdateMemberBasic = async () => {
     try {
-      await updateMember(memberId.id, basicInfo);
-      console.log('!----회원 수정 성공----!'); // 삭제예정
+      await updateMemberBaic(memberId.id, basicInfo);
+      console.log('!----기본정보 수정 성공----!'); // 삭제예정
       await navigate(`/vendor/members/detail/${memberId.id}`);
       onAlertClick();
     } catch (err) {
-      console.error('axiosMemberUpdate => ', err.response.data);
+      console.error('axiosUpdateMemberBasic => ', err.response.data);
     }
   };
 
@@ -37,15 +37,15 @@ const MemberInfoUpdatePage = () => {
           <p className='text-text_black text-xl font-800'>기본정보</p>
         </div>
         <BasicInfoForm formType='UPDATE' />
-        <div className='absolute bottom-0 left-0 flex h-[70px] w-full justify-end px-7 pb-5 font-800 text-lg '>
+        <div className='absolute bottom-0 left-0 flex h-[65px] w-full justify-end px-7 pb-5 font-800 text-lg '>
           <button
-            className=' px-10 py-2 border border-mint rounded-xl text-mint'
+            className=' px-10 py-2 border border-mint rounded-lg text-mint'
             onClick={() => navigate(-1)}>
             취소
           </button>
           <button
-            className=' px-10 py-2 bg-mint rounded-xl text-white transition-all duration-200 hover:bg-mint_hover ml-3'
-            onClick={axiosMemberUpdate}>
+            className=' px-10 py-2 bg-mint rounded-lg text-white transition-all duration-200 hover:bg-mint_hover ml-3'
+            onClick={axiosUpdateMemberBasic}>
             저장
           </button>
         </div>
