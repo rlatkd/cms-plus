@@ -30,22 +30,10 @@ import java.util.ArrayList;
 @Slf4j
 public class MessagingService {
 
-    @Value("${sms.key}")
-    private String smsKey;
-    @Value("${sms.secret}")
-    private String smsSecret;
-    @Value("${sms.domain}")
-    private String smsDomain;
     @Value("${sms.phone}")
     private String smsPhone;
 
-    private DefaultMessageService messageService; // coolsms
-
-    // 의존성 주입 후 초기화 - bean이 여러번 초기화되는 것을 방지
-    @PostConstruct
-    public void init() { // 최초에 쿨에스엠에스 서비스에 내 정보를 매핑시켜야함
-        this.messageService = new DefaultMessageService(smsKey, smsSecret, smsDomain);
-    }
+    private final DefaultMessageService messageService; // coolsms
 
     // 컨트롤러에서 호출할 메서드
 //    public void sendSms(List<MessageDto> messages) {

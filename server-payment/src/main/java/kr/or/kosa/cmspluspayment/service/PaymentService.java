@@ -19,24 +19,28 @@ public class PaymentService {
 
     @Value("${kafkaTopic.paymentResultTopic}")
     private String paymentResultTopic;
-    private final KafkaTemplate<String, PaymentResultDto> kafkaTemplate;
+    private final KafkaTemplate<String, PaymentResultDto> paymentResultKafkaTemplate;
+
+    public void producePaymentResult(PaymentResultDto paymentResultDto) {
+        paymentResultKafkaTemplate.send(paymentResultTopic, paymentResultDto);
+    }
 
     // 결제서버<-메인서버; 결제정보 받음
     @KafkaListener(topics = "payment-topic", groupId = "payment-group", containerFactory = "kafkaListenerContainerFactory")
     public void consumeMessage(ConsumerRecord<String, PaymentDto> consumerRecord) {
         PaymentDto paymentDto = consumerRecord.value(); // 받은 결제정보 데이터
         PaymentResultDto paymentResultDto = new PaymentResultDto(); // 보낼 결제결과 데이터
+        paymentResultDto.setBillingId(paymentDto.getBillingId());
+        paymentResultDto.setPhoneNumber(paymentDto.getPhoneNumber());
         try {
             if (Long.parseLong(paymentDto.getNumber()) % 2 == 0) { // Long; 계좌/카드 번호 길어지면 integer로 변환 에러남
-                paymentResultDto.setBillingId(paymentDto.getBillingId());
-                paymentResultDto.setResult(true);
-                log.error("유효한 결제");
-                kafkaTemplate.send(paymentResultTopic, paymentResultDto); // 결제서버->메인서버; 결제결과 전달
+                paymentResultDto.setResult("결제성공");
+                log.error("결제성공");
             } else {
-                // 청구 상태 로직을 보면, 우린 결제 성공만 생각하면 됨
-                // paymentResultDto.setResult(false);
-                log.error("유효하지 않은 결제");
+                paymentResultDto.setResult("결제실패");
+                log.error("결제실패");
             }
+            producePaymentResult(paymentResultDto); // 결제서버->메인서버; 결제결과 전달
         } catch (Exception e) {
             e.printStackTrace();
         }

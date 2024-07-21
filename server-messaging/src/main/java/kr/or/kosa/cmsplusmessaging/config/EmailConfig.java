@@ -13,8 +13,10 @@ public class EmailConfig {
 
     @Value("${email.emailAddress}")
     private String emailAddress;
+
     @Value("${email.password}")
     private String password;
+
     @Value("${email.username}")
     private String username;
 

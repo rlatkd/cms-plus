@@ -14,10 +14,11 @@ public class KafkaMessagingService {
 
 	@Value("${kafkaTopic.messagingTopic}")
 	private String messagingTopic;
-	private final KafkaTemplate<String, MessageDto> kafkaTemplate;
+
+	private final KafkaTemplate<String, MessageDto> messagingkafkaTemplate;
 
 	public void produceMessaging(MessageDto messageDto) {
-		kafkaTemplate.send(messagingTopic, messageDto);
+		messagingkafkaTemplate.send(messagingTopic, messageDto);
 	}
 
 }
