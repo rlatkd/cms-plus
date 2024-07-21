@@ -39,7 +39,7 @@ const ProductSelectFieldcopy = ({
         className={`${classButton} text-text_grey border border-ipt_border focus:ring-1 focus:outline-none focus:ring-mint focus:border-mint_hover font-400 rounded-lg text-sm p-4 text-center flex items-center justify-between`}
         type='button'>
         {placeholder}
-        <Arrow fill='#7B809A' />
+        <Arrow fill='#C7CCD0' />
       </button>
 
       {isOpen && (

@@ -11,11 +11,7 @@ const BasicInfoForm = ({ formType }) => {
   const handleChangeValue = e => {
     const { id, value } = e.target;
 
-    if (id === 'zipcode' || id === 'address' || id === 'addressDetail') {
-      setAddressInfoItem({
-        [id]: value,
-      });
-    } else if (id === 'memberPhone' || id === 'memberHomePhone') {
+    if (id === 'memberPhone' || id === 'memberHomePhone') {
       setBasicInfoItem({
         [id]: removeDashes(value === '' ? '' : value),
       });
@@ -24,6 +20,13 @@ const BasicInfoForm = ({ formType }) => {
         [id]: value === '' ? '' : value,
       });
     }
+  };
+
+  // <------ 주소 필드 입력값 변경 ------>
+  const handleChangeAddress = (id, value) => {
+    setAddressInfoItem({
+      [id]: value,
+    });
   };
 
   // TODO
@@ -110,7 +113,7 @@ const BasicInfoForm = ({ formType }) => {
             classContainer='mr-5'
             disabled={isDisabled}
             readOnly
-            onChange={handleChangeValue}
+            handleChangeAddress={handleChangeAddress}
           />
           <InputWeb
             id='address'
@@ -120,7 +123,7 @@ const BasicInfoForm = ({ formType }) => {
             disabled={isDisabled}
             classContainer='w-full'
             readOnly
-            onChange={handleChangeValue}
+            onChange={handleChangeAddress}
           />
         </div>
         <InputWeb
@@ -131,9 +134,8 @@ const BasicInfoForm = ({ formType }) => {
           value={basicInfo.memberAddress.addressDetail}
           disabled={isDisabled}
           classContainer='mb-3'
-          onChange={handleChangeValue}
+          onChange={e => handleChangeAddress(e.target.id, e.target.value)}
         />
-
         <TextArea
           id='memberMemo'
           label='메모'

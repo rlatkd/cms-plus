@@ -70,7 +70,7 @@ const ContractInfoForm = ({ formType }) => {
 
   return (
     <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>
-      <div className='flex justify-between w-full mb-5 '>
+      <div className='flex justify-between w-1/2 mb-5 '>
         <ProductSelectFieldcopy
           label='상품추가'
           placeholder='상품을 선택해주세요.'
@@ -78,7 +78,7 @@ const ContractInfoForm = ({ formType }) => {
           options={options}
           onChange={handleProductChange}
           selectedOptions={contractInfo.contractProducts}
-          classContainer='flex-1 mr-7 w-'
+          classContainer='w-2/5 mr-8'
           classButton='w-full'
         />
         <InputWeb
@@ -87,7 +87,7 @@ const ContractInfoForm = ({ formType }) => {
           placeholder='계약정보명( 최대 20자 )'
           type='text'
           required
-          classContainer='flex-1'
+          classContainer='w-3/5'
           value={contractInfo.contractName}
           onChange={handleChangeValue}
         />

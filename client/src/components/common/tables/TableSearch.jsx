@@ -37,7 +37,7 @@ const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
               </select>
 
               <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text_grey'>
-                <Arrow fill='#7B809A' />
+                <Arrow fill='#7B809A' tabIndex='-1' />
               </div>
             </div>
           ) : searchItem.type === 'calendar' ? (
@@ -56,7 +56,8 @@ const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
                   setSelectedDate('');
                   handleChangeSearch(searchItem.key, '');
                   setIsCalendarOpen(!isCalendarOpen);
-                }}>
+                }}
+                tabIndex='-1'>
                 <img src={calender} alt='search' className='w-5 h-5' />
               </button>
 
@@ -82,7 +83,8 @@ const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
 
               <button
                 className='absolute right-2 top-1/2 transform -translate-y-1/2'
-                onClick={handleClickSearch}>
+                onClick={handleClickSearch}
+                tabIndex='-1'>
                 <img
                   src={searchItem.type === 'text' ? searchIcon : triangle}
                   alt='search'

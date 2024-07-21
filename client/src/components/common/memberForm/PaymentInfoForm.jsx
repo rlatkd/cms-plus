@@ -29,6 +29,8 @@ const PaymentInfoForm = ({ formType }) => {
 
   const handleChangeContractInfo = e => {
     const { id, value } = e.target;
+    console.log('id : ', id);
+    console.log('value : ', value);
     setContractInfoItem({ [id]: value });
   };
 

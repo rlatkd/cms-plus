@@ -46,7 +46,6 @@ const DatePicker = ({ selectedDate, onDateChange, isOpen, onToggle }) => {
 
   const handleDateClick = day => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    console.log(newDate);
     onDateChange(newDate);
     onToggle();
   };
