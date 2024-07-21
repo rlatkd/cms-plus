@@ -25,9 +25,6 @@ public class KafkaPaymentService {
     @Value("${kafkaTopic.paymentTopic}")
     private String paymentTopic;
 
-    @Value("${kafkaTopic.paymentResultTopic}")
-    private String paymentResultTopic;
-
     @Value("${kafkaTopic.messagingTopic}")
     private String messagingTopic;
 
@@ -35,12 +32,12 @@ public class KafkaPaymentService {
     private final KafkaTemplate<String, MessageDto> messagingKafkaTemplate;
     private final BillingRepository billingRepository;
 
-
     // 메인서버->결제서버; 결제정보 전달
     public void producePayment(PaymentDto paymentDto) {
         paymentKafkaTemplate.send(paymentTopic, paymentDto);
     }
 
+    // 메인서버->메시징서버; 결제결과문자 전달
     public void produceMessaging(MessageDto messageDto) {
         messagingKafkaTemplate.send(messagingTopic, messageDto);
     }
@@ -56,13 +53,11 @@ public class KafkaPaymentService {
         try {
             if (paymentResultDto.getResult().equals("결제성공")) {
                 billing.setPaid(); // 결제결과가 성공이면 청구상태를 결제완료로 바꿈
-                produceMessaging(messageDto);
                 log.error("결제성공");
-
             } else {
-                produceMessaging(messageDto);
                 log.error("결제실패");
             }
+            produceMessaging(messageDto); // 메인서버->메시징서버; 결제결과문자 전달
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
         }
