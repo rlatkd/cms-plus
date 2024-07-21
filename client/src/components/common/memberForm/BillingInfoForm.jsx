@@ -3,7 +3,6 @@ import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import { formatPhone } from '@/utils/formatPhone';
 import RadioGroup from '@/components/common//inputs/RadioGroup';
 import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
-import { useEffect } from 'react';
 
 const invoiceSendMethods = [
   { label: '휴대전화', value: 'SMS' },
@@ -20,16 +19,12 @@ const autoBillings = [
 
 const BillingInfoForm = ({ formType }) => {
   const { basicInfo } = useMemberBasicStore();
-  const { billingInfo, setBillingInfoItem, resetBillingInfo } = useMemberBillingStore();
+  const { billingInfo, setBillingInfoItem } = useMemberBillingStore();
 
+  // <------ Radio 원하는 선택지 서택 ------>
   const handleChangeValue = (value, name) => {
     setBillingInfoItem({ [name]: value });
   };
-
-  // <------ formType : CREATE일 경우 reset ------>
-  useEffect(() => {
-    if (formType === 'CREATE') resetBillingInfo();
-  }, []);
 
   return (
     <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>

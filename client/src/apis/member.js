@@ -1,7 +1,7 @@
 import { privateAxios } from '.';
 
 // 회원 등록
-export const createMember = async memberData => {
+export const postCreateMember = async memberData => {
   try {
     const res = await privateAxios.post('/v1/vendor/management/members', memberData);
     return res;

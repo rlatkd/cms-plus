@@ -14,9 +14,11 @@ const PaymentType = [
 
 const contractDays = [...Array(31)].map((_, i) => ({ value: i + 1, label: `${i + 1}일` }));
 
-const RegisterPaymentInfo = () => {
+// formType : CREATE, UPDATE
+const RegisterPaymentInfo = ({ formType }) => {
   const [selectedPaymentType, setSelectedPaymentType] = useState('AUTO');
 
+  // <------ 인풋 필드 입력값 변경 ------>
   const handleChangeValue = value => {
     setSelectedPaymentType(value);
   };
@@ -25,15 +27,18 @@ const RegisterPaymentInfo = () => {
   const renderPaymentTypeForm = () => {
     switch (selectedPaymentType) {
       case 'AUTO':
-        return <AutoTypeForm paymentType={selectedPaymentType} />;
+        return <AutoTypeForm paymentType={selectedPaymentType} formType={formType} />;
       case 'BUYER':
-        return <BuyerTypeForm paymentType={selectedPaymentType} />;
+        return <BuyerTypeForm paymentType={selectedPaymentType} formType={formType} />;
       case 'VIRTUAL':
-        return <VirtualAccountTypeForm paymentType={selectedPaymentType} />;
+        return <VirtualAccountTypeForm paymentType={selectedPaymentType} formType={formType} />;
       default:
         return null;
     }
   };
+
+  // TODO
+  // 최종적으로 선택한 결제방식, 수단으로 회원 등록이 진행된다는 알림문구 하나 있으면 좋을 듯
 
   return (
     <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>
@@ -49,12 +54,15 @@ const RegisterPaymentInfo = () => {
         />
         <SelectField
           label='약정일'
-          classContainer=' mx-8'
+          classContainer=' mx-6'
           classLabel='text-15 text-text_black font-700'
           classSelect='py-3 pr-40 rounded-lg'
           required
           options={contractDays}
         />
+
+        {/* TODO */}
+        {/* 데이터 피커로 변경 */}
         <div className='relative flex justify-center '>
           <InputWeb
             id='contractStartDate'
@@ -75,7 +83,7 @@ const RegisterPaymentInfo = () => {
           />
         </div>
       </div>
-      <div className='border border-red-400 '>{renderPaymentTypeForm()}</div>
+      <div>{renderPaymentTypeForm()}</div>
     </div>
   );
 };

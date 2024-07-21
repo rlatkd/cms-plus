@@ -1,13 +1,14 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import TextArea from '../inputs/TextArea';
 import { formatPhone, removeDashes } from '@/utils/formatPhone';
-import { useEffect } from 'react';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 
 // formType : CREATE, UPDATE, DETAIL
 const BasicInfoForm = ({ formType }) => {
-  const { basicInfo, resetBasicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
+  console.log(formType);
+  const { basicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
 
+  // <------ 인풋 필드 입력값 변경 ------>
   const handleChangeValue = e => {
     const { id, value } = e.target;
 
@@ -17,14 +18,17 @@ const BasicInfoForm = ({ formType }) => {
       });
     } else if (id === 'memberPhone' || id === 'memberHomePhone') {
       setBasicInfoItem({
-        [id]: removeDashes(value === '' ? null : value),
+        [id]: removeDashes(value === '' ? '' : value),
       });
     } else {
       setBasicInfoItem({
-        [id]: value === '' ? null : value,
+        [id]: value === '' ? '' : value,
       });
     }
   };
+
+  // TODO
+  // <------ 정규표현식 예외처리 ------>
 
   // <------ 공백입력 불가 ------>
   const handleKeyDown = e => {
@@ -34,13 +38,8 @@ const BasicInfoForm = ({ formType }) => {
   // <------ formType : DETAIL일 경우 입력창 비활성화 ------>
   const isDisabled = formType === 'DETAIL';
 
-  // <------ formType : CREATE일 경우 reset ------>
-  useEffect(() => {
-    if (formType === 'CREATE') resetBasicInfo();
-  }, []);
-
   return (
-    <div className='flex flex-col pt-5 px-2 desktop:flex-row desktop:h-[calc(100%-80px)] extra_desktop:h-[550px]'>
+    <div className='flex flex-col pt-5 px-2 desktop:flex-row desktop:h-[calc(100%-100px)] extra_desktop:h-[520px]'>
       <div className='flex flex-col justify-between flex-1 '>
         <InputWeb
           id='memberName'
@@ -64,6 +63,8 @@ const BasicInfoForm = ({ formType }) => {
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
+        {/* TODO */}
+        {/* 데이터 피커 적용 제대로 */}
         <InputWeb
           id='memberEnrollDate'
           label='가입일'
@@ -97,6 +98,8 @@ const BasicInfoForm = ({ formType }) => {
           onKeyDown={handleKeyDown}
         />
       </div>
+      {/* TODO */}
+      {/* 주소 입력 받기 */}
       <div className='flex-1 desktop:ml-10'>
         <div className='flex items-end mb-5'>
           <InputWeb
@@ -109,7 +112,6 @@ const BasicInfoForm = ({ formType }) => {
             disabled={isDisabled}
             readOnly
             onChange={handleChangeValue}
-            onKeyDown={handleKeyDown}
           />
           <InputWeb
             id='address'
@@ -120,7 +122,6 @@ const BasicInfoForm = ({ formType }) => {
             classContainer='w-full'
             readOnly
             onChange={handleChangeValue}
-            onKeyDown={handleKeyDown}
           />
         </div>
         <InputWeb
@@ -132,7 +133,6 @@ const BasicInfoForm = ({ formType }) => {
           disabled={isDisabled}
           classContainer='mb-3'
           onChange={handleChangeValue}
-          onKeyDown={handleKeyDown}
         />
 
         <TextArea

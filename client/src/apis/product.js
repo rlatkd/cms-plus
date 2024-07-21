@@ -60,6 +60,8 @@ export const deleteProduct = async productId => {
   }
 };
 
+// TODO
+// 민석이 API로 교체하기
 // 상품 목록 조회 임시
 export const getProductListTmp = async () => {
   try {

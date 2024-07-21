@@ -6,11 +6,11 @@ const paymentMethods = [
   { value: 'ACCOUNT', label: '계좌' },
 ];
 
-const BuyerTypeForm = ({ paymentType }) => {
-  console.log(paymentType);
+const BuyerTypeForm = ({ paymentType, formType }) => {
   const { paymentTypeInfoReq_Buyer, setAvailableMethods } = useMemberPaymentStore();
 
-  const handleCheckboxChange = value => {
+  // <------ 체크박스 선택값 변경 ------>
+  const handleChangeCheckbox = value => {
     const updatedMethods = paymentTypeInfoReq_Buyer.availableMethods.includes(value)
       ? paymentTypeInfoReq_Buyer.availableMethods.filter(m => m !== value)
       : [...paymentTypeInfoReq_Buyer.availableMethods, value];
@@ -28,7 +28,7 @@ const BuyerTypeForm = ({ paymentType }) => {
               name={method.value}
               label={method.label}
               checked={paymentTypeInfoReq_Buyer.availableMethods.includes(method.value)}
-              onChange={() => handleCheckboxChange(method.value)}
+              onChange={() => handleChangeCheckbox(method.value)}
             />
           </div>
         ))}

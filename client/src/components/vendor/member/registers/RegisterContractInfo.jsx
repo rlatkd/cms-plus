@@ -1,9 +1,9 @@
 import ContractInfoForm from '@/components/common/memberForm/ContractInfoForm';
 
-const RegisterContractInfo = () => {
+const RegisterContractInfo = ({ formType }) => {
   return (
     <>
-      <ContractInfoForm formType='CREATE' />
+      <ContractInfoForm formType={formType} />
     </>
   );
 };

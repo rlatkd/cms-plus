@@ -7,10 +7,8 @@ import { getProductListTmp } from '@/apis/product';
 
 // formType : CREATE, UPDATE
 const ContractInfoForm = ({ formType }) => {
-  const { contractInfo, setContractInfoItem, setContractProducts, resetContractInfo } =
-    useMemberContractStore(); // 상품 정보 zustand
+  const { contractInfo, setContractInfoItem, setContractProducts } = useMemberContractStore(); // 상품 정보 zustand
   const [productList, setProductList] = useState([]); // 상품 목록
-  const [selectedProducts, setSelectedProducts] = useState([]); // 선택된 상품 목록
 
   // <--------Options생성-------->
   const createOptions = (itemList, valueKey) => {
@@ -23,47 +21,40 @@ const ContractInfoForm = ({ formType }) => {
   };
 
   const options = createOptions(productList, 'productName');
-  console.log(options);
-
-  // <--------상품 목록을 contractProducts형식으로 변환-------->
-  const mapContractProducts = products => {
-    return products.map(option => ({
-      productId: option.productId,
-      price: option.price,
-      quantity: option.quantity || 1, // 기본 값으로 1 설정
-    }));
-  };
 
   // <--------상품 추가-------->
   const handleProductChange = newSelectedOptions => {
-    setSelectedProducts(newSelectedOptions);
-    setContractProducts(mapContractProducts(newSelectedOptions));
-
-    console.log(newSelectedOptions);
+    setContractProducts(newSelectedOptions);
   };
 
   // <--------상품 제거-------->
   const handleRemoveProduct = product => {
-    const newSelectedProducts = selectedProducts.filter(p => p.productId !== product.productId);
-    setSelectedProducts(newSelectedProducts);
-    setContractProducts(mapContractProducts(newSelectedProducts));
+    const newSelectedProducts = contractInfo.mapContractProducts.filter(
+      p => p.productId !== product.productId
+    );
+    setContractProducts(newSelectedProducts);
   };
 
   // <--------상품정보, 계약명 수정-------->
   const handleChangeValue = (e, index = null) => {
     const { id, value } = e.target;
+
     if (id === 'contractName') {
       setContractInfoItem({ [id]: value });
     } else if (index !== null) {
-      const updatedSelectedProducts = selectedProducts.map((product, idx) =>
+      const updatedSelectedProducts = contractInfo.mapContractProducts.map((product, idx) =>
         idx === index ? { ...product, [id]: value } : product
       );
-      setSelectedProducts(updatedSelectedProducts);
-      setContractProducts(mapContractProducts(updatedSelectedProducts));
+      setContractProducts(updatedSelectedProducts);
     }
   };
 
-  // <--------전체 상품 목록 조회-------->
+  // TODO
+  // <------ 정규표현식 예외처리 ------>
+
+  // TODO
+  // 민석이 API로 교체
+  // <------ 전체 상품 목록 조회 ------>
   const axiosProductList = async () => {
     try {
       const res = await getProductListTmp();
@@ -73,11 +64,6 @@ const ContractInfoForm = ({ formType }) => {
       console.error('axiosProductList => ', err.response.data);
     }
   };
-
-  // <--------formType : CREATE일 경우 contractInfo를 reset-------->
-  useEffect(() => {
-    if (formType === 'CREATE') resetContractInfo();
-  }, []);
 
   useEffect(() => {
     axiosProductList();
@@ -92,7 +78,7 @@ const ContractInfoForm = ({ formType }) => {
           required={true}
           options={options}
           onChange={handleProductChange}
-          selectedOptions={selectedProducts}
+          selectedOptions={contractInfo.contractProducts}
           classContainer='flex-1 mr-7 w-'
           classButton='w-full'
         />
@@ -116,7 +102,7 @@ const ContractInfoForm = ({ formType }) => {
           <span className='w-1/5 text-center'>상품합계금액</span>
           <span className='w-1/5 text-center'>삭제</span>
         </div>
-        {selectedProducts.map((product, idx) => (
+        {contractInfo.contractProducts.map((product, idx) => (
           <div
             key={idx}
             className='flex justify-between items-center py-3 border-b border-ipt_border text-sm'>

@@ -1,9 +1,9 @@
 import BillingInfoForm from '@/components/common/memberForm/BillingInfoForm';
 
-const RegisterBillingInfo = () => {
+const RegisterBillingInfo = ({ formType }) => {
   return (
     <>
-      <BillingInfoForm formType='CREATE' />
+      <BillingInfoForm formType={formType} />
     </>
   );
 };
