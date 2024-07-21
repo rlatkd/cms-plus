@@ -15,31 +15,26 @@ const ProductInfoUpdatePage = () => {
   };
 
   return (
-    <div className='flex h-full w-full flex-col'>
-      <div className='sub-dashboard relative mb-5 h-1/5 w-full'>
-        progressivee
-        {/* <img
-          src='/src/assets/close.svg'
-          alt='back'
-          className='absolute right-6 top-6 cursor-pointer'
-          onClick={() => navigate(-1)}
-        /> */}
-      </div>
-      <div className='primary-dashboard relative h-4/5 w-full '>
-        <div className='border-b border-ipt_border px-2 pt-1 pb-3'>
+    <>
+      <div className='up-dashboard relative mb-4 w-full desktop:h-[18%]'>progressivee</div>
+      <div className='primary-dashboard flex flex-col relative h-[1000px] large_desktop:h-[80%] '>
+        <div className='flex items-center h-[50px] px-2 pb-[10px] '>
           <p className='text-text_black text-xl font-800'>기본정보</p>
         </div>
         <ContractInfoForm formType='UPDATE' />
-        <button
-          className='absolute bottom-6 right-40 px-9 py-2 border border-mint rounded-lg font-800 text-mint '
-          onClick={() => navigate(-1)}>
-          취소
-        </button>
-        <button className='absolute bottom-6 right-11 px-9 py-2 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover'>
-          저장
-        </button>
+
+        <div className='absolute bottom-0 left-0 flex h-[65px] w-full justify-end px-7 pb-5 font-800 text-lg '>
+          <button
+            className=' px-10 py-2 border border-mint rounded-lg text-mint'
+            onClick={() => navigate(-1)}>
+            취소
+          </button>
+          <button className=' px-10 py-2 bg-mint rounded-lg text-white transition-all duration-200 hover:bg-mint_hover ml-3'>
+            저장
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
