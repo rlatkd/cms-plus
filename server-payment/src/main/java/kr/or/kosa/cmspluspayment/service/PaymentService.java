@@ -19,15 +19,18 @@ public class PaymentService {
 
     @Value("${kafkaTopic.paymentResultTopic}")
     private String paymentResultTopic;
+
     private final KafkaTemplate<String, PaymentResultDto> paymentResultKafkaTemplate;
 
+    // 결제서버-> 메인서버; 결제결과 전달
     public void producePaymentResult(PaymentResultDto paymentResultDto) {
         paymentResultKafkaTemplate.send(paymentResultTopic, paymentResultDto);
     }
 
     // 결제서버<-메인서버; 결제정보 받음
+    @Transactional
     @KafkaListener(topics = "payment-topic", groupId = "payment-group", containerFactory = "kafkaListenerContainerFactory")
-    public void consumeMessage(ConsumerRecord<String, PaymentDto> consumerRecord) {
+    public void consumePayment(ConsumerRecord<String, PaymentDto> consumerRecord) {
         PaymentDto paymentDto = consumerRecord.value(); // 받은 결제정보 데이터
         PaymentResultDto paymentResultDto = new PaymentResultDto(); // 보낼 결제결과 데이터
         paymentResultDto.setBillingId(paymentDto.getBillingId());
