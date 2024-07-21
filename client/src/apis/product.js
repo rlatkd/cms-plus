@@ -26,6 +26,17 @@ export const getProductList = async (searchParams = {}) => {
   }
 };
 
+// 전체 상품 목록 조회 (조건 없이, 이름, 가격, id만)
+export const getAllProductList = async () => {
+  try {
+    const res = await privateAxios.get('/v1/vendor/product/all/no-cond');
+    return res;
+  } catch (err) {
+    console.error('전체 상품 목록 조회 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
 // 상품 상세 조회
 export const getProductDetail = async productId => {
   try {
