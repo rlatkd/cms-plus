@@ -50,9 +50,9 @@ export const useMemberBasicStore = create(set => ({
         memberHomePhone: '',
         memberEmail: '',
         memberAddress: {
-          address: '',
-          addressDetail: '',
-          zipcode: '',
+          address: '522-11',
+          addressDetail: '강북구 수유동',
+          zipcode: '15245',
         },
         memberMemo: '',
       },

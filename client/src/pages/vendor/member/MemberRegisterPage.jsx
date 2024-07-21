@@ -1,3 +1,4 @@
+import { postCreateMember } from '@/apis/member';
 import NextButton from '@/components/common/buttons/StatusNextButton';
 import PreviousButton from '@/components/common/buttons/StatusPreButton';
 import RegisterBasicInfo from '@/components/vendor/member/registers/RegisterBasicInfo';
@@ -10,7 +11,8 @@ import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import { useStatusStore } from '@/stores/useStatusStore';
-import { useEffect } from 'react';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const MemberRegisterPage = () => {
@@ -21,10 +23,19 @@ const MemberRegisterPage = () => {
   const navigate = useNavigate();
 
   // <------ 회원등록 입력 데이터 ------>
-  const { resetBasicInfo } = useMemberBasicStore();
-  const { resetContractInfo } = useMemberContractStore();
-  const { resetBillingInfo } = useMemberBillingStore();
+  const { basicInfo, resetBasicInfo } = useMemberBasicStore();
+  const { contractInfo, resetContractInfo } = useMemberContractStore();
+  const { billingInfo, resetBillingInfo } = useMemberBillingStore();
   const {
+    paymentType,
+    paymentMethod,
+    paymentTypeInfoReq_Virtual,
+    paymentTypeInfoReq_Buyer,
+    paymentTypeInfoReq_Auto,
+    paymentMethodInfoReq_Cms,
+    paymentMethodInfoReq_Card,
+    resetPaymentType,
+    resetPaymentMethod,
     resetPaymentTypeInfoReq_Virtual,
     resetPaymentTypeInfoReq_Buyer,
     resetPaymentTypeInfoReq_Auto,
@@ -32,6 +43,7 @@ const MemberRegisterPage = () => {
     resetPaymentMethodInfoReq_Card,
   } = useMemberPaymentStore();
 
+  // <------ 등록 폼 교체 ------>
   const componentMap = {
     0: { title: '기본정보', component: RegisterBasicInfo }, // 기본정보
     1: { title: '계약정보', component: RegisterContractInfo }, // 계약정보
@@ -44,6 +56,28 @@ const MemberRegisterPage = () => {
     component: () => 'error',
   };
 
+  // TODO
+  // <------ 회원등록 API ------>
+  const axiosCreateMember = async () => {
+    try {
+      const data = {
+        ...basicInfo, // 기본정보
+        contractCreateReq: transformContractInfo(), // 계약정보
+        paymentCreateReq: transformPaymentInfo(), // 결제정보
+        ...billingInfo, // 청구정보
+      };
+      console.log(data);
+      if (status === 3) {
+        const res = await postCreateMember(data);
+        console.log('!----회원등록 성공----!'); // 삭제예정
+        await navigate('/vendor/members');
+        onAlertClick();
+      }
+    } catch (err) {
+      console.error('axiosCreateMember => ', err.response.data);
+    }
+  };
+
   // <------ 상품 목록을 contractProducts형식으로 변환------>
   const mapContractProducts = products => {
     return products.map(option => ({
@@ -53,9 +87,51 @@ const MemberRegisterPage = () => {
     }));
   };
 
-  // TODO
-  // <------ 회원등록 API ------>
-  const axiosCreateMember = () => {};
+  // <------ 계약정보 데이터 변화 ------>
+  const transformContractInfo = () => {
+    const { contractName, contractStartDate, contractEndDate, contractDay, contractProducts } =
+      contractInfo;
+    return {
+      contractName,
+      contractStartDate,
+      contractEndDate,
+      contractDay,
+      contractProducts: mapContractProducts(contractProducts),
+    };
+  };
+
+  // <------ 결제정보 데이터 변화 ------>
+  const transformPaymentInfo = () => {
+    const paymentCreateReq = {
+      paymentTypeInfoReq: {
+        paymentType,
+        ...(paymentType === 'AUTO' &&
+          (() => {
+            const { consetImgName, ...rest } = paymentTypeInfoReq_Auto;
+            return rest;
+          })()),
+        ...(paymentType === 'BUYER' && paymentTypeInfoReq_Buyer),
+        ...(paymentType === 'VIRTUAL' && paymentTypeInfoReq_Virtual),
+      },
+    };
+
+    if (paymentType === 'AUTO') {
+      paymentCreateReq.paymentMethodInfoReq = {
+        paymentMethod,
+        ...(paymentMethod === 'CMS' && paymentMethodInfoReq_Cms),
+        ...(paymentMethod === 'CARD' && paymentMethodInfoReq_Card),
+      };
+    }
+
+    return paymentCreateReq;
+  };
+
+  // <--------기본정보 수정 성공 Alert창-------->
+  const { alert: alertComp } = useContext(AlertContext);
+  const onAlertClick = async () => {
+    await alertComp('회원정보가 등록되었습니다!');
+  };
+
   // TODO
   // <------ 페이지 이탈 시 Status reset ------>
 
@@ -64,6 +140,8 @@ const MemberRegisterPage = () => {
     resetBasicInfo();
     resetBillingInfo();
     resetContractInfo();
+    resetPaymentType();
+    resetPaymentMethod();
     resetPaymentTypeInfoReq_Virtual();
     resetPaymentTypeInfoReq_Buyer();
     resetPaymentTypeInfoReq_Auto();

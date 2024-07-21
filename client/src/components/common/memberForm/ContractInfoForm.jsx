@@ -29,9 +29,8 @@ const ContractInfoForm = ({ formType }) => {
 
   // <--------상품 제거-------->
   const handleRemoveProduct = product => {
-    const newSelectedProducts = contractInfo.mapContractProducts.filter(
-      p => p.productId !== product.productId
-    );
+    const tmp = contractInfo.contractProducts;
+    const newSelectedProducts = tmp.filter(p => p.productId !== product.productId);
     setContractProducts(newSelectedProducts);
   };
 
@@ -42,7 +41,7 @@ const ContractInfoForm = ({ formType }) => {
     if (id === 'contractName') {
       setContractInfoItem({ [id]: value });
     } else if (index !== null) {
-      const updatedSelectedProducts = contractInfo.mapContractProducts.map((product, idx) =>
+      const updatedSelectedProducts = contractInfo.contractProducts.map((product, idx) =>
         idx === index ? { ...product, [id]: value } : product
       );
       setContractProducts(updatedSelectedProducts);

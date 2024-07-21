@@ -32,8 +32,14 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
 
   // <------ 파일 업로드 ------>
   const handleUploadFile = file => {
-    setPaymentTypeInfoReq_Auto({ consentImgUrl: URL.createObjectURL(file) });
-    setPaymentTypeInfoReq_Auto({ consetImgName: file.name });
+    // TODO
+    // simpleConsentReqDateTime 동의 요청시간 일단은 현재시각으로 설정
+    const currentTime = new Date().toISOString();
+    setPaymentTypeInfoReq_Auto({
+      consentImgUrl: URL.createObjectURL(file),
+      consetImgName: file.name,
+      simpleConsentReqDateTime: currentTime,
+    });
   };
 
   // TODO

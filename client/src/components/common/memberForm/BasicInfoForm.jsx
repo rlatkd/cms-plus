@@ -5,7 +5,6 @@ import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 
 // formType : CREATE, UPDATE, DETAIL
 const BasicInfoForm = ({ formType }) => {
-  console.log(formType);
   const { basicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
 
   // <------ 인풋 필드 입력값 변경 ------>

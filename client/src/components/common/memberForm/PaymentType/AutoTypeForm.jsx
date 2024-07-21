@@ -2,6 +2,7 @@ import RadioGroup from '@/components/common/inputs/RadioGroup';
 import { useEffect, useState } from 'react';
 import CardMethodForm from '../PaymentMethod/CardMethodForm';
 import CmsMethodForm from '../PaymentMethod/CmsMethodForm';
+import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 
 const PaymentMethod = [
   { label: '실시간 CMS', value: 'CMS' },
@@ -10,20 +11,20 @@ const PaymentMethod = [
 
 // formType : CREATE, UPDATE
 const AutoTypeForm = ({ paymentType, formType }) => {
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('CMS');
+  const { paymentMethod, setPaymentMethod } = useMemberPaymentStore();
 
   // <------ Radio paymentMethod 변경 ------>
   const handleChangeValue = value => {
-    setSelectedPaymentMethod(value);
+    setPaymentMethod(value);
   };
 
   // <------ 결제수단에 따른 폼 생성 ------>
   const renderPaymentMethodForm = () => {
-    switch (selectedPaymentMethod) {
+    switch (paymentMethod) {
       case 'CMS':
-        return <CmsMethodForm paymentMethod={selectedPaymentMethod} formType={formType} />;
+        return <CmsMethodForm paymentMethod={paymentMethod} formType={formType} />;
       case 'CARD':
-        return <CardMethodForm paymentMethod={selectedPaymentMethod} formType={formType} />;
+        return <CardMethodForm paymentMethod={paymentMethod} formType={formType} />;
       default:
         return null;
     }
@@ -36,7 +37,7 @@ const AutoTypeForm = ({ paymentType, formType }) => {
         name='PaymentMethod'
         options={PaymentMethod}
         required={true}
-        selectedOption={selectedPaymentMethod}
+        selectedOption={paymentMethod}
         onChange={handleChangeValue}
         classLabel='ml-1 mb-3'
       />

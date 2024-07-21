@@ -1,9 +1,23 @@
 import { create } from 'zustand';
 
 export const useMemberPaymentStore = create(set => ({
-  // <------ 결제 정보 - 가상계좌 ------>
+  // <------ 결제 방식 정보 ------>
+  paymentType: 'AUTO',
+
+  // 결제 방식 설정
+  setPaymentType: type =>
+    set({
+      paymentType: type,
+    }),
+
+  // 결제 방식 초기화
+  resetPaymentType: () =>
+    set({
+      paymentType: 'AUTO',
+    }),
+
+  // <------ 결제 방식 - 가상계좌 ------>
   paymentTypeInfoReq_Virtual: {
-    paymentType: 'VIRTUAL',
     bank: '',
     accountOwner: '',
   },
@@ -21,15 +35,13 @@ export const useMemberPaymentStore = create(set => ({
   resetPaymentTypeInfoReq_Virtual: () =>
     set({
       paymentTypeInfoReq_Virtual: {
-        paymentType: 'VIRTUAL',
         bank: '',
         accountOwner: '',
       },
     }),
 
-  // <------ 결제 정보 - 납부자결제 ------>
+  // <------ 결제 방식 - 납부자결제 ------>
   paymentTypeInfoReq_Buyer: {
-    paymentType: 'BUYER',
     availableMethods: [],
   },
 
@@ -46,14 +58,12 @@ export const useMemberPaymentStore = create(set => ({
   resetPaymentTypeInfoReq_Buyer: () =>
     set({
       paymentTypeInfoReq_Buyer: {
-        paymentType: 'BUYER',
         availableMethods: [],
       },
     }),
 
-  // <---------- 결제 정보 - 자동결제 ---------->
+  // <------ 결제 방식 - 자동결제 ------>
   paymentTypeInfoReq_Auto: {
-    paymentType: 'AUTO',
     consentImgUrl: '',
     simpleConsentReqDateTime: '',
     consetImgName: '',
@@ -72,15 +82,29 @@ export const useMemberPaymentStore = create(set => ({
   resetPaymentTypeInfoReq_Auto: () =>
     set({
       paymentTypeInfoReq_Auto: {
-        paymentType: 'AUTO',
         consentImgUrl: '',
         simpleConsentReqDateTime: '',
+        consetImgName: '',
       },
     }),
 
-  // <---------- 결제 방식 - CMS ---------->
+  // <------ 결제 수단 정보 ------>
+  paymentMethod: 'CMS',
+
+  // 결제 수단 설정
+  setPaymentMethod: method =>
+    set({
+      paymentMethod: method,
+    }),
+
+  // 결제 수단 초기화
+  resetPaymentMethod: () =>
+    set({
+      paymentMethod: 'CMS',
+    }),
+
+  // <------ 결제 수단 - CMS ------>
   paymentMethodInfoReq_Cms: {
-    paymentMethod: 'CMS',
     bank: '',
     accountNumber: '',
     accountOwner: '',
@@ -100,7 +124,6 @@ export const useMemberPaymentStore = create(set => ({
   resetPaymentMethodInfoReq_Cms: () =>
     set({
       paymentMethodInfoReq_Cms: {
-        paymentMethod: 'CMS',
         bank: '',
         accountNumber: '',
         accountOwner: '',
@@ -108,9 +131,8 @@ export const useMemberPaymentStore = create(set => ({
       },
     }),
 
-  // <---------- 결제 방식 - 카드 ---------->
+  // <------ 결제 방식 - 카드 ------>
   paymentMethodInfoReq_Card: {
-    paymentMethod: 'CARD',
     cardNumber: '',
     cardMonth: '',
     cardYear: '',
@@ -131,7 +153,6 @@ export const useMemberPaymentStore = create(set => ({
   resetPaymentMethodInfoReq_Card: () =>
     set({
       paymentMethodInfoReq_Card: {
-        paymentMethod: 'CARD',
         cardNumber: '',
         cardMonth: '',
         cardYear: '',
