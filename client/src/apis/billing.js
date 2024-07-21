@@ -10,7 +10,7 @@ export const getBillingList = async (searchParams = {}) => {
     });
     return res;
   } catch (err) {
-    console.log('청구 목록 조회 실패 => ', err.response);
+    console.error('청구 목록 조회 실패 => ', err.response);
     throw err;
   }
 };
@@ -21,7 +21,7 @@ export const getBillingDetail = async (billingId) => {
     const res = await privateAxios.get(`/v1/vendor/billing/${billingId}`);
     return res;
   } catch (err) {
-    console.log('청구 상세 조회 실패 => ', err.response);
+    console.error('청구 상세 조회 실패 => ', err.response);
     throw err;
   }
 };
@@ -32,7 +32,7 @@ export const updateBilling = async (billingId, billingReq) => {
     const res = await privateAxios.put(`/v1/vendor/billing/${billingId}`, billingReq);
     return res;
   } catch (err) {
-    console.log('청구 수정 실패 => ', err.response);
+    console.error('청구 수정 실패 => ', err.response);
     throw err;
   }
 };

@@ -4,15 +4,7 @@ import { ProductSelectField2 } from '@/components/common/selects/ProductSelectFi
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BillingDetailProductTable from './BillingDetailProductTable';
-
-const cols = [
-  { key: 'order', label: 'No.', width: 'w-1/12' },
-  { key: 'productName', label: '상품', width: 'w-2/12' },
-  { key: 'productPrice', label: '금액', width: 'w-2/12' },
-  { key: 'productQuantity', label: '수량', width: 'w-2/12' },
-  { key: 'totalPrice', label: '총 금액', width: 'w-2/12' },
-  { key: 'removeProduct', label: '', width: 'w-1/12' },
-];
+import { cols } from '@/utils/tableElements/billingProductElement';
 
 const BillingDetailProduct = ({ billingData, products, editable, onChange: onBillingProductsChange, billingId }) => {
   const billingProducts = billingData?.billingProducts || [];
