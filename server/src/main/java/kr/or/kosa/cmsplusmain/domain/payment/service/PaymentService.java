@@ -180,7 +180,6 @@ public class PaymentService {
 
 		//TODO
 		//contractService를 호출 하는 순간 "순환 의존성" 문제가 생긴다 왜 샌기는걸지 알아보자.
-
 		// 고객의 계약 여부 확인
 //		contractService.validateContractUser(contractId, vendorId);
 		Contract contract = contractRepository.findById(contractId).orElseThrow(IllegalArgumentException::new);
@@ -190,10 +189,34 @@ public class PaymentService {
 		validatePaymentUser(paymentId);
 		Payment payment = paymentRepository.findById(paymentId).orElseThrow(IllegalArgumentException::new);
 
-		/*--  원래 결제 테이블의 결제 타입  --*/
-		// 격제 방식 분류
-		PaymentType paymentType = payment.getPaymentType();
 
+		// 원래 결제 테이블의 결제 타입 삭제
+		// 1. paymentTypeInfo 삭제
+		payment.getPaymentTypeInfo().delete();
+
+		// 2. paymentType이 AUTO라면, paymentMethodInfo 삭제
+		if(payment.getPaymentType().equals(PaymentType.AUTO) ){
+			payment.getPaymentMethodInfo().delete();
+		}
+
+		// 요청으로 들어온 데이터 확인
+		PaymentTypeInfoReq paymentTypeInfoReq = paymentUpdateReq.getPaymentTypeInfoReq();
+		PaymentTypeInfo paymentTypeInfo = createPaymentTypeInfo(paymentTypeInfoReq);
+
+		// 결제 방식 정보가 자동결제인 경우 : 결제 수단을 등록한다.
+		PaymentMethodInfo paymentMethodInfo = null;
+		PaymentMethodInfoReq paymentMethodInfoReq = paymentUpdateReq.getPaymentMethodInfoReq();
+		if(paymentMethodInfoReq != null) {
+			// 결제 수단 정보 ( 카드, 실시간CMS )
+			paymentMethodInfo = createPaymentMethodInfo(paymentMethodInfoReq);
+		}
+
+		payment.setPaymentType(paymentTypeInfoReq.getPaymentType());
+		payment.setPaymentTypeInfo(paymentTypeInfo);
+		payment.setPaymentMethod(paymentMethodInfoReq != null ?  paymentMethodInfoReq.getPaymentMethod() : null);
+		payment.setPaymentMethodInfo(paymentMethodInfo);
+
+		paymentRepository.save(payment);
 	}
 
 	/*
