@@ -1,5 +1,16 @@
 import { privateAxios } from '.';
 
+// 청구 생성
+export const createBilling = async billingData => {
+  try {
+    const res = await privateAxios.post('/v1/vendor/billing', billingData);
+    return res;
+  } catch (err) {
+    console.error('청구 생성 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
 // 청구 목록 조회
 export const getBillingList = async (searchParams = {}) => {
   try {

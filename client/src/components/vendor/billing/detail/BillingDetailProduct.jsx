@@ -19,11 +19,11 @@ const BillingDetailProduct = ({ billingData, products, editable, onChange: onBil
       return {
         value: {
           productId: item.productId,
-          productName: item.productName,
-          productPrice: item.productPrice,
+          name: item.name,
+          price: item.price,
           quantity: 1,
         },
-        label: `${item.productName}(${item.productPrice.toLocaleString()}원)`,
+        label: `${item.name}(${item.price.toLocaleString()}원)`,
       };
     });
   };
@@ -34,8 +34,8 @@ const BillingDetailProduct = ({ billingData, products, editable, onChange: onBil
       return {
         value: {
           productId: item.productId,
-          productName: item.name,
-          productPrice: item.price,
+          name: item.name,
+          price: item.price,
           quantity: item.quantity,
         },
         label: `${item.name} (${item.price.toLocaleString()}원)`,
@@ -55,8 +55,8 @@ const BillingDetailProduct = ({ billingData, products, editable, onChange: onBil
       return {
         billingId: billingId.id,
         productId: item.productId,
-        name: item.productName,
-        price: item.productPrice,
+        name: item.name,
+        price: item.price,
         quantity: item.quantity,
       };
     });
@@ -96,7 +96,7 @@ const BillingDetailProduct = ({ billingData, products, editable, onChange: onBil
           <ProductSelectField2
             label={
               products[0] &&
-              `${products[0].productName} (${products[0].productPrice.toLocaleString()}원)`
+              `${products[0].name} (${products[0].price.toLocaleString()}원)`
             }
             options={transformProductToOption(products)}
             selectedOptions={transformBillingProductToOption(billingProducts)}

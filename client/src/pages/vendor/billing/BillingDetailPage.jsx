@@ -2,12 +2,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAllProductList } from '@/apis/product';
 import { deleteBilling, getBillingDetail, sendInvoice, updateBilling, cancelSendInvoice, payBilling, cancelPayBilling } from '@/apis/billing';
-import BillingDetailMember from '@/components/vendor/billing/BillingDetailMember';
-import BillingDetailPayment from '@/components/vendor/billing/BillingDetailPayment';
-import BillingDetailBilling from '@/components/vendor/billing/BillingDetailBilling';
-import BillingDetailProduct from '@/components/vendor/billing/BillingDetailProduct';
-import BillingDetailEditButtons from '@/components/vendor/billing/BillingDetailEditButtons';
-import BillingDetailButtons from '@/components/vendor/billing/BillingDetailButtons';
+import BillingDetailMember from '@/components/vendor/billing/detail/BillingDetailMember';
+import BillingDetailPayment from '@/components/vendor/billing/detail/BillingDetailPayment';
+import BillingDetailBilling from '@/components/vendor/billing/detail/BillingDetailBilling';
+import BillingDetailProduct from '@/components/vendor/billing/detail/BillingDetailProduct';
+import BillingDetailEditButtons from '@/components/vendor/billing/detail/BillingDetailEditButtons';
+import BillingDetailButtons from '@/components/vendor/billing/detail/BillingDetailButtons';
 
 const BillingDetailPage = () => {
   const [billingData, setBillingData] = useState({

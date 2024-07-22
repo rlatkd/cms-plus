@@ -24,6 +24,7 @@ import ProductIndex from '@/pages/vendor/product/ProductIndex';
 import ProductList from '@/pages/vendor/product/ProductListPage';
 import SettingIndex from '@/pages/vendor/setting/SettingIndex';
 import SettingSimpConsent from '@/pages/vendor/setting/SettingSimpConsentPage';
+import BillingRegisterPage from '@/pages/vendor/billing/BillingRegisterPage';
 
 const vendorRoute = () => {
   return [
@@ -124,6 +125,12 @@ const vendorRoute = () => {
           name: '청구 상세 정보',
           menu: false,
           element: <BillingDetail />,
+        },
+        {
+          path: 'create',
+          name: '청구 생성',
+          menu: false,
+          element: <BillingRegisterPage />,
         },
       ],
     },

@@ -14,6 +14,7 @@ import { formatPhone } from '@/utils/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billingElement';
 import { formatProducts } from '@/utils/formatProducts';
+import BillingRegisterPage from './BillingRegisterPage';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
@@ -106,6 +107,11 @@ const BillingListPage = () => {
     navigate(`detail/${billingId}`);
   };
 
+    // 청구 생성 페이지 이동
+    const MoveBillingCreate = async () => {
+      navigate(`create`);
+    };
+
   // 디바운스 커스텀훅
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);
 
@@ -142,7 +148,7 @@ const BillingListPage = () => {
               imgSrc={addItem}
               color='mint'
               buttonText='청구생성'
-              onClick={() => setIsShowModal(true)}
+              onClick={MoveBillingCreate}
             />
           </div>
         </div>
