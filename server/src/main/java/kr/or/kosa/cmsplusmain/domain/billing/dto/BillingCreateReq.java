@@ -5,9 +5,11 @@ import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class BillingCreateReq {
 	@NotNull private BillingType billingType;					// 청구타입 (정기, 추가)
 	@NotNull private LocalDate paymentDate;						// 청구 결제일

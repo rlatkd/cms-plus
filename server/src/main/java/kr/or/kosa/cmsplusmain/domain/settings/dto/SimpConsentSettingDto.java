@@ -8,8 +8,6 @@ import java.util.Set;
 @Data
 public class SimpConsentSettingDto {
     private Long id;
-    private String vendorUsername;
     private Set<PaymentMethod> paymentMethods;
     private Set<Long> productIds;
-
 }

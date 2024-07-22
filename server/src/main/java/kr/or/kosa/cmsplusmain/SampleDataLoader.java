@@ -120,7 +120,7 @@ public class SampleDataLoader {
 		return billings;
 	}
 
-	private List<BillingProduct> createBillingProducts(List<Product> products) {
+	public List<BillingProduct> createBillingProducts(List<Product> products) {
 		List<BillingProduct> billingProducts = new ArrayList<>();
 		int productCount = random.nextInt(3) + 1; // 1~3개의 상품 생성
 		for (int i = 0; i < productCount; i++) {
@@ -148,7 +148,7 @@ public class SampleDataLoader {
 		return createdMembers;
 	}
 
-	private Member createMember(Vendor vendor, int index) {
+	public Member createMember(Vendor vendor, int index) {
 		String name = "학생" + (index + 1);
 		String email = "student" + (index + 1) + "@example.com";
 		String phone = randomGenerator.generateRandomPhone();
@@ -204,7 +204,7 @@ public class SampleDataLoader {
 		return createdContracts;
 	}
 
-	private Contract createContract(Member member, int index, List<Product> products) {
+	public Contract createContract(Member member, int index, List<Product> products) {
 		Payment payment = generatePayment();
 		LocalDate startDate = LocalDate.now().minusMonths(random.nextInt(12));
 		LocalDate endDate = startDate.plusMonths(3);
@@ -227,7 +227,7 @@ public class SampleDataLoader {
 		return contract;
 	}
 
-	private void addRandomContractProducts(Contract contract, List<Product> products) {
+	public void addRandomContractProducts(Contract contract, List<Product> products) {
 		int productCount = random.nextInt(3) + 1; // 1에서 3개의 상품 추가
 
 		for (int i = 0; i < productCount && i < products.size(); i++) {
@@ -256,11 +256,11 @@ public class SampleDataLoader {
 			.build();
 	}
 
-	private PaymentType getRandomPaymentType() {
+	public PaymentType getRandomPaymentType() {
 		return randomGenerator.getRandomInList(Arrays.stream(PaymentType.values()).toList());
 	}
 
-	private PaymentMethod getRandomPaymentMethod(PaymentType paymentType) {
+	public PaymentMethod getRandomPaymentMethod(PaymentType paymentType) {
 		if (paymentType == PaymentType.AUTO) {
 			return random.nextBoolean() ? PaymentMethod.CARD : PaymentMethod.CMS;
 		} else {
@@ -268,7 +268,7 @@ public class SampleDataLoader {
 		}
 	}
 
-	private PaymentTypeInfo generatePaymentTypeInfo(PaymentType paymentType) {
+	public PaymentTypeInfo generatePaymentTypeInfo(PaymentType paymentType) {
 		return switch (paymentType) {
 			case AUTO -> AutoPaymentType.builder()
 				.consentImgUrl("http://example.com/consent" + random.nextInt(1000) + ".jpg")
@@ -285,7 +285,7 @@ public class SampleDataLoader {
 		};
 	}
 
-	private PaymentMethodInfo generatePaymentMethodInfo(PaymentMethod paymentMethod) {
+	public PaymentMethodInfo generatePaymentMethodInfo(PaymentMethod paymentMethod) {
 		if (paymentMethod == null) {
 			return null;
 		}
