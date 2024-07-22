@@ -1,17 +1,19 @@
 package kr.or.kosa.cmsplusmain.domain.statics.dto;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
+@Builder
 public class DayBillingRes {
 	private final LocalDate billingDate;
 	private final Long totalDayBillingPrice;
 	private final Integer totalDayBillingCount;
+	private final Map<BillingStatus, Integer> statusCounts;
 }
