@@ -62,7 +62,7 @@ public class Product extends BaseEntity {
 	@Column(name = "product_memo", length = 2000)
 	@Memo
 	@Setter
-	private String memo = "";
+	private String memo;
 
 	// id값만 가진 빈 product를 생성
 	public static Product of(Long id) {

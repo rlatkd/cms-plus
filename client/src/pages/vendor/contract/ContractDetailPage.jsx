@@ -20,6 +20,9 @@ const ContractDetailPage = () => {
     paymentTypeInfo: {
       paymentType: {},
     },
+    invoiceSendMethod: {
+      title: ''
+    },
     paymentMethodInfo: null,
     totalBillingCount: 0,
     totalBillingPrice: 0,

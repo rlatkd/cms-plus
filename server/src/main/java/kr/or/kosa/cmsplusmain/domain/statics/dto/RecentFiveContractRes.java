@@ -1,21 +1,20 @@
 package kr.or.kosa.cmsplusmain.domain.statics.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import com.querydsl.core.annotations.QueryProjection;
 
 import lombok.Getter;
 
 @Getter
 public class RecentFiveContractRes {
-	private final LocalDate contractStartDate;
+	private final Long contractId;
+	private final LocalDate contractCreatedDate;
 	private final String memberName;
 	private final Long totalContractPrice;
 	private final int contractMonth;
 
-	public RecentFiveContractRes(LocalDate contractStartDate, String memberName, Long totalContractPrice, int contractMonth) {
-		this.contractStartDate = contractStartDate;
+	public RecentFiveContractRes(Long contractId, LocalDate contractCreatedDate, String memberName, Long totalContractPrice, int contractMonth) {
+		this.contractId = contractId;
+		this.contractCreatedDate = contractCreatedDate;
 		this.memberName = memberName;
 		this.totalContractPrice = totalContractPrice;
 		this.contractMonth = contractMonth;

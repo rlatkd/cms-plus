@@ -44,7 +44,7 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	private final ProductCustomRepository productCustomRepository;
-	private final KafkaMessagingService kafkaMessagingService;
+	// private final KafkaMessagingService kafkaMessagingService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
 	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
@@ -104,14 +104,14 @@ public class BillingService {
 
 	private void sendInvoiceMessage(String message, Member member) {
 		// 청구서 링크 발송
-		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
-
-		switch (sendMethod) {
-			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
-							kafkaMessagingService.produceMessaging(smsMessageDto); }
-			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
-							kafkaMessagingService.produceMessaging(emailMessageDto); }
-		}
+		// MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+		//
+		// switch (sendMethod) {
+		// 	case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+		// 					kafkaMessagingService.produceMessaging(smsMessageDto); }
+		// 	case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+		// 					kafkaMessagingService.produceMessaging(emailMessageDto); }
+		// }
 	}
 
 	/*
@@ -185,17 +185,17 @@ public class BillingService {
 			throw new EntityNotFoundException();
 		}
 
-		List<BillingProduct> billingProducts = convertToBillingProducts(billingCreateReq.getBillingProducts());
+		List<BillingProduct> billingProducts = convertToBillingProducts(billingCreateReq.getProducts());
 
 		// 청구 생성
 		Billing billing = new Billing(
 			Contract.of(billingCreateReq.getContractId()),
 			billingCreateReq.getBillingType(),
-			billingCreateReq.getBillingDate(),
+			billingCreateReq.getPaymentDate(),
 			// 청구 생성시 결제일을 넣어주는데 연월일 형식으로 넣어준다.
 			// 정기 청구 시 필요한 약정일은 입력된 결제일에서 일 부분만 빼서 사용
 			// ex. 입력 결제일=2024.07.13 => 약정일=13
-			billingCreateReq.getBillingDate().getDayOfMonth(),
+			billingCreateReq.getPaymentDate().getDayOfMonth(),
 			billingProducts);
 		billingRepository.save(billing);
 	}

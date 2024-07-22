@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
 
-@Configuration
+// @Configuration
 public class KafkaTopicConfig {
 
     /*
@@ -26,18 +26,13 @@ public class KafkaTopicConfig {
     public KafkaAdmin.NewTopics newTopics() {
         return new KafkaAdmin.NewTopics(
                 TopicBuilder.name(messagingTopic)
-                        .partitions(1)
-                        .replicas(1)
+                        .partitions(3)
+                        .replicas(3)
                         .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
                         .build(),
                 TopicBuilder.name(paymentTopic)
-                        .partitions(1)
-                        .replicas(1)
-                        .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
-                        .build(),
-                TopicBuilder.name("monitoring-topic") // 추후 개발
-                        .partitions(1)
-                        .replicas(1)
+                        .partitions(3)
+                        .replicas(3)
                         .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
                         .build()
         );

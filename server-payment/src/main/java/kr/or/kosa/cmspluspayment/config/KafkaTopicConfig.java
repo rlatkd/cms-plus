@@ -17,8 +17,8 @@ public class KafkaTopicConfig {
     public KafkaAdmin.NewTopics newTopics() {
         return new KafkaAdmin.NewTopics(
                 TopicBuilder.name(paymentResultTopic)
-                        .partitions(1)
-                        .replicas(1)
+                        .partitions(3)
+                        .replicas(3)
                         .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
                         .build()
         );

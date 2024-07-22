@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import edit from '@/assets/edit.svg';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
+import { formatPhone } from '@/utils/formatPhone';
 
 const ConDetailBilling = ({ contractData, children }) => {
   const { setBillingInfoItem } = useMemberBillingStore(); // 청구정보 - 수정목적
@@ -41,29 +42,29 @@ const ConDetailBilling = ({ contractData, children }) => {
         <InputWeb
           id='autobilling'
           label='청구 자동 생성'
-          value='수동'
+          value={`${contractData.autoBilling ? '자동' : '수동'}`}
           type='text'
           disabled={true}
         />
         <InputWeb id='autosend' label='청구서 자동 발송' value='수동' type='text' disabled={true} />
         <InputWeb
           id='memberPhone'
-          label='납부자 업체연락처'
-          value='010-1234-5678'
+          label='납부자 휴대번호'
+          value={formatPhone(contractData.payerPhone || '')}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='memberEmail'
           label='납부자 이메일'
-          value='hyosung123@gmail.com'
+          value={contractData.payerEmail || ''}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='sendMethod'
           label='청구서 발송 수단'
-          value='휴대전화'
+          value={contractData.invoiceSendMethod.title}
           type='text'
           disabled={true}
         />
