@@ -46,5 +46,12 @@ public class CmsPaymentMethod extends PaymentMethodInfo {
 	@Column(name = "cms_owner_birth", nullable = false)
 	@NotNull
 	private LocalDate accountOwnerBirth;
+
+	public void update(CmsPaymentMethod newCmsPaymentMethod) {
+		this.bank = newCmsPaymentMethod.getBank();
+		this.accountNumber = newCmsPaymentMethod.getAccountNumber();
+		this.accountOwner = newCmsPaymentMethod.getAccountOwner();
+		this.accountOwnerBirth = newCmsPaymentMethod.getAccountOwnerBirth();
+	}
 }
 

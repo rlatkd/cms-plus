@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/vendor/product")
 @RequiredArgsConstructor
@@ -57,4 +59,10 @@ public class ProductController {
         productService.deleteProduct(vendorId, productId);
     }
 
+    // 임시로 삭제 예정
+    @GetMapping("/tmp")
+    public List<ProductDtoTmp> getProductListTmp(){
+        Long vendorId = 1L;
+        return productService.getProductListTmp(vendorId);
+    }
 }

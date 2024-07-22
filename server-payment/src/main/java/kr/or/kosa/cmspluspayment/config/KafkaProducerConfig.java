@@ -18,12 +18,12 @@ public class KafkaProducerConfig {
 
     // 결제결과 메인서버에 발송
     @Bean
-    public KafkaTemplate<String, PaymentResultDto> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, PaymentResultDto> paymentResultkafkaTemplate() {
+        return new KafkaTemplate<>(paymentResultproducerFactory());
     }
 
     @Bean
-    public ProducerFactory<String, PaymentResultDto> producerFactory() {
+    public ProducerFactory<String, PaymentResultDto> paymentResultproducerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);

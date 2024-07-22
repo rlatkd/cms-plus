@@ -16,7 +16,7 @@ export const getBillingList = async (searchParams = {}) => {
 };
 
 // 청구 상세 조회
-export const getBillingDetail = async (billingId) => {
+export const getBillingDetail = async billingId => {
   try {
     const res = await privateAxios.get(`/v1/vendor/billing/${billingId}`);
     return res;
@@ -88,6 +88,20 @@ export const cancelPayBilling = async billingId => {
     return res;
   } catch (err) {
     console.error('청구서 실시간 결제취소 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 회원 수정 - 청구 정보
+export const updateMemberBilling = async (contractId, billingData) => {
+  try {
+    const res = await privateAxios.put(
+      `/v1/vendor/management/members/billing/${contractId}`,
+      billingData
+    );
+    return res;
+  } catch (err) {
+    console.error('회원 수정 - 청구 정보 => ', err.response.data);
     throw err;
   }
 };

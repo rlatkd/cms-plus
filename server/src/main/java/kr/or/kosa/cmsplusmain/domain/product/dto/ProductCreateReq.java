@@ -30,5 +30,4 @@ public class ProductCreateReq {
                 .memo(productMemo)
                 .build();
     }
-
 }
