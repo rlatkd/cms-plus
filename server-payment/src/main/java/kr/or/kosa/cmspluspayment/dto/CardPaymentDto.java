@@ -13,8 +13,8 @@ import lombok.ToString;
 public class CardPaymentDto extends PaymentDto {
 
     @JsonCreator
-    public CardPaymentDto(@JsonProperty("billingId") Long billingId, @JsonProperty("number") String number) {
-        super(billingId, PaymentPayMethod.CARD, number);
+    public CardPaymentDto(@JsonProperty("billingId") Long billingId, @JsonProperty("phoneNumber") String phoneNumber, @JsonProperty("number") String number) {
+        super(billingId, phoneNumber, PaymentPayMethod.CARD, number);
     }
 
 }

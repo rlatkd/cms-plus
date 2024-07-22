@@ -29,6 +29,11 @@ const ContractDetailPage = () => {
 
   const contractId = useParams();
 
+  // TODO
+  // 회원 계약 정보 Justand에 입력
+  // 회원 결제 정보 Justand에 입력
+  // 회원 청구 정보 Justand에 입력
+
   // 계약 상세 조회
   const axiosContractDetail = async () => {
     try {

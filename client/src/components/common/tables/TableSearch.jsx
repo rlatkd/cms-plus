@@ -2,7 +2,8 @@ import searchIcon from '@/assets/search.svg';
 import calender from '@/assets/calender.svg';
 import triangle from '@/assets/triangle.svg';
 import { useState } from 'react';
-import DatePicker from '../inputs/DatePicker';
+import DatePicker from '@/components/common/inputs/DatePicker';
+import Arrow from '@/assets/Arrow';
 
 const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
   const [selectedDate, setSelectedDate] = useState('');
@@ -34,13 +35,9 @@ const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
                     </option>
                   ))}
               </select>
+
               <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text_grey'>
-                <svg
-                  className='fill-text_grey h-6 w-6'
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 20 20'>
-                  <path d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' />
-                </svg>
+                <Arrow fill='#7B809A' tabIndex='-1' />
               </div>
             </div>
           ) : searchItem.type === 'calendar' ? (
@@ -59,7 +56,8 @@ const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
                   setSelectedDate('');
                   handleChangeSearch(searchItem.key, '');
                   setIsCalendarOpen(!isCalendarOpen);
-                }}>
+                }}
+                tabIndex='-1'>
                 <img src={calender} alt='search' className='w-5 h-5' />
               </button>
 
@@ -85,7 +83,8 @@ const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
 
               <button
                 className='absolute right-2 top-1/2 transform -translate-y-1/2'
-                onClick={handleClickSearch}>
+                onClick={handleClickSearch}
+                tabIndex='-1'>
                 <img
                   src={searchItem.type === 'text' ? searchIcon : triangle}
                   alt='search'
