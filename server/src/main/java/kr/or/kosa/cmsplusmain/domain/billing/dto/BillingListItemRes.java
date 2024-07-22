@@ -29,13 +29,12 @@ public class BillingListItemRes {
 		// NOT NULL
 		final Contract contract = billing.getContract();
 		final Member member = contract.getMember();
+		final Payment payment = contract.getPayment();
 
 		final List<BillingProductRes> billingProductResList = billing.getBillingProducts()
 			.stream()
 			.map(BillingProductRes::fromEntity)
 			.toList();
-
-		final Payment payment = contract.getPayment();
 
 		return BillingListItemRes.builder()
 			.billingId(billing.getId())
