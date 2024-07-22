@@ -33,7 +33,7 @@ const ContractListPage = () => {
 
   const navigate = useNavigate();
 
-  // 계약 목록 조회
+  // <--------계약 목록 조회-------->
   const axiosContractList = useCallback(
     async (
       searchParams = {},
@@ -49,7 +49,6 @@ const ContractListPage = () => {
           page: page,
           size: 10,
         });
-        console.log(res.data);
         const transformdData = transformContractListItem(res.data.content);
         setContractList(transformdData);
         setContractListCount(res.data.totalCount);
@@ -61,7 +60,7 @@ const ContractListPage = () => {
     [currentPage]
   );
 
-  // 데이터 변환
+  // <--------데이터 변환-------->
   const transformContractListItem = data => {
     return data.map(contract => {
       const { contractDay, contractPrice, contractProducts, contractStatus, memberPhone } =
@@ -79,7 +78,7 @@ const ContractListPage = () => {
     });
   };
 
-  // 검색 변경 핸들러
+  // <--------검색 변경 핸들러-------->
   const handleChangeSearch = (key, value) => {
     console.log(key, ':', value);
     const updatedSearch = search.map(searchItem =>
@@ -97,19 +96,19 @@ const ContractListPage = () => {
     setCurrentSearchParams(searchParams);
   };
 
-  // 검색 클릭 이벤트 핸들러
+  // <--------검색 클릭 이벤트 핸들러-------->
   const handleClickSearch = async () => {
     axiosContractList(debouncedSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
 
-  // 계약 상세 조회 페이지 이동
+  // <--------계약 상세 조회 페이지 이동-------->
   const MoveContractDetail = async contractId => {
     navigate(`detail/${contractId}`);
   };
 
-  // 디바운스 커스텀훅
+  // <--------디바운스 커스텀훅-------->
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);
 
   useEffect(() => {
@@ -121,7 +120,7 @@ const ContractListPage = () => {
   }, [currentPage]);
 
   return (
-    <div className='primary-dashboard flex flex-col  h-1500 desktop:h-full'>
+    <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full '>
         <div className='flex items-center '>
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>

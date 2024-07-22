@@ -23,6 +23,8 @@ export default {
         laptop: '1024px', // lg
         desktop: '1280px', // xl
         large_desktop: '1536px', // 2xl
+        extra_desktop: '2000px', // 2xl
+        tmp: '1800px', // 2xl
       },
 
       fontSize: {

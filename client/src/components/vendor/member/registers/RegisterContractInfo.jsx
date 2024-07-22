@@ -1,10 +1,10 @@
-const RegisterContractInfo = () => {
+import ContractInfoForm from '@/components/common/memberForm/ContractInfoForm';
+
+const RegisterContractInfo = ({ formType }) => {
   return (
-    <div>
-      RegisterContractInfo
-      <br />
-      회원 등록 계약정보
-    </div>
+    <>
+      <ContractInfoForm formType={formType} />
+    </>
   );
 };
 

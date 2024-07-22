@@ -1,4 +1,5 @@
-import { privateAxios } from '.';
+import { useNavigate } from 'react-router-dom';
+import { privateAxios, publicAxios, testAxios } from '.';
 
 // 상품 등록
 export const createProduct = async productData => {
@@ -66,6 +67,30 @@ export const deleteProduct = async productId => {
     return res;
   } catch (err) {
     console.error('상품 삭제 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// TODO
+// 민석이 API로 교체하기
+// 상품 목록 조회 임시
+export const getProductListTmp = async () => {
+  try {
+    const res = await privateAxios.get('/v1/vendor/product/tmp');
+    return res;
+  } catch (err) {
+    console.error(' 상품 목록 조회 임시 => ', err.response.data);
+  }
+};
+
+export const test = async testData => {
+  try {
+    const res = await testAxios.post('v1/kafkatest/payment', testData, { validateStatus: false });
+    if (res.status !== 202) {
+      console.error('Unexpected response status:', res.status);
+    }
+  } catch (err) {
+    console.error('테스트 실패 => ', err.response.data);
     throw err;
   }
 };
