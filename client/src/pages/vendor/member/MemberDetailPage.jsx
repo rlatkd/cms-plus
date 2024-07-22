@@ -13,7 +13,7 @@ const MemberDetailPage = () => {
   const { setBasicInfo } = useMemberBasicStore();
   const memberId = useParams();
 
-  // 회원 상세 조회
+  // <------ 회원 상세 조회 ------>
   const axiosMemberDetail = async () => {
     try {
       const res = await getMemberDetail(memberId.id);
@@ -37,7 +37,7 @@ const MemberDetailPage = () => {
     }
   };
 
-  // 회원 정보 저장
+  // <------ 회원 정보 저장 ------>
   const setMemberBasicInfo = data => {
     setBasicInfo(data);
   };

@@ -15,6 +15,7 @@ const ContractInfoForm = ({ formType }) => {
     return itemList.map(item => ({
       value: item[valueKey],
       label: item[valueKey],
+      name: item[valueKey],
       price: item.productPrice,
       productId: item.productId,
     }));
@@ -105,7 +106,7 @@ const ContractInfoForm = ({ formType }) => {
           <div
             key={idx}
             className='flex justify-between items-center py-3 border-b border-ipt_border text-sm'>
-            <p className='w-1/5 text-center'>{product.label}</p>
+            <p className='w-1/5 text-center'>{product.name}</p>
             <input
               id='price'
               placeholder='상품금액'

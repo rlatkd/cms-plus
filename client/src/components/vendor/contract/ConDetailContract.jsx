@@ -16,11 +16,10 @@ const productForm = (product, idx) => {
 const ConDetailContract = ({ contractData }) => {
   const navigate = useNavigate();
 
-  const contractId = useParams();
+  const { id: contractId } = useParams();
 
-  console.log(contractId);
   const handleButtonClick = () => {
-    navigate(`/vendor/contracts/product/update/${contractId.id}`);
+    navigate(`/vendor/contracts/product/update/${contractId}`);
   };
 
   return (

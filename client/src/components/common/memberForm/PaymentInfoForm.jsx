@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import InputWeb from '@/components/common/inputs/InputWeb';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import AutoTypeForm from '@/components/common/memberForm/PaymentType/AutoTypeForm';
 import BuyerTypeForm from '@/components/common/memberForm/PaymentType/BuyerTypeForm';
@@ -7,6 +6,7 @@ import VirtualAccountTypeForm from '@/components/common/memberForm/PaymentType/V
 import SelectField from '@/components/common/selects/SelectField';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
+import InputCalendar from '@/components/common/inputs/InputCalendar';
 
 const PaymentType = [
   { label: '자동결제', value: 'AUTO' },
@@ -29,8 +29,6 @@ const PaymentInfoForm = ({ formType }) => {
 
   const handleChangeContractInfo = e => {
     const { id, value } = e.target;
-    console.log('id : ', id);
-    console.log('value : ', value);
     setContractInfoItem({ [id]: value });
   };
 
@@ -78,26 +76,24 @@ const PaymentInfoForm = ({ formType }) => {
           onChange={e => setContractInfoItem({ contractDay: e.target.value })}
         />
         <div className='relative flex justify-center '>
-          <InputWeb
+          <InputCalendar
             id='contractStartDate'
             label='계약 시작일'
-            placeholder='연도-월-일'
-            type='calendar'
+            placeholder='년도-월-일'
             required
+            readOnly
             value={contractInfo.contractStartDate}
-            classInput='py-3'
-            onChange={handleChangeContractInfo}
+            handleChangeValue={handleChangeContractInfo}
           />
-          <p className='mx-4 mt-10'>~</p>
-          <InputWeb
+          <p className='mx-3 mt-10 text-text_grey'>~</p>
+          <InputCalendar
             id='contractEndDate'
             label='계약 종료일'
-            placeholder='연도-월-일'
-            type='calendar'
+            placeholder='년도-월-일'
             required
-            classInput='py-3'
+            readOnly
             value={contractInfo.contractEndDate}
-            onChange={handleChangeContractInfo}
+            handleChangeValue={handleChangeContractInfo}
           />
         </div>
       </div>

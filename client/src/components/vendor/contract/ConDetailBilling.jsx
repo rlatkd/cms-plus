@@ -5,10 +5,10 @@ import InputWeb from '@/components/common/inputs/InputWeb';
 const ConDetailBilling = ({ contractData, children }) => {
   const navigate = useNavigate();
 
-  const contractId = useParams();
+  const { id: contractId } = useParams();
 
   const handleButtonClick = () => {
-    navigate(`/vendor/contracts/billings/update/${contractId.id}`);
+    navigate(`/vendor/contracts/billings/update/${contractId}`);
   };
 
   return (

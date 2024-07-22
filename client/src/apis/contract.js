@@ -37,10 +37,10 @@ export const getContractDetailBillingList = async contractId => {
   }
 };
 
-// 계약 수정
-export const updateContractDetail = async contractId => {
+// 회원 수정 - 계약 정보
+export const updateContractDetail = async (contractId, data) => {
   try {
-    const res = await privateAxios.put(`/v1/vendor/contract/${contractId}`);
+    const res = await privateAxios.put(`/v1/vendor/contract/${contractId}`, data);
     return res;
   } catch (err) {
     console.error('계약 수정 => ', err.response.data);
