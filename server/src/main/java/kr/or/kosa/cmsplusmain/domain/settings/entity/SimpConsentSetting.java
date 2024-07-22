@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -32,7 +32,7 @@ import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 @Entity
 @Table(name = "setting_simpconsent")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class SimpConsentSetting extends BaseEntity {
@@ -45,6 +45,11 @@ public class SimpConsentSetting extends BaseEntity {
 	@Column(name = "setting_simpconsent_id")
 	private Long id;
 
+	@Setter
+	@OneToOne(mappedBy = "simpConsentSetting", fetch = FetchType.LAZY, optional = false)
+	@NotNull
+	private Vendor vendor;
+
 	/*간편동의 설정 결제수단*/
 	@ElementCollection(targetClass = PaymentMethod.class, fetch = FetchType.LAZY)
 	@CollectionTable(name = "simpconsent_vendor_auto_payment_method")
@@ -55,28 +60,22 @@ public class SimpConsentSetting extends BaseEntity {
 		new HashSet<>(List.of(PaymentMethod.CMS, PaymentMethod.CARD));
 
 	/*간편동의 설정 상품*/
-
-	// TODO: 고객 아이디 생성시 기본 상품 추가??
-	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+	@ManyToMany
 	@JoinTable(name = "simpconsent_vendor_product",
 		joinColumns = @JoinColumn(name = "setting_simpconsent_id"),
 		inverseJoinColumns = @JoinColumn(name = "product_id")
 	)
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
-	@Builder.Default
 	private Set<Product> simpConsentProducts = new HashSet<>();
-
-	//TODO 설정 수정 삭제 메서드 구현
-	// 자동결제 수단만 가능하도록
-
 
 	public void addProduct(Product product) {
 		this.simpConsentProducts.add(product);
 	}
 
 	public void addPaymentMethod(PaymentMethod paymentMethod) {
+		if (!PaymentType.getAutoPaymentMethods().contains(paymentMethod)) {
+			throw new IllegalArgumentException("간편동의는 자동결제 수단만 등록할 수 있습니다.");
+		}
 		this.simpConsentPayments.add(paymentMethod);
 	}
-
-
 }

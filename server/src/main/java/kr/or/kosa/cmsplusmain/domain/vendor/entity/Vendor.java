@@ -29,7 +29,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Comment("고객 (학원의 원장 - 사용자)")
 @Entity
@@ -42,7 +41,6 @@ import lombok.Setter;
 
 //TODO
 // Build, ALL, No 이렇게 세개 전부다 사용해도 괜찮을까
-// 네
 
 @Getter
 @Builder
@@ -104,10 +102,14 @@ public class Vendor extends BaseEntity {
 
 	/* 간편동의 설정 */
 	// TODO: 고객 아이디 만들기 시 최초 설정 값 지녀야함
-	@Setter
 	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "setting_simpconset_id")
 	private SimpConsentSetting simpConsentSetting;
+
+	public void setSimpConsentSetting(SimpConsentSetting simpConsentSetting) {
+		this.simpConsentSetting = simpConsentSetting;
+		simpConsentSetting.setVendor(this);
+	}
 
 	public static Vendor of(Long id) {
 		Vendor emptyVendor = new Vendor();
