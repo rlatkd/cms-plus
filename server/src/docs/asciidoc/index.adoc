@@ -7,5 +7,6 @@
 
 :sectlinks:
 
-include::api/billing.adoc[leveloffset=+1]
-include::api/product.adoc[leveloffset=+1]
+include::domain/billing.adoc[leveloffset=+1]
+include::domain/product.adoc[leveloffset=+1]
+include::domain/contract.adoc[leveloffset=+1]

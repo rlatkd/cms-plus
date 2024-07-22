@@ -10,11 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Random;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import kr.or.kosa.cmsplusmain.domain.product.entity.ProductStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,8 +36,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import kr.or.kosa.cmsplusmain.RandomGenerator;
-import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
-import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.product.dto.*;
 import kr.or.kosa.cmsplusmain.domain.product.service.ProductService;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -73,6 +69,7 @@ public class ProductControllerTest {
                 .alwaysDo(MockMvcResultHandlers.print())
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
         this.objectMapper.registerModule(new Jdk8Module());
