@@ -1,14 +1,40 @@
+import { updateContractDetail } from '@/apis/contract';
 import ContractInfoForm from '@/components/common/memberForm/ContractInfoForm';
+import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ProductInfoUpdatePage = () => {
   const navigate = useNavigate();
+  const { contractInfo } = useMemberContractStore();
+  const { id: contractId } = useParams();
 
-  // 계약 정보 수정 API
+  // <------ 계약 정보 수정 요청Data 형태변환 ------>
+  const transformContractInfo = contractInfo => ({
+    contractName: contractInfo.contractName,
+    contractProducts: contractInfo.contractProducts.map(product => ({
+      productId: product.productId,
+      price: product.price,
+      quantity: product.quantity,
+    })),
+  });
 
-  // 계약정보 수정 성공 Alert창
+  // <------ 계약 정보 수정 API ------>
+  const axiosUpdateContractDetail = async () => {
+    try {
+      const trasformData = transformContractInfo(contractInfo);
+      const res = await updateContractDetail(contractId, trasformData);
+      console.log('!----계약 정보 수정 성공----!');
+      console.log(res);
+      await navigate(`/vendor/contracts/detail/${contractId}`);
+      onAlertClick();
+    } catch (err) {
+      console.error('axiosUpdateContractDetail => ', err.response.data);
+    }
+  };
+
+  // <------ 계약정보 수정 성공 Alert창 ------>
   const { alert: alertComp } = useContext(AlertContext);
   const onAlertClick = async () => {
     const result = await alertComp('계약정보가 수정되었습니다!');
@@ -29,7 +55,9 @@ const ProductInfoUpdatePage = () => {
             onClick={() => navigate(-1)}>
             취소
           </button>
-          <button className=' px-10 py-2 bg-mint rounded-lg text-white transition-all duration-200 hover:bg-mint_hover ml-3'>
+          <button
+            className=' px-10 py-2 bg-mint rounded-lg text-white transition-all duration-200 hover:bg-mint_hover ml-3'
+            onClick={axiosUpdateContractDetail}>
             저장
           </button>
         </div>

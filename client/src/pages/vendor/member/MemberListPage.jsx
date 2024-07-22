@@ -98,7 +98,6 @@ const MemberListPage = () => {
 
   // <--------회원 상세 조회 페이지 이동-------->
   const MoveMemberDetail = async memberId => {
-    console.log(memberId);
     navigate(`detail/${memberId}`);
   };
 

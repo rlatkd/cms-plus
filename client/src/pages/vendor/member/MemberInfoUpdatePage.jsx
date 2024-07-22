@@ -26,7 +26,7 @@ const MemberInfoUpdatePage = () => {
   // <--------기본정보 수정 성공 Alert창-------->
   const { alert: alertComp } = useContext(AlertContext);
   const onAlertClick = async () => {
-    await alertComp('회원정보가 수정되었습니다!');
+    const result = await alertComp('회원정보가 수정되었습니다!');
   };
 
   return (
