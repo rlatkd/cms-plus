@@ -19,6 +19,7 @@
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@headlessui/react": "^2.1.2",
+    "antd": "^5.19.3",
     "axios": "^1.7.2",
     "firebase": "^10.12.3",
     "path-browserify": "^1.0.1",

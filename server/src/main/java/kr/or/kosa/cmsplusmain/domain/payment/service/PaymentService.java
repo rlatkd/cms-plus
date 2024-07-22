@@ -175,7 +175,10 @@ public class PaymentService {
 	/*
 	 * 회원 수정 - 결제 정보
 	 * */
-	@Transactional
+	// TODO
+	// 결제 수정 로직을 변경예정
+
+ 	@Transactional
 	public void updatePayment(Long vendorId, Long contractId,  PaymentUpdateReq paymentUpdateReq){
 
 		//TODO
