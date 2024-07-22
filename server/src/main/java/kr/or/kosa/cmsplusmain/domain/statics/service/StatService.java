@@ -1,10 +1,8 @@
 package kr.or.kosa.cmsplusmain.domain.statics.service;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,10 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.DayBillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.DayBillingRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.RecentFiveContractRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.StatInfoRes;
@@ -23,6 +18,7 @@ import kr.or.kosa.cmsplusmain.domain.statics.dto.TopFiveMemberRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.TopInfoRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.BillingStatQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.ContractStatQueryRes;
+import kr.or.kosa.cmsplusmain.domain.statics.dto.query.DayBillingQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.MemberStatQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.MonthBillingInfoRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.MonthBillingQueryRes;
@@ -111,7 +107,7 @@ public class StatService {
 	private List<TopFiveMemberRes> getTopFiveMember(Long vendorId) {
 		List<TopFiveMemberQueryRes> queryRes = statRepository.findTopFiveMembers(vendorId);
 		return queryRes.stream()
-			.map(res -> new TopFiveMemberRes(res.getMemberName(), res.getTotalContractPrice(), res.getContractCount()))
+			.map(res -> new TopFiveMemberRes(res.getMemberId(), res.getMemberName(), res.getTotalContractPrice(), res.getContractCount()))
 			.toList();
 	}
 
@@ -119,70 +115,83 @@ public class StatService {
 		List<RecentFiveContractQueryRes> queryRes = statRepository.findRecentFiveContracts(vendorId);
 		return queryRes.stream()
 			.map(res -> new RecentFiveContractRes(
-				res.getContractStartDate(),
+				res.getContractId(),
+				res.getCreateDateTime().toLocalDate(),
 				res.getMemberName(), res.getTotalContractPrice(),
 				Period.between(res.getContractStartDate(), res.getContractEndDate()).getMonths()))
 			.toList();
 	}
 
 	public MonthBillingInfoRes getMonthBillingInfo(Long vendorId, int year, int month) {
-		List<MonthBillingQueryRes> monthBillingQueryRes = statRepository.findBillingsByMonth(vendorId, year, month);
+		List<DayBillingQueryRes> dayBillingQueryRes = statRepository.findBillingsByMonth(vendorId, year, month);
 
-		System.out.println("month: " + monthBillingQueryRes);
+		Map<BillingStatus, List<DayBillingQueryRes>> statusToQRes = groupByStatus(dayBillingQueryRes);
+		Map<BillingStatus, Long> statusToPrices = calculateStatusPrices(statusToQRes);
+		Map<BillingStatus, Integer> statusToCounts = calculateStatusCounts(statusToQRes);
+		Long totalBillingPrice = calculateTotalBillingPrice(statusToPrices);
+		List<DayBillingRes> dayBillingRes = createDayBillingResList(dayBillingQueryRes);
 
-		// 상태별 그룹핑
-		Map<BillingStatus, List<MonthBillingQueryRes>> statusToRes = monthBillingQueryRes.stream()
-			.collect(Collectors.groupingBy(MonthBillingQueryRes::getBillingStatus));
-		Arrays.stream(BillingStatus.values()).forEach(bs ->
-			statusToRes.computeIfAbsent(bs, k -> new ArrayList<>())
-		);
-
-		// 일별 그룹핑
-		List<DayBillingRes> dayBillingResList = monthBillingQueryRes.stream()
-			.collect(Collectors.groupingBy(MonthBillingQueryRes::getBillingDate))
-			.entrySet()
-			.stream()
-			.map(entry -> {
-				LocalDate billingDate = entry.getKey();
-				List<MonthBillingQueryRes> dayResList = entry.getValue();
-
-				return new DayBillingRes(
-					billingDate,
-					calcBillingPrice(dayResList),
-					dayResList.size()
-				);
-			})
-			.toList();
-
-		return new MonthBillingInfoRes(
-				calcBillingPrice(monthBillingQueryRes),
-				calcBillingPrice(statusToRes.get(BillingStatus.CREATED)),
-				calcBillingPrice(statusToRes.get(BillingStatus.PAID)),
-				calcBillingPrice(statusToRes.get(BillingStatus.WAITING_PAYMENT)),
-				calcBillingPrice(statusToRes.get(BillingStatus.NON_PAID)),
-				monthBillingQueryRes.size(),
-				statusToRes.get(BillingStatus.CREATED).size(),
-				statusToRes.get(BillingStatus.PAID).size(),
-				statusToRes.get(BillingStatus.WAITING_PAYMENT).size(),
-				statusToRes.get(BillingStatus.NON_PAID).size(),
-				dayBillingResList);
+		return MonthBillingInfoRes.builder()
+			.statusPrices(statusToPrices)
+			.statusCounts(statusToCounts)
+			.dayBillingRes(dayBillingRes)
+			.totalBillingPrice(totalBillingPrice)
+			.build();
 	}
 
-	// public DayBillingDetailRes getDayBillingDetail(Long vendorId, LocalDate date) {
-	// 	List<Billing> billings = statRepository.findBillingsByDay(vendorId, date);
-	//
-	// 	// 상태별 그룹핑
-	// 	Map<BillingStatus, List<Billing>> statusToRes = billings.stream()
-	// 		.collect(Collectors.groupingBy(Billing::getBillingStatus));
-	// 	Arrays.stream(BillingStatus.values()).forEach(bs ->
-	// 		statusToRes.computeIfAbsent(bs, k -> new ArrayList<>())
-	// 	);
-	//
-	// }
+	private Map<BillingStatus, List<DayBillingQueryRes>> groupByStatus(List<DayBillingQueryRes> dayBillingQueryRes) {
+		return dayBillingQueryRes.stream()
+			.collect(Collectors.groupingBy(DayBillingQueryRes::getBillingStatus));
+	}
 
-	private Long calcBillingPrice(List<MonthBillingQueryRes> monthBillingQueryRes) {
-		return monthBillingQueryRes.stream()
-			.mapToLong(MonthBillingQueryRes::getBillingPrice)
+	private Map<BillingStatus, Long> calculateStatusPrices(Map<BillingStatus, List<DayBillingQueryRes>> statusToQRes) {
+		return statusToQRes.entrySet().stream()
+			.collect(Collectors.toMap(
+				Map.Entry::getKey,
+				entry -> entry.getValue().stream()
+					.mapToLong(DayBillingQueryRes::getBillingPrice)
+					.sum()
+			));
+	}
+
+	private Map<BillingStatus, Integer> calculateStatusCounts(Map<BillingStatus, List<DayBillingQueryRes>> statusToQRes) {
+		return statusToQRes.entrySet().stream()
+			.collect(Collectors.toMap(
+				Map.Entry::getKey,
+				entry -> entry.getValue().size()
+			));
+	}
+
+	private Long calculateTotalBillingPrice(Map<BillingStatus, Long> statusToPrices) {
+		return statusToPrices.values().stream()
+			.mapToLong(Long::longValue)
 			.sum();
+	}
+
+	private List<DayBillingRes> createDayBillingResList(List<DayBillingQueryRes> dayBillingQueryRes) {
+		return dayBillingQueryRes.stream()
+			.collect(Collectors.groupingBy(DayBillingQueryRes::getBillingDate))
+			.entrySet().stream()
+			.map(entry -> createDayBillingRes(entry.getKey(), entry.getValue()))
+			.toList();
+	}
+
+	private DayBillingRes createDayBillingRes(LocalDate day, List<DayBillingQueryRes> qResList) {
+		long totalDayBillingPrice = qResList.stream()
+			.mapToLong(DayBillingQueryRes::getBillingPrice)
+			.sum();
+
+		Map<BillingStatus, Integer> statusCounts = qResList.stream()
+			.collect(Collectors.groupingBy(
+				DayBillingQueryRes::getBillingStatus,
+				Collectors.summingInt(e -> 1)
+			));
+
+		return DayBillingRes.builder()
+			.billingDate(day)
+			.totalDayBillingCount(qResList.size())
+			.totalDayBillingPrice(totalDayBillingPrice)
+			.statusCounts(statusCounts)
+			.build();
 	}
 }

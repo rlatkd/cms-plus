@@ -22,22 +22,20 @@ public class KafkaTopicConfig {
     @Value("${kafkaTopic.paymentTopic}")
     private String paymentTopic;
 
+    @Value("${kafkaTopic.monitoringTopic}")
+    private String monitoringTopic;
+
     @Bean
     public KafkaAdmin.NewTopics newTopics() {
         return new KafkaAdmin.NewTopics(
                 TopicBuilder.name(messagingTopic)
-                        .partitions(1)
-                        .replicas(1)
+                        .partitions(3)
+                        .replicas(3)
                         .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
                         .build(),
                 TopicBuilder.name(paymentTopic)
-                        .partitions(1)
-                        .replicas(1)
-                        .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
-                        .build(),
-                TopicBuilder.name("monitoring-topic") // 추후 개발
-                        .partitions(1)
-                        .replicas(1)
+                        .partitions(3)
+                        .replicas(3)
                         .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
                         .build()
         );

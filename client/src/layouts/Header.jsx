@@ -12,6 +12,7 @@ const Header = () => {
       mainRef.current.scrollIntoView();
     }
   }, [pathname]);
+
   return (
     <div
       ref={mainRef}

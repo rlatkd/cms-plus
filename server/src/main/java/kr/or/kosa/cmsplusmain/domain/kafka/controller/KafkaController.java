@@ -4,7 +4,6 @@ import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.VirtualAccountPaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;

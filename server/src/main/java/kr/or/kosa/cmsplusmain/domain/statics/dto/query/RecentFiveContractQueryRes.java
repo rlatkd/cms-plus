@@ -9,6 +9,7 @@ import lombok.Getter;
 
 @Getter
 public class RecentFiveContractQueryRes {
+	private final Long contractId;
 	private final LocalDateTime createDateTime;
 	private final String memberName;
 	private final Long totalContractPrice;
@@ -16,8 +17,9 @@ public class RecentFiveContractQueryRes {
 	private final LocalDate contractEndDate;
 
 	@QueryProjection
-	public RecentFiveContractQueryRes(LocalDateTime createDateTime, String memberName, Long totalContractPrice,
+	public RecentFiveContractQueryRes(Long contractId, LocalDateTime createDateTime, String memberName, Long totalContractPrice,
 		LocalDate contractStartDate, LocalDate contractEndDate) {
+		this.contractId = contractId;
 		this.createDateTime = createDateTime;
 		this.memberName = memberName;
 		this.totalContractPrice = totalContractPrice;

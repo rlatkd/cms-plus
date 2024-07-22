@@ -2,6 +2,7 @@ import InputWeb from '@/components/common/inputs/InputWeb';
 import TextArea from '../inputs/TextArea';
 import { formatPhone, removeDashes } from '@/utils/formatPhone';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
+import InputCalendar from '@/components/common/inputs/InputCalendar';
 
 // formType : CREATE, UPDATE, DETAIL
 const BasicInfoForm = ({ formType }) => {
@@ -10,6 +11,9 @@ const BasicInfoForm = ({ formType }) => {
   // <------ 인풋 필드 입력값 변경 ------>
   const handleChangeValue = e => {
     const { id, value } = e.target;
+    console.log('id', id);
+    console.log('value', value);
+    console.log(basicInfo);
 
     if (id === 'memberPhone' || id === 'memberHomePhone') {
       setBasicInfoItem({
@@ -65,18 +69,17 @@ const BasicInfoForm = ({ formType }) => {
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
-        {/* TODO */}
-        {/* 데이터 피커 적용 제대로 */}
-        <InputWeb
+        <InputCalendar
           id='memberEnrollDate'
           label='가입일'
           placeholder='ex) 2024-11-02'
-          type='text'
-          value={basicInfo.memberEnrollDate}
           required
+          height='55px'
+          width='100%'
+          classContainer='w-full'
           disabled={isDisabled}
-          onChange={handleChangeValue}
-          onKeyDown={handleKeyDown}
+          value={basicInfo.memberEnrollDate}
+          handleChangeValue={handleChangeValue}
         />
         <InputWeb
           id='memberHomePhone'
