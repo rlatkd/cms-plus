@@ -2,9 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getContractList } from '@/apis/contract';
 import { getAllProductList } from '@/apis/product';
-import PagiNation from '@/components/common/PagiNation';
-import InputWeb from '@/components/common/inputs/InputWeb';
-import { ProductSelectField2 } from '@/components/common/selects/ProductSelectField';
 import useDebounce from '@/hooks/useDebounce';
 import { formatProducts } from '@/utils/formatProducts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,7 +13,6 @@ import { createBilling } from '@/apis/billing';
 const BillingRegisterPage = () => {
   const navigate = useNavigate();
   const [contractList, setContractList] = useState([]);
-  const [contractListCount, setContractListCount] = useState(0);
   const [searchType, setSearchType] = useState('memberName');
   const [searchTerm, setSearchTerm] = useState('');
   const [totalPages, setTotalPages] = useState(1);
@@ -42,7 +38,6 @@ const BillingRegisterPage = () => {
         size: 10,
       });
       setContractList(res.data.content);
-      setContractListCount(res.data.totalCount);
       setTotalPages(res.data.totalPage || 1);
     } catch (err) {
       console.error('Failed to fetch contract list:', err);
@@ -62,15 +57,6 @@ const BillingRegisterPage = () => {
     fetchContractList();
     fetchAllProducts();
   }, [fetchContractList, fetchAllProducts, debouncedSearchTerm]);
-
-  const transformContractListItem = (data) => {
-    return data.map(contract => ({
-      ...contract,
-      contractDay: `${contract.contractDay}일`,
-      contractPrice: `${contract.contractPrice.toLocaleString()}원`,
-      contractProducts: formatProducts(contract.contractProducts),
-    }));
-  };
 
   const calculatePaymentDate = (contractDay) => {
     const today = new Date();
@@ -105,7 +91,6 @@ const BillingRegisterPage = () => {
   };
 
   const handleBillingDataChange = (key, value) => {
-    console.log(key, value);
     setBillingData(prev => ({ ...prev, [key]: value }));
   };
 
@@ -139,7 +124,6 @@ const BillingRegisterPage = () => {
   };
 
   const handleBillingSubmit = async () => {
-    console.log('청구 데이터:', billingData);
     try {
         await createBilling(billingData);
         alert('청구 생성했습니다.');
@@ -171,7 +155,7 @@ const BillingRegisterPage = () => {
 
         {/* 오른쪽: 청구 생성 정보 */}
         <div className="w-3/5 p-6 overflow-auto">
-          <h2 className="text-2xl font-semibold mb-4">청구 생성 정보</h2>
+          <h2 className="text-2xl mb-4">청구 생성 정보</h2>
           {selectedContract ? (
             <BillingForm
               billingData={billingData}

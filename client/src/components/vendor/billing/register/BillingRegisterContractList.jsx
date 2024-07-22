@@ -17,7 +17,7 @@ const ContractList = ({
 }) => {
   return (
     <div className="w-2/5 p-6 overflow-auto">
-      <h2 className="text-2xl font-semibold mb-4">계약 목록</h2>
+      <h2 className="text-xl text-text_black font-800 mb-4">계약 목록</h2>
       <div className="flex space-x-2 mb-4">
         <select
           value={searchType}
