@@ -44,7 +44,7 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	private final ProductCustomRepository productCustomRepository;
-	private final KafkaMessagingService kafkaMessagingService;
+	// private final KafkaMessagingService kafkaMessagingService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
 	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
@@ -104,14 +104,14 @@ public class BillingService {
 
 	private void sendInvoiceMessage(String message, Member member) {
 		// 청구서 링크 발송
-		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
-
-		switch (sendMethod) {
-			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
-							kafkaMessagingService.produceMessaging(smsMessageDto); }
-			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
-							kafkaMessagingService.produceMessaging(emailMessageDto); }
-		}
+		// MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+		//
+		// switch (sendMethod) {
+		// 	case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+		// 					kafkaMessagingService.produceMessaging(smsMessageDto); }
+		// 	case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+		// 					kafkaMessagingService.produceMessaging(emailMessageDto); }
+		// }
 	}
 
 	/*

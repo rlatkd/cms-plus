@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
 
-@Configuration
+// @Configuration
 public class KafkaTopicConfig {
 
     /*
@@ -21,9 +21,6 @@ public class KafkaTopicConfig {
 
     @Value("${kafkaTopic.paymentTopic}")
     private String paymentTopic;
-
-    @Value("${kafkaTopic.monitoringTopic}")
-    private String monitoringTopic;
 
     @Bean
     public KafkaAdmin.NewTopics newTopics() {
