@@ -66,6 +66,20 @@ public class ProductService {
         return ProductDetailRes.fromEntity(product, contractNum);
     }
 
+    public List<ProductDto> getAllProducts(Long vendorId) {
+        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId).stream()
+            .map(ProductDto::fromEntity)
+            .toList();
+    }
+
+    @Deprecated
+    public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
+        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
+            .stream()
+            .map(product -> ProductListItemRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
+            .collect(Collectors.toList());
+    }
+
     /*
      * 상품 수정
      * */

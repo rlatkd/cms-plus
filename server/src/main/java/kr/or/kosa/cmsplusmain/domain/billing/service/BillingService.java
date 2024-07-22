@@ -65,7 +65,7 @@ public class BillingService {
 	@Transactional
 	public void sendInvoice(Long vendorId, Long billingId) {
 		// 청구가 고객의 청구인지 확인
-		validateBillingUser(vendorId, billingId);
+		validateBillingUser(billingId, vendorId);
 
 		// 청구서 발송 가능 상태 확인
 		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
@@ -119,7 +119,7 @@ public class BillingService {
 	* */
 	@Transactional
 	public void cancelInvoice(Long vendorId, Long billingId) {
-		validateBillingUser(vendorId, billingId);
+		validateBillingUser(billingId, vendorId);
 
 		// 청구서 취소 가능 상태 확인
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
@@ -136,7 +136,7 @@ public class BillingService {
 	* */
 	@Transactional
 	public void payBilling(Long vendorId, Long billingId) {
-		validateBillingUser(vendorId, billingId);
+		validateBillingUser(billingId, vendorId);
 
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 
@@ -156,7 +156,7 @@ public class BillingService {
 	* */
 	@Transactional
 	public void cancelPayBilling(Long vendorId, Long billingId) {
-		validateBillingUser(vendorId, billingId);
+		validateBillingUser(billingId, vendorId);
 
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		if (!billing.canCancelPaid()) {
@@ -253,7 +253,7 @@ public class BillingService {
 		// 결제일, 청구서 메시지 수정
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		billing.setBillingDate(billingUpdateReq.getBillingDate());
-		billing.setInvoiceMessage(billingUpdateReq.getInvoiceMemo());
+		billing.setInvoiceMessage(billingUpdateReq.getBillingMemo());
 
 		// 신규 청구상품
 		List<BillingProduct> newBillingProducts = convertToBillingProducts(billingUpdateReq.getBillingProducts());

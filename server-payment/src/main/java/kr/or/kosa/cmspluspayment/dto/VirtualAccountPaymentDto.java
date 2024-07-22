@@ -13,8 +13,8 @@ import lombok.ToString;
 public class VirtualAccountPaymentDto extends PaymentDto {
 
     @JsonCreator
-    public VirtualAccountPaymentDto(@JsonProperty("billingId") Long billingId, @JsonProperty("number") String number) {
-        super(billingId, PaymentPayMethod.VIRTUAL, number);
+    public VirtualAccountPaymentDto(@JsonProperty("billingId") Long billingId, @JsonProperty("phoneNumber") String phoneNumber, @JsonProperty("number") String number) {
+        super(billingId, phoneNumber, PaymentPayMethod.VIRTUAL, number);
     }
 
 }
