@@ -185,17 +185,17 @@ public class BillingService {
 			throw new EntityNotFoundException();
 		}
 
-		List<BillingProduct> billingProducts = convertToBillingProducts(billingCreateReq.getBillingProducts());
+		List<BillingProduct> billingProducts = convertToBillingProducts(billingCreateReq.getProducts());
 
 		// 청구 생성
 		Billing billing = new Billing(
 			Contract.of(billingCreateReq.getContractId()),
 			billingCreateReq.getBillingType(),
-			billingCreateReq.getBillingDate(),
+			billingCreateReq.getPaymentDate(),
 			// 청구 생성시 결제일을 넣어주는데 연월일 형식으로 넣어준다.
 			// 정기 청구 시 필요한 약정일은 입력된 결제일에서 일 부분만 빼서 사용
 			// ex. 입력 결제일=2024.07.13 => 약정일=13
-			billingCreateReq.getBillingDate().getDayOfMonth(),
+			billingCreateReq.getPaymentDate().getDayOfMonth(),
 			billingProducts);
 		billingRepository.save(billing);
 	}

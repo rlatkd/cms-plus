@@ -8,14 +8,14 @@ import lombok.Getter;
 @Builder
 public class ProductDto {
 	private Long productId;
-	private String productName;
-	private Integer productPrice;
+	private String name;
+	private Integer price;
 
 	public static ProductDto fromEntity(Product product) {
 		return ProductDto.builder()
 			.productId(product.getId())
-			.productName(product.getName())
-			.productPrice(product.getPrice())
+			.name(product.getName())
+			.price(product.getPrice())
 			.build();
 	}
 }

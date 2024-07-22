@@ -183,7 +183,7 @@ public class SampleDataLoader {
 		vendor = vendorRepository.save(vendor);
 
 		// 기본 상품
-		Product defaultProduct =createTestProduct(vendor, 1);
+		Product defaultProduct =createTestProduct(vendor, -1);
 		defaultProduct = productRepository.save(defaultProduct);
 
 		// 간편동의 기본상품 추가
@@ -330,9 +330,9 @@ public class SampleDataLoader {
 		return Product.builder()
 			.vendor(vendor)
 			.status(ProductStatus.ENABLED)
-			.name("테스트 상품" + idx)
+			.name("테스트 상품" + ((idx != -1) ? idx : ""))
 			.price(random.nextInt(1000, 1000000))
-			.memo("이것은 테스트 상품입니다. " + idx)
+			.memo("이것은 테스트 상품입니다. " + ((idx != -1) ? idx : ""))
 			.build();
 	}
 }
