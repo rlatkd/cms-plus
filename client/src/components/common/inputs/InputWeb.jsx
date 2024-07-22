@@ -1,7 +1,5 @@
 import Search from '@/assets/Search';
 import { useState, useRef } from 'react';
-import calender from '@/assets/calender.svg';
-import DatePicker from './DatePicker';
 import PostCodeModal from '@/components/vendor/modal/PostCodeModal';
 
 const InputWeb = ({
@@ -19,8 +17,7 @@ const InputWeb = ({
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const inputRef = useRef(null);
 
@@ -36,11 +33,6 @@ const InputWeb = ({
   const handleSearchAddress = () => {
     if (disabled) return;
     setIsAddressModalOpen(true);
-  };
-
-  // <------ DatePicker 열기/닫기 ------>
-  const handleToggleCalendar = () => {
-    setIsCalendarOpen(!isCalendarOpen);
   };
 
   // <------ 주소 선택 시 핸들러 ------>
@@ -96,30 +88,39 @@ const InputWeb = ({
           onClose={() => setIsAddressModalOpen(false)}
           handleSelectAddress={handleSelectAddress}
         />
-        {type === 'calendar' && (
-          <div onClick={handleToggleCalendar}>
-            <button
-              className='absolute right-2 top-1/2 transform -translate-y-1/2'
-              onClick={() => {
-                setSelectedDate('');
-                setIsCalendarOpen(!isCalendarOpen);
-              }}
-              tabIndex='-1'>
-              <img src={calender} alt='search' className='w-5 h-5' />
-            </button>
-            <DatePicker
-              selectedDate={selectedDate}
-              onDateChange={date => {
-                setSelectedDate(date);
-              }}
-              isOpen={isCalendarOpen}
-              onToggle={() => setIsCalendarOpen(!isCalendarOpen)}
-            />
-          </div>
-        )}
       </div>
     </div>
   );
 };
 
 export default InputWeb;
+
+// {type === 'calendar' && (
+//   <div onClick={handleToggleCalendar}>
+//     <button
+//       className='absolute right-2 top-1/2 transform -translate-y-1/2'
+//       onClick={() => {
+//         setSelectedDate('');
+//         setIsCalendarOpen(!isCalendarOpen);
+//       }}
+//       tabIndex='-1'>
+//       <img src={calender} alt='search' className='w-5 h-5' />
+//     </button>
+//     <DatePicker
+//       selectedDate={selectedDate}
+//       onDateChange={date => {
+//         setSelectedDate(date);
+//       }}
+//       isOpen={isCalendarOpen}
+//       onToggle={() => setIsCalendarOpen(!isCalendarOpen)}
+//     />
+//   </div>
+// )}
+
+// <------ DatePicker 열기/닫기 ------>
+// const handleToggleCalendar = () => {
+//   setIsCalendarOpen(!isCalendarOpen);
+// };
+
+// const [selectedDate, setSelectedDate] = useState('');
+// const [isCalendarOpen, setIsCalendarOpen] = useState(false);

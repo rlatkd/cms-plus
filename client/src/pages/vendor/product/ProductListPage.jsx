@@ -81,12 +81,16 @@ const ProductListPage = () => {
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );
 
+    console.log(updatedSearch);
+
     let searchParams = {};
     updatedSearch.forEach(searchMember => {
       if (searchMember.value) {
         searchParams[searchMember.key] = searchMember.value;
       }
     });
+
+    console.log(searchParams);
 
     setSearch(updatedSearch);
     setCurrentSearchParams(searchParams);
