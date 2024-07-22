@@ -1,7 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.billing.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -180,17 +179,19 @@ public class BillingService {
 			throw new EntityNotFoundException();
 		}
 
-		List<BillingProduct> billingProducts = convertToBillingProducts(billingCreateReq.getProducts());
+		List<BillingProduct> billingProducts = billingCreateReq.getProducts().stream()
+			.map(BillingProductReq::toEntity)
+			.toList();
 
 		// 청구 생성
 		Billing billing = new Billing(
 			Contract.of(billingCreateReq.getContractId()),
 			billingCreateReq.getBillingType(),
-			billingCreateReq.getPaymentDate(),
+			billingCreateReq.getBillingDate(),
 			// 청구 생성시 결제일을 넣어주는데 연월일 형식으로 넣어준다.
 			// 정기 청구 시 필요한 약정일은 입력된 결제일에서 일 부분만 빼서 사용
 			// ex. 입력 결제일=2024.07.13 => 약정일=13
-			billingCreateReq.getPaymentDate().getDayOfMonth(),
+			billingCreateReq.getBillingDate().getDayOfMonth(),
 			billingProducts);
 		billingRepository.save(billing);
 	}
@@ -251,7 +252,9 @@ public class BillingService {
 		billing.setInvoiceMessage(billingUpdateReq.getBillingMemo());
 
 		// 신규 청구상품
-		List<BillingProduct> newBillingProducts = convertToBillingProducts(billingUpdateReq.getBillingProducts());
+		List<BillingProduct> newBillingProducts = billingUpdateReq.getBillingProducts().stream()
+			.map(BillingProductReq::toEntity)
+			.toList();
 
 		// 청구상품 수정
 		updateBillingProducts(billing, newBillingProducts);
@@ -292,35 +295,6 @@ public class BillingService {
 			.filter(obp -> !newBillingProducts.contains(obp))
 			.toList()
 			.forEach(billing::removeBillingProduct);
-	}
-
-	/*
-	* 청구 상품 요청 -> 청구 상품 엔티티 변환 메서드
-	*
-	* 요청에서 상품의 ID를 받아서
-	* 상품의 ID를 토대로 상품 이름을 가져온다.
-	*
-	* 상품이름을 청구상품 테이블에 저장해
-	* 청구상품 조회시 상품 이름만을 가져오기위한 조인을 없앤다.
-	*
-	* 상품 설정에서 이름 수정 불가 필요
-	* */
-	private List<BillingProduct> convertToBillingProducts(List<BillingProductReq> billingProductReqs) {
-		// 상품 ID
-		List<Long> productIds = billingProductReqs.stream()
-			.mapToLong(BillingProductReq::getProductId)
-			.boxed().toList();
-
-		// 상품 ID -> 이름
-		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
-
-		// 청구 상품 목록
-		List<BillingProduct> billingProducts = billingProductReqs
-			.stream()
-			.map(dto -> dto.toEntity(productIdToName.get(dto.getProductId())))
-			.toList();
-
-		return billingProducts;
 	}
 
 	/*

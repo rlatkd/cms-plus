@@ -43,8 +43,6 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEnum;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.*;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
@@ -99,7 +97,7 @@ public class BillingControllerTest {
 
 		BillingCreateReq request = BillingCreateReq.builder()
 			.billingType(randomGenerator.getRandomBillingType())
-			.paymentDate(LocalDate.now().plusDays(random.nextInt(30)))
+			.billingDate(LocalDate.now().plusDays(random.nextInt(30)))
 			.contractId(1L)
 			.products(Arrays.asList(productReq))
 			.build();
