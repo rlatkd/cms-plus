@@ -68,7 +68,17 @@ public class Payment extends BaseEntity {
 	* 결제 취소 가능 여부
 	* */
 	public boolean canCancel() {
-		return paymentType == PaymentType.BUYER
-			|| (paymentMethod != null && paymentMethod.getCanCancel());
+		return paymentType == PaymentType.BUYER || (paymentMethod != null && paymentMethod.getCanCancel());
+	}
+
+	/*
+	 * 결제 정보 수정
+	 */
+	public void update(PaymentType newPaymentType, PaymentTypeInfo newPaymentTypeInfo,
+					   PaymentMethod newPaymentMethod, PaymentMethodInfo newPaymentMethodInfo) {
+		this.paymentType = newPaymentType;
+		this.paymentTypeInfo = newPaymentTypeInfo;
+		this.paymentMethod = newPaymentMethod;
+		this.paymentMethodInfo = newPaymentMethodInfo;
 	}
 }

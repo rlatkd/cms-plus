@@ -214,10 +214,10 @@ public class PaymentService {
 			paymentMethodInfo = createPaymentMethodInfo(paymentMethodInfoReq);
 		}
 
-		payment.setPaymentType(paymentTypeInfoReq.getPaymentType());
-		payment.setPaymentTypeInfo(paymentTypeInfo);
-		payment.setPaymentMethod(paymentMethodInfoReq != null ?  paymentMethodInfoReq.getPaymentMethod() : null);
-		payment.setPaymentMethodInfo(paymentMethodInfo);
+		// 결제 정보 업데이트
+		payment.update(paymentTypeInfoReq.getPaymentType(),paymentTypeInfo,
+				paymentMethodInfoReq != null ?  paymentMethodInfoReq.getPaymentMethod() : null,
+				paymentMethodInfo);
 
 		paymentRepository.save(payment);
 	}

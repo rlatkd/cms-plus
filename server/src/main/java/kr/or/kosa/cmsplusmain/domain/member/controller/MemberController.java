@@ -83,14 +83,6 @@ public class MemberController {
         memberService.updateMember(vendorId, memberId, memberUpdateReq);
     }
 
-        /*
-      * 회원 엑셀 -> json 변환
-    * */
-    @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public List<MemberExcelDto> conventMembersByExcel(MultipartFile file) {
-        return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
-    }
-
     /*
      * 회원 수정 - 청구 정보
      * */
@@ -107,6 +99,23 @@ public class MemberController {
     public void updateMemberPayment(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @RequestBody @Valid PaymentUpdateReq paymentUpdateReq, @PathVariable Long contractId) {
         Long vendorId = userDetails.getId();
         paymentService.updatePayment(vendorId, contractId, paymentUpdateReq);
+    }
+
+    /*
+     * 회원 삭제
+     * */
+    @DeleteMapping("/members/{memberId}}")
+    public void deleteMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails ,  @PathVariable Long memberId) {
+        Long vendorId = userDetails.getId();
+
+    }
+
+    /*
+     * 회원 엑셀 -> json 변환
+     * */
+    @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public List<MemberExcelDto> conventMembersByExcel(MultipartFile file) {
+        return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
     }
 
     /*
