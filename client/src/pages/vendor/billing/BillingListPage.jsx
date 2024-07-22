@@ -155,7 +155,7 @@ const BillingListPage = () => {
         currentPage={currentPage}
         handleChangeSearch={handleChangeSearch}
         handleClickSearch={handleClickSearch}
-        onRowClick={item => MoveBillingDetail(item.contractId)}
+        onRowClick={item => MoveBillingDetail(item.billingId)}
       />
 
       <PagiNation
