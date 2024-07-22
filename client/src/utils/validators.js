@@ -1,3 +1,5 @@
+// 유효성 검사를 진행하는 함수
+
 import { regex } from './regex';
 
 export const validateField = (id, value) => {

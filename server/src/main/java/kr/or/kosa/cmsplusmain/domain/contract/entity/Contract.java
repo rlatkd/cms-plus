@@ -76,7 +76,7 @@ public class Contract extends BaseEntity {
 	private Integer contractDay;
 
 	@Comment("계약 결제정보")
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "payment_id")
 	@NotNull
 	private Payment payment;
@@ -91,6 +91,12 @@ public class Contract extends BaseEntity {
 	@NotNull
 	private LocalDate contractEndDate;
 
+	@Comment("계약 상태")
+	@Column(name = "contract_status", nullable = false)
+	@NotNull
+	@Builder.Default
+	private ContractStatus contractStatus = ContractStatus.ENABLED;
+
 	/* 계약한 상품 목록 */
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
@@ -101,8 +107,8 @@ public class Contract extends BaseEntity {
 	 * 계약 상품 추가
 	 * */
 	public void addContractProduct(ContractProduct contractProduct) {
-		contractProduct.setContract(this);
 		contractProducts.add(contractProduct);
+		contractProduct.setContract(this);
 	}
 
 	/*
@@ -134,6 +140,14 @@ public class Contract extends BaseEntity {
 	public void delete() {
 		super.delete();
 		contractProducts.forEach(BaseEntity::delete);
+	}
+
+	/*
+	* 계약 활성화 여부
+	* */
+	public boolean isEnabled() {
+		LocalDate curDate = LocalDate.now();
+		return curDate.isBefore(contractEndDate);
 	}
 
 	/*

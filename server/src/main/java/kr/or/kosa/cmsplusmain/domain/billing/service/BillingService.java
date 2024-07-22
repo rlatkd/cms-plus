@@ -3,6 +3,8 @@ package kr.or.kosa.cmsplusmain.domain.billing.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +27,8 @@ import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
-import kr.or.kosa.cmsplusmain.domain.messaging.service.MessageService;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +44,7 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	private final ProductCustomRepository productCustomRepository;
-	private final MessageService messageService;
+	private final KafkaMessagingService kafkaMessagingService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
 	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
@@ -63,7 +65,7 @@ public class BillingService {
 	@Transactional
 	public void sendInvoice(Long vendorId, Long billingId) {
 		// 청구가 고객의 청구인지 확인
-		validateBillingUser(vendorId, billingId);
+		validateBillingUser(billingId, vendorId);
 
 		// 청구서 발송 가능 상태 확인
 		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
@@ -103,9 +105,12 @@ public class BillingService {
 	private void sendInvoiceMessage(String message, Member member) {
 		// 청구서 링크 발송
 		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+
 		switch (sendMethod) {
-			case SMS -> messageService.sendSms(member.getPhone(), message);
-			case EMAIL -> messageService.sendEmail(member.getEmail(), message);
+			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+							kafkaMessagingService.produceMessaging(smsMessageDto); }
+			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+							kafkaMessagingService.produceMessaging(emailMessageDto); }
 		}
 	}
 
@@ -114,7 +119,7 @@ public class BillingService {
 	* */
 	@Transactional
 	public void cancelInvoice(Long vendorId, Long billingId) {
-		validateBillingUser(vendorId, billingId);
+		validateBillingUser(billingId, vendorId);
 
 		// 청구서 취소 가능 상태 확인
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
@@ -131,7 +136,7 @@ public class BillingService {
 	* */
 	@Transactional
 	public void payBilling(Long vendorId, Long billingId) {
-		validateBillingUser(vendorId, billingId);
+		validateBillingUser(billingId, vendorId);
 
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 
@@ -151,7 +156,7 @@ public class BillingService {
 	* */
 	@Transactional
 	public void cancelPayBilling(Long vendorId, Long billingId) {
-		validateBillingUser(vendorId, billingId);
+		validateBillingUser(billingId, vendorId);
 
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		if (!billing.canCancelPaid()) {
@@ -180,17 +185,17 @@ public class BillingService {
 			throw new EntityNotFoundException();
 		}
 
-		List<BillingProduct> billingProducts = convertToBillingProducts(billingCreateReq.getBillingProducts());
+		List<BillingProduct> billingProducts = convertToBillingProducts(billingCreateReq.getProducts());
 
 		// 청구 생성
 		Billing billing = new Billing(
 			Contract.of(billingCreateReq.getContractId()),
 			billingCreateReq.getBillingType(),
-			billingCreateReq.getBillingDate(),
+			billingCreateReq.getPaymentDate(),
 			// 청구 생성시 결제일을 넣어주는데 연월일 형식으로 넣어준다.
 			// 정기 청구 시 필요한 약정일은 입력된 결제일에서 일 부분만 빼서 사용
 			// ex. 입력 결제일=2024.07.13 => 약정일=13
-			billingCreateReq.getBillingDate().getDayOfMonth(),
+			billingCreateReq.getPaymentDate().getDayOfMonth(),
 			billingProducts);
 		billingRepository.save(billing);
 	}
@@ -234,7 +239,7 @@ public class BillingService {
 	/*
 	* 청구 수정
 	*
-	* 총 발생 쿼리수: 6회
+	* 총 발생 쿼리수: 7회
 	* 내용:
 	* 	존재여부 확인, 청구 조회, 상품 이름 조회, 청구상품 목록 조회(+? batch_size=100),
 	* 	청구상품 생성(*N 청구상품 수만큼), 청구 수정,
@@ -248,7 +253,7 @@ public class BillingService {
 		// 결제일, 청구서 메시지 수정
 		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		billing.setBillingDate(billingUpdateReq.getBillingDate());
-		billing.setInvoiceMessage(billingUpdateReq.getInvoiceMemo());
+		billing.setInvoiceMessage(billingUpdateReq.getBillingMemo());
 
 		// 신규 청구상품
 		List<BillingProduct> newBillingProducts = convertToBillingProducts(billingUpdateReq.getBillingProducts());

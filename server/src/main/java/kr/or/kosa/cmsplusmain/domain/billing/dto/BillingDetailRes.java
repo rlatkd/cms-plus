@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.billing.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
@@ -36,6 +37,15 @@ public class BillingDetailRes {
 
 	private final List<BillingProductRes> billingProducts;	// 청구상품 목록
 	private final Long billingPrice;						// 청구금액
+	private final LocalDateTime invoiceSendDateTime;		// 청구서 발송 시각
+	private final LocalDateTime paidDateTime;				// 결제된 시각
+
+	private final Boolean canBeUpdated;						// 청구 수정 가능여부
+	private final Boolean canBeDeleted;						// 청구 삭제 가능여부
+	private final Boolean canSendInvoice;					// 청구서 발송 가능여부
+	private final Boolean canCancelInvoice;					// 청구서 발송 취소 가능여부
+	private final Boolean canBePaid;						// 실시간 결제 가능여부
+	private final Boolean canPayCanceled;					// 결제 취소 가능여부
 
 	public static BillingDetailRes fromEntity(Billing billing) {
 		final Contract contract = billing.getContract();
@@ -66,6 +76,16 @@ public class BillingDetailRes {
 
 			.billingProducts(billingProductResList)
 			.billingPrice(billing.getBillingPrice())
+			.invoiceSendDateTime(billing.getInvoiceSendDateTime())
+			.paidDateTime(billing.getPaidDateTime())
+
+			.canBeUpdated(billing.canBeUpdated())
+			.canBeDeleted(billing.canBeDeleted())
+			.canSendInvoice(billing.canSendInvoice())
+			.canCancelInvoice(billing.canCancelInvoice())
+			.canBePaid(billing.canPayRealtime())
+			.canPayCanceled(billing.canCancelPaid())
+
 			.build();
 	}
 }

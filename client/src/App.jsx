@@ -6,7 +6,7 @@ import AlertWidthDialog from './utils/dialog/alertwidth/AlertWidthDialog';
 
 const App = () => {
   return (
-    <div className='flex h-full w-full justify-center'>
+    <div className='flex h-dvh w-vw justify-center'>
       <AlertDialog>
         <AlertWidthDialog>
           <ConfirmDialog>

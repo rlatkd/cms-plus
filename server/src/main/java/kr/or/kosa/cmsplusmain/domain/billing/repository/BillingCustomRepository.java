@@ -1,17 +1,13 @@
 package kr.or.kosa.cmsplusmain.domain.billing.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
+
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -21,6 +17,13 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.extern.slf4j.Slf4j;
+
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.billing;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.billingProduct;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.payment;
 
 @Slf4j
 @Repository
@@ -76,8 +79,8 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 고객의 전체 계약 수 (검색 조건 반영된 계약 수)
 	 * */
 	public int countAllBillings(Long vendorId, BillingSearchReq search) {
-		Long count = jpaQueryFactory
-			.select(billing.id.countDistinct())
+		JPQLQuery<Long> subQuery = jpaQueryFactory
+			.select(billing.id)
 			.from(billing)
 
 			.join(billing.contract, contract)
@@ -99,8 +102,14 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.having(
 				productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
 				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
-			)
+			);
 
+		Long count = jpaQueryFactory
+			.select(billing.id.countDistinct())
+			.from(billing)
+			.where(
+				billing.id.in(subQuery)
+			)
 			.fetchOne();
 
 		return (count != null) ? count.intValue() : 0;
@@ -211,6 +220,35 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 						billingProductNotDel()
 				)
 				.fetchOne();
+	}
+
+	/*
+	* 계약의 청구 총 개수 및 금액
+	* */
+	public Long[] findBillingCntAndPriceByContract(Long contractId) {
+		List<Long> billingIds = jpaQueryFactory
+			.select(billing.id)
+			.from(billing)
+			.where(
+				billingNotDel(),
+				billing.contract.id.eq(contractId)
+			)
+			.fetch();
+
+		if (billingIds == null || billingIds.isEmpty()) {
+			return new Long[] {0L, 0L};
+		}
+
+		Long totalPrice = jpaQueryFactory
+			.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
+			.from(billingProduct)
+			.where(
+				billingProductNotDel(),
+				billingProduct.billing.id.in(billingIds)
+			)
+			.fetchOne();
+
+		return new Long[] {(long)billingIds.size(), totalPrice};
 	}
 
 	private BooleanExpression paymentTypeEq(PaymentType paymentType) {

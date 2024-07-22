@@ -66,6 +66,20 @@ public class ProductService {
         return ProductDetailRes.fromEntity(product, contractNum);
     }
 
+    public List<ProductDto> getAllProducts(Long vendorId) {
+        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId).stream()
+            .map(ProductDto::fromEntity)
+            .toList();
+    }
+
+    @Deprecated
+    public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
+        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
+            .stream()
+            .map(product -> ProductListItemRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
+            .collect(Collectors.toList());
+    }
+
     /*
      * 상품 수정
      * */
@@ -78,7 +92,7 @@ public class ProductService {
     }
 
     /*
-     * 상품 수정
+     * 상품 삭제
      * */
     @Transactional
     public void deleteProduct(Long vendorId,Long productId) {
@@ -94,11 +108,11 @@ public class ProductService {
         }
     }
 
-    public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
+    // 임시로 삭제 예정
+    public List<ProductDtoTmp> getProductListTmp(Long vendorId) {
         return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
                 .stream()
-                .map(product -> ProductListItemRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
+                .map(ProductDtoTmp::fromEntity)
                 .collect(Collectors.toList());
     }
-
 }

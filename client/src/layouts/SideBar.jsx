@@ -12,7 +12,7 @@ const SideBar = () => {
     <div className='hidden h-full w-72  py-6 pl-4 mr-4 sticky desktop:block desktop:animate-slideIn '>
       <div
         className='mb-7 ml-3 mt-3 flex items-center cursor-pointer'
-        onClick={() => navigate('/vendor')}>
+        onClick={() => navigate('/vendor/dashboard')}>
         <img src='/src/assets/tmplogo.svg' alt='logo' className='mx-2 h-6 w-6' />
         <h1 className='font-800 text-text_black'>HYOSUNG CMS#</h1>
       </div>

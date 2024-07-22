@@ -1,10 +1,10 @@
-const RegisterBasicInfo = () => {
+import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
+
+const RegisterBasicInfo = ({ formType }) => {
   return (
-    <div>
-      RegisterBasicInfo
-      <br />
-      회원 등록 기본정보
-    </div>
+    <>
+      <BasicInfoForm formType={formType} />
+    </>
   );
 };
 

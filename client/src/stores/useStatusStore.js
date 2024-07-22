@@ -8,6 +8,7 @@ export const useStatusStore = create(
       increment: () => set(state => ({ status: state.status + 1 })),
       decrement: () => set(state => ({ status: state.status - 1 })),
       reset: () => set({ status: 0 }),
+      setStatus: newStatus => set({ status: newStatus }),
     }),
     {
       name: 'status-storage',

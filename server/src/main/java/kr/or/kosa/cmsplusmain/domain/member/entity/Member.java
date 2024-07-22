@@ -6,7 +6,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
@@ -19,14 +19,13 @@ import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 
 @Comment("회원 (학원의 학생)")
 @Entity
 @Table(name = "member", uniqueConstraints = {
-	@UniqueConstraint(name = "unique_member_email", columnNames = {"member_email"}),
-	@UniqueConstraint(name = "unique_member_phone", columnNames = {"member_phone"})})
+	@UniqueConstraint(name = "unique_member_email", columnNames = {"vendor_id", "member_email"}),
+	@UniqueConstraint(name = "unique_member_phone", columnNames = {"vendor_id", "member_phone"})})
 @Getter
 @AllArgsConstructor
 @Builder
@@ -50,7 +49,8 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "member_status", nullable = false)
 	@NotNull
-	private MemberStatus status;
+	@Builder.Default
+	private MemberStatus status = MemberStatus.ENABLED;
 
 	@Comment("회원 이름")
 	@Column(name = "member_name", nullable = false, length = 40)
@@ -111,18 +111,21 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "member_invoice_send_method", nullable = false)
 	@NotNull
+	@Builder.Default
 	@Setter
-	private MessageSendMethod invoiceSendMethod;
+	private MessageSendMethod invoiceSendMethod = MessageSendMethod.EMAIL;
 
 	@Comment("회원 청구서 자동 발송 여부")
 	@Column(name = "member_auto_invoice_send", nullable = false)
 	@Setter
-	private boolean autoInvoiceSend;
+	@Builder.Default
+	private boolean autoInvoiceSend = true;
 
 	@Comment("회원 청구 자동 생성 여부")
 	@Column(name = "member_auto_billing", nullable = false)
 	@Setter
-	private boolean autoBilling;
+	@Builder.Default
+	private boolean autoBilling = true;
 
 	/*
 	 * 계약금액합

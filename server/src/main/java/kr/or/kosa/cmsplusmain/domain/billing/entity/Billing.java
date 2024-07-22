@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +79,7 @@ public class Billing extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "billing_status", nullable = false)
 	@NotNull
+	@Setter
 	private BillingStatus billingStatus = BillingStatus.CREATED;
 
 	@Comment("청구서 메시지")
@@ -85,6 +87,16 @@ public class Billing extends BaseEntity {
 	@InvoiceMessage
 	@Setter
 	private String invoiceMessage;
+
+	@Comment("청구서 보낸시각")
+	@Column(name = "billing_invoice_send_datetime")
+	@Setter
+	private LocalDateTime invoiceSendDateTime;
+
+	@Comment("청구 결제된 시각")
+	@Column(name = "billing_paid_datetime")
+	@Setter
+	private LocalDateTime paidDateTime;
 
 	/* 청구 상품 목록 */
 	@OneToMany(mappedBy = "billing", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -150,20 +162,24 @@ public class Billing extends BaseEntity {
 	* 청구서 발송 가능 상태여부
 	*
 	* 청구서는 [생성, 미납] 상태에서만 발송 가능하다.
+	* 청구서는 딱 한 번만 발송가능하다.
 	* */
 	public boolean canSendInvoice() {
-		return billingStatus == BillingStatus.CREATED
-			|| billingStatus == BillingStatus.NON_PAID;
+		return (billingStatus == BillingStatus.CREATED
+			|| billingStatus == BillingStatus.NON_PAID)
+			&& invoiceSendDateTime == null;
 	}
 
 	/*
 	* 청구서 발송 완료로 상태 변경
+	* 청구서 발송 시각 저장
 	* */
 	public void setInvoiceSent() {
 		if (!canSendInvoice()) {
 			throw new SendInvoiceException();
 		}
 		billingStatus = BillingStatus.WAITING_PAYMENT;
+		invoiceSendDateTime = LocalDateTime.now();
 	}
 
 	/*
@@ -183,12 +199,16 @@ public class Billing extends BaseEntity {
 			throw new SendInvoiceException();
 		}
 		billingStatus = BillingStatus.CREATED;
+		invoiceSendDateTime = null;
 	}
 
 	/*
 	* 청구 결제일 수정
 	* */
 	public void setBillingDate(LocalDate billingDate) {
+		if (this.billingDate.equals(billingDate)) {
+			return;
+		}
 		// 청구의 결제일은 청구서 발송 전 상태에서만 수정 가능하다.
 		if (!billingStatus.equals(BillingStatus.CREATED)) {
 			throw new UpdateBillingDateException();
@@ -202,8 +222,8 @@ public class Billing extends BaseEntity {
 	* */
 	public boolean canPayRealtime() {
 		// 청구상태 확인
-		if (billingStatus == BillingStatus.WAITING_PAYMENT
-			|| billingStatus == BillingStatus.CREATED) {
+		if (!(billingStatus == BillingStatus.WAITING_PAYMENT
+			|| billingStatus == BillingStatus.CREATED)) {
 			return false;
 		}
 
@@ -213,9 +233,14 @@ public class Billing extends BaseEntity {
 
 	/*
 	* 청구 실시간 결제 완료 상태변경
+	* 결제된 시각 설정
 	* */
 	public void setPaid() {
+		if (billingStatus == BillingStatus.PAID) {
+			throw new PayBillingException("이미 결제된 청구입니다.");
+		}
 		billingStatus = BillingStatus.PAID;
+		paidDateTime = LocalDateTime.now();
 	}
 
 	/*
@@ -234,7 +259,28 @@ public class Billing extends BaseEntity {
 	 * 청구 결제 취소 상태 변경
 	 * */
 	public void setPayCanceled() {
+		if (!canCancelPaid()) {
+			throw new PayBillingException("결제 취소가 불가능합니다.");
+		}
 		billingStatus = BillingStatus.WAITING_PAYMENT;
+		paidDateTime = null;
+	}
+
+	/*
+	* 청구 수정 가능여부
+	* */
+	public boolean canBeUpdated() {
+		return this.billingStatus == BillingStatus.CREATED
+			|| billingStatus == BillingStatus.WAITING_PAYMENT;
+	}
+
+	/*
+	* 청구 삭제 가능여부
+	*
+	* 생성 수납대기중
+	* */
+	public boolean canBeDeleted() {
+		return this.billingStatus == BillingStatus.CREATED || billingStatus == BillingStatus.WAITING_PAYMENT;
 	}
 
 	/*

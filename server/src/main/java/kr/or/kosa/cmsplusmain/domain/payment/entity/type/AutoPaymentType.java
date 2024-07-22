@@ -2,6 +2,8 @@ package kr.or.kosa.cmsplusmain.domain.payment.entity.type;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.DiscriminatorValue;
+import kr.or.kosa.cmsplusmain.domain.base.validator.BlobUrl;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
@@ -17,12 +19,13 @@ import lombok.NoArgsConstructor;
 @Comment("결제방식 - 자동결제")
 @Entity
 @Getter
+@DiscriminatorValue(PaymentType.Const.AUTO)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AutoPaymentType extends PaymentTypeInfo {
 
 	@Comment("회원 간편동의 서명 이미지 URL")
 	@Column(name = "payment_sign_img_url", length = 2000)
-	@HttpUrl
+	@BlobUrl
 	private String signImgUrl;
 
 	@Comment("고객이 등록한 동의서 이미지 URL")
@@ -38,7 +41,8 @@ public class AutoPaymentType extends PaymentTypeInfo {
 	// 기본생성자 어노테니션 쓴 entity에서 builder 패턴을 적용해도 괜찮은가
 
 	@Builder
-	public AutoPaymentType(String consentImgUrl, LocalDateTime simpleConsentReqDateTime) {
+	public AutoPaymentType(String signImgUrl, String consentImgUrl, LocalDateTime simpleConsentReqDateTime) {
+		this.signImgUrl = signImgUrl;
 		this.consentImgUrl = consentImgUrl;
 		this.simpleConsentReqDateTime = simpleConsentReqDateTime;
 	}

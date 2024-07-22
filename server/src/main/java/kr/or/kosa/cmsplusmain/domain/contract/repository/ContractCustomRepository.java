@@ -1,16 +1,14 @@
 package kr.or.kosa.cmsplusmain.domain.contract.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.type.QPaymentTypeInfo.*;
+
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -21,6 +19,12 @@ import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.extern.slf4j.Slf4j;
+
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.payment;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.type.QPaymentTypeInfo.paymentTypeInfo;
 
 @Slf4j
 @Repository
@@ -49,7 +53,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 				contractNotDel(),                                // 계약 소프트 삭제
 
 				contract.vendor.id.eq(vendorId),                // 고객 일치
-
+				contractStatusEq(search.getContractStatus()),
 				memberNameContains(search.getMemberName()),        // 회원 이름 포함
 				memberPhoneContains(search.getMemberPhone()),    // 회원 휴대번호 포함
 				contractDayEq(search.getContractDay()),         // 약정일 일치
@@ -77,8 +81,8 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 	* 전체 계약 수
 	* */
 	public int countAllContracts(Long vendorId, ContractSearchReq search) {
-		Long count = jpaQueryFactory
-			.select(contract.id.countDistinct())
+		JPQLQuery<Long> subQuery = jpaQueryFactory
+			.select(contract.id)
 			.from(contract)
 
 			.join(contract.member, member)
@@ -101,7 +105,12 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 			.having(
 				productNameContainsInGroup(search.getProductName()),
 				contractPriceLoeInGroup(search.getContractPrice())
-			)
+			);
+
+		Long count = jpaQueryFactory
+			.select(contract.id.countDistinct())
+			.from(contract)
+			.where(contract.id.in(subQuery))
 			.fetchOne();
 
 		return (count != null) ? count.intValue() : 0;
@@ -176,5 +185,9 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 
 	private BooleanExpression paymentMethodEq(PaymentMethod paymentMethod) {
 		return (paymentMethod != null) ? payment.paymentMethod.eq(paymentMethod) : null;
+	}
+
+	private BooleanExpression contractStatusEq(ContractStatus contractStatus) {
+		return (contractStatus != null) ? contract.contractStatus.eq(contractStatus) : null;
 	}
 }

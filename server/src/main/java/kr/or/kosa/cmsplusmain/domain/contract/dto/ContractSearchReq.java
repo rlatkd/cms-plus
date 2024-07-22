@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.contract.dto;
 
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public class ContractSearchReq {
 	private String memberPhone;
 	private Integer contractDay;
 	private Long contractPrice;
+	private ContractStatus contractStatus;
 	private String productName;
 	private PaymentType paymentType;
 	private PaymentMethod paymentMethod;

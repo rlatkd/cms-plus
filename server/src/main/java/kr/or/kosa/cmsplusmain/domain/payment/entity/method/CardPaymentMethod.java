@@ -14,6 +14,7 @@ import kr.or.kosa.cmsplusmain.domain.payment.validator.CardNumber;
 
 @Comment("결제수단 - 카드")
 @Entity
+@DiscriminatorValue(PaymentMethod.Const.CARD)
 @Getter
 @Builder
 @AllArgsConstructor

@@ -10,9 +10,9 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { getMonthBillingInfo, getStatInfo, getTopInfo } from '@/apis/dashboard';
 
-const formatNumber = (num) => {
+const formatNumber = num => {
   if (!num) return '0';
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 const Stats = ({ statInfo }) => (
@@ -39,7 +39,7 @@ const Stats = ({ statInfo }) => (
       icon={faChartLine}
       title={'전월 대비 매출'}
       value={`+${statInfo.billingPriceGrowth}%`}
-      subStat={`회원: +${statInfo.memberGrowth}%`}
+      subStat={`회원: ${statInfo.memberGrowth >= 0 ? '+' : ''}${statInfo.memberGrowth}%`}
     />
   </div>
 );
@@ -59,67 +59,45 @@ const StatItem = ({ icon, title, value, subStat }) => (
 
 const BillingSummary = ({ billingInfo, month }) => (
   <div className='bg-white rounded-xl shadow-md p-6'>
-    <h2 className='text-xl font-bold mb-4 text-gray-800'>{month}월 청구 현황</h2>
-    <div className='space-y-4'>
-      <div>
-        <p className='text-sm font-medium text-gray-500 mb-1'>총 청구액</p>
-        <p className='text-2xl font-bold text-blue-600'>
+    <h2 className='text-xl font-bold mb-6 text-gray-800 border-b pb-2'>{month}월 청구 현황</h2>
+    <div className='space-y-6'>
+      <div className='bg-blue-50 rounded-lg p-4'>
+        <p className='text-sm font-medium text-blue-600 mb-1'>총 청구액</p>
+        <p className='text-3xl font-bold text-blue-700'>
           ₩{formatNumber(billingInfo.totalBillingPrice)}
         </p>
       </div>
-      <div className='grid grid-cols-2 gap-4'>
-        <div>
-          <p className='text-sm font-medium text-gray-500 mb-1'>완납</p>
-          <p className='text-lg font-semibold text-green-600'>
-            ₩{formatNumber(billingInfo.paidBillingPrice)}
-          </p>
-          <p className='text-xs text-gray-400'>76%</p>
-        </div>
-        <div>
-          <p className='text-sm font-medium text-gray-500 mb-1'>미납</p>
-          <p className='text-lg font-semibold text-red-600'>
-            ₩{formatNumber(billingInfo.nonPaidBillingPrice)}
-          </p>
-          <p className='text-xs text-gray-400'>24%</p>
-        </div>
-      </div>
-      <div className='pt-4 border-t border-gray-200'>
-        <p className='text-sm font-medium text-gray-500 mb-2'>청구 건수</p>
+      <div className='bg-gray-50 rounded-lg p-4'>
+        <p className='text-sm font-medium text-gray-700 mb-3'>청구 건수</p>
         <div className='grid grid-cols-2 gap-4'>
-          <div>
-            <p className='text-sm text-gray-600'>
-              총 청구:{' '}
-              <span className='font-semibold'>
-                {formatNumber(billingInfo.totalBillingAmount)}건
-              </span>
-            </p>
-            <p className='text-sm text-gray-600'>
-              완납:{' '}
-              <span className='font-semibold text-green-600'>
-                {formatNumber(billingInfo.paidBillingAmount)}건
-              </span>
+          <div className='bg-white rounded-md p-3 shadow-sm'>
+            <p className='text-xs text-gray-500 mb-1'>총 청구</p>
+            <p className='text-lg font-semibold text-gray-800'>
+              {formatNumber(billingInfo.totalBillingAmount)}건
             </p>
           </div>
-          <div>
-            <p className='text-sm text-gray-600'>
-              수납대기:{' '}
-              <span className='font-semibold text-yellow-600'>
-                {formatNumber(billingInfo.waitBillingAmount)}건
-              </span>
-            </p>
-            <p className='text-sm text-gray-600'>
-              미납:{' '}
-              <span className='font-semibold text-red-600'>
-                {formatNumber(billingInfo.nonPaidBillingAmount)}건
-              </span>
+          <div className='bg-white rounded-md p-3 shadow-sm'>
+            <p className='text-xs text-gray-500 mb-1'>완납</p>
+            <p className='text-lg font-semibold text-green-600'>
+              {formatNumber(billingInfo.paidBillingAmount)}건
             </p>
           </div>
-          <div>
-            <p className='text-sm text-gray-600'>
-              생성:{' '}
-              <span className='font-semibold text-yellow-600'>
-                {formatNumber(billingInfo.createdBillingAmount)}건
-              </span>
+          <div className='bg-white rounded-md p-3 shadow-sm'>
+            <p className='text-xs text-gray-500 mb-1'>수납대기</p>
+            <p className='text-lg font-semibold text-yellow-600'>
+              {formatNumber(billingInfo.waitBillingAmount)}건
+            </p>
+          </div>
+          <div className='bg-white rounded-md p-3 shadow-sm'>
+            <p className='text-xs text-gray-500 mb-1'>미납</p>
+            <p className='text-lg font-semibold text-red-600'>
+              {formatNumber(billingInfo.nonPaidBillingAmount)}건
+            </p>
+          </div>
+          <div className='bg-white rounded-md p-3 shadow-sm'>
+            <p className='text-xs text-gray-500 mb-1'>생성</p>
+            <p className='text-lg font-semibold text-blue-600'>
+              {formatNumber(billingInfo.createdBillingAmount)}건
             </p>
           </div>
         </div>
@@ -240,7 +218,19 @@ const TableRow = ({ data }) => (
 );
 
 const DashBoardPage = () => {
-  const [statInfo, setStatInfo] = useState({});
+  const [statInfo, setStatInfo] = useState({
+    totalMemberCount: 0,
+    newMemberCount: 0,
+    activeMemberCount: 0,
+    totalContractCount: 0,
+    newContractCount: 0,
+    expectedToExpiredCount: 0,
+    totalBillingPrice: 0,
+    totalPaidPrice: 0,
+    totalNotPaidPrice: 0,
+    billingPriceGrowth: 0,
+    memberGrowth: 0,
+  });
   const [billingInfo, setBillingInfo] = useState({});
   const [topFive, setTopFive] = useState({});
   const [date, setDate] = useState(new Date());
@@ -254,7 +244,6 @@ const DashBoardPage = () => {
   };
 
   const calendarGoPrev = () => {
-    console.log('prev clicked');
     const calendarApi = calendarRef.current.getApi();
     calendarApi.prev();
     setDate(calendarApi.getDate());
@@ -311,7 +300,7 @@ const DashBoardPage = () => {
   }, [date]);
 
   return (
-    <div className='bg-gray-100 min-h-screen py-8'>
+    <div className='min-h-screen py-8'>
       <div className='container mx-auto px-4'>
         <Stats statInfo={statInfo} />
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>
@@ -332,17 +321,21 @@ const DashBoardPage = () => {
                 customButtons={{
                   mNext: {
                     text: '>',
-                    click: function() {calendarGoNext()},
+                    click: function () {
+                      calendarGoNext();
+                    },
                   },
                   mPrev: {
                     text: '<',
-                    click: function() {calendarGoPrev()},
+                    click: function () {
+                      calendarGoPrev();
+                    },
                   },
                 }}
               />
             </div>
           </div>
-          <BillingSummary billingInfo={billingInfo} month={date.getMonth() + 1}/>
+          <BillingSummary billingInfo={billingInfo} month={date.getMonth() + 1} />
         </div>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           <TopMembers topFive={topFive.topFiveMemberRes} />

@@ -88,8 +88,8 @@ const vendorRoute = () => {
           element: <ContractDetail />,
         },
         {
-          path: 'Product/update/:id',
-          name: '상품 정보 수정',
+          path: 'product/update/:id',
+          name: '계약 정보 수정',
           menu: false,
           element: <ProductInfoUpdate />,
         },

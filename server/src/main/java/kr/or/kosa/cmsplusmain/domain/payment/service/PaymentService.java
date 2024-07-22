@@ -1,25 +1,42 @@
 package kr.or.kosa.cmsplusmain.domain.payment.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.*;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.*;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.*;
 import kr.or.kosa.cmsplusmain.domain.payment.repository.*;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
+import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.stereotype.Service;
 
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
+
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+
+import com.querydsl.jpa.hibernate.HibernateUtil;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PaymentService {
 
@@ -29,58 +46,105 @@ public class PaymentService {
 	private final CardPaymentMethodRepository cardPaymentMethodRepository;
 	private final CmsPaymentMethodRepository cmsPaymentMethodRepository;
 	private final PaymentRepository paymentRepository;
+	private final ContractRepository contractRepository;
+//	private final ContractService contractService;
+	private final PaymentCustomRepository paymentCustomRepository;
 
 	public PaymentTypeInfoRes getPaymentTypeInfo(Payment payment) {
 		PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
-		PaymentTypeInfoRes paymentTypeInfoRes = null;
 
-		if (paymentTypeInfo instanceof AutoPaymentType autoPaymentType) {
-			paymentTypeInfoRes = AutoTypeRes.builder()
-				.consentImgUrl(autoPaymentType.getConsentImgUrl())
-				.signImgUrl(autoPaymentType.getSignImgUrl())
-				.simpleConsentReqDateTime(autoPaymentType.getSimpleConsentReqDateTime())
-				.consentStatus(autoPaymentType.getConsentStatus())
-				.build();
+		// proxy 객체인 경우 자식 클래스로 캐스팅이 안된다.
+		// 프록시를 자식 객체로써 받아온다.
+		if (!Hibernate.isInitialized(paymentTypeInfo)) {
+			LazyInitializer lazyInitializer = HibernateProxy.extractLazyInitializer(paymentTypeInfo);
+			if (lazyInitializer != null) {
+				paymentTypeInfo = (PaymentTypeInfo) lazyInitializer.getImplementation();
+			} else {
+				throw new IllegalStateException("Provided payment type is not initialized");
+			}
 		}
-		else if (paymentTypeInfo instanceof BuyerPaymentType buyerPaymentType) {
-			paymentTypeInfoRes = BuyerTypeRes.builder()
-				.availableMethods(buyerPaymentType.getAvailableMethods())
-				.build();
-		}
-		else if (paymentTypeInfo instanceof VirtualAccountPaymentType virtualAccountPaymentType) {
-			paymentTypeInfoRes = VirtualAccountTypeRes.builder()
-				.bank(virtualAccountPaymentType.getBank())
-				.accountNumber(virtualAccountPaymentType.getAccountNumber())
-				.accountOwner(virtualAccountPaymentType.getAccountOwner())
-				.build();
-		}
+
+		PaymentType paymentType = paymentTypeInfo.getPaymentType();
+
+		PaymentTypeInfoRes paymentTypeInfoRes = switch (paymentType) {
+			case VIRTUAL -> {
+				VirtualAccountPaymentType virtualAccountPaymentType = (VirtualAccountPaymentType) paymentTypeInfo;
+				yield VirtualAccountTypeRes.builder()
+					.bank(virtualAccountPaymentType.getBank())
+					.accountNumber(virtualAccountPaymentType.getAccountNumber())
+					.accountOwner(virtualAccountPaymentType.getAccountOwner())
+					.build();
+			}
+			case BUYER -> {
+				BuyerPaymentType buyerPaymentType = (BuyerPaymentType) paymentTypeInfo;
+				yield BuyerTypeRes.builder()
+					.availableMethods(buyerPaymentType.getAvailableMethods())
+					.build();
+			}
+			case AUTO -> {
+				AutoPaymentType autoPaymentType = (AutoPaymentType) paymentTypeInfo;
+				yield AutoTypeRes.builder()
+					.consentImgUrl(autoPaymentType.getConsentImgUrl())
+					.signImgUrl(autoPaymentType.getSignImgUrl())
+					.simpleConsentReqDateTime(autoPaymentType.getSimpleConsentReqDateTime())
+					.consentStatus(autoPaymentType.getConsentStatus())
+					.build();
+			}
+		};
 
 		return paymentTypeInfoRes;
 	}
 
 	public PaymentMethodInfoRes getPaymentMethodInfo(Payment payment) {
 		PaymentMethodInfo paymentMethodInfo = payment.getPaymentMethodInfo();
-		PaymentMethodInfoRes paymentMethodInfoRes = null;
 
-		if (paymentMethodInfo instanceof CardPaymentMethod cardPaymentMethod) {
-			paymentMethodInfoRes = CardMethodRes.builder()
-				.cardNumber(cardPaymentMethod.getCardNumber())
-				.cardOwner(cardPaymentMethod.getCardOwner())
-				.cardOwnerBirth(cardPaymentMethod.getCardOwnerBirth())
-				.build();
+		// 결제수단은 자동결제방식의 경우에만 존재한다.
+		if (paymentMethodInfo == null) {
+			return null;
 		}
-		else if (paymentMethodInfo instanceof CmsPaymentMethod cmsPaymentMethod) {
-			paymentMethodInfoRes = CMSMethodRes.builder()
-				.bank(cmsPaymentMethod.getBank())
-				.accountOwner(cmsPaymentMethod.getAccountOwner())
-				.accountNumber(cmsPaymentMethod.getAccountNumber())
-				.accountOwnerBirth(cmsPaymentMethod.getAccountOwnerBirth())
-				.build();
+
+		// proxy 객체인 경우 자식 클래스로 캐스팅이 안된다.
+		// 프록시를 자식 객체로써 받아온다.
+		if (!Hibernate.isInitialized(paymentMethodInfo)) {
+			LazyInitializer lazyInitializer = HibernateProxy.extractLazyInitializer(paymentMethodInfo);
+			if (lazyInitializer != null) {
+				paymentMethodInfo = (PaymentMethodInfo) lazyInitializer.getImplementation();
+			} else {
+				throw new IllegalStateException("Provided payment method is not initialized");
+			}
 		}
+
+		PaymentMethod paymentMethod = paymentMethodInfo.getPaymentMethod();
+		PaymentMethodInfoRes paymentMethodInfoRes = switch (paymentMethod) {
+			case CARD -> {
+				CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) paymentMethodInfo;
+				yield CardMethodRes.builder()
+					.cardNumber(cardPaymentMethod.getCardNumber())
+					.cardOwner(cardPaymentMethod.getCardOwner())
+					.cardOwnerBirth(cardPaymentMethod.getCardOwnerBirth())
+					.cardMonth(cardPaymentMethod.getCardMonth())
+					.cardYear(cardPaymentMethod.getCardYear())
+					.build();
+			}
+			case CMS -> {
+				CmsPaymentMethod cmsPaymentMethod = (CmsPaymentMethod) paymentMethodInfo;
+				yield CMSMethodRes.builder()
+					.bank(cmsPaymentMethod.getBank())
+					.accountOwner(cmsPaymentMethod.getAccountOwner())
+					.accountNumber(cmsPaymentMethod.getAccountNumber())
+					.accountOwnerBirth(cmsPaymentMethod.getAccountOwnerBirth())
+					.build();
+
+			}
+			case ACCOUNT -> null;
+		};
 
 		return paymentMethodInfoRes;
 	}
 
+	/*
+	 * 회원 등록 - 결제 정보
+	 * */
 	@Transactional
 	public Payment createPayment(PaymentCreateReq paymentCreateReq) {
 
@@ -106,6 +170,56 @@ public class PaymentService {
 				.build();
 
 		return paymentRepository.save(payment);
+	}
+
+	/*
+	 * 회원 수정 - 결제 정보
+	 * */
+	// TODO
+	// 결제 수정 로직을 변경예정
+
+ 	@Transactional
+	public void updatePayment(Long vendorId, Long contractId,  PaymentUpdateReq paymentUpdateReq){
+
+		//TODO
+		//contractService를 호출 하는 순간 "순환 의존성" 문제가 생긴다 왜 샌기는걸지 알아보자.
+		// 고객의 계약 여부 확인
+//		contractService.validateContractUser(contractId, vendorId);
+		Contract contract = contractRepository.findById(contractId).orElseThrow(IllegalArgumentException::new);
+
+		// 고객의 결제 여부 확인
+		Long paymentId = contract.getPayment().getId();
+		validatePaymentUser(paymentId);
+		Payment payment = paymentRepository.findById(paymentId).orElseThrow(IllegalArgumentException::new);
+
+
+		// 원래 결제 테이블의 결제 타입 삭제
+		// 1. paymentTypeInfo 삭제
+		payment.getPaymentTypeInfo().delete();
+
+		// 2. paymentType이 AUTO라면, paymentMethodInfo 삭제
+		if(payment.getPaymentType().equals(PaymentType.AUTO) ){
+			payment.getPaymentMethodInfo().delete();
+		}
+
+		// 요청으로 들어온 데이터 확인
+		PaymentTypeInfoReq paymentTypeInfoReq = paymentUpdateReq.getPaymentTypeInfoReq();
+		PaymentTypeInfo paymentTypeInfo = createPaymentTypeInfo(paymentTypeInfoReq);
+
+		// 결제 방식 정보가 자동결제인 경우 : 결제 수단을 등록한다.
+		PaymentMethodInfo paymentMethodInfo = null;
+		PaymentMethodInfoReq paymentMethodInfoReq = paymentUpdateReq.getPaymentMethodInfoReq();
+		if(paymentMethodInfoReq != null) {
+			// 결제 수단 정보 ( 카드, 실시간CMS )
+			paymentMethodInfo = createPaymentMethodInfo(paymentMethodInfoReq);
+		}
+
+		payment.setPaymentType(paymentTypeInfoReq.getPaymentType());
+		payment.setPaymentTypeInfo(paymentTypeInfo);
+		payment.setPaymentMethod(paymentMethodInfoReq != null ?  paymentMethodInfoReq.getPaymentMethod() : null);
+		payment.setPaymentMethodInfo(paymentMethodInfo);
+
+		paymentRepository.save(payment);
 	}
 
 	/*
@@ -161,6 +275,9 @@ public class PaymentService {
 		return paymentMethodInfo;
 	}
 
+	/*
+	 * 가상 계좌 랜덤 생성
+	 */
 	private static String generateRandomAccountNumber(int length) {
 		StringBuilder accountNumber = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
@@ -168,4 +285,14 @@ public class PaymentService {
 		}
 		return accountNumber.toString();
 	}
+
+	/*
+	 * 결제 ID 존재여부
+	 * */
+	private void validatePaymentUser(Long paymentId) {
+		if(!paymentCustomRepository.isExistPaymentId(paymentId)) {
+			throw new EntityNotFoundException("결제 ID 없음("+paymentId + ")");
+		}
+	}
+
 }

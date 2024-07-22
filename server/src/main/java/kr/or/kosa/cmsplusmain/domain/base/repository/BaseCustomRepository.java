@@ -1,11 +1,12 @@
 package kr.or.kosa.cmsplusmain.domain.base.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
+
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.billing;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.billingProduct;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
+import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;

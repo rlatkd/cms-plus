@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.DiscriminatorValue;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
@@ -23,11 +24,13 @@ import lombok.NoArgsConstructor;
 @Comment("결제방식-납부자결제")
 @Entity
 @Getter
+@DiscriminatorValue(PaymentType.Const.BUYER)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BuyerPaymentType extends PaymentTypeInfo {
 
+	// TODO transaction 전파 안됨??
 	@Comment("납부자결제 - 설정된 가능 결제수단")
-	@ElementCollection(targetClass = PaymentMethod.class, fetch = FetchType.LAZY)
+	@ElementCollection(targetClass = PaymentMethod.class, fetch = FetchType.EAGER)
 	@CollectionTable(name = "buyer_payment_method")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "buyer_payment_method")
