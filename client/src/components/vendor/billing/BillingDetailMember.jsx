@@ -1,5 +1,5 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 
 const BillingDetailMember = ({ billingData }) => {
   return (

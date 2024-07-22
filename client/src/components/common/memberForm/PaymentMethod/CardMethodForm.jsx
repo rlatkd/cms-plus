@@ -1,7 +1,9 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import FileUpload from '@/components/common/FileUpload';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
-import { formatBirth } from '@/utils/formatBirth';
+import { formatBirth } from '@/utils/format/formatBirth';
+import { formatCardMonthForDisplay, formatCardYearForDisplay } from '@/utils/format/formatCardDate';
+import InputCalendar from '@/components/common/inputs/InputCalendar';
 
 const CardMethodForm = ({ paymentMethod, formType }) => {
   const {
@@ -14,7 +16,13 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
   // <------ 인풋 필드 입력값 변경 ------>
   const handleChangeInput = e => {
     const { id, value } = e.target;
-    setPaymentMethodInfoReq_Card({ [id]: value });
+    if (id === 'cardYear') {
+      setPaymentMethodInfoReq_Card({ [id]: formatCardYearForDisplay(value) });
+    } else if (id === 'cardMonth') {
+      setPaymentMethodInfoReq_Card({ [id]: formatCardMonthForDisplay(value) });
+    } else {
+      setPaymentMethodInfoReq_Card({ [id]: value });
+    }
   };
 
   // <------ 파일 업로드 ------>
@@ -48,7 +56,7 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
               placeholder='월'
               type='text'
               required
-              classInput='py-3 pr-20'
+              classInput='py-3'
               value={paymentMethodInfoReq_Card.cardMonth}
               onChange={handleChangeInput}
             />
@@ -57,7 +65,7 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
               id='cardYear'
               placeholder='년'
               type='text'
-              classInput='py-3 pr-20'
+              classInput='py-3 '
               value={paymentMethodInfoReq_Card.cardYear}
               onChange={handleChangeInput}
             />
@@ -68,7 +76,7 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
             <InputWeb
               id='agreement'
               label='동의서'
-              placeholder='최대 20자리'
+              placeholder='파일 업로드'
               type='text'
               classContainer='w-3/4'
               classInput='py-3 pr-20'
@@ -92,16 +100,16 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
           onChange={handleChangeInput}
         />
         <div className='flex flex-1 items-end ml-5'>
-          <InputWeb
+          <InputCalendar
             id='cardOwnerBirth'
             label='생년월일'
             placeholder='생년월일8자리'
-            type='text'
             required
+            height='46px'
+            width='100%'
             classContainer='w-3/4'
-            classInput='py-3 pr-20'
-            value={formatBirth(paymentMethodInfoReq_Card.cardOwnerBirth)}
-            onChange={handleChangeInput}
+            value={paymentMethodInfoReq_Card.cardOwnerBirth}
+            handleChangeValue={handleChangeInput}
           />
           <button className='h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover ml-3'>
             카드 인증

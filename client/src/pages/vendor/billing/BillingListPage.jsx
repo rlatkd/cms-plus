@@ -10,10 +10,10 @@ import addItem from '@/assets/addItem.svg';
 import card from '@/assets/card.svg';
 import send from '@/assets/send.svg';
 import Card from '@/assets/Card';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billingElement';
-import { formatProducts } from '@/utils/formatProducts';
+import { formatProducts } from '@/utils/format/formatProducts';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록

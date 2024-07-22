@@ -8,7 +8,7 @@ import registerManyUser from '@/assets/registerManyUser.svg';
 import registerUser from '@/assets/registerUser.svg';
 import { getMemberList } from '@/apis/member';
 import User from '@/assets/User';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/memberElement';
 import MemberExcelModal from '@/components/vendor/modal/MemberExcelModal';

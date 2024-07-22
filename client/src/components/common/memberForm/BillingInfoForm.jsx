@@ -1,6 +1,6 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 import RadioGroup from '@/components/common//inputs/RadioGroup';
 import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
 

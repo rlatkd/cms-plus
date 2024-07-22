@@ -1,12 +1,7 @@
 import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
-
-const cardOptions = [
-  { value: '', label: '--- 선택 ---' },
-  { value: 'KOOKMIN', label: '국민은행' },
-  { value: 'SHINHAN', label: '신한은행' },
-];
+import cardOptions from '@/utils/bank/cardOptions';
 
 const VirtualAccountTypeForm = ({ paymentType, formType }) => {
   const { paymentTypeInfoReq_Virtual, setPaymentTypeInfoReq_Virtual } = useMemberPaymentStore();

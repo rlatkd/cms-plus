@@ -12,6 +12,7 @@ import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import { useStatusStore } from '@/stores/useStatusStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
+import { formatCardYearForStorage } from '@/utils/format/formatCardDate';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -105,13 +106,13 @@ const MemberRegisterPage = () => {
     const paymentCreateReq = {
       paymentTypeInfoReq: {
         paymentType,
+        ...(paymentType === 'VIRTUAL' && paymentTypeInfoReq_Virtual),
+        ...(paymentType === 'BUYER' && paymentTypeInfoReq_Buyer),
         ...(paymentType === 'AUTO' &&
           (() => {
             const { consetImgName, ...rest } = paymentTypeInfoReq_Auto;
             return rest;
           })()),
-        ...(paymentType === 'BUYER' && paymentTypeInfoReq_Buyer),
-        ...(paymentType === 'VIRTUAL' && paymentTypeInfoReq_Virtual),
       },
     };
 
@@ -119,7 +120,10 @@ const MemberRegisterPage = () => {
       paymentCreateReq.paymentMethodInfoReq = {
         paymentMethod,
         ...(paymentMethod === 'CMS' && paymentMethodInfoReq_Cms),
-        ...(paymentMethod === 'CARD' && paymentMethodInfoReq_Card),
+        ...(paymentMethod === 'CARD' && {
+          ...paymentMethodInfoReq_Card,
+          cardYear: formatCardYearForStorage(paymentMethodInfoReq_Card.cardYear),
+        }),
       };
     }
 

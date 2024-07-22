@@ -7,6 +7,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const BillingInfoUpdatePage = () => {
   const { billingInfo } = useMemberBillingStore();
+  console.log('======청구업데이트=======');
+  console.log(billingInfo);
   const navigate = useNavigate();
 
   const contractId = useParams();

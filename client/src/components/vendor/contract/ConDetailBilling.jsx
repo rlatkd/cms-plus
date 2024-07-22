@@ -1,8 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import edit from '@/assets/edit.svg';
 import InputWeb from '@/components/common/inputs/InputWeb';
+import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
 
 const ConDetailBilling = ({ contractData, children }) => {
+  const { setBillingInfoItem } = useMemberBillingStore(); // 청구정보 - 수정목적
   const navigate = useNavigate();
 
   const { id: contractId } = useParams();
@@ -11,12 +13,24 @@ const ConDetailBilling = ({ contractData, children }) => {
     navigate(`/vendor/contracts/billings/update/${contractId}`);
   };
 
+  // <------ 회원 청구 정보 zustand에 입력 ------>
+  const updateBillingInfo = data => {
+    setBillingInfoItem({
+      invoiceSendMethod: data.invoiceSendMethod,
+      autoInvoiceSend: data.autoInvoiceSend,
+      autoBilling: data.autoBilling,
+    });
+  };
+
   return (
     <div className='flex flex-col sub-dashboard pb-6  mb-5 h-640 w-full'>
       <div className='flex justify-between items-center border-b border-ipt_border px-2 pt-1 pb-3'>
         <p className='text-text_black text-xl font-800'>청구정보</p>
         <button
-          onClick={handleButtonClick}
+          onClick={() => {
+            updateBillingInfo(contractData);
+            handleButtonClick();
+          }}
           className='flex justify-between items-center px-4 py-2 ml-4 text-mint
             font-700 rounded-md border border-mint cursor-pointer'>
           <img src={edit} alt='edit' className='mr-2 ' />
