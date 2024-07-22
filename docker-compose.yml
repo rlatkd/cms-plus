@@ -113,6 +113,7 @@ services:
     restart: unless-stopped
 
   kafdrop:
+    container_name: kafdrop
     image: obsidiandynamics/kafdrop
     ports: 
       - '9001:9000'
