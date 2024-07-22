@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.config;
 
 
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.TestDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentResultDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -33,7 +34,7 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, PaymentResultDto> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "payment-result-group");
@@ -49,5 +50,52 @@ public class KafkaConsumerConfig {
         JsonDeserializer<PaymentResultDto> jsonDeserializer = new JsonDeserializer<>(PaymentResultDto.class, false);
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
     }
+
+    
+    
+    
+    // 테스트
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, TestDto> monitoringSingleKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, TestDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(monitoringSingleConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, TestDto> monitoringBatchKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, TestDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(monitoringBatchConsumerFactory());
+        factory.setBatchListener(true);
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, TestDto> monitoringSingleConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "monitoring-group");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        JsonDeserializer<TestDto> jsonDeserializer = new JsonDeserializer<>(TestDto.class, false);
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
+    }
+
+    @Bean
+    public ConsumerFactory<String, TestDto> monitoringBatchConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "monitoring-group");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        JsonDeserializer<TestDto> jsonDeserializer = new JsonDeserializer<>(TestDto.class, false);
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
+    }
+
+
 
 }

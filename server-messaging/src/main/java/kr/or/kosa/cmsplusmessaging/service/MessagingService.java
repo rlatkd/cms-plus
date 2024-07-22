@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class MessagingService {
@@ -54,19 +53,6 @@ public class MessagingService {
 
 
 
-    // 대량 sms용 메서드(쿨에스엠에스에서 제공)
-    private MultipleDetailMessageSentResponse sendMany(ArrayList<Message> messageList) {
-        try {
-            MultipleDetailMessageSentResponse response = this.messageService.send(messageList, true);
-            return response;
-        } catch (NurigoMessageNotReceivedException e) {
-            log.error(e.getFailedMessageList().toString());
-            log.error(e.getMessage());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return null;
-    }
 
 
 
@@ -113,6 +99,20 @@ public class MessagingService {
     }
 
 
+
+    // 대량 sms용 메서드(쿨에스엠에스에서 제공)
+    private MultipleDetailMessageSentResponse sendMany(ArrayList<Message> messageList) {
+        try {
+            MultipleDetailMessageSentResponse response = this.messageService.send(messageList, true);
+            return response;
+        } catch (NurigoMessageNotReceivedException e) {
+            log.error(e.getFailedMessageList().toString());
+            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return null;
+    }
 
 
 

@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class PaymentService {
 
     @Value("${kafkaTopic.paymentResultTopic}")
@@ -28,7 +27,6 @@ public class PaymentService {
     }
 
     // 결제서버<-메인서버; 결제정보 받음
-    @Transactional
     @KafkaListener(topics = "payment-topic", groupId = "payment-group", containerFactory = "kafkaListenerContainerFactory")
     public void consumePayment(ConsumerRecord<String, PaymentDto> consumerRecord) {
         PaymentDto paymentDto = consumerRecord.value(); // 받은 결제정보 데이터

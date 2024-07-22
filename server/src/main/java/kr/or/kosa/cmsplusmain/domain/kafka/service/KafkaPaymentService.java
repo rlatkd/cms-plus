@@ -3,7 +3,6 @@ package kr.or.kosa.cmsplusmain.domain.kafka.service;
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
-import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentDto;
@@ -44,7 +43,7 @@ public class KafkaPaymentService {
 
     // 메인서버<-결제서버; 결제결과 받음
     @Transactional
-    @KafkaListener(topics = "payment-result-topic", groupId = "payment-group", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "payment-result-topic", groupId = "payment-result-group", containerFactory = "kafkaListenerContainerFactory")
     public void consumePaymentResult(ConsumerRecord<String, PaymentResultDto> record) {
         PaymentResultDto paymentResultDto = record.value();
         MessageDto messageDto = new SmsMessageDto(paymentResultDto.getResult(), paymentResultDto.getPhoneNumber());

@@ -1,13 +1,15 @@
 package kr.or.kosa.cmsplusmain.domain.kafka.controller;
 
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.TestDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.VirtualAccountPaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.TestService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ public class KafkaController {
 
     private final KafkaMessagingService kafkaMessagingService;
     private final KafkaPaymentService kafkaPaymentService;
+    private final TestService testService;
 
     @PostMapping("/messaging/sms")
     public void sendSms(@RequestBody SmsMessageDto smsMessageDto) {
@@ -44,6 +47,16 @@ public class KafkaController {
     @PostMapping("/payment/virtual-account")
     public void getVirtualAccountPaymentResult(@RequestBody VirtualAccountPaymentDto virtualAccountPaymentDto) {
         kafkaPaymentService.producePayment(virtualAccountPaymentDto);
+    }
+
+    @GetMapping("/single-test")
+    public void singleTest() {
+        testService.produceSingleTest(10000);
+    }
+
+    @GetMapping("/batch-test")
+    public void batchTest() {
+        testService.produceBatchTest(200);
     }
 
 }

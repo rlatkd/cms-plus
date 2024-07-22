@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging;
 
+import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import lombok.ToString;
 @ToString
 public class EmailMessageDto extends MessageDto {
 
+    @NotNull
     private String emailAddress;
 
     public EmailMessageDto(String text, String emailAddress) {
