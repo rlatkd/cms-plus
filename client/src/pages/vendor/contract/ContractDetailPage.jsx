@@ -43,13 +43,13 @@ const ContractDetailPage = () => {
 
   const { id: contractId } = useParams();
 
-  // <------ 회원 계약 정보 Justand에 입력 ------>
+  // <------ 회원 계약 정보 zustand에 입력 ------>
   const updateContractInfo = data => {
     setContractInfoItem({ contractName: data.contractName });
     setContractProducts(data.contractProducts);
   };
 
-  // <------ 회원 청구 정보 Justand에 입력 ------>
+  // <------ 회원 청구 정보 zustand에 입력 ------>
   const updateBillingInfo = data => {
     setBillingInfoItem({
       invoiceSendMethod: data.invoiceSendMethod,
@@ -58,7 +58,7 @@ const ContractDetailPage = () => {
     });
   };
 
-  // <------ 회원 결제 정보(결제방식) Justand에 입력 ------>
+  // <------ 회원 결제 정보(결제방식) zustand에 입력 ------>
   const updatePaymentTypeInfo = data => {
     setPaymentType(data.paymentTypeInfo.paymentType.code);
 
@@ -81,7 +81,7 @@ const ContractDetailPage = () => {
     }
   };
 
-  // <------ 회원 결제 정보(결제수단) Justand에 입력 ------>
+  // <------ 회원 결제 정보(결제수단) zustand에 입력 ------>
   const updatePaymentMethodInfo = data => {
     if (data.paymentMethodInfo) {
       setPaymentMethod(data.paymentMethodInfo.paymentMethod.code);
