@@ -21,7 +21,7 @@ const ContractDetailPage = () => {
       paymentType: {},
     },
     invoiceSendMethod: {
-      title: ''
+      title: '',
     },
     paymentMethodInfo: null,
     totalBillingCount: 0,
@@ -51,7 +51,7 @@ const ContractDetailPage = () => {
   }, []);
 
   return (
-    <div className='p-6'>
+    <div>
       <ConDetailHeader contractData={contractData} />
       <div className='flex gap-6 mb-6'>
         <ConDetailContract contractData={contractData} />

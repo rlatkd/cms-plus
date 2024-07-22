@@ -91,7 +91,7 @@ const ConDetailPayment = ({ contractData }) => {
   };
 
   return (
-    <div className='bg-white p-4 rounded-lg shadow w-1/2'>
+    <div className='sub-dashboard w-1/2'>
       <div className='flex justify-between items-center border-b border-ipt_border px-2 pt-1 pb-3'>
         <p className='text-text_black text-xl font-800'>결제정보</p>
         <button
