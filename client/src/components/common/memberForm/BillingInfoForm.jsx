@@ -24,6 +24,7 @@ const BillingInfoForm = ({ formType }) => {
   // <------ Radio 원하는 선택지 서택 ------>
   const handleChangeValue = (value, name) => {
     setBillingInfoItem({ [name]: value });
+    console.log(billingInfo);
   };
 
   return (

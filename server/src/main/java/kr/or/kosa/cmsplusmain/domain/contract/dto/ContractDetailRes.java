@@ -17,6 +17,7 @@ import lombok.Getter;
 public class ContractDetailRes {
 
 	private final Long contractId;                                	// 계약 ID
+	private final Long memberId;                                	// 회원 ID
 	private final String contractName;                              // 계약이름
 	private final LocalDateTime createdDateTime;                	// 계약 등록일시
 	private final LocalDateTime modifiedDateTime;                	// 계약 변경일시
@@ -53,6 +54,7 @@ public class ContractDetailRes {
 		final Member member = contract.getMember();
 
 		return ContractDetailRes.builder()
+			.memberId(contract.getMember().getId())
 			.contractId(contract.getId())
 			.contractName(contract.getContractName())
 			.createdDateTime(contract.getCreatedDateTime())

@@ -8,16 +8,16 @@ const ConDetailBilling = ({ contractData, children }) => {
   const { setBillingInfoItem } = useMemberBillingStore(); // 청구정보 - 수정목적
   const navigate = useNavigate();
 
-  const { id: contractId } = useParams();
-
   const handleButtonClick = () => {
-    navigate(`/vendor/contracts/billings/update/${contractId}`);
+    navigate(
+      `/vendor/contracts/billings/update/${contractData.contractId}/${contractData.memberId}`
+    );
   };
 
   // <------ 회원 청구 정보 zustand에 입력 ------>
   const updateBillingInfo = data => {
     setBillingInfoItem({
-      invoiceSendMethod: data.invoiceSendMethod,
+      invoiceSendMethod: data.invoiceSendMethod.code,
       autoInvoiceSend: data.autoInvoiceSend,
       autoBilling: data.autoBilling,
     });
@@ -46,7 +46,13 @@ const ConDetailBilling = ({ contractData, children }) => {
           type='text'
           disabled={true}
         />
-        <InputWeb id='autosend' label='청구서 자동 발송' value='수동' type='text' disabled={true} />
+        <InputWeb
+          id='autosend'
+          label='청구서 자동 발송'
+          value={`${contractData.autoInvoiceSend ? '자동' : '수동'}`}
+          type='text'
+          disabled={true}
+        />
         <InputWeb
           id='memberPhone'
           label='납부자 휴대번호'

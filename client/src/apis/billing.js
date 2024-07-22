@@ -104,10 +104,10 @@ export const cancelPayBilling = async billingId => {
 };
 
 // 회원 수정 - 청구 정보
-export const updateMemberBilling = async (contractId, billingData) => {
+export const updateMemberBilling = async (memberId, billingData) => {
   try {
     const res = await privateAxios.put(
-      `/v1/vendor/management/members/billing/${contractId}`,
+      `/v1/vendor/management/members/billing/${memberId}`,
       billingData
     );
     return res;
