@@ -123,6 +123,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 		return jpaQueryFactory
 			.selectFrom(contract)
 			.join(contract.payment, payment).fetchJoin()
+			.join(contract.member, member).fetchJoin()
 			.join(payment.paymentTypeInfo, paymentTypeInfo).fetchJoin()
 			.where(
 				contractNotDel(),
