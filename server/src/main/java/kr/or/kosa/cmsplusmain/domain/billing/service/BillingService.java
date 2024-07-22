@@ -163,12 +163,9 @@ public class BillingService {
 		billing.setPayCanceled();
 	}
 
-	/*
-	 * 청구 생성
-	 *
-	 * 총 발생 쿼리수: 4회
-	 * 내용:
-	 * 		존재여부 확인, 상품 이름 조회, 청구 생성, 청구상품 생성
+	/**
+	 * 청구 생성 |
+	 * 2+n회 쿼리 발생 | 존재여부 확인, 청구 생성, 청구상품 생성 * n
 	 * */
 	@Transactional
 	public void createBilling(Long vendorId, BillingCreateReq billingCreateReq) {
@@ -176,7 +173,7 @@ public class BillingService {
 
 		// 청구 기반 계약 존재 여부 확인
 		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
-			throw new EntityNotFoundException();
+			throw new EntityNotFoundException("해당하는 계약이 존재하지 않습니다");
 		}
 
 		List<BillingProduct> billingProducts = billingCreateReq.getProducts().stream()

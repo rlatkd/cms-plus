@@ -12,13 +12,19 @@ import lombok.Getter;
 @Getter
 @Builder
 public class BillingProductReq {
-	@NotNull
+	@NotNull(message = "상품 정보가 필요합니다")
 	private Long productId;			// 상품 ID
-	@ProductName @NotNull
+
+	@ProductName
+	@NotNull(message = "상품 정보가 필요합니다")
 	private String name;			// 상품이름
-	@ProductPrice @NotNull
+
+	@ProductPrice
+	@NotNull(message = "상품 가격이 설정되지 않았습니다")
 	private Integer price;			// 청구 상품 가격
-	@ProductQuantity @NotNull
+
+	@ProductQuantity
+	@NotNull(message = "상품 수량이 설정되지 않았습니다")
 	private Integer quantity;		// 청구 상품 개수
 
 	public BillingProduct toEntity() {

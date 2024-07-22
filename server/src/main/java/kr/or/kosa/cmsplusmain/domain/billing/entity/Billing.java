@@ -42,7 +42,7 @@ import lombok.Setter;
 public class Billing extends BaseEntity {
 
 	// 최소 청구상품 개수
-	private static final int MIN_BILLING_PRODUCT_NUMBER = 1;
+	public static final int MIN_BILLING_PRODUCT_NUMBER = 1;
 
 	@Id
 	@Column(name = "billing_id")
