@@ -15,6 +15,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -43,22 +44,24 @@ public class KafkaPaymentService {
 
     // 메인서버<-결제서버; 결제결과 받음
     @Transactional
-    @KafkaListener(topics = "payment-result-topic", groupId = "payment-result-group", containerFactory = "kafkaListenerContainerFactory")
-    public void consumePaymentResult(ConsumerRecord<String, PaymentResultDto> record) {
-        PaymentResultDto paymentResultDto = record.value();
-        MessageDto messageDto = new SmsMessageDto(paymentResultDto.getResult(), paymentResultDto.getPhoneNumber());
-        Billing billing = billingRepository.findById(paymentResultDto.getBillingId())
-                .orElseThrow(() -> new EntityNotFoundException(paymentResultDto.getBillingId().toString()));
-        try {
-            if (paymentResultDto.getResult().equals("결제성공")) {
-                billing.setPaid(); // 결제결과가 성공이면 청구상태를 결제완료로 바꿈
-                log.error("결제성공");
-            } else {
-                log.error("결제실패");
+    @KafkaListener(topics = "payment-result-topic", groupId = "payment-result-group", containerFactory = "paymentKafkaListenerContainerFactory")
+    public void consumePaymentResult(List<ConsumerRecord<String, PaymentResultDto>> records) {
+        for (ConsumerRecord<String, PaymentResultDto> record : records) {
+            PaymentResultDto paymentResultDto = record.value();
+            MessageDto messageDto = new SmsMessageDto(paymentResultDto.getResult(), paymentResultDto.getPhoneNumber());
+            Billing billing = billingRepository.findById(paymentResultDto.getBillingId())
+                    .orElseThrow(() -> new EntityNotFoundException(paymentResultDto.getBillingId().toString()));
+            try {
+                if (paymentResultDto.getResult().equals("결제성공")) {
+                    billing.setPaid(); // 결제결과가 성공이면 청구상태를 결제완료로 바꿈
+                    log.info("결제성공");
+                } else {
+                    log.error("결제실패");
+                }
+                produceMessaging(messageDto); // 메인서버->메시징서버; 결제결과문자 전달
+            } catch (EntityNotFoundException e) {
+                log.error(e.getMessage());
             }
-            produceMessaging(messageDto); // 메인서버->메시징서버; 결제결과문자 전달
-        } catch (EntityNotFoundException e) {
-            log.error(e.getMessage());
         }
     }
 
