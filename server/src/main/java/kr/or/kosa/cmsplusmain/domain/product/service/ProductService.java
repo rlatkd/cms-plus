@@ -108,13 +108,6 @@ public class ProductService {
         }
     }
 
-    public List<ProductListItemRes> findAvailableProductsByVendorUsername(Long vendorId) {
-        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
-                .stream()
-                .map(product -> ProductListItemRes.fromEntity(product, productCustomRepository.getContractNumber(product.getId())))
-                .collect(Collectors.toList());
-    }
-
     // 임시로 삭제 예정
     public List<ProductDtoTmp> getProductListTmp(Long vendorId) {
         return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)

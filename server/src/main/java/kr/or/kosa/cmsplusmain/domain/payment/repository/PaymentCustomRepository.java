@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.payment;
 
+
 @Repository
 public class PaymentCustomRepository extends BaseCustomRepository<Payment> {
 

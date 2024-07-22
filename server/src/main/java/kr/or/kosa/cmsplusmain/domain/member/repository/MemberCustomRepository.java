@@ -1,10 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.member.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
-import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -26,6 +21,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
 
 
 @Repository
