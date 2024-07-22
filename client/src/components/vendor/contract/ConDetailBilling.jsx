@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import edit from '@/assets/edit.svg';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 
 const ConDetailBilling = ({ contractData, children }) => {
   const { setBillingInfoItem } = useMemberBillingStore(); // 청구정보 - 수정목적

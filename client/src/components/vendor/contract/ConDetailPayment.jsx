@@ -3,9 +3,9 @@ import edit from '@/assets/edit.svg';
 import ConDetailPaymentType from './ConDetailPaymentType';
 import ConDetailPaymentMethod from './ConDetailPaymentMethod';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
-import { formatCardYearForDisplay } from '@/utils/format/formatCardDate';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import bankCode from '@/utils/bank/bankCode';
+import { formatCardYearForDisplay } from '@/utils/format/formatCardDate';
 
 const ConDetailPayment = ({ contractData }) => {
   const { setContractInfoItem, setContractProducts } = useMemberContractStore(); // 계약정보 - 수정목적
