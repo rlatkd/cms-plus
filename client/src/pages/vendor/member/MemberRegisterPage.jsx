@@ -22,6 +22,7 @@ const MemberRegisterPage = () => {
   const { status } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const navigate = useNavigate();
+  const { reset } = useStatusStore();
 
   // <------ 회원등록 입력 데이터 ------>
   const { basicInfo, resetBasicInfo } = useMemberBasicStore();
@@ -136,8 +137,12 @@ const MemberRegisterPage = () => {
     await alertComp('회원정보가 등록되었습니다!');
   };
 
-  // TODO
   // <------ 페이지 이탈 시 Status reset ------>
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, []);
 
   // <------ 회원등록 입력 데이터 reset------>
   useEffect(() => {

@@ -68,7 +68,7 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-		generateSampleData(vendor, 30, 30, 30, 30);
+		generateSampleData(vendor, 100, 100, 100, 100);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
@@ -271,7 +271,7 @@ public class SampleDataLoader {
 	public PaymentTypeInfo generatePaymentTypeInfo(PaymentType paymentType) {
 		return switch (paymentType) {
 			case AUTO -> AutoPaymentType.builder()
-				.consentImgUrl("http://example.com/consent" + random.nextInt(1000) + ".jpg")
+				.consentImgUrl("blob:http://example.com/consent" + random.nextInt(1000) + ".jpg")
 				.simpleConsentReqDateTime(LocalDateTime.now().minusDays(random.nextInt(30)))
 				.build();
 			case BUYER -> BuyerPaymentType.builder()

@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.excel.service.ExcelHandler;
@@ -104,10 +105,19 @@ public class MemberController {
     /*
      * 회원 삭제
      * */
-    @DeleteMapping("/members/{memberId}}")
+    @DeleteMapping("/members/{memberId}")
     public void deleteMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails ,  @PathVariable Long memberId) {
         Long vendorId = userDetails.getId();
+        memberService.deleteMember(vendorId, memberId);
+    }
 
+    /*
+     * 회원 삭제 - 회원의 청구 목록
+     * */
+    @GetMapping("/members/{memberId}/billing")
+    public List<BillingListItemRes> getBillingList(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @PathVariable Long memberId) {
+        Long vendorId = userDetails.getId();
+        return memberService.getBillingByMember(vendorId, memberId);
     }
 
     /*

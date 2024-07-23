@@ -1,7 +1,6 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import FileUpload from '@/components/common/FileUpload';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
-import { formatBirth } from '@/utils/format/formatBirth';
 import { formatCardMonthForDisplay, formatCardYearForDisplay } from '@/utils/format/formatCardDate';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 

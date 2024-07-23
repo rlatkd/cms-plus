@@ -36,25 +36,21 @@ public class Payment extends BaseEntity {
 	@Comment("결제방식")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "payment_type")
-	@Setter
 	private PaymentType paymentType;
 
 	@Comment("결제방식 정보")
 	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "payment_type_info_id")
-	@Setter
 	private PaymentTypeInfo paymentTypeInfo;
 
 	@Comment("결제수단")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "payment_method")
-	@Setter
 	private PaymentMethod paymentMethod;
 
 	@Comment("결제수단 정보")
 	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "payment_method_info_id")
-	@Setter
 	private PaymentMethodInfo paymentMethodInfo;
 
 	/*
@@ -80,5 +76,19 @@ public class Payment extends BaseEntity {
 		this.paymentTypeInfo = newPaymentTypeInfo;
 		this.paymentMethod = newPaymentMethod;
 		this.paymentMethodInfo = newPaymentMethodInfo;
+	}
+
+	/*
+	 * 결제 삭제
+	 * 결제방식 정보도 같이 삭제된다
+	 * 결제수단 정보도 같이 삭제된다
+	 * */
+	@Override
+	public void delete() {
+		super.delete();
+		paymentTypeInfo.delete();
+		if (paymentMethodInfo != null) {
+			paymentMethodInfo.delete();
+		}
 	}
 }

@@ -1,7 +1,7 @@
 import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
-import cardOptions from '@/utils/bank/cardOptions';
+import bankOptions from '@/utils/bank/cardOptions';
 
 const VirtualAccountTypeForm = ({ paymentType, formType }) => {
   const { paymentTypeInfoReq_Virtual, setPaymentTypeInfoReq_Virtual } = useMemberPaymentStore();
@@ -28,7 +28,7 @@ const VirtualAccountTypeForm = ({ paymentType, formType }) => {
         classLabel='text-15 text-text_black font-700 ml-2'
         classSelect='py-3 pr-20 p-4 rounded-lg'
         required
-        options={cardOptions}
+        options={bankOptions}
         value={paymentTypeInfoReq_Virtual.bank}
         onChange={handleChangeSelect}
       />
