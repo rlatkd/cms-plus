@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import lombok.AccessLevel;
@@ -57,6 +60,15 @@ public class ErrorRes {
 		final String value = e.getValue() == null ? "" : e.getValue().toString();
 		final List<ErrorRes.FieldError> errors = ErrorRes.FieldError.of(e.getName(), value, e.getErrorCode());
 		return new ErrorRes(ErrorCode.INVALID_TYPE_VALUE, errors);
+	}
+
+	public static ErrorRes of(HttpMessageNotReadableException e) {
+		if (e.getCause() instanceof MismatchedInputException mismatchedInputException) {
+			final String field = mismatchedInputException.getPath().get(0).getFieldName();
+			final List<ErrorRes.FieldError> errors = ErrorRes.FieldError.of(field, "", "잘못된 값 입력");
+			return new ErrorRes(ErrorCode.INVALID_TYPE_VALUE, errors);
+		}
+		return new ErrorRes(ErrorCode.INVALID_TYPE_VALUE);
 	}
 
 
