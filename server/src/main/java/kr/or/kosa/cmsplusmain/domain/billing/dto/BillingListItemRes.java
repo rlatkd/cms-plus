@@ -22,32 +22,18 @@ public class BillingListItemRes {
 	private final Long billingId;
 	private final String memberName;
 	private final String memberPhone;
-	@Setter
-	private List<BillingProductRes> billingProducts;
 	private final Long billingPrice;
 	private final BillingStatus billingStatus;
 	private final PaymentType paymentType;
 	private final LocalDate billingDate;
-
-	@Builder
-	public BillingListItemRes(Long billingId, String memberName, String memberPhone,
-		List<BillingProductRes> billingProducts, Long billingPrice, BillingStatus billingStatus,
-		PaymentType paymentType,
-		LocalDate billingDate) {
-		this.billingId = billingId;
-		this.memberName = memberName;
-		this.memberPhone = memberPhone;
-		this.billingProducts = billingProducts;
-		this.billingPrice = billingPrice;
-		this.billingStatus = billingStatus;
-		this.paymentType = paymentType;
-		this.billingDate = billingDate;
-	}
+	@Setter
+	private String firstProductName;
+	private final Long totalProductCount;
 
 	@QueryProjection
-	public BillingListItemRes(Long billingId, String memberName, String memberPhone,
-		Long billingPrice, BillingStatus billingStatus,
-		PaymentType paymentType, LocalDate billingDate) {
+	public BillingListItemRes(Long billingId, String memberName, String memberPhone, Long billingPrice,
+		BillingStatus billingStatus, PaymentType paymentType, LocalDate billingDate, String firstProductName,
+		Long totalProductCount) {
 		this.billingId = billingId;
 		this.memberName = memberName;
 		this.memberPhone = memberPhone;
@@ -55,31 +41,7 @@ public class BillingListItemRes {
 		this.billingStatus = billingStatus;
 		this.paymentType = paymentType;
 		this.billingDate = billingDate;
-		this.billingProducts = new ArrayList<>();
+		this.firstProductName = firstProductName;
+		this.totalProductCount = totalProductCount;
 	}
-
-	public static BillingListItemRes fromEntity(Billing billing) {
-
-		// NOT NULL
-		final Contract contract = billing.getContract();
-		final Member member = contract.getMember();
-		final Payment payment = contract.getPayment();
-
-		final List<BillingProductRes> billingProductResList = billing.getBillingProducts()
-			.stream()
-			.map(BillingProductRes::fromEntity)
-			.toList();
-
-		return BillingListItemRes.builder()
-			.billingId(billing.getId())
-			.memberName(member.getName())
-			.memberPhone(member.getPhone())
-			.billingProducts(billingProductResList)
-			.billingPrice(billing.getBillingPrice())
-			.billingStatus(billing.getBillingStatus())
-			.paymentType(payment.getPaymentType())
-			.billingDate(billing.getBillingDate())
-			.build();
-	}
-
 }

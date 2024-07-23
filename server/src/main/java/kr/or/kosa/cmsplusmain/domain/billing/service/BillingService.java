@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
@@ -196,7 +197,7 @@ public class BillingService {
 		List<BillingListItemRes> content =
 			billingCustomRepository.findBillingListWithCondition(vendorId, search, pageReq);
 
-		int totalContentCount = billingCustomRepository.countAllBillings(vendorId, search);
+		int totalContentCount = (int)billingCustomRepository.countBillingListWithCondition(vendorId, search);
 
 		return new PageRes<>(totalContentCount, pageReq.getSize(), content);
 	}

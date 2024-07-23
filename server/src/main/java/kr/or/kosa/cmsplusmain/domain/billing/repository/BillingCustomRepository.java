@@ -12,16 +12,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
@@ -46,99 +54,67 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 기본정렬: 생성시간 내림차순
 	 * */
 	public List<BillingListItemRes> findBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		List<BillingListItemRes> billingList = jpaQueryFactory
+		return jpaQueryFactory
 			.select(new QBillingListItemRes(
 				billing.id,
 				member.name,
 				member.phone,
-				JPAExpressions
-					.select(billingProduct.price.multiply(billingProduct.quantity).sum().longValue())
-					.from(billingProduct)
-					.where(billingProduct.billing.eq(billing), billingProduct.deleted.isFalse()),
+				billingProduct.price.longValue().multiply(billingProduct.quantity).sum(),
 				billing.billingStatus,
 				payment.paymentType,
-				billing.billingDate
+				billing.billingDate,
+				getFirstProductName(search.getProductName()),
+				billingProduct.countDistinct()
 			))
 			.from(billing)
 			.join(billing.contract, contract)
 			.join(contract.member, member)
 			.join(contract.payment, payment)
+			.leftJoin(billing.billingProducts, billingProduct).on(billingProduct.deleted.isFalse())
 			.where(
-				billingNotDel(),                                   // 청구 삭제 여부
-				contractVendorIdEq(vendorId),                      // 고객 일치
-				memberNameContains(search.getMemberName()),        // 회원 이름 포함
-				memberPhoneContains(search.getMemberPhone()),      // 회원 휴대전화 포함
-				billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
-				paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
-				billingDateEq(search.getBillingDate()),            // 결제일 일치
-				productNameContains(search.getProductName()),      // 청구상품 이름 포함
-				billingPriceLoe(search.getBillingPrice())          // 청구금액 이하
+				billingNotDel(),
+				contractVendorIdEq(vendorId),
+				memberNameContains(search.getMemberName()),
+				memberPhoneContains(search.getMemberPhone()),
+				billingStatusEq(search.getBillingStatus()),
+				paymentTypeEq(search.getPaymentType()),
+				billingDateEq(search.getBillingDate()),
+				productNameContainsInBilling(search.getProductName()),
+				contractIdEq(search.getContractId())
 			)
+			.groupBy(billing.id, member.name, member.phone, billing.billingStatus, payment.paymentType, billing.billingDate)
+			.having(billingPriceLoe(search.getBillingPrice()))
 			.orderBy(buildOrderSpecifier(pageReq).orElse(billing.createdDateTime.desc()))
-			.offset(pageReq.getPage())
 			.limit(pageReq.getSize())
+			.offset(pageReq.getPage())
 			.fetch();
-
-		// 청구 ID 목록 추출
-		List<Long> billingIds = billingList.stream()
-			.map(BillingListItemRes::getBillingId)
-			.collect(Collectors.toList());
-
-		// 모든 관련 청구 상품을 한 번에 조회
-		List<BillingProductRes> allProducts = jpaQueryFactory
-			.select(new QBillingProductRes(
-				billingProduct.id,
-				billingProduct.billing.id,
-				billingProduct.product.id,
-				billingProduct.name,
-				billingProduct.price,
-				billingProduct.quantity
-			))
-			.from(billingProduct)
-			.where(billingProduct.billing.id.in(billingIds),
-				billingProduct.deleted.isFalse())
-			.fetch();
-
-		// 청구 상품을 각 청구에 매핑
-		Map<Long, List<BillingProductRes>> productMap = allProducts.stream()
-			.collect(Collectors.groupingBy(BillingProductRes::getBillingId));
-
-		billingList.forEach(billing ->
-			billing.setBillingProducts(productMap.getOrDefault(billing.getBillingId(), new ArrayList<>()))
-		);
-
-		return billingList;
 	}
 
 	/**
 	 * 고객의 전체 계약 수 (검색 조건 반영된 계약 수)
 	 * */
-	public int countAllBillings(Long vendorId, BillingSearchReq search) {
-		JPQLQuery<Long> subQuery = jpaQueryFactory
+	public long countBillingListWithCondition(Long vendorId, BillingSearchReq search) {
+		return jpaQueryFactory
 			.select(billing.id)
 			.from(billing)
 			.join(billing.contract, contract)
 			.join(contract.member, member)
 			.join(contract.payment, payment)
+			.leftJoin(billing.billingProducts, billingProduct).on(billingProduct.deleted.isFalse())
 			.where(
-				billingNotDel(),                                   // 청구 삭제 여부
-				contractVendorIdEq(vendorId),                      // 고객 일치
-				memberNameContains(search.getMemberName()),        // 회원 이름 포함
-				memberPhoneContains(search.getMemberPhone()),      // 회원 휴대전화 포함
-				billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
-				paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
-				billingDateEq(search.getBillingDate()),            // 결제일 일치
-				productNameContains(search.getProductName()),      // 청구상품 이름 포함
-				billingPriceLoe(search.getBillingPrice())          // 청구금액 이하
-			);
-
-		Long count = jpaQueryFactory
-			.select(billing.id.countDistinct())
-			.from(billing)
-			.where(billing.id.in(subQuery))
-			.fetchOne();
-
-		return (count != null) ? count.intValue() : 0;
+				billingNotDel(),
+				contractVendorIdEq(vendorId),
+				memberNameContains(search.getMemberName()),
+				memberPhoneContains(search.getMemberPhone()),
+				billingStatusEq(search.getBillingStatus()),
+				paymentTypeEq(search.getPaymentType()),
+				billingDateEq(search.getBillingDate()),
+				productNameContainsInBilling(search.getProductName()),
+				contractIdEq(search.getContractId())
+			)
+			.groupBy(billing.id)
+			.having(billingPriceLoe(search.getBillingPrice()))
+			.fetchCount();
 	}
 
 	/*
@@ -294,22 +270,38 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	private BooleanExpression billingDateEq(LocalDate billingDate) {
 		return (billingDate != null) ? billing.billingDate.eq(billingDate) : null;
 	}
-	private BooleanExpression productNameContains(String productName) {
+	private StringExpression getFirstProductName(String productName) {
+		if (StringUtils.hasText(productName)) {
+			return Expressions.stringTemplate(
+				"COALESCE({0}, {1})",
+				JPAExpressions
+					.select(Expressions.stringTemplate("ANY_VALUE({0})", billingProduct.name))
+					.from(billingProduct)
+					.where(billingProduct.billing.eq(billing),
+						billingProduct.name.contains(productName))
+					.groupBy(billingProduct.billing.id),
+				billingProduct.name.min()
+			);
+		} else {
+			return billingProduct.name.min();
+		}
+	}
+
+	private BooleanExpression productNameContainsInBilling(String productName) {
 		if (!StringUtils.hasText(productName)) {
 			return null;
 		}
-		return JPAExpressions
-			.selectOne()
-			.from(billingProduct)
-			.where(
-				billingProduct.billing.eq(billing),
-				billingProduct.deleted.isFalse(),
-				billingProduct.name.contains(productName)
-			)
-			.exists();
+		return billing.id.in(
+			JPAExpressions
+				.select(billingProduct.billing.id)
+				.from(billingProduct)
+				.where(billingProduct.name.contains(productName))
+		);
 	}
-
 	private BooleanExpression billingPriceLoe(Long billingPrice) {
-		return billingPrice != null ? billing.billingProducts.any().price.multiply(billingProduct.quantity).sum().loe(billingPrice) : null;
+		return billingPrice != null ? billingProduct.price.multiply(billingProduct.quantity).sum().loe(billingPrice) : null;
+	}
+	private BooleanExpression contractIdEq(Long contractId) {
+		return contractId != null ? contract.id.eq(contractId) : null;
 	}
 }
