@@ -193,11 +193,8 @@ public class BillingService {
 	 * 3회 쿼리 발생 | 청구목록조회, 청구상품조회, 전체 개수(페이징)
 	 * */
 	public PageRes<BillingListItemRes> getBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		List<BillingListItemRes> content = billingCustomRepository
-			.findBillingListWithCondition(vendorId, search, pageReq)
-			.stream()
-			.map(BillingListItemRes::fromEntity)
-			.toList();
+		List<BillingListItemRes> content =
+			billingCustomRepository.findBillingListWithCondition(vendorId, search, pageReq);
 
 		int totalContentCount = billingCustomRepository.countAllBillings(vendorId, search);
 
@@ -212,7 +209,6 @@ public class BillingService {
 	* 	존재여부 확인, 청구목록 조회, 청구상품 목록 조회(+? batch_size=100)
 	* */
 	public BillingDetailRes getBillingDetail(Long vendorId, Long billingId) {
-		// 고객의 청구 여부 확인
 		validateBillingUser(billingId, vendorId);
 
 		Billing billing = billingCustomRepository.findBillingWithContract(billingId);

@@ -1,9 +1,16 @@
 package kr.or.kosa.cmsplusmain.domain.billing.repository;
 
-
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -16,18 +23,15 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.extern.slf4j.Slf4j;
-
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.billing;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.billingProduct;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.payment;
 
 @Slf4j
 @Repository
@@ -40,14 +44,25 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	/**
 	 * 청구목록 조회 |
 	 * 기본정렬: 생성시간 내림차순
-	 * 상품명 포함 검색 조건, 동의여부 판단을 비즈니스 로직으로 처리하기 위해 select 절을 제한 시키지 않음
 	 * */
-	public List<Billing> findBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		return jpaQueryFactory
-			.selectFrom(billing)
-			.join(billing.contract, contract).fetchJoin()
-			.join(contract.member, member).fetchJoin()
-			.join(contract.payment, payment).fetchJoin()
+	public List<BillingListItemRes> findBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
+		List<BillingListItemRes> billingList = jpaQueryFactory
+			.select(new QBillingListItemRes(
+				billing.id,
+				member.name,
+				member.phone,
+				JPAExpressions
+					.select(billingProduct.price.multiply(billingProduct.quantity).sum().longValue())
+					.from(billingProduct)
+					.where(billingProduct.billing.eq(billing), billingProduct.deleted.isFalse()),
+				billing.billingStatus,
+				payment.paymentType,
+				billing.billingDate
+			))
+			.from(billing)
+			.join(billing.contract, contract)
+			.join(contract.member, member)
+			.join(contract.payment, payment)
 			.where(
 				billingNotDel(),                                   // 청구 삭제 여부
 				contractVendorIdEq(vendorId),                      // 고객 일치
@@ -59,10 +74,40 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				productNameContains(search.getProductName()),      // 청구상품 이름 포함
 				billingPriceLoe(search.getBillingPrice())          // 청구금액 이하
 			)
-			.orderBy(buildOrderSpecifier(pageReq).orElse(billing.createdDateTime.desc())) // 기본 정렬: 생성시간 내림차순
+			.orderBy(buildOrderSpecifier(pageReq).orElse(billing.createdDateTime.desc()))
 			.offset(pageReq.getPage())
 			.limit(pageReq.getSize())
 			.fetch();
+
+		// 청구 ID 목록 추출
+		List<Long> billingIds = billingList.stream()
+			.map(BillingListItemRes::getBillingId)
+			.collect(Collectors.toList());
+
+		// 모든 관련 청구 상품을 한 번에 조회
+		List<BillingProductRes> allProducts = jpaQueryFactory
+			.select(new QBillingProductRes(
+				billingProduct.id,
+				billingProduct.billing.id,
+				billingProduct.product.id,
+				billingProduct.name,
+				billingProduct.price,
+				billingProduct.quantity
+			))
+			.from(billingProduct)
+			.where(billingProduct.billing.id.in(billingIds),
+				billingProduct.deleted.isFalse())
+			.fetch();
+
+		// 청구 상품을 각 청구에 매핑
+		Map<Long, List<BillingProductRes>> productMap = allProducts.stream()
+			.collect(Collectors.groupingBy(BillingProductRes::getBillingId));
+
+		billingList.forEach(billing ->
+			billing.setBillingProducts(productMap.getOrDefault(billing.getBillingId(), new ArrayList<>()))
+		);
+
+		return billingList;
 	}
 
 	/**

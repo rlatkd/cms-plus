@@ -69,7 +69,7 @@ public class BillingController {
 		billingService.cancelPayBilling(vendorId, billingId);
 	}
 
-	/*
+	/**
 	 * 청구목록 조회
 	 * */
 	@GetMapping
