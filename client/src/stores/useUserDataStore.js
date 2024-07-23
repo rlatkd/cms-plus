@@ -12,7 +12,7 @@ export const useUserDataStore = create((set, get) => ({
       addressDetail: '',
     },
     paymentDTO: {
-      paymentMethod: 'CARD',
+      paymentMethod: '',
       cardNumber: '',
       expiryDate: '',
       cardHolder: '',
@@ -53,7 +53,7 @@ export const useUserDataStore = create((set, get) => ({
     }),
 
   resetUserData: () =>
-    set(state => ({
+    set(() => ({
       userData: {
         memberDTO: {
           name: '',
@@ -65,7 +65,7 @@ export const useUserDataStore = create((set, get) => ({
           addressDetail: '',
         },
         paymentDTO: {
-          paymentMethod: 'CARD',
+          paymentMethod: '',
           cardNumber: '',
           expiryDate: '',
           cardHolder: '',
