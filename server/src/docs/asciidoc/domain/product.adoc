@@ -1,37 +1,37 @@
-== 상품 API
-:doctype: book
-:icons: font
-
-이 문서는 상품 관리 시스템의 API를 설명합니다. 이 API를 통해 상품 생성, 조회, 수정, 삭제 및 관련 작업을 수행할 수 있습니다.
-
-=== 상품 생성
-
-POST /api/v1/vendor/product
-
-상품을 새로 생성합니다.
-
-operation::product-create[snippets='http-request,http-response,request-fields']
-
-=== 상품 상세 조회
-
-GET /api/v1/vendor/product/{productId}
-
-특정 상품의 상세 정보를 조회합니다.
-
-operation::product-detail[snippets='http-request,http-response,path-parameters,response-fields']
-
-=== 상품 수정
-
-PUT /api/v1/vendor/product/{productId}
-
-특정 상품의 정보를 수정합니다.
-
-operation::product-update[snippets='http-request,http-response,path-parameters,request-fields']
-
-=== 상품 삭제
-
-DELETE /api/v1/vendor/product/{productId}
-
-특정 상품을 삭제합니다.
-
-operation::product-delete[snippets='http-request,http-response,path-parameters']
+// == 상품 API
+// :doctype: book
+// :icons: font
+//
+// 이 문서는 상품 관리 시스템의 API를 설명합니다. 이 API를 통해 상품 생성, 조회, 수정, 삭제 및 관련 작업을 수행할 수 있습니다.
+//
+// === 상품 생성
+//
+// POST /api/v1/vendor/product
+//
+// 상품을 새로 생성합니다.
+//
+// operation::product-create[snippets='http-request,http-response,request-fields']
+//
+// === 상품 상세 조회
+//
+// GET /api/v1/vendor/product/{productId}
+//
+// 특정 상품의 상세 정보를 조회합니다.
+//
+// operation::product-detail[snippets='http-request,http-response,path-parameters,response-fields']
+//
+// === 상품 수정
+//
+// PUT /api/v1/vendor/product/{productId}
+//
+// 특정 상품의 정보를 수정합니다.
+//
+// operation::product-update[snippets='http-request,http-response,path-parameters,request-fields']
+//
+// === 상품 삭제
+//
+// DELETE /api/v1/vendor/product/{productId}
+//
+// 특정 상품을 삭제합니다.
+//
+// operation::product-delete[snippets='http-request,http-response,path-parameters']
