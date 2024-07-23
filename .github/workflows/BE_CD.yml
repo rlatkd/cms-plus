@@ -8,14 +8,14 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: rlatkdecr5
-  ECS_CLUSTER: rlatkdcluster5
-  ECS_CONTAINER: rlatkdcontainer5
-  ECS_SERVICE: rlatkdservice5
+  ECR_REPOSITORY: t3-back-mainecr
+  ECS_CLUSTER: t3-back-ecscluster
+  ECS_CONTAINER: t3-back-maincontainer
+  ECS_SERVICE: t3-back-mainservice
 
   ECS_TASK_DEFINITION: task-definition.json
 
-  S3_BUCKET: rlatkdbe3
+  S3_BUCKET: t3-back-cicdbucket
 
 permissions:
   contents: read
