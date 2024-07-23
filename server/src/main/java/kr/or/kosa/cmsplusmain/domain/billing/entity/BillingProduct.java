@@ -64,16 +64,24 @@ public class BillingProduct extends BaseEntity {
 	@ProductQuantity
 	private int quantity;
 
-	/*
+	/**
+	 * 청구상품 수정
+	 * */
+	public void update(int price, int quantity) {
+		this.price = price;
+		this.quantity = quantity;
+	}
+
+	/**
 	* 청구상품 가격 (가격 * 수량)
 	* */
 	public long getBillingProductPrice() {
 		return (long)price * quantity;
 	}
 
-	/*
-	* 청구상품 동일성 비교
-	* 기반이된 상품, 청구상품 가격, 청구상품 수량
+	/**
+	* 청구상품 동일성 비교 |
+	* 청구상품은 동일한 상품을 중복해서 지닐 수 없다.
 	* */
 	@Override
 	public boolean equals(Object obj) {
@@ -81,8 +89,11 @@ public class BillingProduct extends BaseEntity {
 			return false;
 		}
 
-		return (this.product.getId().equals(other.product.getId()))
-			&& (this.price == other.price)
-			&& (this.quantity == other.quantity);
+		return (this.product.getId().equals(other.product.getId()));
+	}
+
+	@Override
+	public int hashCode() {
+		return product.getId().hashCode();
 	}
 }

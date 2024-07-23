@@ -91,7 +91,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorRes> handleException(Exception e) {
-		log.error("handleEntityNotFoundException", e);
+		log.error("handleUnknownException", e);
 		final ErrorRes response = ErrorRes.of(ErrorCode.INTERNAL_SERVER_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}

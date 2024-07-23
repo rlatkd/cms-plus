@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.billing.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
 import lombok.Builder;
@@ -16,5 +17,5 @@ public class BillingUpdateReq {
 	@NotNull
 	private LocalDate billingDate;
 	@NotNull
-	private List<BillingProductReq> billingProducts;
+	private List<@Valid BillingProductReq> billingProducts;
 }

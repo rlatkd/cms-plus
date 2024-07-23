@@ -96,6 +96,8 @@ public class Billing extends BaseEntity {
 	private LocalDateTime paidDateTime;
 
 	/* 청구 상품 목록 */
+	// 청구 상품은 상품 ID 별로 하나만 존재할 수 있다.
+	// 동일 상품 추가 안됨
 	@OneToMany(mappedBy = "billing", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private List<BillingProduct> billingProducts = new ArrayList<>();

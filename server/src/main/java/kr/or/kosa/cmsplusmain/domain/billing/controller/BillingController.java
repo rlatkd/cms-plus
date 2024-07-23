@@ -80,7 +80,7 @@ public class BillingController {
 		return billingService.getBillingListWithCondition(vendorId, search, pageReq);
 	}
 
-	/*
+	/**
 	 * 청구상세 조회
 	 * */
 	@GetMapping("/{billingId}")
@@ -88,7 +88,7 @@ public class BillingController {
 		return billingService.getBillingDetail(vendorId, billingId);
 	}
 
-	/*
+	/**
 	 * 청구상품 조회
 	 * */
 	@GetMapping("products/{billingId}")
@@ -96,7 +96,7 @@ public class BillingController {
 		return billingService.getBillingProducts(vendorId, billingId);
 	}
 
-	/*
+	/**
 	* 청구 수정
 	* */
 	@PutMapping("/{billingId}")

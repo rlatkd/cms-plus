@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.billing.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.BillingNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingProductRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
@@ -39,6 +41,7 @@ public class BillingService {
 
 	private final BillingRepository billingRepository;
 	private final BillingCustomRepository billingCustomRepository;
+	private final BillingProductRepository billingProductRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	// private final KafkaMessagingService kafkaMessagingService;
 
@@ -179,14 +182,12 @@ public class BillingService {
 		return new PageRes<>(totalContentCount, pageReq.getSize(), content);
 	}
 
-	/*
-	* 청구 상세 조회
-	* 총 발생 쿼리수: 3회
-	* 내용:
-	* 	존재여부 확인, 청구목록 조회, 청구상품 목록 조회(+? batch_size=100)
-	* */
+	/**
+	 * 청구상세 조회 |
+	 * 2회 쿼리 발생 | 청구존재여부, 청구상세
+	 * */
 	public BillingDetailRes getBillingDetail(Long vendorId, Long billingId) {
-		validateBillingUser(billingId, vendorId);
+		validateVendorHasBilling(billingId, vendorId);
 		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
 
 		Map<BillingState.Field, BillingState> fieldToState = Arrays.stream(BillingState.Field.values())
@@ -197,23 +198,19 @@ public class BillingService {
 
 	/**
 	 * 특정 청구의 모든 청구상품 조회
+	 * 2회 쿼리 발생 | 청구존재여부, 청구상품
 	 * */
 	public List<BillingProductRes> getBillingProducts(Long vendorId, Long billingId) {
-		validateBillingUser(billingId, vendorId);
+		validateVendorHasBilling(billingId, vendorId);
 		return billingCustomRepository.findAllBillingProducts(billingId).stream()
 			.map(BillingProductRes::fromEntity)
 			.toList();
 	}
 
-	/*
-	* 청구 수정
-	*
-	* 총 발생 쿼리수: 7회
-	* 내용:
-	* 	존재여부 확인, 청구 조회, 상품 이름 조회, 청구상품 목록 조회(+? batch_size=100),
-	* 	청구상품 생성(*N 청구상품 수만큼), 청구 수정,
-	* 	청구상품 삭제(*N 삭제된 청구상품 수만큼)
-	* */
+	/**
+	 * 청구 수정
+	 * 6+a+b회 쿼리 발생 | 청구존재여부, 청구 조회, 청구상품 조회, 청구상품 생성 * a, 청구 수정, 청구상품 수정 * b, 청구상품 삭제
+	 * */
 	@Transactional
 	public void updateBilling(Long vendorId, Long billingId, BillingUpdateReq billingUpdateReq) {
 		Billing billing = validateAndGetBilling(vendorId, billingId);
@@ -244,36 +241,63 @@ public class BillingService {
 		billing.delete();
 	}
 
-	/*
+	/**
 	 * 기존 청구상품과 신규 청구상품 비교해서
-	 * 새롭게 추가되거나 삭제된 것만 수정 반영
+	 * 새롭게 추가되거나 삭제된 것 그리고 수정된것 반영
 	 * */
-	private void updateBillingProducts(Billing billing, List<BillingProduct> newBillingProducts) {
-		// 기존 청구상품
+	private void updateBillingProducts(Billing billing, List<BillingProduct> mNewBillingProducts) {
+
 		List<BillingProduct> oldBillingProducts = billing.getBillingProducts();
+		List<BillingProduct> newBillingProducts = new ArrayList<>(mNewBillingProducts);
+
+		// 삭제될 청구상품 ID
+		// 삭제 상태 수정을 IN을 사용해 업데이트 쿼리 횟수 감소 목적
+		List<Long> toRemoveIds = new ArrayList<>();
+
+		// 수정될 청구상품 수정
+		for (BillingProduct oldBillingProduct : oldBillingProducts) {
+
+			// 수정된 청구상품은 리스트에서 삭제해서 insert 되지 않도록 한다.
+			BillingProduct updatedNewBillingProduct = null;
+
+			for (BillingProduct newBillingProduct : newBillingProducts) {
+				if (newBillingProduct.equals(oldBillingProduct)) {
+					oldBillingProduct.update(newBillingProduct.getPrice(), newBillingProduct.getQuantity());
+					updatedNewBillingProduct = newBillingProduct;
+					break;
+				}
+			}
+
+			// 신규 상품 목록에 없는 기존 상품은 삭제한다.
+			if (updatedNewBillingProduct == null) {
+				toRemoveIds.add(oldBillingProduct.getId());
+			} else {
+				newBillingProducts.remove(updatedNewBillingProduct);
+			}
+		}
 
 		// 새롭게 추가되는 청구상품 저장
-		newBillingProducts.stream()
-			.filter(nbp -> !oldBillingProducts.contains(nbp))
-			.forEach(billing::addBillingProduct);
+		newBillingProducts.forEach(bp -> bp.setBilling(billing));
+		billingProductRepository.saveAll(newBillingProducts);
 
 		// 없어진 청구상품 삭제
-		oldBillingProducts.stream()
-			.filter(obp -> !newBillingProducts.contains(obp))
-			.toList()
-			.forEach(billing::removeBillingProduct);
+		billingProductRepository.deleteAllById(toRemoveIds);
 	}
 
-	/*
-	 * 청구 ID 존재여부
-	 * 청구가 현재 로그인 고객의 회원의 청구인지 여부
+	/**
+	 * 청구 존재여부
+	 * 청구가 현재 로그인 고객의 청구이면서 존재하는 청구 여부 확인
 	 * */
-	private void validateBillingUser(Long billingId, Long vendorId) {
+	private void validateVendorHasBilling(Long billingId, Long vendorId) {
 		if (!billingCustomRepository.isExistBillingByUsername(billingId, vendorId)) {
 			throw new BillingNotFoundException("존재하지 않는 청구입니다");
 		}
 	}
 
+	/**
+	 * 청구 존재여부
+	 * 청구가 현재 로그인 고객의 청구이면서 존재하는 청구 여부 확인 후 청구 리턴
+	 * */
 	private Billing validateAndGetBilling(Long vendorId, Long billingId) {
 		if (!billingCustomRepository.isExistBillingByUsername(billingId, vendorId)) {
 			throw new BillingNotFoundException("존재하지 않는 청구입니다");
