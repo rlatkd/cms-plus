@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
@@ -21,6 +22,10 @@ import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.SmsIdFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.authenticationNumber.NumberReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.EmailPwFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwResetReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.SmsPwFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -216,6 +221,56 @@ public class VendorService {
 	}
 
 	/*
+	 * 비밀번호 찾기
+	 * */
+	public boolean findPassword(PwFindReq pwFindReq) {
+		String key = null;
+		Vendor vendor = null;
+
+		// SMS 요청
+		if (pwFindReq.getMethod().equals(MessageSendMethod.SMS)) {
+			SmsPwFindReq smsPwFindReq = (SmsPwFindReq) pwFindReq;
+			key = smsPwFindReq.getUsername() +":"+smsPwFindReq.getPhone();
+
+			// 인증번호 일치여부 검증
+			String value = redisTemplate.opsForValue().get(key);
+			if(value != null && value.equals(smsPwFindReq.getAuthenticationNumber())){
+				vendor = vendorCustomRepository.findByUsername(smsPwFindReq.getUsername());
+			}
+		}
+
+		// EMAIL 요청
+		else if (pwFindReq.getMethod().equals(MessageSendMethod.EMAIL)) {
+			EmailPwFindReq emailPwFindReq = (EmailPwFindReq) pwFindReq;
+			key = emailPwFindReq.getUsername()+":"+emailPwFindReq.getEmail();
+
+			// 인증번호 일치여부 검증
+			String value = redisTemplate.opsForValue().get(key);
+			if(value != null && value.equals(emailPwFindReq.getAuthenticationNumber())){
+				vendor = vendorCustomRepository.findByUsername(emailPwFindReq.getUsername());
+			}
+		}
+		redisTemplate.delete(key);
+		if(vendor != null) {
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * 비밀번호 재설정
+	 * */
+	@Transactional
+	public void resetPassword(PwResetReq pwResetReq) {
+
+		// 고객 여부 확인
+		validateVendorUser(pwResetReq.getUsername());
+
+		Vendor vendor = vendorCustomRepository.findByUsername(pwResetReq.getUsername());
+		vendor.setPassword(bCryptPasswordEncoder.encode(pwResetReq.getNewPassword()));
+	}
+
+	/*
 	 * 인증번호 요청
 	 * */
 	public void requestVerification(NumberReq numberReq) {
@@ -249,5 +304,14 @@ public class VendorService {
 		System.out.println("<-----Redis 저장 확인---->");
 		System.out.println("Key: " + key);
 		System.out.println("Value: " + storedValue);
+	}
+
+	/*
+	 * 고객 Username 존재여부
+	 * */
+	private void validateVendorUser(String username) {
+		if(!vendorCustomRepository.isExistUsername(username)) {
+			throw new EntityNotFoundException("고객 없음(" + username + ")");
+		}
 	}
 }

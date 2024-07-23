@@ -5,6 +5,8 @@ import java.io.IOException;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.authenticationNumber.NumberReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwResetReq;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,6 +83,23 @@ public class VendorController {
 	@PostMapping("/id-inquiry")
 	public IdFindRes findIdentifier(@RequestBody @Valid IdFindReq idFindReq) {
 		return vendorService.findIdentifire(idFindReq);
+	}
+
+	/*
+	 * 비밀번호 찾기
+	 * */
+	@PostMapping("/pw-inquiry")
+	public boolean findPassword(@RequestBody @Valid PwFindReq pwFindReq) {
+		return vendorService.findPassword(pwFindReq);
+	}
+
+	/*
+	 * 비밀번호 재설정
+	 * */
+	@PostMapping("/pw-reset")
+	public void resetPassword(@RequestBody @Valid PwResetReq pwResetReq) {
+		System.out.println(pwResetReq.getUsername());
+		vendorService.resetPassword(pwResetReq);
 	}
 
 	/*
