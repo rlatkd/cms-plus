@@ -1,6 +1,6 @@
 = Try-Angle API 명세서
 :toc: left
-:toclevels: 3
+:toclevels: 4
 
 :doctype: book
 :source-highlighter: highlightjs
@@ -10,3 +10,4 @@
 include::domain/billing.adoc[leveloffset=+1]
 include::domain/product.adoc[leveloffset=+1]
 include::domain/contract.adoc[leveloffset=+1]
+include::domain/member.adoc[leveloffset=+1]
