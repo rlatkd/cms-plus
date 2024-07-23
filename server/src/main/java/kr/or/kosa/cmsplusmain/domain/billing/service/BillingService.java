@@ -86,11 +86,9 @@ public class BillingService {
 		String billingDate = billing.getBillingDate().toString();
 		String url = INVOICE_URL_FORMAT.formatted(billing.getId());
 
-		String message = INVOICE_MESSAGE_FORMAT
+		return INVOICE_MESSAGE_FORMAT
 			.formatted(memberName, invoiceName, billingPrice, billingDate, url)
 			.trim();
-
-		return message;
 	}
 
 	private void sendInvoiceMessage(String message, Member member) {

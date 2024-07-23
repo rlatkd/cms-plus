@@ -23,7 +23,6 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/vendor/billing")

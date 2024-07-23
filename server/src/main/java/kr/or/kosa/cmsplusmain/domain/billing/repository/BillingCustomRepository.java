@@ -7,35 +7,23 @@ import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
-import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;

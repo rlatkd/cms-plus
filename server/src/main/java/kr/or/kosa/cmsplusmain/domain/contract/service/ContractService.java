@@ -158,12 +158,10 @@ public class ContractService {
 		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
 
 		// 청구 상품 목록
-		List<ContractProduct> contractProducts = contractProductReqs
+		return contractProductReqs
 			.stream()
 			.map(dto -> dto.toEntity(productIdToName.get(dto.getProductId())))
 			.toList();
-
-		return contractProducts;
 	}
 
 	/*

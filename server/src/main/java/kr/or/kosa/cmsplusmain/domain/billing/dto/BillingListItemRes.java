@@ -1,19 +1,11 @@
 package kr.or.kosa.cmsplusmain.domain.billing.dto;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.querydsl.core.annotations.QueryProjection;
 
-import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
