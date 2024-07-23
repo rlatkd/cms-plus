@@ -8,7 +8,7 @@ public class InfraTestController {
 
     @GetMapping("/infra-test")
     public String infraTest() {
-        return "infra-test v1.0";
+        return "infra-test v2.0";
     }
 
 }
