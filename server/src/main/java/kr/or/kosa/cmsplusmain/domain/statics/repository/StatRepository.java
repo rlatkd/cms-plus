@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -22,12 +21,12 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.member.entity.MemberStatus;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.BillingStatQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.ContractStatQueryRes;
+import kr.or.kosa.cmsplusmain.domain.statics.dto.query.DayBillingQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.MemberStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.MonthBillingQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QBillingStatQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QContractStatQueryRes;
+import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QDayBillingQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QMemberStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QMonthBillingQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QRecentFiveContractQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QTopFiveMemberQueryRes;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.query.RecentFiveContractQueryRes;
@@ -148,45 +147,6 @@ public class StatRepository {
 	}
 
 	/*
-	 * 전월 대비
-	 * 회원 수 증감
-	 * */
-	public Double calculateMemberGrowthRate(Long vendorId, int month, int year) {
-
-		LocalDate endOfCurrentMonth = LocalDate.of(year, month, 1)
-			.plusMonths(1)
-			.minusDays(1);
-		LocalDate endOfPreviousMonth = endOfCurrentMonth.minusMonths(1);
-
-		// 이번 달까지 등록된 회원 수
-		Long currentMonthMemberCount = queryFactory
-			.select(member.count())
-			.from(member)
-			.where(
-				member.vendor.id.eq(vendorId),
-				member.enrollDate.before(endOfCurrentMonth),
-				member.deleted.isFalse())
-			.fetchOne();
-		currentMonthMemberCount = (currentMonthMemberCount == null) ? 0 : currentMonthMemberCount;
-
-		// 저번 달까지 등록된 회원수
-		Long previousMonthMemberCount = queryFactory
-			.select(member.count())
-			.from(member)
-			.where(
-				member.vendor.id.eq(vendorId),
-				member.enrollDate.before(endOfPreviousMonth),
-				member.deleted.isFalse())
-			.fetchOne();
-		previousMonthMemberCount = (previousMonthMemberCount == null) ? 0 : previousMonthMemberCount;
-
-		if (previousMonthMemberCount == 0) {
-			return 0.0;
-		}
-		return ((double) (currentMonthMemberCount - previousMonthMemberCount) / previousMonthMemberCount) * 100;
-	}
-
-	/*
 	* 특정 달 까지 등록된 회원 수
 	* */
 	public Long countMemberEnrollmentsByMonth(Long vendorId, int year, int month) {
@@ -242,11 +202,11 @@ public class StatRepository {
 	}
 
 	/*
-	* 특정 달의 청구 목록
+	* 특정 달의 청구 요약 목록
 	* */
-	public List<MonthBillingQueryRes> findBillingsByMonth(Long vendorId, int year, int month) {
+	public List<DayBillingQueryRes> findBillingsByMonth(Long vendorId, int year, int month) {
 		 return queryFactory
-			.select(new QMonthBillingQueryRes(
+			.select(new QDayBillingQueryRes(
 					billing.billingDate,
 					billing.billingStatus,
 					billing.id.count().intValue(),
@@ -287,6 +247,7 @@ public class StatRepository {
 	public List<TopFiveMemberQueryRes> findTopFiveMembers(Long vendorId) {
 		return queryFactory
 			.select(new QTopFiveMemberQueryRes(
+				member.id,
 				member.name, contractProduct.price.longValue().multiply(contractProduct.quantity).sum(),
 				contract.id.countDistinct().intValue()
 			))
@@ -309,6 +270,7 @@ public class StatRepository {
 	public List<RecentFiveContractQueryRes> findRecentFiveContracts(Long vendorId) {
 		return queryFactory
 			.select(new QRecentFiveContractQueryRes(
+				contract.id,
 				contract.createdDateTime,
 				member.name,
 				contractProduct.price.longValue().multiply(contractProduct.quantity).sum(),

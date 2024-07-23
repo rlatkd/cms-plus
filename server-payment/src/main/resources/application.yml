@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: cmsplus-payment
+
+server:
+  port: 8070
+
+fcm:
+  adminKeyPath: "src/main/resources/payment-a6511-firebase-adminsdk-ijdci-5129a9d92c.json"
+
+kafkaTopic:
+  paymentResultTopic: ${PAYMENT_RESULT_TOPIC}

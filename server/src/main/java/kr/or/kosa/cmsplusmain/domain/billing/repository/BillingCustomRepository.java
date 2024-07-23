@@ -1,14 +1,10 @@
 package kr.or.kosa.cmsplusmain.domain.billing.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
+
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -22,6 +18,13 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.extern.slf4j.Slf4j;
+
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.billing;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.billingProduct;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.payment;
 
 @Slf4j
 @Repository
@@ -167,6 +170,21 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.limit(pageable.getSize())
 			.fetch();
 	}
+	/*
+	 * 회원 삭제 - 청구 목록 조회
+	 * */
+	public List<Billing> findBillingListByMemberId(Long vendorId, Long memberId){
+		return jpaQueryFactory
+			.selectFrom(billing)
+			.join(billing.contract, contract)
+			.where(
+					contract.vendor.id.eq(vendorId),
+					contract.member.id.eq(memberId),
+					contractNotDel(),
+					billingNotDel()
+			)
+			.fetch();
+	}
 
 	/*
 	 * 회원 상세 - 기본정보(청구수)
@@ -179,11 +197,30 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.where(
 					contract.vendor.id.eq(vendorId),
 					contract.member.id.eq(memberId),
-					contractNotDel()
+					contractNotDel(),
+					billingNotDel()
 			)
 			.fetchOne();
 
 		return (res == null) ? 0 : res.intValue();
+	}
+
+	/*
+	 * 회원 상세 - 기본정보(청구금액)
+  	 * */
+	public Long findBillingPriceByMemberId(Long vendorId, Long memberId){
+		return jpaQueryFactory
+				.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
+				.from(billingProduct)
+				.join(billingProduct.billing, billing)
+				.join(billing.contract, contract)
+				.where(
+						contract.vendor.id.eq(vendorId),
+						contract.member.id.eq(memberId),
+						contractNotDel(),
+						billingProductNotDel()
+				)
+				.fetchOne();
 	}
 
 	/*
@@ -203,21 +240,32 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	}
 
 	/*
-	 회원 상세 - 기본정보(청구금액)
-	  */
-	public Long findBillingPriceByMemberId(Long vendorId, Long memberId){
-		return jpaQueryFactory
-				.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
-				.from(billingProduct)
-				.join(billingProduct.billing, billing)
-				.join(billing.contract, contract)
-				.where(
-						contract.vendor.id.eq(vendorId),
-						contract.member.id.eq(memberId),
-						contractNotDel(),
-						billingProductNotDel()
-				)
-				.fetchOne();
+	* 계약의 청구 총 개수 및 금액
+	* */
+	public Long[] findBillingCntAndPriceByContract(Long contractId) {
+		List<Long> billingIds = jpaQueryFactory
+			.select(billing.id)
+			.from(billing)
+			.where(
+				billingNotDel(),
+				billing.contract.id.eq(contractId)
+			)
+			.fetch();
+
+		if (billingIds == null || billingIds.isEmpty()) {
+			return new Long[] {0L, 0L};
+		}
+
+		Long totalPrice = jpaQueryFactory
+			.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
+			.from(billingProduct)
+			.where(
+				billingProductNotDel(),
+				billingProduct.billing.id.in(billingIds)
+			)
+			.fetchOne();
+
+		return new Long[] {(long)billingIds.size(), totalPrice};
 	}
 
 	private BooleanExpression paymentTypeEq(PaymentType paymentType) {

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class BillingProductRes {
 	private Long billingProductId;		// 청구상품 ID
-	private Long billingStandardId;		// 청구기준 ID
+	private Long billingId;		// 청구기준 ID
 	private Long productId;				// 상품 ID
 	private String name;				// 상품명
 	private Integer price;				// 청구상품 가격
@@ -17,7 +17,7 @@ public class BillingProductRes {
 	public static BillingProductRes fromEntity(BillingProduct billingProduct) {
 		return BillingProductRes.builder()
 			.billingProductId(billingProduct.getId())
-			.billingStandardId(billingProduct.getBilling().getId())
+			.billingId(billingProduct.getBilling().getId())
 			.productId(billingProduct.getProduct().getId())
 			.name(billingProduct.getName())
 			.price(billingProduct.getPrice())

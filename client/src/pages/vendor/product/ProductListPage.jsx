@@ -13,6 +13,7 @@ import { cols, initialSearch, selectOptions } from '@/utils/tableElements/produc
 
 const ProductListPage = () => {
   const [productList, setProductList] = useState([]); // 상품 목록
+  const [productListListCount, setProductListListCount] = useState(); // 상품 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 상품 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
@@ -29,10 +30,11 @@ const ProductListPage = () => {
   const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
   const [isValid, setIsValid] = useState(true); // 유효성 flag
 
-  // 상품 목록 조회 함수
   // axiosProductLists는 useEffect 훅 내부에서 사용하고 있기 때문에
   // 종속성 배열에 포함시키고 useCallback으로 함수 재생성 방지
   // 의도하지 않은 렌더링 에러 방지
+
+  // <--------상품 목록 조회-------->
   const axiosProductList = useCallback(
     async (
       searchParams = {},
@@ -48,9 +50,10 @@ const ProductListPage = () => {
           page: page,
           size: 10,
         });
-        const transformedData = transformProductListItem(res.data.content);
+        const transformdData = transformProductListItem(res.data.content);
 
-        setProductList(transformedData);
+        setProductList(transformdData);
+        setProductListListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosProductList => ', err.response.data);
@@ -59,9 +62,8 @@ const ProductListPage = () => {
     [currentPage]
   );
 
-  // 상품 데이터 값 정제
+  // <--------데이터 변환-------->
   const transformProductListItem = data => {
-    // 데이터 변환
     return data.map(product => {
       const { productPrice, contractNumber } = product;
 
@@ -73,11 +75,13 @@ const ProductListPage = () => {
     });
   };
 
-  // 검색 변경 핸들러
+  // <--------검색 변경 핸들러-------->
   const handleChangeSearch = (key, value) => {
     const updatedSearch = search.map(searchItem =>
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );
+
+    console.log(updatedSearch);
 
     let searchParams = {};
     updatedSearch.forEach(searchMember => {
@@ -86,11 +90,13 @@ const ProductListPage = () => {
       }
     });
 
+    console.log(searchParams);
+
     setSearch(updatedSearch);
     setCurrentSearchParams(searchParams);
   };
 
-  // 검색 안에 입력값 유효성 검사
+  // <--------검색 안에 입력값 유효성 검사-------->
   const validateSearchParams = () => {
     for (const searchProduct of search) {
       if (searchProduct.value) {
@@ -105,23 +111,22 @@ const ProductListPage = () => {
     return true;
   };
 
-  // 검색 클릭 이벤트 핸들러
+  // <--------검색 클릭 이벤트 핸들러-------->
   const handleClickSearch = async () => {
     if (!validateSearchParams()) return;
-    console.log('debouncedSearchParams => ', debouncedSearchParams);
     axiosProductList(debouncedSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
     setIsValid(true); // 검색 후 유효성 flag 초기화
   };
 
-  // 상품 등록 모달 열기용 이벤트핸들러
+  // <--------상품 등록 모달-------->
   const handleCreateModalOpen = () => {
     setModalTitle('상품 등록');
     setIsShowModal(true);
   };
 
-  // 상품 상세조회 모달 열기용 이벤트핸들러
+  // <--------상품 상세조회 모달-------->
   const handleDetailModalOpen = async productId => {
     setModalTitle('상품 상세 정보');
     try {
@@ -133,26 +138,26 @@ const ProductListPage = () => {
     }
   };
 
-  // 디바운스 커스텀훅
+  // <--------디바운스 커스텀훅-------->
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);
 
   useEffect(() => {
     handleClickSearch();
   }, [debouncedSearchParams]);
 
-  // 페이지 진입 시 상품 목록 조회
+  // <-------- 페이지 진입 시 상품 목록 조회-------->
   useEffect(() => {
     axiosProductList(currentSearchParams, currentorder, currentorderBy, currentPage);
   }, [currentPage]);
 
   return (
-    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
+    <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center '>
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <Item fill='#4FD1C5' stroke='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <p className='text-text_black font-700 mr-5'>총 {productListListCount}건</p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}

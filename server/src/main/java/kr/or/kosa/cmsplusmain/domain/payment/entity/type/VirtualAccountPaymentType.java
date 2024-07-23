@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.payment.entity.type;
 
+import jakarta.persistence.DiscriminatorValue;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Comment("결제방식 - 가상계좌")
 @Entity
 @Getter
+@DiscriminatorValue(PaymentType.Const.VIRTUAL)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VirtualAccountPaymentType extends PaymentTypeInfo {
 

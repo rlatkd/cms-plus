@@ -8,13 +8,14 @@ import registerManyUser from '@/assets/registerManyUser.svg';
 import registerUser from '@/assets/registerUser.svg';
 import { getMemberList } from '@/apis/member';
 import User from '@/assets/User';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/memberElement';
 import MemberExcelModal from '@/components/vendor/modal/MemberExcelModal';
 
 const MemberListPage = () => {
   const [memberList, setMemberList] = useState([]); // 회원 목록
+  const [memberListCount, setMemberListCount] = useState(); // 회원 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
@@ -26,11 +27,11 @@ const MemberListPage = () => {
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
   const buttonCount = 5; // 버튼 갯수
 
-  const [isShowExcelModal, setIsShowExcelModal] = useState(false);  // 대량 회원 등록
+  const [isShowExcelModal, setIsShowExcelModal] = useState(false); // 대량 회원 등록
 
   const navigate = useNavigate();
 
-  // 회원 목록 조회
+  // <--------회원 목록 조회-------->
   const axiosMemberList = useCallback(
     async (
       searchParams = {},
@@ -46,8 +47,9 @@ const MemberListPage = () => {
           page: page,
           size: 10,
         });
-        const transformedData = transformMemberListItem(res.data.content);
-        setMemberList(transformedData);
+        const transformdData = transformMemberListItem(res.data.content);
+        setMemberList(transformdData);
+        setMemberListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response.data);
@@ -56,9 +58,8 @@ const MemberListPage = () => {
     [currentPage, currentorder, currentorderBy]
   );
 
-  // 회원 데이터 값 정제
+  // <--------데이터 변환-------->
   const transformMemberListItem = data => {
-    // 데이터 변환
     return data.map(member => {
       const { contractPrice, contractCount, memberPhone } = member;
 
@@ -71,7 +72,7 @@ const MemberListPage = () => {
     });
   };
 
-  // 검색 변경 핸들러
+  // <--------검색 변경 핸들러-------->
   const handleChangeSearch = (key, value) => {
     const updatedSearch = search.map(searchItem =>
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
@@ -88,20 +89,19 @@ const MemberListPage = () => {
     setCurrentSearchParams(searchParams);
   };
 
-  // 검색 클릭 이벤트 핸들러
+  // <--------검색 클릭 이벤트 핸들러-------->
   const handleClickSearch = async () => {
     axiosMemberList(debouncedSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
 
-  // 회원 상세 조회 페이지 이동
+  // <--------회원 상세 조회 페이지 이동-------->
   const MoveMemberDetail = async memberId => {
-    console.log(memberId);
     navigate(`detail/${memberId}`);
   };
 
-  // 디바운스 커스텀훅
+  // <--------디바운스 커스텀훅-------->
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);
 
   useEffect(() => {
@@ -113,13 +113,13 @@ const MemberListPage = () => {
   }, [currentPage]);
 
   return (
-    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
+    <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center '>
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <User fill='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <p className='text-text_black font-700 mr-5'>총 {memberListCount}건</p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}
@@ -164,12 +164,12 @@ const MemberListPage = () => {
         buttonCount={buttonCount}
       />
       <MemberExcelModal
-             isShowModal={isShowExcelModal}
-             setIsShowModal={setIsShowExcelModal}
-             // TODO 아이콘 변경 필요
-             icon='/src/assets/user.svg'
-             modalTitle={'대량 회원 등록'}
-             axiosMemberList={axiosMemberList}
+        isShowModal={isShowExcelModal}
+        setIsShowModal={setIsShowExcelModal}
+        // TODO 아이콘 변경 필요
+        icon='/src/assets/user.svg'
+        modalTitle={'대량 회원 등록'}
+        axiosMemberList={axiosMemberList}
       />
     </div>
   );

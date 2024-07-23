@@ -9,13 +9,13 @@ import lombok.Getter;
 @Getter
 public class CardMethodRes extends PaymentMethodInfoRes {
 	private final String cardNumber;
-	private final int cardMonth;
-	private final int cardYear;
+	private final Integer cardMonth;
+	private final Integer cardYear;
 	private final String cardOwner;
 	private final LocalDate cardOwnerBirth;
 
 	@Builder
-	public CardMethodRes(String cardNumber, int cardMonth, int cardYear, String cardOwner, LocalDate cardOwnerBirth) {
+	public CardMethodRes(String cardNumber, Integer cardMonth, Integer cardYear, String cardOwner, LocalDate cardOwnerBirth) {
 		super(PaymentMethod.CARD);
 		this.cardNumber = cardNumber;
 		this.cardMonth = cardMonth;

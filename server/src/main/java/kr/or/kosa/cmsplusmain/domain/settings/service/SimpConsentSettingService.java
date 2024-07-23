@@ -92,7 +92,6 @@ public class SimpConsentSettingService {
     private SimpConsentSettingDto convertToDto(SimpConsentSetting setting) {
         SimpConsentSettingDto dto = new SimpConsentSettingDto();
         dto.setId(setting.getId());
-        dto.setVendorUsername(setting.getVendor().getUsername());
         dto.setPaymentMethods(setting.getSimpConsentPayments());
         dto.setProductIds(setting.getSimpConsentProducts().stream().map(Product::getId).collect(java.util.stream.Collectors.toSet()));
         return dto;

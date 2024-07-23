@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
@@ -21,7 +23,7 @@ import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
-import kr.or.kosa.cmsplusmain.domain.messaging.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
@@ -40,7 +42,9 @@ import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SampleDataLoader {
@@ -61,7 +65,7 @@ public class SampleDataLoader {
 				"vendor1",
 				"테스트고객",
 				"testvendor@fms.com",
-				"010-1234-1234")
+				"01012341234")
 		);
 
 		generateSampleData(vendor, 100, 100, 100, 100);
@@ -105,12 +109,18 @@ public class SampleDataLoader {
 			billing.setBillingStatus(randomGenerator.getRandomBillingStatus(billingDate));
 			billing.setInvoiceMessage(randomGenerator.generateRandomInvoiceMessage());
 
+			// 청구 상태 여부에 따른 결제 시각 및 청구서 발송 시각 설정
+			switch (billing.getBillingStatus()) {
+				case PAID -> billing.setPaidDateTime(billingDate.atTime(random.nextInt(23), random.nextInt(59)));
+				case WAITING_PAYMENT, NON_PAID -> billing.setInvoiceSendDateTime(billingDate.atTime(random.nextInt(23), random.nextInt(59)));
+			}
+
 			billings.add(billing);
 		}
 		return billings;
 	}
 
-	private List<BillingProduct> createBillingProducts(List<Product> products) {
+	public List<BillingProduct> createBillingProducts(List<Product> products) {
 		List<BillingProduct> billingProducts = new ArrayList<>();
 		int productCount = random.nextInt(3) + 1; // 1~3개의 상품 생성
 		for (int i = 0; i < productCount; i++) {
@@ -138,7 +148,7 @@ public class SampleDataLoader {
 		return createdMembers;
 	}
 
-	private Member createMember(Vendor vendor, int index) {
+	public Member createMember(Vendor vendor, int index) {
 		String name = "학생" + (index + 1);
 		String email = "student" + (index + 1) + "@example.com";
 		String phone = randomGenerator.generateRandomPhone();
@@ -173,7 +183,7 @@ public class SampleDataLoader {
 		vendor = vendorRepository.save(vendor);
 
 		// 기본 상품
-		Product defaultProduct =createTestProduct(vendor, 1);
+		Product defaultProduct =createTestProduct(vendor, -1);
 		defaultProduct = productRepository.save(defaultProduct);
 
 		// 간편동의 기본상품 추가
@@ -194,10 +204,12 @@ public class SampleDataLoader {
 		return createdContracts;
 	}
 
-	private Contract createContract(Member member, int index, List<Product> products) {
+	public Contract createContract(Member member, int index, List<Product> products) {
 		Payment payment = generatePayment();
 		LocalDate startDate = LocalDate.now().minusMonths(random.nextInt(12));
-		LocalDate endDate = startDate.plusYears(1);
+		LocalDate endDate = startDate.plusMonths(3);
+
+		ContractStatus status = (LocalDate.now().isAfter(endDate)) ? ContractStatus.DISABLED : ContractStatus.ENABLED;
 
 		Contract contract = Contract.builder()
 			.vendor(member.getVendor())
@@ -205,6 +217,7 @@ public class SampleDataLoader {
 			.contractName("계약" + (index + 1))
 			.contractDay(random.nextInt(28) + 1)
 			.payment(payment)
+			.contractStatus(status)
 			.contractStartDate(startDate)
 			.contractEndDate(endDate)
 			.build();
@@ -214,7 +227,7 @@ public class SampleDataLoader {
 		return contract;
 	}
 
-	private void addRandomContractProducts(Contract contract, List<Product> products) {
+	public void addRandomContractProducts(Contract contract, List<Product> products) {
 		int productCount = random.nextInt(3) + 1; // 1에서 3개의 상품 추가
 
 		for (int i = 0; i < productCount && i < products.size(); i++) {
@@ -243,11 +256,11 @@ public class SampleDataLoader {
 			.build();
 	}
 
-	private PaymentType getRandomPaymentType() {
+	public PaymentType getRandomPaymentType() {
 		return randomGenerator.getRandomInList(Arrays.stream(PaymentType.values()).toList());
 	}
 
-	private PaymentMethod getRandomPaymentMethod(PaymentType paymentType) {
+	public PaymentMethod getRandomPaymentMethod(PaymentType paymentType) {
 		if (paymentType == PaymentType.AUTO) {
 			return random.nextBoolean() ? PaymentMethod.CARD : PaymentMethod.CMS;
 		} else {
@@ -255,10 +268,10 @@ public class SampleDataLoader {
 		}
 	}
 
-	private PaymentTypeInfo generatePaymentTypeInfo(PaymentType paymentType) {
+	public PaymentTypeInfo generatePaymentTypeInfo(PaymentType paymentType) {
 		return switch (paymentType) {
 			case AUTO -> AutoPaymentType.builder()
-				.consentImgUrl("http://example.com/consent" + random.nextInt(1000) + ".jpg")
+				.consentImgUrl("blob:http://example.com/consent" + random.nextInt(1000) + ".jpg")
 				.simpleConsentReqDateTime(LocalDateTime.now().minusDays(random.nextInt(30)))
 				.build();
 			case BUYER -> BuyerPaymentType.builder()
@@ -269,12 +282,13 @@ public class SampleDataLoader {
 				.accountNumber(randomGenerator.generateRandomAccountNumber())
 				.accountOwner("가상계좌주인" + random.nextInt(100))
 				.build();
-			default -> throw new IllegalArgumentException("Unsupported PaymentType");
 		};
 	}
 
-	private PaymentMethodInfo generatePaymentMethodInfo(PaymentMethod paymentMethod) {
-		if (paymentMethod == null) return null;
+	public PaymentMethodInfo generatePaymentMethodInfo(PaymentMethod paymentMethod) {
+		if (paymentMethod == null) {
+			return null;
+		}
 		return switch (paymentMethod) {
 			case CARD -> CardPaymentMethod.builder()
 				.cardNumber(randomGenerator.generateRandomCardNumber())
@@ -290,7 +304,6 @@ public class SampleDataLoader {
 				.accountOwnerBirth(LocalDate.now().minusYears(20 + random.nextInt(40)))
 				.build();
 			case ACCOUNT ->
-				// Assuming ACCOUNT uses the same structure as CMS for this example
 				CmsPaymentMethod.builder()
 					.bank(randomGenerator.getRandomBank())
 					.accountNumber(randomGenerator.generateRandomAccountNumber())
@@ -307,7 +320,7 @@ public class SampleDataLoader {
 			.name(name)
 			.email(email)
 			.phone(phone)
-			.homePhone("02-1234-5678")
+			.homePhone("021235678")
 			.department("영업부")
 			.role(UserRole.ROLE_VENDOR)
 			.build();
@@ -317,9 +330,9 @@ public class SampleDataLoader {
 		return Product.builder()
 			.vendor(vendor)
 			.status(ProductStatus.ENABLED)
-			.name("테스트 상품" + idx)
+			.name("테스트 상품" + ((idx != -1) ? idx : ""))
 			.price(random.nextInt(1000, 1000000))
-			.memo("이것은 테스트 상품입니다. " + idx)
+			.memo("이것은 테스트 상품입니다. " + ((idx != -1) ? idx : ""))
 			.build();
 	}
 }

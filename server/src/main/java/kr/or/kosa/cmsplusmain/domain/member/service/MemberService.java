@@ -6,17 +6,22 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
@@ -46,6 +51,8 @@ public class MemberService {
 
     private final PaymentService paymentService;
     private final ContractService contractService;
+    private final ContractRepository contractRepository;
+    private final ContractProductRepository contractProductRepository;
 
     /*
      * 회원 목록 조회
@@ -84,18 +91,17 @@ public class MemberService {
     /*
     * 회원 상세 - 계약리스트
     * */
-    public SortPageDto.Res<MemberContractListItemDto> findContractListItemByMemberId(Long vendorId, Long memberId, PageReq pageable) {
+    public PageRes<MemberContractListItemRes> findContractListItemByMemberId(Long vendorId, Long memberId, PageReq pageable) {
 
         int countAllContractListItemByMemberId = contractCustomRepository.countContractListItemByMemberId(vendorId, memberId);
-        int totalPages = (int) Math.ceil((double) countAllContractListItemByMemberId / pageable.getSize());
 
-        List<MemberContractListItemDto> memberContractListItemDtos = contractCustomRepository
+        List<MemberContractListItemRes> memberContractListItemRes = contractCustomRepository
                 .findContractListItemByMemberId(vendorId, memberId, pageable)
                 .stream()
-                .map(MemberContractListItemDto::fromEntity)
+                .map(MemberContractListItemRes::fromEntity)
                 .toList();
 
-        return new SortPageDto.Res<>(totalPages, memberContractListItemDtos);
+        return new PageRes<>(countAllContractListItemByMemberId,pageable.getSize(), memberContractListItemRes);
     }
 
     /*
@@ -120,6 +126,77 @@ public class MemberService {
 
         // 계약 정보를 DB에 저장한다.
         contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
+    }
+
+    /*
+     * 회원 수정 - 기본 정보
+     *
+     * 총 발생 쿼리수: 3회
+     * 내용 :
+     *    회원 존재여부 확인, 회원 상세 조회, 회원 정보 업데이트
+     * */
+    @Transactional
+    public void updateMember(Long vendorId, Long memberId, MemberUpdateReq memberUpdateReq) {
+        // 고객의 회원 여부 확인
+         validateMemberUser(vendorId, memberId);
+
+        // 회원의 기본 정보 수정
+        Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
+        member.setName(memberUpdateReq.getMemberName());
+        member.setPhone(memberUpdateReq.getMemberPhone());
+        member.setEnrollDate(memberUpdateReq.getMemberEnrollDate());
+        member.setHomePhone(memberUpdateReq.getMemberHomePhone());
+        member.setEmail(memberUpdateReq.getMemberEmail());
+        member.setAddress(memberUpdateReq.getMemberAddress());
+        member.setMemo(memberUpdateReq.getMemberMemo());
+    }
+
+    /*
+     * 회원 수정 - 청구 정보
+     * */
+    @Transactional
+    public void updateMemberBilling(Long vendorId, Long memberId, MemberBillingUpdateReq memberBillingUpdateReq){
+
+        // 고객의 회원 여부 확인
+        validateMemberUser(vendorId, memberId);
+
+        // 회원의 청구 정보 수정
+        Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
+        member.setInvoiceSendMethod(memberBillingUpdateReq.getInvoiceSendMethod());
+        member.setAutoInvoiceSend(memberBillingUpdateReq.isAutoInvoiceSend());
+        member.setAutoBilling(memberBillingUpdateReq.isAutoBilling());
+    }
+
+    /*
+     * 회원 삭제
+     * */
+    @Transactional
+    public void deleteMember(Long vendorId, Long memberId) {
+
+        // 고객의 회원 여부 확인
+        validateMemberUser(vendorId, memberId);
+
+        // 고객정보 삭제
+        Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
+        member.delete();
+    }
+
+    /*
+     * 회원 삭제 - 회원의 청구 목록 조회
+     * */
+    public List<BillingListItemRes> getBillingByMember(Long vendorId, Long memberId) {
+
+        // 고객의 회원 여부 확인
+        validateMemberUser(vendorId, memberId);
+
+        // 청구 목록 조회
+        List<Billing> billingList = billingCustomRepository.findBillingListByMemberId(vendorId, memberId);
+
+        // 빌더 패턴을 사용하여 BillingListItemRes로 변환
+        return billingList.stream()
+                .map(BillingListItemRes::fromEntity)
+                .collect(Collectors.toList());
+
     }
 
     /*
@@ -170,4 +247,15 @@ public class MemberService {
 
         return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }
+
+    /*
+     * 회원 ID 존재여부
+     * 회원이 현재 로그인 고객의 회원인지 여부
+     * */
+    private void validateMemberUser(Long vendorId, Long memberId) {
+        if(!memberCustomRepository.isExistMemberById(memberId, vendorId)) {
+            throw new EntityNotFoundException("회원 ID 없음(" + memberId + ")");
+        }
+    }
+
 }

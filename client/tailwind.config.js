@@ -23,6 +23,8 @@ export default {
         laptop: '1024px', // lg
         desktop: '1280px', // xl
         large_desktop: '1536px', // 2xl
+        extra_desktop: '2000px', // 2xl
+        tmp: '1800px', // 2xl
       },
 
       fontSize: {
@@ -34,6 +36,7 @@ export default {
         54: '54px',
         360: '380px',
         480: '480px',
+        510: '510px',
         580: '580px',
         640: '640px', // 모바일 max-width
         680: '680px',
@@ -46,6 +49,7 @@ export default {
         'dash-board': '0px 2px 6px rgba(0, 0, 0, 0.25)', // 대시보드 그림자
         'dash-sub': '0px 1px 6px 0px #DADBDC', // 서브 대시보드 그림자
         sidebars: '0 1px 3.5px 0 rgba(218, 219, 220, 1)', // 사이드바 아이콘 그림자
+        dash_up: '0 0 3px 0 rgba(0, 0, 0, 0.25)',
         modal: '0 3px 10px rgba(209, 209, 209, 1)',
         dialog: '0 0 15px rgba(0, 0, 0, 0.1)', // alert, confirm
         column: '0 1px 2px rgba(0, 0, 0, 0.19)', // table column 그림자

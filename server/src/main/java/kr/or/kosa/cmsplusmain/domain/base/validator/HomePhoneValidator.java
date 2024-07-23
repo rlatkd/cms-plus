@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class HomePhoneValidator implements ConstraintValidator<HomePhone, String> {
 
 	private static final Pattern USERNAME_PATTERN = Pattern.compile(
-		"^(02|0[3-6]{1}[1-5]{1})-([0-9]{3,4})-[0-9]{4}$"
+		"^(02|0[3-6]{1}[1-5]{1})([0-9]{3,4})[0-9]{4}$"
 	);
 
 	@Override

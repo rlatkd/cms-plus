@@ -13,6 +13,7 @@ RUN        gradle build -x test --no-daemon
 FROM       openjdk:17-jdk-slim
 WORKDIR    /server
 COPY       --from=build /home/gradle/project/build/libs/*.jar app.jar
+ENV SPRING_PROFILES_ACTIVE=prod
 ENTRYPOINT [ "java", "-jar", "app.jar" ]
 # VOLUME     /tmp
 # EXPOSE     8080

@@ -15,6 +15,7 @@ const BreadCrumb = () => {
     .filter(path => path)
     .slice(1);
 
+  // <--------헤더 아이콘, 상위메뉴 선택--------
   const breadCrumbTitle = () => {
     for (const route of vendorRoute()) {
       if (currentPaths[0] === route.path) {
@@ -26,8 +27,10 @@ const BreadCrumb = () => {
         return route;
       }
     }
+    return vendorRoute()[0];
   };
 
+  // <--------헤더 하위메뉴 선택 (재귀)--------
   const breadCrumbMenu = (route, idx) => {
     if (!route.children) return;
 

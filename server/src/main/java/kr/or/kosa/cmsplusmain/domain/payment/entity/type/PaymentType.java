@@ -35,6 +35,15 @@ public enum PaymentType implements BaseEnum {
 		return PaymentType.BUYER.availablePaymentMethods;
 	}
 
+	public static PaymentType fromCode(String code) {
+		for (PaymentType paymentType : PaymentType.values()) {
+			if (paymentType.name().equals(code)) {
+				return paymentType;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public String getCode() {
 		return name();

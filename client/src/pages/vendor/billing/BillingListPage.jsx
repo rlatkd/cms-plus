@@ -10,12 +10,15 @@ import addItem from '@/assets/addItem.svg';
 import card from '@/assets/card.svg';
 import send from '@/assets/send.svg';
 import Card from '@/assets/Card';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billingElement';
+import { formatProducts } from '@/utils/format/formatProducts';
+import BillingRegisterPage from './BillingRegisterPage';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
+  const [billingListCount, setBillingListCount] = useState(); // 청구 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
@@ -31,7 +34,7 @@ const BillingListPage = () => {
 
   const navigate = useNavigate();
 
-  // 청구 목록 조회
+  // <--------청구 목록 조회-------->
   const axiosBillingList = useCallback(
     async (
       searchParams = {},
@@ -47,8 +50,9 @@ const BillingListPage = () => {
           page: page,
           size: 10,
         });
-        const transformedData = transformBillingListItem(res.data.content);
-        setBillingList(transformedData);
+        const transformdData = transformBillingListItem(res.data.content);
+        setBillingList(transformdData);
+        setBillingListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response.data);
@@ -57,18 +61,15 @@ const BillingListPage = () => {
     [currentPage]
   );
 
-  // 청구 데이터 값 정제
+  // <--------데이터 변환-------->
   const transformBillingListItem = data => {
-    // 데이터 변환
     return data.map(billing => {
       const { billingPrice, billingProducts, paymentType, billingStatus, memberPhone } = billing;
-      const firstProduct = billingProducts[0];
-      const additionalProductsCount = billingProducts.length - 1;
 
       return {
         ...billing,
         billingPrice: `${billingPrice.toLocaleString()}원`,
-        billingProducts: `${firstProduct.name} + ${additionalProductsCount}`,
+        billingProducts: formatProducts(billingProducts),
         paymentType: paymentType.title,
         billingStatus: billingStatus.title,
         memberPhone: formatPhone(memberPhone),
@@ -76,7 +77,7 @@ const BillingListPage = () => {
     });
   };
 
-  // 검색 변경 핸들러
+  // <--------검색 변경 핸들러-------->
   const handleChangeSearch = (key, value) => {
     const updatedSearch = search.map(searchItem =>
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
@@ -93,20 +94,25 @@ const BillingListPage = () => {
     setCurrentSearchParams(searchParams);
   };
 
-  // 검색 클릭 이벤트 핸들러
+  // <--------검색 클릭 이벤트 핸들러-------->
   const handleClickSearch = async () => {
     axiosBillingList(debouncedSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
 
-  // 청구 상세 조회 페이지 이동
+  // <--------청구 상세 조회 페이지 이동-------->
   const MoveBillingDetail = async billingId => {
     console.log(billingId);
     navigate(`detail/${billingId}`);
   };
 
-  // 디바운스 커스텀훅
+  // 청구 생성 페이지 이동
+  const MoveBillingCreate = async () => {
+    navigate(`create`);
+  };
+
+  // <--------디바운스 커스텀훅-------->
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);
 
   useEffect(() => {
@@ -118,13 +124,13 @@ const BillingListPage = () => {
   }, [currentPage]);
 
   return (
-    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full'>
+    <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center'>
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <Card fill='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 24건</p>
+          <p className='text-text_black font-700 mr-5'>총 {billingListCount}건</p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}
@@ -142,7 +148,7 @@ const BillingListPage = () => {
               imgSrc={addItem}
               color='mint'
               buttonText='청구생성'
-              onClick={() => setIsShowModal(true)}
+              onClick={MoveBillingCreate}
             />
           </div>
         </div>
@@ -155,7 +161,7 @@ const BillingListPage = () => {
         currentPage={currentPage}
         handleChangeSearch={handleChangeSearch}
         handleClickSearch={handleClickSearch}
-        onRowClick={item => MoveBillingDetail(item.contractId)}
+        onRowClick={item => MoveBillingDetail(item.billingId)}
       />
 
       <PagiNation

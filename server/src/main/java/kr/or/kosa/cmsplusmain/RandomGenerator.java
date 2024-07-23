@@ -35,8 +35,8 @@ public class RandomGenerator {
 	public LocalDate generateRandomDate(LocalDate from, LocalDate to) {
 		Period period = Period.between(from, to);
 		return from
-			.plusMonths(random.nextInt(period.getMonths()))
-			.plusDays(random.nextInt(period.getDays()));
+			.plusMonths(random.nextInt((period.getMonths() < 0) ? period.getMonths() * -1 : period.getMonths()))
+			.plusDays(random.nextInt((period.getDays() < 0) ? period.getDays() * -1 : period.getDays()));
 	}
 
 	public BillingStatus getRandomBillingStatus(LocalDate billingDate) {
@@ -72,10 +72,10 @@ public class RandomGenerator {
 	}
 
 	public String generateRandomPhone() {
-		return String.format("010-%04d-%04d", random.nextInt(10000), random.nextInt(10000));
+		return String.format("010%04d%04d", random.nextInt(10000), random.nextInt(10000));
 	}
 
 	public String generateRandomHomePhone() {
-		return String.format("02-%04d-%04d", random.nextInt(10000), random.nextInt(10000));
+		return String.format("02%04d%04d", random.nextInt(10000), random.nextInt(10000));
 	}
 }

@@ -37,7 +37,6 @@ import lombok.RequiredArgsConstructor;
 public class VendorService {
 	private final VendorRepository vendorRepository;
 	private final VendorCustomRepository vendorCustomRepository;
-	private final ProductCustomRepository productCustomRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
@@ -66,8 +65,15 @@ public class VendorService {
 		// 간편동의 설정 초기화
 		SimpConsentSetting simpConsentSetting = createDefaultSimpConsentSetting();
 		vendor.setSimpConsentSetting(simpConsentSetting);
+		Vendor mVendor = vendorRepository.save(vendor);
 
-		vendorRepository.save(vendor);
+		Product sampleProduct = Product.builder()
+			.name("기본상품")
+			.vendor(mVendor)
+			.price(0)
+			.build();
+
+		simpConsentSetting.addProduct(sampleProduct);
 	}
 
 	// 간편동의 설정 기본값
@@ -78,14 +84,6 @@ public class VendorService {
 		Set<PaymentMethod> autoPaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
 		for (PaymentMethod paymentMethod : autoPaymentMethods) {
 			setting.addPaymentMethod(paymentMethod);
-		}
-
-		// ProductCustomRepository를 사용하여 상품 조회
-		//  전체 상품 조회
-		List<Product> defaultProducts = productCustomRepository.findProducts();
-
-		for (Product product : defaultProducts) {
-			setting.addProduct(product);
 		}
 
 		return setting;
