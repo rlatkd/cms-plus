@@ -29,7 +29,7 @@ jobs:
         run: |
 
           timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
-          log_file="DEPLOY_LOG/client/FE_CD_LOG-$timestamp.log"
+          log_file="DEPLOY_LOG/client/FE_CD_LOG_$timestamp.log"
           mkdir -p DEPLOY_LOG/client
           echo "프론트엔드 배포 로그" >> "$log_file"
           git fetch origin
