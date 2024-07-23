@@ -12,7 +12,6 @@ import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
 import convertBadReqMsg from '@/utils/dialog/alertwidth/convertBadReqMsg';
 
 const BillingRegisterPage = () => {
-
   /**
    * 계약 목록 페이징
    */
@@ -25,7 +24,7 @@ const BillingRegisterPage = () => {
   const [selectedContract, setSelectedContract] = useState(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const [products, setProducts] = useState([]);     // 전체 상품 목록
+  const [products, setProducts] = useState([]); // 전체 상품 목록
 
   /**
    * 청구 생성 정보
@@ -36,19 +35,22 @@ const BillingRegisterPage = () => {
     products: [],
   });
 
-  const fetchContractList = useCallback(async (page = currentPage) => {
-    try {
-      const res = await getContractList({
-        [searchType]: searchTerm,
-        page,
-        size: 10,
-      });
-      setContractList(res.data.content);
-      setTotalPages(res.data.totalPage || 1);
-    } catch (err) {
-      console.error('청구 생성 - 계약 목록 조회 실패', err);
-    }
-  }, [searchType, searchTerm, currentPage]);
+  const fetchContractList = useCallback(
+    async (page = currentPage) => {
+      try {
+        const res = await getContractList({
+          [searchType]: searchTerm,
+          page,
+          size: 10,
+        });
+        setContractList(res.data.content);
+        setTotalPages(res.data.totalPage || 1);
+      } catch (err) {
+        console.error('청구 생성 - 계약 목록 조회 실패', err);
+      }
+    },
+    [searchType, searchTerm, currentPage]
+  );
 
   const fetchAllProducts = useCallback(async () => {
     try {
@@ -86,7 +88,7 @@ const BillingRegisterPage = () => {
     if (billingDate < today) {
       billingDate.setMonth(billingDate.getMonth() + 1);
     }
-    
+
     return billingDate.toISOString().split('T')[0];
   };
 
@@ -104,7 +106,7 @@ const BillingRegisterPage = () => {
     setBillingData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleProductAdd = (newProduct) => {
+  const handleProductAdd = newProduct => {
     if (!newProduct) return;
     setBillingData(prev => ({
       ...prev,
@@ -114,14 +116,14 @@ const BillingRegisterPage = () => {
 
   const handleProductInfoChange = (idx, column, to) => {
     const newBillingProducts = [...billingData.products];
-    newBillingProducts[idx] = {...newBillingProducts[idx], [column]: to};
+    newBillingProducts[idx] = { ...newBillingProducts[idx], [column]: to };
     setBillingData(prev => ({
       ...prev,
       products: newBillingProducts,
     }));
   };
 
-  const handleProductRemove = (productId) => {
+  const handleProductRemove = productId => {
     setBillingData(prev => ({
       ...prev,
       products: prev.products.filter(p => p.productId !== productId),
@@ -131,23 +133,23 @@ const BillingRegisterPage = () => {
   const handleBillingSubmit = async () => {
     console.log('청구 데이터:', billingData);
     try {
-        await createBilling(billingData);
-        onAlertWidthClick('청구가 생성되었습니다.');
-        navigate(-1);
-      } catch (err) {
-        console.log(err);
-        if (err.response.status === 400) {
-          onAlertWidthClick(convertBadReqMsg(err));
-        } else {
-          onAlertWidthClick(err.response.data.message);
-        }
-        console.error('axiosBillingCreate => ', err.response.data);
+      await createBilling(billingData);
+      onAlertWidthClick('청구가 생성되었습니다.');
+      navigate(-1);
+    } catch (err) {
+      console.log(err);
+      if (err.response.status === 400) {
+        onAlertWidthClick(convertBadReqMsg(err));
+      } else {
+        onAlertWidthClick(err.response.data.message);
       }
+      console.error('axiosBillingCreate => ', err.response.data);
+    }
   };
 
   return (
     <div className='primary-dashboard flex flex-col h-full'>
-      <div className="flex flex-1 overflow-hidden">
+      <div className='flex flex-1 overflow-hidden'>
         {/* 왼쪽: 계약 목록 */}
         <ContractList
           searchType={searchType}
@@ -162,15 +164,15 @@ const BillingRegisterPage = () => {
           pageGroup={pageGroup}
           setPageGroup={setPageGroup}
         />
-        
+
         {/* 중앙 구분선 */}
-        <div className="w-px bg-ipt_border"></div>
+        <div className='w-px bg-ipt_border'></div>
 
         {/* 오른쪽: 청구 생성 정보 */}
-        <div className="w-3/5 p-6 flex flex-col h-full overflow-hidden">
-          <h2 className="text-2xl font-semibold mb-4 text-text_black">청구 생성 정보</h2>
+        <div className='w-3/5 p-6 flex flex-col h-full overflow-hidden'>
+          <h2 className='text-2xl font-semibold mb-4 text-text_black'>청구 생성 정보</h2>
           {selectedContract ? (
-            <div className="flex-1 overflow-hidden flex flex-col">
+            <div className='flex-1 overflow-hidden flex flex-col'>
               <BillingForm
                 billingData={billingData}
                 handleBillingDataChange={handleBillingDataChange}
@@ -181,29 +183,27 @@ const BillingRegisterPage = () => {
               />
             </div>
           ) : (
-            <div className="flex-1 flex items-center justify-center">
-            <p className='text-center text-xl text-gray-500'>계약을 선택해주세요.</p>
-          </div>
+            <div className='flex-1 flex items-center justify-center'>
+              <p className='text-center text-xl text-gray-500'>계약을 선택해주세요.</p>
+            </div>
           )}
         </div>
       </div>
-      
+
       {/* 하단 버튼 영역 */}
-      <div className="flex justify-end space-x-4 p-6 bg-white">
+      <div className='flex justify-end space-x-4 p-6 bg-white'>
         <button
-          type="button"
+          type='button'
           onClick={() => navigate(-1)}
-          className="flex justify-between items-center px-4 py-2 ml-2 
-    font-700 rounded-md border cursor-pointer transition-all duration-200 ease-in-out text-red-500 border-red-500 hover:bg-red-50"
-        >
-          <FontAwesomeIcon icon={faTimes} className="mr-2" />
+          className='flex justify-between items-center px-4 py-2 ml-2 
+    font-700 rounded-md border cursor-pointer transition-all duration-200 ease-in-out text-red-500 border-red-500 hover:bg-red-50'>
+          <FontAwesomeIcon icon={faTimes} className='mr-2' />
           <p>취소</p>
         </button>
         <button
           onClick={handleBillingSubmit}
-          className="flex items-center px-4 py-2 text-white border border-mint bg-mint hover:bg-mint_hover rounded"
-        >
-          <FontAwesomeIcon icon={faSave} className="mr-2" />
+          className='flex items-center px-4 py-2 text-white border border-mint bg-mint hover:bg-mint_hover rounded'>
+          <FontAwesomeIcon icon={faSave} className='mr-2' />
           <p>청구 생성</p>
         </button>
       </div>

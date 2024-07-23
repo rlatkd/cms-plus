@@ -107,10 +107,10 @@ const BillingListPage = () => {
     navigate(`detail/${billingId}`);
   };
 
-    // 청구 생성 페이지 이동
-    const MoveBillingCreate = async () => {
-      navigate(`create`);
-    };
+  // 청구 생성 페이지 이동
+  const MoveBillingCreate = async () => {
+    navigate(`create`);
+  };
 
   // <--------디바운스 커스텀훅-------->
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);
