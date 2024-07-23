@@ -31,10 +31,38 @@ public class VendorCustomRepository extends BaseCustomRepository<Vendor> {
 		return count != null;
 	}
 
+	/*
+	 * 아이디로 고객 찾기
+	 * */
 	public Vendor findByUsername(String username) {
 		return jpaQueryFactory
 			.selectFrom(vendor)
 			.where(vendor.username.eq(username), vendor.deleted.eq(false))
 			.fetchOne();
+	}
+
+	/*
+	 * 이름과 전화번호로 고객 찾기
+	 * */
+	public Vendor findByNameAndPhone(String name, String phone) {
+		return jpaQueryFactory
+				.selectFrom(vendor)
+				.where(
+						vendor.name.eq(name),
+						vendor.phone.eq(phone),
+						vendorNotDel()
+				)
+				.fetchOne();
+	}
+
+	public Vendor findByNameAndEmail(String name, String email) {
+		return jpaQueryFactory
+				.selectFrom(vendor)
+				.where(
+						vendor.name.eq(name),
+						vendor.email.eq(email),
+						vendorNotDel()
+				)
+				.fetchOne();
 	}
 }
