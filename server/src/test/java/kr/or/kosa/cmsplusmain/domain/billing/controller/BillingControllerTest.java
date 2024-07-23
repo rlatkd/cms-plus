@@ -143,7 +143,7 @@ public class BillingControllerTest {
 
 		PageRes<BillingListItemRes> pageRes = new PageRes<>(20, 9, Arrays.asList(billingListItemRes));
 
-		given(billingService.searchBillings(anyLong(), any(BillingSearchReq.class), any(PageReq.class)))
+		given(billingService.getBillingListWithCondition(anyLong(), any(BillingSearchReq.class), any(PageReq.class)))
 			.willReturn(pageRes);
 
 		mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/vendor/billing")

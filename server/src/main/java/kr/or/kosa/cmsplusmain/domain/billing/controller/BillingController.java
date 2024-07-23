@@ -20,6 +20,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/vendor/billing")
@@ -73,7 +74,7 @@ public class BillingController {
 	 * */
 	@GetMapping
 	public PageRes<BillingListItemRes> getBillingListWithCondition(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		return billingService.searchBillings(vendorId, search, pageReq);
+		return billingService.getBillingListWithCondition(vendorId, search, pageReq);
 	}
 
 	/*

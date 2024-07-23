@@ -37,7 +37,6 @@ public class BillingService {
 	private final BillingRepository billingRepository;
 	private final BillingCustomRepository billingCustomRepository;
 	private final ContractCustomRepository contractCustomRepository;
-	private final ProductCustomRepository productCustomRepository;
 	// private final KafkaMessagingService kafkaMessagingService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
@@ -169,10 +168,7 @@ public class BillingService {
 	 * */
 	@Transactional
 	public void createBilling(Long vendorId, BillingCreateReq billingCreateReq) {
-		Long contractId = billingCreateReq.getContractId();
-
-		// 청구 기반 계약 존재 여부 확인
-		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
+		if (!contractCustomRepository.isExistContractByUsername(billingCreateReq.getContractId(), vendorId)) {
 			throw new EntityNotFoundException("해당하는 계약이 존재하지 않습니다");
 		}
 
@@ -180,7 +176,6 @@ public class BillingService {
 			.map(BillingProductReq::toEntity)
 			.toList();
 
-		// 청구 생성
 		Billing billing = new Billing(
 			Contract.of(billingCreateReq.getContractId()),
 			billingCreateReq.getBillingType(),
@@ -193,22 +188,17 @@ public class BillingService {
 		billingRepository.save(billing);
 	}
 
-	/*
-	 * 청구목록 조회
-	 *
-	 * 총 발생 쿼리수: 3회
-	 * 내용:
-	 * 		청구 조회, 청구상품 목록 조회(+? batch_size=100), 전체 개수 조회
+	/**
+	 * 청구목록 조회 |
+	 * 3회 쿼리 발생 | 청구목록조회, 청구상품조회, 전체 개수(페이징)
 	 * */
-	public PageRes<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		// 단일 페이지 결과
+	public PageRes<BillingListItemRes> getBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		List<BillingListItemRes> content = billingCustomRepository
 			.findBillingListWithCondition(vendorId, search, pageReq)
 			.stream()
 			.map(BillingListItemRes::fromEntity)
 			.toList();
 
-		// 전체 개수
 		int totalContentCount = billingCustomRepository.countAllBillings(vendorId, search);
 
 		return new PageRes<>(totalContentCount, pageReq.getSize(), content);

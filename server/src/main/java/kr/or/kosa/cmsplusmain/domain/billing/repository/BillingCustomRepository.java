@@ -2,11 +2,14 @@ package kr.or.kosa.cmsplusmain.domain.billing.repository;
 
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -15,6 +18,7 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,83 +37,60 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 		super(em, jpaQueryFactory);
 	}
 
-	/*
-	 * 청구목록 조회
-	 *
-	 * 총 2번의 쿼리
-	 * 1. billing
-	 * 2. billingProduct <- batchsize 100
+	/**
+	 * 청구목록 조회 |
+	 * 기본정렬: 생성시간 내림차순
+	 * 상품명 포함 검색 조건, 동의여부 판단을 비즈니스 로직으로 처리하기 위해 select 절을 제한 시키지 않음
 	 * */
 	public List<Billing> findBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		return jpaQueryFactory
 			.selectFrom(billing)
-
 			.join(billing.contract, contract).fetchJoin()
 			.join(contract.member, member).fetchJoin()
 			.join(contract.payment, payment).fetchJoin()
-			.leftJoin(contract.contractProducts, contractProduct).on(contractProduct.deleted.isFalse())
-
 			.where(
-				billingNotDel(),                                	// 청구 삭제 여부
-				contract.vendor.id.eq(vendorId),					// 고객 일치
-				memberNameContains(search.getMemberName()),        	// 회원 이름 포함
-				memberPhoneContains(search.getMemberPhone()),    	// 회원 휴대전화 포함
-				billingStatusEq(search.getBillingStatus()),        	// 청구상태 일치
-				paymentTypeEq(search.getPaymentType()),            	// 결제방식 일치
-				billingDateEq(search.getBillingDate())            	// 결제일 일치
+				billingNotDel(),                                   // 청구 삭제 여부
+				contractVendorIdEq(vendorId),                      // 고객 일치
+				memberNameContains(search.getMemberName()),        // 회원 이름 포함
+				memberPhoneContains(search.getMemberPhone()),      // 회원 휴대전화 포함
+				billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
+				paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
+				billingDateEq(search.getBillingDate()),            // 결제일 일치
+				productNameContains(search.getProductName()),      // 청구상품 이름 포함
+				billingPriceLoe(search.getBillingPrice())          // 청구금액 이하
 			)
-
-			.groupBy(billing.id)
-			.having(
-				productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
-				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
-			)
-
-			.orderBy(
-				buildOrderSpecifier(pageReq)
-					.orElse(billing.createdDateTime.desc())				// 기본 정렬 = 생성시간 내림차순
-			)
-
+			.orderBy(buildOrderSpecifier(pageReq).orElse(billing.createdDateTime.desc())) // 기본 정렬: 생성시간 내림차순
 			.offset(pageReq.getPage())
 			.limit(pageReq.getSize())
 			.fetch();
 	}
 
-	/*
+	/**
 	 * 고객의 전체 계약 수 (검색 조건 반영된 계약 수)
 	 * */
 	public int countAllBillings(Long vendorId, BillingSearchReq search) {
 		JPQLQuery<Long> subQuery = jpaQueryFactory
 			.select(billing.id)
 			.from(billing)
-
 			.join(billing.contract, contract)
 			.join(contract.member, member)
 			.join(contract.payment, payment)
-			.leftJoin(contract.contractProducts, contractProduct).on(contractProduct.deleted.isFalse())
-
 			.where(
-				billingNotDel(),                                	// 청구 삭제 여부
-				contract.vendor.id.eq(vendorId),					// 고객 일치
-				memberNameContains(search.getMemberName()),        	// 회원 이름 포함
-				memberPhoneContains(search.getMemberPhone()),    	// 회원 휴대전화 포함
-				billingStatusEq(search.getBillingStatus()),        	// 청구상태 일치
-				paymentTypeEq(search.getPaymentType()),            	// 결제방식 일치
-				billingDateEq(search.getBillingDate())            	// 결제일 일치
-			)
-
-			.groupBy(billing.id)
-			.having(
-				productNameContainsInGroup(search.getProductName()),    // 청구상품 이름 포함
-				billingPriceLoeInGroup(search.getBillingPrice())        // 청구금액 이하
+				billingNotDel(),                                   // 청구 삭제 여부
+				contractVendorIdEq(vendorId),                      // 고객 일치
+				memberNameContains(search.getMemberName()),        // 회원 이름 포함
+				memberPhoneContains(search.getMemberPhone()),      // 회원 휴대전화 포함
+				billingStatusEq(search.getBillingStatus()),        // 청구상태 일치
+				paymentTypeEq(search.getPaymentType()),            // 결제방식 일치
+				billingDateEq(search.getBillingDate()),            // 결제일 일치
+				productNameContains(search.getProductName()),      // 청구상품 이름 포함
+				billingPriceLoe(search.getBillingPrice())          // 청구금액 이하
 			);
 
 		Long count = jpaQueryFactory
 			.select(billing.id.countDistinct())
 			.from(billing)
-			.where(
-				billing.id.in(subQuery)
-			)
+			.where(billing.id.in(subQuery))
 			.fetchOne();
 
 		return (count != null) ? count.intValue() : 0;
@@ -251,7 +232,39 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 		return new Long[] {(long)billingIds.size(), totalPrice};
 	}
 
+	/*********** 조건 ************/
+
 	private BooleanExpression paymentTypeEq(PaymentType paymentType) {
 		return (paymentType != null) ? payment.paymentType.eq(paymentType) : null;
+	}
+	private BooleanExpression billingNotDel() {
+		return billing.deleted.isFalse();
+	}
+	private BooleanExpression contractVendorIdEq(Long vendorId) {
+		return (vendorId != null) ? contract.vendor.id.eq(vendorId) : null;
+	}
+	private BooleanExpression billingStatusEq(BillingStatus billingStatus) {
+		return (billingStatus != null) ? billing.billingStatus.eq(billingStatus) : null;
+	}
+	private BooleanExpression billingDateEq(LocalDate billingDate) {
+		return (billingDate != null) ? billing.billingDate.eq(billingDate) : null;
+	}
+	private BooleanExpression productNameContains(String productName) {
+		if (!StringUtils.hasText(productName)) {
+			return null;
+		}
+		return JPAExpressions
+			.selectOne()
+			.from(billingProduct)
+			.where(
+				billingProduct.billing.eq(billing),
+				billingProduct.deleted.isFalse(),
+				billingProduct.name.contains(productName)
+			)
+			.exists();
+	}
+
+	private BooleanExpression billingPriceLoe(Long billingPrice) {
+		return billingPrice != null ? billing.billingProducts.any().price.multiply(billingProduct.quantity).sum().loe(billingPrice) : null;
 	}
 }
