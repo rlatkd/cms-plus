@@ -6,6 +6,8 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
@@ -151,7 +153,6 @@ public class MemberService {
 
     /*
      * 회원 수정 - 청구 정보
-     *
      * */
     @Transactional
     public void updateMemberBilling(Long vendorId, Long memberId, MemberBillingUpdateReq memberBillingUpdateReq){
@@ -167,13 +168,35 @@ public class MemberService {
     }
 
     /*
-     * 회원 ID 존재여부
-     * 회원이 현재 로그인 고객의 회원인지 여부
+     * 회원 삭제
      * */
-    private void validateMemberUser(Long vendorId, Long memberId) {
-        if(!memberCustomRepository.isExistMemberById(memberId, vendorId)) {
-            throw new EntityNotFoundException("회원 ID 없음(" + memberId + ")");
-        }
+    @Transactional
+    public void deleteMember(Long vendorId, Long memberId) {
+
+        // 고객의 회원 여부 확인
+        validateMemberUser(vendorId, memberId);
+
+        // 고객정보 삭제
+        Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
+        member.delete();
+    }
+
+    /*
+     * 회원 삭제 - 회원의 청구 목록 조회
+     * */
+    public List<BillingListItemRes> getBillingByMember(Long vendorId, Long memberId) {
+
+        // 고객의 회원 여부 확인
+        validateMemberUser(vendorId, memberId);
+
+        // 청구 목록 조회
+        List<Billing> billingList = billingCustomRepository.findBillingListByMemberId(vendorId, memberId);
+
+        // 빌더 패턴을 사용하여 BillingListItemRes로 변환
+        return billingList.stream()
+                .map(BillingListItemRes::fromEntity)
+                .collect(Collectors.toList());
+
     }
 
     /*
@@ -224,4 +247,15 @@ public class MemberService {
 
         return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }
+
+    /*
+     * 회원 ID 존재여부
+     * 회원이 현재 로그인 고객의 회원인지 여부
+     * */
+    private void validateMemberUser(Long vendorId, Long memberId) {
+        if(!memberCustomRepository.isExistMemberById(memberId, vendorId)) {
+            throw new EntityNotFoundException("회원 ID 없음(" + memberId + ")");
+        }
+    }
+
 }

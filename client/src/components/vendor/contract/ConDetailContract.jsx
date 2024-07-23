@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import edit from '@/assets/edit.svg';
+import { useMemberContractStore } from '@/stores/useMemberContractStore';
 
 const productForm = (product, idx) => {
   return (
@@ -14,6 +15,7 @@ const productForm = (product, idx) => {
 };
 
 const ConDetailContract = ({ contractData }) => {
+  const { setContractInfoItem, setContractProducts } = useMemberContractStore(); // 계약정보 - 수정목적
   const navigate = useNavigate();
 
   const { id: contractId } = useParams();
@@ -22,14 +24,28 @@ const ConDetailContract = ({ contractData }) => {
     navigate(`/vendor/contracts/product/update/${contractId}`);
   };
 
+  // <------ 회원 계약 정보 zustand에 입력 ------>
+  const updateContractInfo = data => {
+    setContractInfoItem({
+      contractName: data.contractName,
+      contractDay: data.contractDay,
+      contractStartDate: data.contractStartDate,
+      contractEndDate: data.contractEndDate,
+    });
+    setContractProducts(data.contractProducts);
+  };
+
   return (
-    <div className='bg-white p-4 rounded-lg shadow w-1/2'>
+    <div className='sub-dashboard w-1/2'>
       <div className='flex justify-between items-center border-b border-ipt_border px-2 pt-1 pb-3'>
         <p className='text-text_black text-xl font-800'>계약정보</p>
         <button
           className='flex justify-between items-center px-4 py-2 ml-4 text-mint
             font-700 rounded-md border border-mint cursor-pointer'
-          onClick={handleButtonClick}>
+          onClick={() => {
+            updateContractInfo(contractData);
+            handleButtonClick();
+          }}>
           <img src={edit} alt='edit' className='mr-2 ' />
           <p>계약수정</p>
         </button>

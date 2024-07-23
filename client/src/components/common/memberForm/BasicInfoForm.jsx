@@ -1,6 +1,6 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import TextArea from '../inputs/TextArea';
-import { formatPhone, removeDashes } from '@/utils/formatPhone';
+import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 
@@ -11,9 +11,6 @@ const BasicInfoForm = ({ formType }) => {
   // <------ 인풋 필드 입력값 변경 ------>
   const handleChangeValue = e => {
     const { id, value } = e.target;
-    console.log('id', id);
-    console.log('value', value);
-    console.log(basicInfo);
 
     if (id === 'memberPhone' || id === 'memberHomePhone') {
       setBasicInfoItem({

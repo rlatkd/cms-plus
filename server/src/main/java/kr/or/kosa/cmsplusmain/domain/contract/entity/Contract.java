@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -103,6 +104,12 @@ public class Contract extends BaseEntity {
 	@Builder.Default
 	private List<ContractProduct> contractProducts = new ArrayList<>();
 
+	/* 계약한 청구 목록 */
+	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)
+	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
+	@Builder.Default
+	private List<Billing> billings = new ArrayList<>();
+
 	/*
 	 * 계약 상품 추가
 	 * */
@@ -135,11 +142,15 @@ public class Contract extends BaseEntity {
 	/*
 	* 계약 삭제
 	* 계약상품도 같이 삭제된다
+	* 청구도 같이 삭제된다
+	* 결제도 같이 삭제된다
 	* */
 	@Override
 	public void delete() {
 		super.delete();
 		contractProducts.forEach(BaseEntity::delete);
+		billings.forEach(BaseEntity::delete);
+		payment.delete();
 	}
 
 	/*

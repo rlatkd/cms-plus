@@ -79,7 +79,7 @@ const ContractInfoForm = ({ formType }) => {
           options={options}
           onChange={handleProductChange}
           selectedOptions={contractInfo.contractProducts}
-          classContainer='w-2/5 mr-8'
+          classContainer='w-3/5 mr-8'
           classButton='w-full'
         />
         <InputWeb
