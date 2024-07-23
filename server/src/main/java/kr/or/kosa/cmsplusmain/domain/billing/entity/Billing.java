@@ -28,8 +28,6 @@ import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusExcep
 import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidUpdateBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

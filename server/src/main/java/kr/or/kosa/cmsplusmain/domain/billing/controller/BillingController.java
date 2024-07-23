@@ -103,7 +103,7 @@ public class BillingController {
 		billingService.updateBilling(vendorId, billingId, billingUpdateReq);
 	}
 
-	/*
+	/**
 	* 청구 삭제
 	* */
 	@DeleteMapping("/{billingId}")
