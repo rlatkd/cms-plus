@@ -1,15 +1,15 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-maintask:8",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-messagingtask:1",
     "containerDefinitions": [
         {
-            "name": "t3-back-maincontainer",
-            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-mainecr:latest",
+            "name": "t3-back-messagingcontainer",
+            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-messagingecr:latest",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "t3-back-maincontainer-8080-tcp",
-                    "containerPort": 8080,
-                    "hostPort": 8080,
+                    "name": "t3-back-messagingcontainer-8090-tcp",
+                    "containerPort": 8090,
+                    "hostPort": 8090,
                     "protocol": "tcp",
                     "appProtocol": "http"
                 }
@@ -23,7 +23,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/t3-back-maintask",
+                    "awslogs-group": "/ecs/t3-back-messagingtask",
                     "awslogs-create-group": "true",
                     "awslogs-region": "ap-northeast-2",
                     "awslogs-stream-prefix": "ecs"
@@ -33,11 +33,11 @@
             "systemControls": []
         }
     ],
-    "family": "t3-back-maintask",
+    "family": "t3-back-messagingtask",
     "taskRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 8,
+    "revision": 1,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -83,7 +83,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-07-23T11:30:13.106Z",
+    "registeredAt": "2024-07-23T11:31:28.056Z",
     "registeredBy": "arn:aws:iam::891376922202:user/fms-kosa-tema3",
     "tags": []
 }

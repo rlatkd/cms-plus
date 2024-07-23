@@ -1,27 +1,70 @@
-# name: PAYMENT CICD
+name: PAYMENT CICD
 
-# on:
-#   push:
-#     branches:
-#       - dev
-#     paths:
-#       - 'server-payment/**'
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'server-payment/**'
 
-# env:
-#   AWS_REGION: ap-northeast-2
-#   ECR_REPOSITORY: t3-back-mainecr
-#   ECS_CLUSTER: t3-back-ecscluster
-#   ECS_CONTAINER: t3-back-maincontainer
-#   ECS_SERVICE: t3-back-mainservice
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: t3-back-paymentecr
+  ECS_CLUSTER: t3-back-ecscluster
+  ECS_CONTAINER: t3-back-paymentcontainer
+  ECS_SERVICE: t3-back-paymentservice
 
-#   ECS_TASK_DEFINITION: task-definition.json
+  ECS_TASK_DEFINITION: task-definition-payment.json
 
 
-# permissions:
-#   contents: read
+permissions:
+  contents: read
 
-# jobs:
-#   ci-cd:
-#     runs-on: ubuntu-latest
-#     environment: production
+jobs:
+  ci-cd:
+    runs-on: ubuntu-latest
+    environment: production
 
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Add secure properties
+      run: echo "${{ secrets.PAYMENT_SECURE_DEV }}" > server-payment/src/main/resources/secure.properties
+
+    - name: Build with Gradle
+      run: ./gradlew clean build
+
+    - name: Log in to Amazon ECR
+      id: ecr-login
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push Docker image
+      env:
+        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+        AWS_REGION: ${{ env.AWS_REGION }}
+      run: |
+        docker build -t $ECR_REPOSITORY:latest server-payment/dockerfile .
+        docker tag $ECR_REPOSITORY:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+        docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+
+    - name: Register ECS Task Definition
+      env:
+        AWS_REGION: ${{ env.AWS_REGION }}
+      run: |
+        aws ecs register-task-definition --cli-input-json file://${{ env.ECS_TASK_DEFINITION }}
+
+    - name: Deploy to ECS Service
+      env:
+        AWS_REGION: ${{ env.AWS_REGION }}
+      run: |
+        aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --force-new-deployment
