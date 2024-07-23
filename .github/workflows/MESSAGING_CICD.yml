@@ -13,9 +13,7 @@ env:
   ECS_CLUSTER: t3-back-ecscluster
   ECS_CONTAINER: t3-back-messagingcontainer
   ECS_SERVICE: t3-back-messagingservice
-
   ECS_TASK_DEFINITION: task-definition-messaging.json
-
 
 permissions:
   contents: read
@@ -51,7 +49,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-northeast-2
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1 
@@ -60,8 +58,9 @@ jobs:
       env:
         ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
         AWS_REGION: ${{ env.AWS_REGION }}
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       run: |
-        docker build -t $ECR_REPOSITORY:latest server-messaging/dockerfile .
+        docker build -t $ECR_REPOSITORY:latest -f server-messaging/dockerfile .
         docker tag $ECR_REPOSITORY:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
         docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 
