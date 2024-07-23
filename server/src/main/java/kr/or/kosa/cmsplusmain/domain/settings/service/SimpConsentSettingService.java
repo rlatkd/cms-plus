@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.settings.service;
 
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductDetailRes;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
@@ -70,9 +71,18 @@ public class SimpConsentSettingService {
 
 
     public AvailableOptionsDto getAvailableOptions(Long vendorId) {
-        Set<PaymentMethod> availablePaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
 
-        List<ProductListItemRes> availableProducts = productService.findAvailableProductsByVendorUsername(vendorId);
+        SimpConsentSetting setting = simpConsentSettingRepository.findByVendorUsername(vendorId);
+        if (setting == null) {
+            throw new EntityNotFoundException("SimpConsentSetting not found for vendor: " + vendorId);
+        }
+
+        // 설정에서 저장된 결제 수단만 사용
+        Set<PaymentMethod> availablePaymentMethods = new HashSet<>(setting.getSimpConsentPayments());
+
+        List<ProductDetailRes> availableProducts = setting.getSimpConsentProducts().stream()
+                .map(product -> ProductDetailRes.fromEntity(product, 0)) // 계약 건수는 0으로 설정, 필요시 다른 방법으로 가져와야 함
+                .collect(Collectors.toList());
 
         return new AvailableOptionsDto(availablePaymentMethods, availableProducts);
     }
