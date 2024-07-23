@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConfigProvider, DatePicker, Space } from 'antd';
 import koKR from 'antd/es/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -87,6 +87,11 @@ const InputCalendar = ({
       color: #4FD1C5 !important;
     }
   `;
+
+  useEffect(() => {
+    if (!value) return;
+    setSelectedDate(dayjs(value));
+  }, [value]);
 
   return (
     <div className={`${classContainer}`}>

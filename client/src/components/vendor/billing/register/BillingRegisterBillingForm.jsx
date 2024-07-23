@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { ProductSelectField2 } from '@/components/common/selects/ProductSelectField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faCalendar } from '@fortawesome/free-solid-svg-icons';
-import DatePicker from '@/components/common/inputs/DatePicker';
-import InputWeb from '@/components/common/inputs/InputWeb';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import SelectField from '@/components/common/selects/SelectField';
-import { formatDate } from '@/utils/formatDate';
+import InputCalendar from '@/components/common/inputs/InputCalendar';
 
 const typeOtions = [
+  { value: '', label: '청구타입을 선택하세요' },
     { value: 'REGULAR', label: '정기' },
     { value: 'IRREGULAR', label: '추가' },
   ];
@@ -16,16 +15,13 @@ const BillingForm = ({
   billingData, 
   handleBillingDataChange, 
   products, 
-  handleProductAdd, 
   handleProductChange, 
   handleProductRemove 
 }) => {
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [editingState, setEditingState] = useState({});
 
   const handleDateChange = date => {
-    handleBillingDataChange('paymentDate', formatDate(date));
-    setIsCalendarOpen(false);
+    handleBillingDataChange('billingDate', date);
   };
 
   const handleEditClick = (idx, field) => {
@@ -64,71 +60,65 @@ const BillingForm = ({
   };
 
   return (
-    <form className="space-y-4">
-      <div className="flex space-x-4">
-        <div className="w-1/2">
-        <SelectField
-          label='청구타입'
-          name='billingType'
-          required
-          options={typeOtions}
-          value={billingData.billingType}
-          onChange={e => handleBillingDataChange('billingType', e.target.value)}
-          onBlur={e => handleBillingDataChange('billingType', e.target.value)}
-        />
+    <form className="flex flex-col h-full">
+      <div className="space-y-4 mb-4">
+        <div className="flex space-x-4">
+          <div className="w-full">
+            <div className='flex mb-4 border-b border-ipt_border justify-between'>
+              <SelectField
+                label='청구타입'
+                classContainer='mr-5 w-1/2'
+                classLabel='text-15 text-text_black font-700'
+                classSelect='py-3 p-4 rounded-lg'
+                value={billingData.billingType}
+                options={typeOtions}
+                onChange={e => handleBillingDataChange('billingType', e.target.value)}
+              />
+              <div className='relative flex justify-center w-1/2'>
+                <InputCalendar
+                  id='billingDate'
+                  label='결제일'
+                  placeholder='년도-월-일'
+                  width='100%'
+                  readOnly
+                  value={billingData.billingDate}
+                  handleChangeValue={e => handleDateChange(e.target.value)}
+                  classContainer='w-full'
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className='relative flex items-center w-1/2'>
-          <DatePicker
-            selectedDate={new Date(billingData.paymentDate)}
-            onDateChange={handleDateChange}
-            isOpen={isCalendarOpen}
-            onToggle={() => setIsCalendarOpen(!isCalendarOpen)}
-          />
-          <InputWeb
-            id='billingDate'
-            label='결제일'
-            value={billingData.paymentDate}
-            type='text'
-            readOnly={true}
-            classInput='w-full'
-            classContainer='w-full'
-          />
-          <div
-            className='cursor-pointer absolute right-3 top-11'
-            onClick={() => setIsCalendarOpen(!isCalendarOpen)}>
-            <FontAwesomeIcon icon={faCalendar} className='h-5 w-5 text-gray-400' />
+        <div className="flex justify-between mb-5">
+          <div className='w-2/6 flex-row mb-3'>
+            <label className={`block text-text_black text-15 font-700 mb-2 ml-2`}>상품 추가</label>
+            <ProductSelectField2
+              label='상품을 선택하세요'
+              options={products.map(p => ({
+                value: {
+                  productId: p.productId,
+                  name: p.name,
+                  price: p.price,
+                  quantity: 1,
+                },
+                label: `${p.name}(${p.price.toLocaleString()}원)`
+              }))}
+              selectedOptions={billingData.products.map(p => ({
+                value: p,
+                label: `${p.name} (${p.price.toLocaleString()}원)`
+              }))}
+              onChange={(newOptions) => {
+                handleBillingDataChange('products', newOptions.map(option => option.value));
+              }}
+            />
+          </div>
+          <div className='flex items-end'>
+            <p className='font-bold text-lg'>합계:</p>
+            <p className='text-right font-bold text-lg border-none'>{`${calcBillingPrice(billingData.products).toLocaleString()}원`}</p>
           </div>
         </div>
       </div>
-      <div className="flex justify-between mb-5">
-        <div className='w-2/6 flex-row'>
-          <label className={`block text-text_black text-15 font-700 mb-2 ml-2`}>상품 추가</label>
-          <ProductSelectField2
-            label='상품을 선택하세요'
-            options={products.map(p => ({
-              value: {
-                productId: p.productId,
-                name: p.name,
-                price: p.price,
-                quantity: 1,
-              },
-              label: `${p.name}(${p.price.toLocaleString()}원)`
-            }))}
-            selectedOptions={billingData.products.map(p => ({
-              value: p,
-              label: `${p.name} (${p.price.toLocaleString()}원)`
-            }))}
-            onChange={(newOptions) => {
-              handleBillingDataChange('products', newOptions.map(option => option.value));
-            }}
-          />
-        </div>
-        <div className='flex items-end'>
-          <p className='font-bold text-lg'>합계:</p>
-          <p className='text-right font-bold text-lg border-none'>{`${calcBillingPrice(billingData.products).toLocaleString()}원`}</p>
-        </div>
-      </div>
-      <div className='flex flex-col h-full justify-between'>
+      <div className='flex-1 overflow-auto'>
         <table className='w-full'>
           <thead>
             <tr className="bg-gray-100">
