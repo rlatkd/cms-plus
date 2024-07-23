@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.billing.controller;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Random;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -43,12 +46,11 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEnum;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.*;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 @WebMvcTest(BillingController.class)
 @AutoConfigureRestDocs
@@ -71,21 +73,30 @@ public class BillingControllerTest {
 	public void setUp(WebApplicationContext webApplicationContext,
 		RestDocumentationContextProvider restDocumentation) {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-			.apply(documentationConfiguration(restDocumentation))
-			.build();
+				.apply(documentationConfiguration(restDocumentation)
+						.operationPreprocessors()
+						.withRequestDefaults(prettyPrint())
+						.withResponseDefaults(prettyPrint())
+				)
+				.alwaysDo(MockMvcResultHandlers.print())
+				.addFilters(new CharacterEncodingFilter("UTF-8", true))
+				.build();
 
 		this.objectMapper = new ObjectMapper();
 		this.objectMapper.registerModule(new JavaTimeModule());
 		this.objectMapper.registerModule(new Jdk8Module());
 		this.objectMapper.registerModule(new ParameterNamesModule());
+		this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
 		SimpleModule baseEnumModule = new SimpleModule();
+
 		baseEnumModule.addSerializer(BaseEnum.class, new JsonSerializer<BaseEnum>() {
 			@Override
 			public void serialize(BaseEnum value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 				gen.writeString(value.getCode());
 			}
 		});
+
 		this.objectMapper.registerModule(baseEnumModule);
 	}
 
@@ -247,7 +258,7 @@ public class BillingControllerTest {
 				),
 				responseFields(
 					fieldWithPath("billingId").description("청구 ID"),
-					fieldWithPath("memberId").description("회원 ID"),  // memberId 문서화
+					fieldWithPath("memberId").description("회원 ID"),
 					fieldWithPath("memberName").description("회원 이름"),
 					fieldWithPath("memberPhone").description("회원 휴대전화"),
 					fieldWithPath("contractId").description("계약 ID"),
@@ -265,7 +276,7 @@ public class BillingControllerTest {
 					fieldWithPath("billingStatus.title").description("청구 상태 제목"),
 					fieldWithPath("billingCreatedDate").description("청구 생성일"),
 					fieldWithPath("billingDate").description("청구일"),
-					fieldWithPath("billingName").description("청구서 이름"),  // billingName 문서화
+					fieldWithPath("billingName").description("청구서 이름"),
 					fieldWithPath("billingMemo").description("청구 메모"),
 					fieldWithPath("billingProducts").description("청구 상품 목록"),
 					fieldWithPath("billingProducts[].billingProductId").description("청구 상품 ID"),
