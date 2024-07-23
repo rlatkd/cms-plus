@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.test;
+package kr.or.kosa.cmspluspayment.test;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
