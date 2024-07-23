@@ -20,6 +20,8 @@ const Test = () => {
     const result = await confrimComp('회원정보가 수정되었습니다!');
   };
 
+  console.log("test");
+
   return (
     <div>
       <div style={{ display: 'flex', marginBottom: '20px' }}>
