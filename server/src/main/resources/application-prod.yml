@@ -1,56 +1,11 @@
-server:
-  port: 8080
-
 spring:
-  application:
-    name: cmsplus-main
-  jwt:
-    secret: ${JWT_SECRET}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://t3-back-rds.cbociiqm6c4x.ap-northeast-2.rds.amazonaws.com:3306/cmsplusmain?serverTimezone=UTC&characterEncoding=UTF-8
-    username: user
-    password: kosa1004
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
-        default_batch_fetch_size: 100
-    open-in-view: false
-    defer-datasource-initialization: true
-
-  sql:
-    init:
-      mode: always
+    url: ${RDS_URL}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
 
   data:
     redis:
-      host: t3-back-redis.ngpjqn.ng.0001.apn2.cache.amazonaws.com:6379
+      host: ${REDIS_HOST}
       port: 6379
-
-
-logging:
-  level:
-    org.hibernate.orm.jdbc.bind: trace
-
-cloud:
-  aws:
-    s3:
-      bucket: ${S3_BUCKET}
-    stack.auto: false
-    region.static: ap-northeast-2
-    credentials:
-      accessKey: ${S3_ACCESS_KEY}
-      secretKey: ${S3_SECRET_KEY}
-
-kafkaTopic:
-  messagingTopic: ${MESSAGING_TOPIC}
-  paymentTopic: ${PAYMENT_TOPIC}
-  paymentResultTopic: ${PAYMENT_RESULT_TOPIC}
-  monitoringTopic: ${MONITORING_TOPIC}
