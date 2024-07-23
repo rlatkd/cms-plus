@@ -1,41 +1,74 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAllProductList } from '@/apis/product';
-import { deleteBilling, getBillingDetail, sendInvoice, updateBilling, cancelSendInvoice, payBilling, cancelPayBilling } from '@/apis/billing';
+import {
+  deleteBilling,
+  getBillingDetail,
+  sendInvoice,
+  updateBilling,
+  cancelSendInvoice,
+  payBilling,
+  cancelPayBilling,
+  getBillingProducts,
+} from '@/apis/billing';
 import BillingDetailMember from '@/components/vendor/billing/detail/BillingDetailMember';
 import BillingDetailPayment from '@/components/vendor/billing/detail/BillingDetailPayment';
 import BillingDetailBilling from '@/components/vendor/billing/detail/BillingDetailBilling';
 import BillingDetailProduct from '@/components/vendor/billing/detail/BillingDetailProduct';
 import BillingDetailEditButtons from '@/components/vendor/billing/detail/BillingDetailEditButtons';
 import BillingDetailButtons from '@/components/vendor/billing/detail/BillingDetailButtons';
+import { cols } from '@/utils/tableElements/billingProductElement';
 
 const BillingDetailPage = () => {
   const [billingData, setBillingData] = useState({
-    // ... (기존 상태 유지)
+    member: {},
+    billing: {},
+    contractId: null,
+    paymentType: null,
+    paymentMethod: null,
+    fieldToState: {},
   });
-  
+
   const [billingReq, setBillingReq] = useState({
     billingProducts: [],
     billingDate: '',
-    billingMemo: ''
+    billingMemo: '',
   });
   const [editable, setEditable] = useState(false);
   const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);  // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalBillingReq, setOriginalBillingReq] = useState(null);
 
   const { id: billingId } = useParams();
   const navigate = useNavigate();
 
   const fetchBillingDetail = useCallback(async () => {
-    setIsLoading(true);  // 데이터 로딩 시작
+    setIsLoading(true);
     try {
       const res = await getBillingDetail(billingId);
       setBillingData(res.data);
-      setBillingReq(transformReqData(res.data));
+      setBillingReq(prevReq => ({
+        ...prevReq,
+        billingDate: res.data.billing.billingDate,
+        billingMemo: res.data.billing.invoiceMessage,
+      }));
     } catch (err) {
-      console.error('Failed to fetch billing detail:', err);
+      console.error('청구 상세 정보 조회 실패:', err);
     } finally {
-      setIsLoading(false);  // 데이터 로딩 완료
+      setIsLoading(false);
+    }
+  }, [billingId]);
+
+  const fetchBillingProducts = useCallback(async () => {
+    try {
+      const res = await getBillingProducts(billingId);
+      setBillingReq(prevReq => ({
+        ...prevReq,
+        billingProducts: res.data,
+      }));
+    } catch (err) {
+      console.error('청구상품 조회 실패', err);
     }
   }, [billingId]);
 
@@ -44,34 +77,51 @@ const BillingDetailPage = () => {
       const res = await getAllProductList();
       setProducts(res.data);
     } catch (err) {
-      console.error('Failed to fetch product list:', err);
+      console.error('전체 상품 조회 실패', err);
     }
   }, []);
 
   useEffect(() => {
     fetchBillingDetail();
+    fetchBillingProducts();
     fetchAllProducts();
-  }, [fetchBillingDetail, fetchAllProducts]);
+  }, [fetchBillingDetail, fetchBillingProducts, fetchAllProducts]);
 
-  const transformReqData = (data) => ({
-    billingMemo: data.billingMemo,
-    billingDate: data.billingDate,
-    billingProducts: data.billingProducts?.map(product => ({
-      ...product,
-      name: product.name,
-    })) || []
-  });
+  const handleEditStart = () => {
+    setOriginalBillingReq({ ...billingReq });
+    setIsEditing(true);
+    setEditable(true);
+  };
 
   const handleEditSave = async () => {
     try {
       await updateBilling(billingId, billingReq);
       alert('청구가 수정되었습니다.');
+      setIsEditing(false);
       setEditable(false);
       fetchBillingDetail();
+      fetchBillingProducts();
     } catch (err) {
       alert('청구 수정에 실패했습니다.');
       console.error('Failed to update billing:', err);
     }
+  };
+
+  const handleEditCancel = () => {
+    setBillingReq(originalBillingReq);
+    setIsEditing(false);
+    setEditable(false);
+  };
+
+  const handleBillingMemoChange = memo => {
+    setBillingReq(prev => ({ ...prev, billingMemo: memo }));
+  };
+
+  const handleBillingDateChange = date => {
+    setBillingReq(prev => ({ ...prev, billingDate: date }));
+  };
+  const handleBillingProductChange = newProducts => {
+    setBillingReq(prev => ({ ...prev, billingProducts: newProducts }));
   };
 
   const handleRemove = async () => {
@@ -129,39 +179,27 @@ const BillingDetailPage = () => {
     }
   };
 
-  const handleEditCancel = () => {
-    setBillingReq(transformReqData(billingData));
-    setEditable(false);
-  };
-
-  const handleBillingMemoChange = memo => {
-    setBillingReq(prev => ({ ...prev, billingMemo: memo }));
-  };
-  const handleBillingDateChange = date => {
-    setBillingReq(prev => ({ ...prev, billingDate: date }));
-  };
-
-  const handleBillingProductChange = products => {
-    setBillingReq(prev => ({ ...prev, billingProducts: products }));
-  };
-
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+    return <div className='flex justify-center items-center h-screen'>로딩 중...</div>;
   }
 
   return (
     <div className='primary-dashboard w-full'>
       <div className='flex flex-col border-b border-ipt_border my-7 mx-4'>
-        <BillingDetailMember billingData={billingData} />
+        <BillingDetailMember memberData={billingData.member} />
       </div>
 
       <div className='flex flex-col border-b border-ipt_border my-7 mx-4'>
-        <BillingDetailPayment billingData={billingData} />
+        <BillingDetailPayment
+          contractId={billingData.contractId}
+          paymentType={billingData.paymentType}
+          paymentMethod={billingData.paymentMethod}
+        />
       </div>
 
       <div className='flex flex-col border-b border-ipt_border my-7 mx-4'>
         <BillingDetailBilling
-          billingData={billingData}
+          billingData={billingData.billing}
           billingReq={billingReq}
           editable={editable}
           onBillingMemoChange={handleBillingMemoChange}
@@ -171,28 +209,24 @@ const BillingDetailPage = () => {
 
       <div className='flex flex-col border-b border-ipt_border my-7 mx-4'>
         <BillingDetailProduct
-          billingData={billingReq}
+          billingProducts={billingReq.billingProducts}
           products={products}
           editable={editable}
           onChange={handleBillingProductChange}
           billingId={billingId}
+          cols={cols}
         />
       </div>
 
       <div className='flex justify-end items-center px-2 pt-1 pb-3'>
-        {editable ? (
+        {isEditing ? (
           <BillingDetailEditButtons onCancel={handleEditCancel} onSave={handleEditSave} />
         ) : (
-          <BillingDetailButtons 
-            canUpdate={billingData.canBeUpdated}
-            canDelete={billingData.canBeDeleted}
-            canPay={billingData.canBePaid}
-            canSendInvoice={billingData.canSendInvoice}
-            canCancelInvoice={billingData.canCancelInvoice}
-            canPayCanceled={billingData.canPayCanceled}
-            invoiceSendTime={billingData.invoiceSendDateTime}
-            paidDateTime={billingData.paidDateTime}
-            onEdit={() => setEditable(true)} 
+          <BillingDetailButtons
+            fieldToState={billingData.fieldToState}
+            invoiceSendTime={billingData.billing.invoiceSendDateTime}
+            paidDateTime={billingData.billing.paidDateTime}
+            onEdit={handleEditStart}
             onRemove={handleRemove}
             onSend={handleSend}
             onCancelSend={handleCancelSend}

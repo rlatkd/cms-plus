@@ -6,6 +6,7 @@ import InputWeb from '@/components/common/inputs/InputWeb';
 import TextArea from '@/components/common/inputs/TextArea';
 import { formatDate } from '@/utils/formatDate';
 import { formatId } from '@/utils/formatId';
+import dayjs from 'dayjs';
 
 const BillingDetailBilling = ({
   billingData,
@@ -16,18 +17,22 @@ const BillingDetailBilling = ({
 }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+  const formatDateTime = dateTime => {
+    return dayjs(dateTime).format('YYYY-MM-DD HH:mm:ss');
+  };
+
   const makeStatusText = billingData => {
-    const { billingStatus, billingCreatedDate, invoiceSendDateTime, paidDateTime } = billingData;
+    const { billingStatus, createdDateTime, invoiceSendDateTime, paidDateTime } = billingData;
     switch (billingStatus.code) {
       case 'CREATED':
-        return `${billingStatus.title} (${billingCreatedDate})`;
+        return `${billingStatus.title} (${createdDateTime})`;
       case 'WAITING_PAYMENT':
-      case 'NON-PAID':
+      case 'NON_PAID':
         return `${billingStatus.title} (청구서 발송: ${invoiceSendDateTime || '미발송'})`;
       case 'PAID':
         return `${billingStatus.title} (결제: ${paidDateTime})`;
       default:
-        return billingStatus.title;
+        return '-';
     }
   };
 
@@ -50,11 +55,10 @@ const BillingDetailBilling = ({
         <InputWeb
           id='invoiceName'
           label='청구서명'
-          value={billingData.billingName}
+          value={billingData.invoiceName}
           type='text'
           disabled={true}
         />
-
         <InputWeb
           id='billingStatus'
           label='청구 상태'
@@ -68,18 +72,18 @@ const BillingDetailBilling = ({
         <InputWeb
           id='billingType'
           label='청구타입'
-          value={billingData.billingType.title}
+          value={billingData.billingType.title || '-'}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='billingCreatedDateTime'
           label='청구 생성일'
-          value={billingData.billingCreatedDate}
+          value={formatDateTime(billingData.createdDateTime)}
           type='text'
           disabled={true}
         />
-        <div className='relative flex items-cente'>
+        <div className='relative flex items-center'>
           <DatePicker
             selectedDate={new Date(billingReq.billingDate)}
             onDateChange={handleDateChange}

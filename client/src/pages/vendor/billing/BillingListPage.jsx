@@ -13,8 +13,7 @@ import Card from '@/assets/Card';
 import { formatPhone } from '@/utils/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billingElement';
-import { formatProducts, formatProductsForList } from '@/utils/formatProducts';
-import BillingRegisterPage from './BillingRegisterPage';
+import { formatProductsForList } from '@/utils/formatProducts';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
