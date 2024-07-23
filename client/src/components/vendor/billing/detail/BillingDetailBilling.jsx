@@ -110,7 +110,7 @@ const BillingDetailBilling = ({
       <TextArea
         id='billingMemo'
         label='청구서 메시지'
-        value={billingReq.billingMemo}
+        value={billingReq.billingMemo || ''}
         onChange={e => onBillingMemoChange(e.target.value)}
         disabled={!editable}
         classContainer='my-5 w-1/2'
