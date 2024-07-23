@@ -29,6 +29,7 @@ public class BillingProductRes {
 
 	public static BillingProductRes fromEntity(BillingProduct billingProduct) {
 		return BillingProductRes.builder()
+			.billingId(billingProduct.getBilling().getId())
 			.billingProductId(billingProduct.getId())
 			.productId(billingProduct.getProduct().getId())
 			.name(billingProduct.getName())

@@ -29,6 +29,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidUpdateBillingExcep
 import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -156,10 +157,18 @@ public class Billing extends BaseEntity {
 	* 청구서 발송 가능 상태여부 | 청구서는 최대 1번 [생성, 미납] 상태에서만 발송 가능하다.
 	 * @return 청구상태가 [생성, 미납]이 아니거나 청구서가 발송된 적이 있는 경우 false, 나머지 true
 	* */
-	public boolean canSendInvoice() {
-		return (billingStatus == BillingStatus.CREATED
-			|| billingStatus == BillingStatus.NON_PAID)
-			&& invoiceSendDateTime == null;
+	public BillingState canSendInvoice() {
+		if (!(billingStatus == BillingStatus.CREATED || billingStatus == BillingStatus.NON_PAID)) {
+			return new BillingState(BillingState.Field.SEND_INVOICE, false,
+				"[%s]상태에서는 청구서 발송이 불가능합니다".formatted(billingStatus.getTitle()));
+		}
+
+		if (invoiceSendDateTime != null) {
+			return new BillingState(BillingState.Field.SEND_INVOICE, false,
+				"[%s]에 이미 청구서가 발송되었습니다".formatted(FormatUtil.formatDateTime(invoiceSendDateTime)));
+		}
+
+		return new BillingState(BillingState.Field.SEND_INVOICE, true);
 	}
 
 	/**
@@ -167,7 +176,7 @@ public class Billing extends BaseEntity {
 	 * @throws InvalidBillingStatusException 청구서 발송 불가능인경우
 	* */
 	public void setInvoiceSent() {
-		if (!canSendInvoice()) {
+		if (!canSendInvoice().isEnabled()) {
 			throw new InvalidBillingStatusException("청구서 발송이 불가능한 상태입니다");
 		}
 		billingStatus = BillingStatus.WAITING_PAYMENT;
@@ -178,17 +187,22 @@ public class Billing extends BaseEntity {
 	* 청구소 발송 취소 가능여부 | 청구서는 [수납대기] 상태에서만 취소 가능하다.
  	* @return 청구상태가 [수납대기]이 아닌경우 false, 나머지 true
 	* */
-	public boolean canCancelInvoice() {
-		return billingStatus == BillingStatus.WAITING_PAYMENT;
+	public BillingState canCancelInvoice() {
+		if (billingStatus != BillingStatus.WAITING_PAYMENT) {
+			return new BillingState(BillingState.Field.CANCEL_INVOICE, false,
+				"[%s] 상태에서는 청구서 발송 취소가 불가능합니다".formatted(billingStatus.getTitle()));
+		}
+		return new BillingState(BillingState.Field.CANCEL_INVOICE, true);
 	}
 
 	/**
 	 * 청구서 발송 취소 상태 변경 | 청구생성 상태로 돌아간다.
 	 * @throws InvalidBillingStatusException 청구서 발송 취소가 불가능한 경우
-	 * */
+	 */
 	public void setInvoiceCancelled() {
-		if (!canCancelInvoice()) {
-			throw new InvalidBillingStatusException("청구서 발송 취소가 불가능합니다");
+		BillingState state = canCancelInvoice();
+		if (!state.isEnabled()) {
+			throw new InvalidBillingStatusException(state.getReason());
 		}
 		billingStatus = BillingStatus.CREATED;
 		invoiceSendDateTime = null;
@@ -212,23 +226,29 @@ public class Billing extends BaseEntity {
 	/**
 	* 청구 실시간 결제 가능 여부 | 실시간 결제는 생성 및 수납대기 상태에서만 가능하다.
 	* */
-	public boolean canPayRealtime() {
-		if (!(billingStatus == BillingStatus.WAITING_PAYMENT
-			|| billingStatus == BillingStatus.CREATED)) {
-			return false;
+	public BillingState canPayRealtime() {
+		if (!(billingStatus == BillingStatus.WAITING_PAYMENT || billingStatus == BillingStatus.CREATED)) {
+			return new BillingState(BillingState.Field.PAY_REALTIME, false,
+				"[%s] 상태에서는 실시간 결제가 불가능합니다".formatted(billingStatus.getTitle()));
 		}
 
 		Payment payment = contract.getPayment();
-		return payment.canPayRealtime();
+		if (!payment.canPayRealtime()) {
+			return new BillingState(BillingState.Field.PAY_REALTIME, false,
+				"현재 설정된 결제 방식으로는 실시간 결제가 불가능합니다");
+		}
+
+		return new BillingState(BillingState.Field.PAY_REALTIME, true);
 	}
 
 	/**
-	* 청구 실시간 결제 완료 상태변경
+	 * 청구 실시간 결제 완료 상태변경
 	 * @throws InvalidBillingStatusException 이미 결제된 청구인 경우
-	* */
+	 */
 	public void setPaid() {
-		if (billingStatus == BillingStatus.PAID) {
-			throw new InvalidBillingStatusException("이미 결제된 청구입니다.");
+		BillingState state = canPayRealtime();
+		if (!state.isEnabled()) {
+			throw new InvalidBillingStatusException(state.getReason());
 		}
 		billingStatus = BillingStatus.PAID;
 		paidDateTime = LocalDateTime.now();
@@ -237,22 +257,29 @@ public class Billing extends BaseEntity {
 	/**
 	* 청구 결제 취소 가능 | 납부 상태 그리고 취소가능 결제수단 여부
 	* */
-	public boolean canCancelPaid() {
+	public BillingState canCancelPaid() {
 		if (billingStatus != BillingStatus.PAID) {
-			return false;
+			return new BillingState(BillingState.Field.CANCEL_PAYMENT, false,
+				"[%s] 상태에서는 결제 취소가 불가능합니다".formatted(billingStatus.getTitle()));
 		}
 
 		Payment payment = contract.getPayment();
-		return payment.canCancel();
+		if (!payment.canCancel()) {
+			return new BillingState(BillingState.Field.CANCEL_PAYMENT, false,
+				"현재 설정된 결제 방식으로는 결제 취소가 불가능합니다");
+		}
+
+		return new BillingState(BillingState.Field.CANCEL_PAYMENT, true);
 	}
 
 	/**
 	 * 청구 결제 취소 상태 변경
 	 * @throws InvalidBillingStatusException 결제 취소가 불가능한 경우
-	 * */
+	 */
 	public void setPayCanceled() {
-		if (!canCancelPaid()) {
-			throw new InvalidBillingStatusException("결제 취소가 불가능합니다.");
+		BillingState state = canCancelPaid();
+		if (!state.isEnabled()) {
+			throw new InvalidBillingStatusException(state.getReason());
 		}
 		billingStatus = BillingStatus.WAITING_PAYMENT;
 		paidDateTime = null;
@@ -261,26 +288,34 @@ public class Billing extends BaseEntity {
 	/**
 	* 청구 수정 가능여부 | 생성 및 수납대기 상태에서만 가능
 	* */
-	public boolean canBeUpdated() {
-		return this.billingStatus == BillingStatus.CREATED
-			|| billingStatus == BillingStatus.WAITING_PAYMENT;
+	public BillingState canBeUpdated() {
+		if (!(billingStatus == BillingStatus.CREATED || billingStatus == BillingStatus.WAITING_PAYMENT)) {
+			return new BillingState(BillingState.Field.UPDATE, false,
+				"[%s] 상태에서는 청구 수정이 불가능합니다".formatted(billingStatus.getTitle()));
+		}
+		return new BillingState(BillingState.Field.UPDATE, true);
 	}
 
 	/**
 	* 청구 삭제 가능여부 | 생성 수납대기 상태에서만 가능
 	* */
-	public boolean canBeDeleted() {
-		return this.billingStatus == BillingStatus.CREATED || billingStatus == BillingStatus.WAITING_PAYMENT;
+	public BillingState canBeDeleted() {
+		if (!(billingStatus == BillingStatus.CREATED || billingStatus == BillingStatus.WAITING_PAYMENT)) {
+			return new BillingState(BillingState.Field.DELETE, false,
+				"[%s] 상태에서는 청구 삭제가 불가능합니다".formatted(billingStatus.getTitle()));
+		}
+		return new BillingState(BillingState.Field.DELETE, true);
 	}
 
 	/**
-	* 청구 삭제 | 청구 상품도 같이 삭제한다.
- 	* @throws InvalidBillingStatusException 납부 전에만 삭제가능
-	* */
+	 * 청구 삭제 | 청구 상품도 같이 삭제한다.
+	 * @throws InvalidBillingStatusException 납부 전에만 삭제가능
+	 */
 	@Override
 	public void delete() {
-		if (billingStatus == BillingStatus.CREATED || billingStatus == BillingStatus.WAITING_PAYMENT) {
-			throw new InvalidBillingStatusException("청구는 납부 전에만 삭제가 가능합니다");
+		BillingState state = canBeDeleted();
+		if (!state.isEnabled()) {
+			throw new InvalidBillingStatusException(state.getReason());
 		}
 		super.delete();
 		billingProducts.forEach(BaseEntity::delete);

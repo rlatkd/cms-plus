@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.billing.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
@@ -83,6 +86,14 @@ public class BillingController {
 	@GetMapping("/{billingId}")
 	public BillingDetailRes getBillingDetail(@VendorId Long vendorId, @PathVariable Long billingId) {
 		return billingService.getBillingDetail(vendorId, billingId);
+	}
+
+	/*
+	 * 청구상품 조회
+	 * */
+	@GetMapping("products/{billingId}")
+	public List<BillingProductRes> getBillingProducts(@VendorId Long vendorId, @PathVariable Long billingId) {
+		return billingService.getBillingProducts(vendorId, billingId);
 	}
 
 	/*

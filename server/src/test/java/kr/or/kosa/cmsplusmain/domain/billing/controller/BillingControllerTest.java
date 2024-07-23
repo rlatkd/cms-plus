@@ -295,7 +295,7 @@ public class BillingControllerTest {
 			.build();
 
 		BillingUpdateReq updateReq = BillingUpdateReq.builder()
-			.billingMemo(randomGenerator.generateRandomInvoiceMessage())
+			.invoiceMessage(randomGenerator.generateRandomInvoiceMessage())
 			.billingDate(LocalDate.now().plusDays(random.nextInt(30)))
 			.billingProducts(Arrays.asList(productReq))
 			.build();

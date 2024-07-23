@@ -37,6 +37,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.extern.slf4j.Slf4j;
@@ -149,6 +150,16 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				billing.id.eq(billingId)
 			)
 			.fetchOne();
+	}
+
+	public List<BillingProduct> findAllBillingProducts(Long billingId) {
+		return jpaQueryFactory
+			.selectFrom(billingProduct)
+			.where(
+				billingProduct.billing.id.eq(billingId),
+				billingProductNotDel()
+			)
+			.fetch();
 	}
 
 	/*

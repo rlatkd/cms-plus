@@ -1,10 +1,12 @@
 package kr.or.kosa.cmsplusmain.domain.billing.service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
@@ -13,18 +15,18 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.BillingNotFoundException;
-import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusException;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
-import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,23 +60,15 @@ public class BillingService {
 	* */
 	@Transactional
 	public void sendInvoice(Long vendorId, Long billingId) {
-		// 청구가 고객의 청구인지 확인
-		validateBillingUser(billingId, vendorId);
-
-		// 청구서 발송 가능 상태 확인
-		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
-		if (!billing.canSendInvoice()) {
-			throw new InvalidBillingStatusException("청구서 발송이 불가능한 상태입니다");
-		}
+		Billing billing = validateAndGetBilling(vendorId, billingId);
+		BillingState.Field.SEND_INVOICE.validateState(billing);
 
 		Contract contract = billing.getContract();
 		Member member = contract.getMember();
 
-		// 회원에게 메시지 전송
 		String invoiceMessage = createInvoiceMessage(billing, member);
 		sendInvoiceMessage(invoiceMessage, member);
 
-		// 청구 수납 대기중 상태변경
 		billing.setInvoiceSent();
 	}
 
@@ -113,15 +107,9 @@ public class BillingService {
 	* */
 	@Transactional
 	public void cancelInvoice(Long vendorId, Long billingId) {
-		validateBillingUser(billingId, vendorId);
+		Billing billing = validateAndGetBilling(vendorId, billingId);
+		BillingState.Field.CANCEL_INVOICE.validateState(billing);
 
-		// 청구서 취소 가능 상태 확인
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
-		if (!billing.canCancelInvoice()) {
-			throw new InvalidBillingStatusException("청구서 발송 취소가 불가능한 상태입니다");
-		}
-
-		// 청구서 발송 취소 상태변경
 		billing.setInvoiceCancelled();
 	}
 
@@ -130,18 +118,11 @@ public class BillingService {
 	* */
 	@Transactional
 	public void payBilling(Long vendorId, Long billingId) {
-		validateBillingUser(billingId, vendorId);
+		Billing billing = validateAndGetBilling(vendorId, billingId);
+		BillingState.Field.PAY_REALTIME.validateState(billing);
 
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
+		// TODO: 결제 프로세스 구현
 
-		// 실시간 결제 가능 청구여부
-		if (!billing.canPayRealtime()) {
-			throw new InvalidBillingStatusException("실시간 결제가 불가능한 청구입니다");
-		}
-
-		//TODO 결제 프로세스
-
-		// 완납상태로 변경
 		billing.setPaid();
 	}
 
@@ -150,21 +131,17 @@ public class BillingService {
 	* */
 	@Transactional
 	public void cancelPayBilling(Long vendorId, Long billingId) {
-		validateBillingUser(billingId, vendorId);
+		Billing billing = validateAndGetBilling(vendorId, billingId);
+		BillingState.Field.CANCEL_PAYMENT.validateState(billing);
 
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
-		if (!billing.canCancelPaid()) {
-			throw new InvalidBillingStatusException("결제 취소가 불가능한 청구입니다");
-		}
+		// TODO: 결제 취소 프로세스 구현
 
-		// TODO 결제 취소 프로세스
-
-		// 수납대기 상태로 변경
 		billing.setPayCanceled();
 	}
 
 	/**
 	 * 청구 생성 |
+	 * 계약이 존재하는지 확인 후에 생성한다 |
 	 * 2+n회 쿼리 발생 | 존재여부 확인, 청구 생성, 청구상품 생성 * n
 	 * */
 	@Transactional
@@ -204,16 +181,28 @@ public class BillingService {
 
 	/*
 	* 청구 상세 조회
-	*
 	* 총 발생 쿼리수: 3회
 	* 내용:
 	* 	존재여부 확인, 청구목록 조회, 청구상품 목록 조회(+? batch_size=100)
 	* */
 	public BillingDetailRes getBillingDetail(Long vendorId, Long billingId) {
 		validateBillingUser(billingId, vendorId);
-
 		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
-		return BillingDetailRes.fromEntity(billing);
+
+		Map<BillingState.Field, BillingState> fieldToState = Arrays.stream(BillingState.Field.values())
+			.collect(Collectors.toMap(field -> field, field -> field.checkState(billing)));
+
+		return BillingDetailRes.fromEntity(billing, fieldToState);
+	}
+
+	/**
+	 * 특정 청구의 모든 청구상품 조회
+	 * */
+	public List<BillingProductRes> getBillingProducts(Long vendorId, Long billingId) {
+		validateBillingUser(billingId, vendorId);
+		return billingCustomRepository.findAllBillingProducts(billingId).stream()
+			.map(BillingProductRes::fromEntity)
+			.toList();
 	}
 
 	/*
@@ -227,20 +216,16 @@ public class BillingService {
 	* */
 	@Transactional
 	public void updateBilling(Long vendorId, Long billingId, BillingUpdateReq billingUpdateReq) {
-		// 고객의 청구 여부 확인
-		validateBillingUser(billingId, vendorId);
+		Billing billing = validateAndGetBilling(vendorId, billingId);
+		BillingState.Field.UPDATE.validateState(billing);
 
-		// 결제일, 청구서 메시지 수정
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		billing.updateBillingDate(billingUpdateReq.getBillingDate());
-		billing.setInvoiceMessage(billingUpdateReq.getBillingMemo());
+		billing.setInvoiceMessage(billingUpdateReq.getInvoiceMessage());
 
-		// 신규 청구상품
 		List<BillingProduct> newBillingProducts = billingUpdateReq.getBillingProducts().stream()
 			.map(BillingProductReq::toEntity)
 			.toList();
 
-		// 청구상품 수정
 		updateBillingProducts(billing, newBillingProducts);
 	}
 
@@ -253,11 +238,9 @@ public class BillingService {
 	* */
 	@Transactional
 	public void deleteBilling(Long vendorId, Long billingId) {
-		// 고객의 청구 여부 확인
-		validateBillingUser(billingId, vendorId);
+		Billing billing = validateAndGetBilling(vendorId, billingId);
+		BillingState.Field.DELETE.validateState(billing);
 
-		// 청구 상품도 동시 삭제처리된다.
-		Billing billing = billingRepository.findById(billingId).orElseThrow(IllegalStateException::new);
 		billing.delete();
 	}
 
@@ -289,5 +272,13 @@ public class BillingService {
 		if (!billingCustomRepository.isExistBillingByUsername(billingId, vendorId)) {
 			throw new BillingNotFoundException("존재하지 않는 청구입니다");
 		}
+	}
+
+	private Billing validateAndGetBilling(Long vendorId, Long billingId) {
+		if (!billingCustomRepository.isExistBillingByUsername(billingId, vendorId)) {
+			throw new BillingNotFoundException("존재하지 않는 청구입니다");
+		}
+		return billingRepository.findById(billingId)
+			.orElseThrow(() -> new BillingNotFoundException("청구를 찾을 수 없습니다"));
 	}
 }

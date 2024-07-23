@@ -7,13 +7,12 @@ import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 @Builder
 public class BillingUpdateReq {
 	@InvoiceMessage
-	private String billingMemo;
+	private String invoiceMessage;
 	@NotNull
 	private LocalDate billingDate;
 	@NotNull
