@@ -7,7 +7,7 @@ on:
     paths:
       - 'client/**'
 
-permissions: #github actions bot에게 권한 열기
+permissions:
   contents: write
   pages: write
   id-token: write
@@ -27,13 +27,17 @@ jobs:
 
       - name: LOG
         run: |
-
           timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
           log_file="DEPLOY_LOG/client/FE_CD_LOG_$timestamp.log"
           mkdir -p DEPLOY_LOG/client
           echo "프론트엔드 배포 로그" >> "$log_file"
-          git fetch origin
-          git checkout prod || git checkout -b prod
           git add "$log_file"
           git commit -m "release: $timestamp FE 배포 완료"
-          git push origin prod --force
+          git push origin dev
+
+      - name: Merge to Prod
+        run: |
+          git fetch origin
+          git checkout prod || git checkout -b prod
+          git merge dev
+          git push origin prod

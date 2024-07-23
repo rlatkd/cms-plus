@@ -60,7 +60,7 @@ jobs:
         AWS_REGION: ${{ env.AWS_REGION }}
         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       run: |
-        docker build -t $ECR_REPOSITORY:latest -f server-messaging/dockerfile .
+        docker build -t $ECR_REPOSITORY:latest -f server-messaging/Dockerfile .
         docker tag $ECR_REPOSITORY:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
         docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 
