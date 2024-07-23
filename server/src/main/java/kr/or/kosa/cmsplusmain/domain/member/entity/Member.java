@@ -142,4 +142,14 @@ public class Member extends BaseEntity {
 	public int getContractNum() {
 		return contracts.size();
 	}
+
+	/*
+	 * 총 계약 수
+	 * 계약이 함께 삭제된다
+	 * */
+	@Override
+	public void delete() {
+		super.delete();
+		contracts.forEach(Contract::delete);
+	}
 }

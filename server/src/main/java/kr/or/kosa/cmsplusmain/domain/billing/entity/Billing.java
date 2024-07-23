@@ -290,11 +290,6 @@ public class Billing extends BaseEntity {
 	* */
 	@Override
 	public void delete() {
-		// 청구상태에 따른 삭제 조건 존재
-		// 청구상태가 생성 (청구서 발송 전)에만 삭제가 가능하다.
-		if (billingStatus != BillingStatus.CREATED) {
-			throw new DeleteBillingException();
-		}
 		super.delete();
 		billingProducts.forEach(BaseEntity::delete);
 	}

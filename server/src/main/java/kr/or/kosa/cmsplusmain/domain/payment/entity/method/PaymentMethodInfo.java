@@ -36,4 +36,17 @@ public abstract class PaymentMethodInfo extends BaseEntity {
 	@Convert(converter = PaymentMethodConverter.class)
 	@Column(name = "payment_method", updatable = false, insertable = false)
 	private PaymentMethod paymentMethod;
+
+	/*
+	 * 결제수단 정보 삭제
+	 * */
+	@Override
+	public void delete(){
+		// TODO
+		/*
+		 * 결제 수단 정보 삭제에서 예외 케이스 있는지 고려
+		 * 카드결제, 실시간CMS
+		 * */
+		super.delete();
+	}
 }

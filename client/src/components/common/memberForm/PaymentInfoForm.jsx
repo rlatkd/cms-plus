@@ -45,13 +45,17 @@ const PaymentInfoForm = ({ formType }) => {
     }
   };
 
-  useEffect(() => {
-    if (paymentType === 'AUTO') {
-      setPaymentMethod('CMS');
-    } else if (paymentType !== 'AUTO') {
-      setPaymentMethod('');
-    }
-  }, [paymentType]);
+  // <------ formType : UPDATE일 경우 계약일 비활성화 ------>
+  const isDisabled = formType === 'UPDATE';
+
+  // <------ 필요성 여부 검토 필요 ------>
+  // useEffect(() => {
+  //   if (paymentType === 'AUTO') {
+  //     setPaymentMethod('CMS');
+  //   } else if (paymentType !== 'AUTO') {
+  //     setPaymentMethod('');
+  //   }
+  // }, [paymentType]);
 
   return (
     <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>
@@ -82,6 +86,7 @@ const PaymentInfoForm = ({ formType }) => {
             placeholder='년도-월-일'
             required
             readOnly
+            disabled={isDisabled}
             value={contractInfo.contractStartDate}
             handleChangeValue={handleChangeContractInfo}
           />
@@ -92,6 +97,7 @@ const PaymentInfoForm = ({ formType }) => {
             placeholder='년도-월-일'
             required
             readOnly
+            disabled={isDisabled}
             value={contractInfo.contractEndDate}
             handleChangeValue={handleChangeContractInfo}
           />

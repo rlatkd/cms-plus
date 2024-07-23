@@ -30,7 +30,7 @@ public class AutoPaymentType extends PaymentTypeInfo {
 
 	@Comment("고객이 등록한 동의서 이미지 URL")
 	@Column(name = "payment_consent_img_url", length = 2000)
-	@HttpUrl
+	@BlobUrl
 	private String consentImgUrl;
 
 	@Comment("간편동의 마지막 요청시간")

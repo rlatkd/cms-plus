@@ -7,15 +7,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const BillingInfoUpdatePage = () => {
   const { billingInfo } = useMemberBillingStore();
+  console.log('======청구업데이트=======');
+  console.log(billingInfo);
   const navigate = useNavigate();
 
-  const contractId = useParams();
+  const { contractId, memberId } = useParams();
+  console.log(contractId, memberId);
 
   // <--------청구 정보 수정 API-------->
   const axiosUpdateMemberBilling = async () => {
     try {
-      await updateMemberBilling(contractId.id, billingInfo);
+      await updateMemberBilling(memberId, billingInfo);
       console.log('!----청구정보 수정 성공----!'); // 삭제예정
+      await navigate(`/vendor/contracts/detail/${contractId}`);
       onAlertClick();
     } catch (err) {
       console.error('axiosMemberUpdate => ', err.response.data);

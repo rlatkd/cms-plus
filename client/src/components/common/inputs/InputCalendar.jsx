@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConfigProvider, DatePicker, Space } from 'antd';
 import koKR from 'antd/es/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -17,7 +17,7 @@ const InputCalendar = ({
   height = '45px',
   width = '290px',
   handleChangeValue,
-  value,
+  value = '',
   ...props
 }) => {
   const [selectedDate, setSelectedDate] = useState('');
@@ -42,7 +42,7 @@ const InputCalendar = ({
     datePicker: {
       width: width,
       height: height,
-      fontSize: `${type === 'search' ? '10px' : '16px'}`,
+      fontSize: `${type === 'search' ? '10px' : '14px'}`,
       color: '#344767',
     },
   };
@@ -86,7 +86,26 @@ const InputCalendar = ({
     .ant-picker-footer .ant-picker-today-btn:hover {
       color: #4FD1C5 !important;
     }
+
+    .ant-picker-suffix {
+      font-size: 14px; /* Increase icon size */
+    }
+
+    .ant-picker-clear {
+      font-size: ${type === 'search' ? '14px' : '18px'} !important; /* 삭제 아이콘 크기 */
+      color: ${type === 'search' ? '#344767' : '#C7CCD0'}  !important; /* 삭제 아이콘 색상 */
+    }
+
+    .anticon.anticon-calendar {
+      font-size: ${type === 'search' ? '14px' : '18px'} !important; /* 캘린더 아이콘 크기 */
+      color: ${type === 'search' ? '#344767' : '#C7CCD0'} !important; /* 캘린더 아이콘 색상 */
+    }
   `;
+
+  useEffect(() => {
+    if (!value) return;
+    setSelectedDate(dayjs(value));
+  }, [value]);
 
   return (
     <div className={`${classContainer}`}>
