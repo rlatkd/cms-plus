@@ -9,5 +9,5 @@
 
 include::domain/billing.adoc[leveloffset=+1]
 include::domain/product.adoc[leveloffset=+1]
-include::domain/contract.adoc[leveloffset=+1]
-include::domain/member.adoc[leveloffset=+1]
+// include::domain/contract.adoc[leveloffset=+1]
+// include::domain/member.adoc[leveloffset=+1]
