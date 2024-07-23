@@ -32,7 +32,7 @@ const BillingDetailPage = () => {
   const [billingReq, setBillingReq] = useState({
     billingProducts: [],
     billingDate: '',
-    billingMemo: '',
+    invoiceMessage: '',
   });
   const [editable, setEditable] = useState(false);
   const [products, setProducts] = useState([]);
@@ -51,7 +51,7 @@ const BillingDetailPage = () => {
       setBillingReq(prevReq => ({
         ...prevReq,
         billingDate: res.data.billing.billingDate,
-        billingMemo: res.data.billing.invoiceMessage,
+        invoiceMessage: res.data.billing.invoiceMessage,
       }));
     } catch (err) {
       console.error('청구 상세 정보 조회 실패:', err);
@@ -93,6 +93,23 @@ const BillingDetailPage = () => {
     setEditable(true);
   };
 
+  const handleEditCancel = () => {
+    setBillingReq(originalBillingReq);
+    setIsEditing(false);
+    setEditable(false);
+  };
+
+  const handleInvoiceMessageChange = message => {
+    console.log(message);
+    setBillingReq(prev => ({ ...prev, invoiceMessage: message }));
+  };
+  const handleBillingDateChange = date => {
+    setBillingReq(prev => ({ ...prev, billingDate: date }));
+  };
+  const handleBillingProductChange = newProducts => {
+    setBillingReq(prev => ({ ...prev, billingProducts: newProducts }));
+  };
+
   const handleEditSave = async () => {
     try {
       await updateBilling(billingId, billingReq);
@@ -105,23 +122,6 @@ const BillingDetailPage = () => {
       alert('청구 수정에 실패했습니다.');
       console.error('Failed to update billing:', err);
     }
-  };
-
-  const handleEditCancel = () => {
-    setBillingReq(originalBillingReq);
-    setIsEditing(false);
-    setEditable(false);
-  };
-
-  const handleBillingMemoChange = memo => {
-    setBillingReq(prev => ({ ...prev, billingMemo: memo }));
-  };
-
-  const handleBillingDateChange = date => {
-    setBillingReq(prev => ({ ...prev, billingDate: date }));
-  };
-  const handleBillingProductChange = newProducts => {
-    setBillingReq(prev => ({ ...prev, billingProducts: newProducts }));
   };
 
   const handleRemove = async () => {
@@ -202,7 +202,7 @@ const BillingDetailPage = () => {
           billingData={billingData.billing}
           billingReq={billingReq}
           editable={editable}
-          onBillingMemoChange={handleBillingMemoChange}
+          onInvoiceMessageChange={handleInvoiceMessageChange}
           onBillingDateChange={handleBillingDateChange}
         />
       </div>

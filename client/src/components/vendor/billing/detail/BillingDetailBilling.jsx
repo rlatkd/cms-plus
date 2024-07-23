@@ -12,7 +12,7 @@ const BillingDetailBilling = ({
   billingData,
   billingReq,
   editable,
-  onBillingMemoChange,
+  onInvoiceMessageChange,
   onBillingDateChange,
 }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -114,8 +114,8 @@ const BillingDetailBilling = ({
       <TextArea
         id='billingMemo'
         label='청구서 메시지'
-        value={billingReq.billingMemo || ''}
-        onChange={e => onBillingMemoChange(e.target.value)}
+        value={billingReq.invoiceMessage || ''}
+        onChange={e => onInvoiceMessageChange(e.target.value)}
         disabled={!editable}
         classContainer='my-5 w-1/2'
         classTextarea='w-1/2 h-48'
