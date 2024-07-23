@@ -169,7 +169,7 @@ public class BillingService {
 
 	/**
 	 * 청구목록 조회 |
-	 * 3회 쿼리 발생 | 청구목록조회, 청구상품조회, 전체 개수(페이징)
+	 * 3+x회 쿼리 발생 | 청구목록조회, 청구상품조회 * x(배치사이즈: 100), 전체 개수(페이징)
 	 * */
 	public PageRes<BillingListItemRes> getBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		List<BillingListItemRes> content =
@@ -207,7 +207,7 @@ public class BillingService {
 
 	/**
 	 * 청구 수정
-	 * 6+a+b회 쿼리 발생 | 청구존재여부, 청구 조회, 청구상품 조회, 청구상품 생성 * a, 청구 수정, 청구상품 수정 * b, 청구상품 삭제
+	 * 6+a+b+x회 쿼리 발생 | 청구존재여부, 청구 조회, 청구상품 조회 * x(배치사이즈: 100), 청구상품 생성 * a, 청구 수정, 청구상품 수정 * b, 청구상품 삭제
 	 * */
 	@Transactional
 	public void updateBilling(Long vendorId, Long billingId, BillingUpdateReq billingUpdateReq) {
@@ -224,19 +224,22 @@ public class BillingService {
 		updateBillingProducts(billing, newBillingProducts);
 	}
 
-	/*
-	* 청구 삭제
-	*
-	* 총 발생 쿼리수: 4회
-	* 내용:
-	* 	존재여부 확인, 청구 조회, 청구상품 조회(+?), 청구 삭제(*N 청구상품수)
-	* */
+
+	/**
+	 * 청구 삭제 | 연관된 청구상품도 동시에 삭제된다.
+	 * 5+x회 쿼리 발생 | 청구존재여부, 청구 조회, 청구상품 조회 * x(배치사이즈: 100), 청구삭제, 청구상품 삭제
+	 * */
 	@Transactional
 	public void deleteBilling(Long vendorId, Long billingId) {
 		Billing billing = validateAndGetBilling(vendorId, billingId);
 		BillingState.Field.DELETE.validateState(billing);
 
-		billing.delete();
+		List<Long> billingProductIds = billing.getBillingProducts().stream()
+				.mapToLong(BillingProduct::getId)
+				.boxed().toList();
+
+		billing.deleteWithoutProducts();
+		billingProductRepository.deleteAllById(billingProductIds);
 	}
 
 	/**
