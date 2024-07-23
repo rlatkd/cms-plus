@@ -1,21 +1,81 @@
-import React from 'react';
-import RadioGroup from '@/components/common/inputs/RadioGroup';
-import PaymentCard from '@/components/member/simpConsent/PaymentCard';
-import PaymentCMS from '@/components/member/simpConsent/PaymentCMS';
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
+import PaymentCard from './PaymentCard';
+import PaymentCMS from './PaymentCMS';
 import { useUserDataStore } from '@/stores/useUserDataStore';
+import RadioGroup from '@/components/common/inputs/RadioGroup';
+import { getAvailableOptions } from '@/apis/simpleConsent';
 
-const PaymentInfo = () => {
-  const { userData, setUserData, clearPaymentInfo } = useUserDataStore();
+const PaymentInfo = forwardRef((props, ref) => {
+  const { userData, setUserData } = useUserDataStore();
+  const [localData, setLocalData] = useState({
+    paymentMethod: userData.paymentDTO.paymentMethod || '',
+    ...userData.paymentDTO,
+  });
+  const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
+  const [isVerified, setIsVerified] = useState(false);
 
-  const paymentOptions = [
-    { label: '카드', value: 'CARD' },
-    { label: '실시간 CMS', value: 'CMS' },
-  ];
+  useEffect(() => {
+    const fetchAvailableOptions = async () => {
+      try {
+        const options = await getAvailableOptions();
+        setAvailablePaymentMethods(options.availablePaymentMethods);
+      } catch (error) {
+        console.error('결제 수단 옵션 가져오기 실패:', error);
+      }
+    };
 
-  const handlePaymentMethodChange = value => {
-    clearPaymentInfo(); // 결제 방법이 변경될 때 기존 결제 정보 초기화
-    setUserData({ paymentDTO: { ...userData.paymentDTO, paymentMethod: value } });
-  };
+    fetchAvailableOptions();
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    handleNextClick: () => {
+      setUserData({
+        paymentDTO: {
+          ...localData,
+        },
+      });
+    },
+    validatePaymentInfo: () => {
+      const missingFields = [];
+
+      if (!localData.paymentMethod) missingFields.push('결제수단');
+
+      if (localData.paymentMethod === 'CARD') {
+        if (!isVerified) missingFields.push('카드 인증');
+        if (!localData.cardNumber) missingFields.push('카드번호');
+        if (!localData.expiryDate) missingFields.push('유효기간');
+        if (!localData.cardHolder) missingFields.push('명의자');
+        if (!localData.cardOwnerBirth) missingFields.push('생년월일');
+      } else if (localData.paymentMethod === 'CMS') {
+        if (!isVerified) missingFields.push('계좌 인증');
+        if (!localData.bank) missingFields.push('은행');
+        if (!localData.accountHolder) missingFields.push('예금주');
+        if (!localData.accountOwnerBirth) missingFields.push('생년월일');
+        if (!localData.accountNumber) missingFields.push('계좌번호');
+      }
+
+      return missingFields;
+    },
+  }));
+
+  const handlePaymentMethodChange = useCallback(method => {
+    setLocalData(prev => ({ ...prev, paymentMethod: method }));
+    setIsVerified(false); // 결제 수단이 변경되면 인증 상태 초기화
+  }, []);
+
+  const handleVerificationComplete = useCallback(verified => {
+    console.log('카드/계좌 인증 완료:', verified);
+    setIsVerified(verified);
+  }, []);
+
+  const handleInputChange = useCallback((name, value) => {
+    setLocalData(prev => ({ ...prev, [name]: value }));
+  }, []);
+
+  const paymentOptions = availablePaymentMethods.map(method => ({
+    label: method.title,
+    value: method.code,
+  }));
 
   return (
     <>
@@ -30,13 +90,28 @@ const PaymentInfo = () => {
         label='결제수단'
         name='paymentMethod'
         options={paymentOptions}
-        selectedOption={userData.paymentDTO.paymentMethod}
+        selectedOption={localData.paymentMethod}
         onChange={handlePaymentMethodChange}
         required={true}
       />
-      {userData.paymentDTO.paymentMethod === 'CARD' ? <PaymentCard /> : <PaymentCMS />}
+      {localData.paymentMethod === 'CARD' && (
+        <PaymentCard
+          localData={localData}
+          onInputChange={handleInputChange}
+          onVerificationComplete={handleVerificationComplete}
+          isVerified={isVerified}
+        />
+      )}
+      {localData.paymentMethod === 'CMS' && (
+        <PaymentCMS
+          localData={localData}
+          onInputChange={handleInputChange}
+          onVerificationComplete={handleVerificationComplete}
+          isVerified={isVerified}
+        />
+      )}
     </>
   );
-};
+});
 
 export default PaymentInfo;

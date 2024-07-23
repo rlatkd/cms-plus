@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Input from '@/components/common/inputs/Input';
 import AddressInput from '@/components/common/inputs/AddressInput';
+import { useUserDataStore } from '@/stores/useUserDataStore';
 
-const BasicInfo = ({ userData, setUserData }) => {
+const BasicInfo = () => {
+  const { userData, setUserData } = useUserDataStore();
   const [localData, setLocalData] = useState({
     name: userData.memberDTO.name || '',
     phone: userData.memberDTO.phone || '',
@@ -37,7 +39,10 @@ const BasicInfo = ({ userData, setUserData }) => {
 
   const handleAddressChange = (field, value) => {
     setLocalData(prev => ({ ...prev, [field]: value }));
-    setUserData({ memberDTO: { ...userData.memberDTO, [field]: value } });
+    setUserData(prev => ({
+      ...prev,
+      memberDTO: { ...prev.memberDTO, [field]: value },
+    }));
   };
 
   return (

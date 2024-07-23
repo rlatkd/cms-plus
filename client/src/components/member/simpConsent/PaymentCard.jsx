@@ -1,44 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import Input from '@/components/common/inputs/Input';
-import { useUserDataStore } from '@/stores/useUserDataStore';
+import { verifyCard } from '@/apis/validation';
 
-const PaymentCard = () => {
-  const { userData, setUserData } = useUserDataStore();
-  const [localData, setLocalData] = useState({
-    cardNumber: userData.paymentDTO.cardNumber || '',
-    expiryDate: userData.paymentDTO.expiryDate || '',
-    cardHolder: userData.paymentDTO.cardHolder || '',
-    cardOwnerBirth: userData.paymentDTO.cardOwnerBirth || '',
-  });
+const PaymentCard = ({ localData, onInputChange, onVerificationComplete, isVerified }) => {
+  const handleCardVerification = useCallback(async () => {
+    try {
+      const cardData = {
+        paymentMethod: 'CARD',
+        cardNumber: localData.cardNumber,
+        cardOwner: localData.cardHolder,
+        cardOwnerBirth: localData.cardOwnerBirth,
+      };
 
-  useEffect(() => {
-    setLocalData({
-      cardNumber: userData.paymentDTO.cardNumber || '',
-      expiryDate: userData.paymentDTO.expiryDate || '',
-      cardHolder: userData.paymentDTO.cardHolder || '',
-      cardOwnerBirth: userData.paymentDTO.cardOwnerBirth || '',
-    });
-  }, [userData.paymentDTO]);
+      const result = await verifyCard(cardData);
 
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    let formattedValue = value;
-
-    if (name === 'cardOwnerBirth') {
-      formattedValue = formatBirthDate(value);
-    } else if (name === 'expiryDate') {
-      formattedValue = formatExpiryDate(value);
-    } else if (name === 'cardNumber') {
-      formattedValue = formatCardNumber(value);
+      if (result === true) {
+        onVerificationComplete(true);
+        alert('카드 인증이 성공적으로 완료되었습니다.');
+      } else {
+        onVerificationComplete(false);
+        alert('카드 인증에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('Card verification error:', error);
+      onVerificationComplete(false);
+      alert('카드 인증에 실패했습니다. 다시 시도해주세요.');
     }
+  }, [localData, onVerificationComplete]);
 
-    setLocalData(prev => ({ ...prev, [name]: formattedValue }));
-  };
+  const handleInputChange = useCallback(
+    e => {
+      const { name, value } = e.target;
+      let formattedValue = value;
 
-  const handleBlur = e => {
-    const { name, value } = e.target;
-    setUserData({ paymentDTO: { ...userData.paymentDTO, [name]: value } });
-  };
+      if (name === 'cardOwnerBirth') {
+        formattedValue = formatBirthDate(value);
+      } else if (name === 'expiryDate') {
+        formattedValue = formatExpiryDate(value);
+      } else if (name === 'cardNumber') {
+        formattedValue = formatCardNumber(value);
+      }
+
+      onInputChange(name, formattedValue);
+    },
+    [onInputChange]
+  );
 
   const formatBirthDate = value => {
     const cleaned = value.replace(/\D/g, '');
@@ -87,7 +93,6 @@ const PaymentCard = () => {
           placeholder='카드번호 16자리'
           value={localData.cardNumber}
           onChange={handleInputChange}
-          onBlur={handleBlur}
           maxLength={19}
         />
         <Input
@@ -98,7 +103,6 @@ const PaymentCard = () => {
           placeholder='MM/YY'
           value={localData.expiryDate}
           onChange={handleInputChange}
-          onBlur={handleBlur}
           maxLength={5}
         />
         <Input
@@ -109,7 +113,6 @@ const PaymentCard = () => {
           placeholder='최대 15자리'
           value={localData.cardHolder}
           onChange={handleInputChange}
-          onBlur={handleBlur}
           maxLength={15}
         />
         <Input
@@ -120,15 +123,21 @@ const PaymentCard = () => {
           placeholder='YYYY-MM-DD (예: 1990-01-01)'
           value={localData.cardOwnerBirth}
           onChange={handleInputChange}
-          onBlur={handleBlur}
           maxLength={10}
         />
       </form>
-      <button className='mt-4 w-full rounded-lg border border-teal-400 bg-white py-2 text-sm font-normal text-teal-400 transition-colors hover:bg-teal-50'>
-        카드 인증하기
+      <button
+        className={`mt-4 w-full rounded-lg border py-2 text-sm font-normal transition-colors ${
+          isVerified
+            ? 'border-green-400 bg-green-50 text-green-400'
+            : 'border-teal-400 bg-white text-teal-400 hover:bg-teal-50'
+        }`}
+        onClick={handleCardVerification}
+        disabled={isVerified}>
+        {isVerified ? '인증 완료' : '카드 인증하기'}
       </button>
     </div>
   );
 };
 
-export default PaymentCard;
+export default React.memo(PaymentCard);
