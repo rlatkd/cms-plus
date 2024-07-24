@@ -45,10 +45,9 @@ jobs:
         docker compose -f ${{ env.COMPOSE_FILE }} build
         docker compose -f ${{ env.COMPOSE_FILE }} push
 
-    - name: Create ECS context
+    - name: Create and Use ECS context
       run: |
-        aws ecs create-cluster --cluster-name ${{ env.ECS_CLUSTER }} || true
-        docker context create ecs myecscontext
+        docker context create ecs myecscontext --from-env
         docker context use myecscontext
 
     - name: Deploy to ECS
