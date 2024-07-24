@@ -16,6 +16,7 @@ import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
@@ -60,12 +61,23 @@ public class MemberService {
         int countMemberListItem = memberCustomRepository.countAllMemberByVendor(vendorId, memberSearch);
 
         List<MemberListItemRes> memberListItemRes = memberCustomRepository
-                .findAllMemberByVendor(vendorId, memberSearch, pageable)
+                .searchAllMemberByVendor(vendorId, memberSearch, pageable)
                 .stream()
                 .map(MemberListItemRes::fromEntity)
                 .toList();
 
         return new PageRes<>(countMemberListItem, pageable.getSize(), memberListItemRes);
+    }
+
+    /**
+     * 해당 고객 회원의 기본정보 목록 조회
+     * */
+    public PageRes<MemberDto> findAllMemberBasicInfo(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
+        int totalCount = memberCustomRepository.countAllMembers(vendorId, memberSearch);
+        List<MemberDto> members = memberCustomRepository.findAllMembers(vendorId, memberSearch, pageable).stream()
+            .map(MemberDto::fromEntity)
+            .toList();
+        return new PageRes<>(totalCount, pageable.getSize(), members);
     }
 
     /*
