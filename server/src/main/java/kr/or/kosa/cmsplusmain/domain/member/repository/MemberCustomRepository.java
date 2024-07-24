@@ -1,19 +1,16 @@
 package kr.or.kosa.cmsplusmain.domain.member.repository;
 
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
-import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -37,7 +34,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     *
     * 기본 정렬: 최신 등록된 회원(회원 등록일 기준, not db 생성)
     * */
-    public List<Member> findAllMemberByVendor(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
+    public List<Member> searchAllMemberByVendor(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
         return jpaQueryFactory
             .selectFrom(member)
             .leftJoin(member.contracts, contract).on(contract.deleted.isFalse())
@@ -61,6 +58,43 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             .offset(pageable.getPage())
             .limit(pageable.getSize())
             .fetch();
+    }
+
+    /**
+     * 회원 기본정보 목록
+     * */
+    public List<Member> findAllMembers(Long vendorId, MemberSearchReq memberSearch, PageReq pageReq) {
+        return jpaQueryFactory
+            .selectFrom(member)
+            .where(
+                member.vendor.id.eq(vendorId),
+                member.deleted.isFalse(),
+                memberIdContains(memberSearch.getMemberId()),
+                memberNameContains(memberSearch.getMemberName()),
+                memberPhoneContains(memberSearch.getMemberPhone())
+            )
+            .offset(pageReq.getPage())
+            .limit(pageReq.getSize())
+            .fetch();
+    }
+
+    /**
+     * 회원 기본정보 목록 개수
+     * */
+    public int countAllMembers(Long vendorId, MemberSearchReq memberSearch) {
+        Long res = jpaQueryFactory
+            .select(member.count())
+            .from(member)
+            .where(
+                member.vendor.id.eq(vendorId),
+                member.deleted.isFalse(),
+                memberIdContains(memberSearch.getMemberId()),
+                memberNameContains(memberSearch.getMemberName()),
+                memberPhoneContains(memberSearch.getMemberPhone())
+            )
+            .fetchOne();
+
+        return (res != null) ? res.intValue() : 0;
     }
 
     /*
@@ -172,6 +206,9 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     }
     private BooleanExpression memberEmailEq(String email) {
         return StringUtils.hasText(email) ?  member.email.eq(email) : null;
+    }
+    private BooleanExpression memberIdContains(Long memberId) {
+        return (memberId != null) ?  member.id.stringValue().contains(memberId.toString()) : null;
     }
 
     private BooleanExpression memberPhoneEq(String phone) {
