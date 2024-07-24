@@ -10,9 +10,9 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: t3-back-messagingecr2
-  ECS_CLUSTER: t3-back-ecscluster
+  ECS_CLUSTER: t3-back-ecscluster2
   ECS_CONTAINER: t3-back-messagingcontainer2
-  ECS_SERVICE: t3-back-messagingservice2
+  ECS_SERVICE: t3-back-ecscluster2/t3-back-messagingservice2
   ECS_TASK_DEFINITION: task-definition-messaging.json
 
 permissions:
