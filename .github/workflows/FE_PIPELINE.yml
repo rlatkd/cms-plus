@@ -1,43 +1,43 @@
-name: FE PIPELINE
+# name: FE PIPELINE
 
-on:
-  push:
-    branches:
-      - dev
-    paths:
-      - 'client/**'
+# on:
+#   push:
+#     branches:
+#       - dev
+#     paths:
+#       - 'client/**'
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+# permissions:
+#   contents: write
+#   pages: write
+#   id-token: write
 
-jobs:
-  fe-pipeline:
-    runs-on: ubuntu-latest
+# jobs:
+#   fe-pipeline:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
 
-      - name: Git Config
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+#       - name: Git Config
+#         run: |
+#           git config --global user.name 'github-actions[bot]'
+#           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: LOG
-        run: |
-          timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
-          log_file="DEPLOY_LOG/client/FE_CD_LOG_$timestamp.log"
-          mkdir -p DEPLOY_LOG/client
-          echo "프론트엔드 배포 로그" >> "$log_file"
-          git add "$log_file"
-          git commit -m "release: $timestamp FE 배포 완료"
-          git push origin dev
+#       - name: LOG
+#         run: |
+#           timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+#           log_file="DEPLOY_LOG/client/FE_CD_LOG_$timestamp.log"
+#           mkdir -p DEPLOY_LOG/client
+#           echo "프론트엔드 배포 로그" >> "$log_file"
+#           git add "$log_file"
+#           git commit -m "release: $timestamp FE 배포 완료"
+#           git push origin dev
 
-      - name: Merge to Prod
-        run: |
-          git fetch origin
-          git checkout prod || git checkout -b prod
-          git merge dev
-          git push origin prod
+#       - name: Merge to Prod
+#         run: |
+#           git fetch origin
+#           git checkout prod || git checkout -b prod
+#           git merge dev
+#           git push origin prod
