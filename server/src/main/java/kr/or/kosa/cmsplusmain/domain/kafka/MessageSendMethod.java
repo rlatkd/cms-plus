@@ -16,4 +16,5 @@ public enum MessageSendMethod implements BaseEnum {
 		this.title = title;
 		this.code = this.name();
 	}
+	
 }
