@@ -167,9 +167,6 @@ public class VendorService {
 			.build();
 	}
 
-	public boolean isExistUsername(String username) {
-		return vendorCustomRepository.isExistUsername(username);
-	}
 
 	private Cookie createCookie(String key, String value) {
 
@@ -210,7 +207,7 @@ public class VendorService {
 			// 인증번호 일치여부 검증
 			String value = redisTemplate.opsForValue().get(key);
 			if(value != null && value.equals(emailIdFindReq.getAuthenticationNumber())){
-				vendor = vendorCustomRepository.findByNameAndPhone(emailIdFindReq.getName(), emailIdFindReq.getEmail());
+				vendor = vendorCustomRepository.findByNameAndEmail(emailIdFindReq.getName(), emailIdFindReq.getEmail());
 			}
 		}
 		redisTemplate.delete(key);
@@ -273,7 +270,8 @@ public class VendorService {
 	/*
 	 * 인증번호 요청
 	 * */
-	public void requestVerification(NumberReq numberReq) {
+	public void requestAuthenticationNumber(NumberReq numberReq) {
+
 		// 인증번호 생성 (6자리)
 		Random random = new Random();
 		String authenticationNumber = String.valueOf( random.nextInt(900000) + 100000);
@@ -285,25 +283,25 @@ public class VendorService {
 		String key = numberReq.getUserInfo() +":"+ numberReq.getMethodInfo();
         redisTemplate.opsForValue().set(key, authenticationNumber, 5, TimeUnit.MINUTES);
 
-		// 메세지 호출 - SMS 일때
-		if(numberReq.getMethod().equals(MessageSendMethod.SMS)){
-			SmsMessageDto smsMessageDto =  new SmsMessageDto(messageText,numberReq.getMethodInfo());
-			System.out.println("<-----임시 SMS 요청완료---->");
-//			kafkaMessagingService.produceMessaging(smsMessageDto);
+		// 다형성을 이용한 메시지 전송 (SMS, EMAIL)
+		MessageDto messageDto;
+		if (numberReq.getMethod().equals(MessageSendMethod.SMS)) {
+			messageDto = new SmsMessageDto(messageText, numberReq.getMethodInfo());
+		} else {
+			messageDto = new EmailMessageDto(messageText, numberReq.getMethodInfo());
 		}
-
-		// 메세지 호출 - EMAIL 일때
-		else if(numberReq.getMethod().equals(MessageSendMethod.EMAIL)){
-			EmailMessageDto emailMessageDto =  new EmailMessageDto(messageText,numberReq.getMethodInfo());
-			System.out.println("<-----임시 EMAIL 요청완료---->");
-//			kafkaMessagingService.produceMessaging(emailMessageDto);
-		}
+//		kafkaMessagingService.produceMessaging(messageDto);
 
 		// Redis에서 저장된 값 확인
 		String storedValue = redisTemplate.opsForValue().get(key);
 		System.out.println("<-----Redis 저장 확인---->");
 		System.out.println("Key: " + key);
 		System.out.println("Value: " + storedValue);
+	}
+
+
+	public boolean isExistUsername(String username) {
+		return vendorCustomRepository.isExistUsername(username);
 	}
 
 	/*

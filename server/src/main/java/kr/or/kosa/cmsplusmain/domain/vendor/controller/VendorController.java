@@ -98,7 +98,6 @@ public class VendorController {
 	 * */
 	@PostMapping("/pw-reset")
 	public void resetPassword(@RequestBody @Valid PwResetReq pwResetReq) {
-		System.out.println(pwResetReq.getUsername());
 		vendorService.resetPassword(pwResetReq);
 	}
 
@@ -106,7 +105,7 @@ public class VendorController {
 	 * 인증번호 요청
 	 * */
 	@PostMapping("/request-number")
-	public void requestVerificationCode(@RequestBody @Valid NumberReq numberReq) {
-		vendorService.requestVerification(numberReq);
+	public void requestAuthenticationNumber(@RequestBody @Valid NumberReq numberReq) {
+		vendorService.requestAuthenticationNumber(numberReq);
 	}
 }

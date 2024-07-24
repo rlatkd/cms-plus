@@ -2,7 +2,9 @@ package kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import lombok.Getter;
 
@@ -22,7 +24,8 @@ public abstract class IdFindReq {
     @NotNull
     private MessageSendMethod method;
 
-    @NotNull
+    @NotBlank
+    @PersonName
     private String name;
 
     @NotNull

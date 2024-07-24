@@ -11,5 +11,5 @@ public class IdFindRes {
 
     @NotNull
     @Username
-    private final String usernmae;
+    private final String username;
 }
