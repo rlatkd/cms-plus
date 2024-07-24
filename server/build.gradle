@@ -100,10 +100,13 @@ asciidoctor {
     dependsOn test
     // source를 지정하면 특정 adoc만 HTML로 만듬
     sources {
-        include("**/index.adoc")
+        include("**")
     }
     // 경로를 baseDir로 맞춰줌
     baseDirFollowsSourceFile()
+    doFirst {
+        file(snippetsDir).mkdirs()
+    }
 }
 
 // REST Docs
@@ -116,6 +119,10 @@ tasks.register('copyDocs', Copy) {
 // REST Docs
 build {
     dependsOn copyDocs
+}
+
+bootJar {
+    mainClass = 'kr.or.kosa.cmsplusmain.CmsplusMainApplication' // 실제 메인 클래스 이름으로 변경
 }
 
 /**

@@ -90,10 +90,32 @@ export const updateMemberBaic = async (memberId, memberData) => {
 // 회원 삭제
 export const deleteMember = async memberId => {
   try {
-    const res = await privateAxios.delete(`/v1/vendor/members/${memberId}`);
+    const res = await privateAxios.delete(`/v1/vendor/management/members/${memberId}`);
     return res;
   } catch (err) {
     console.error('회원 삭제 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 회원 삭제 - 회원의 진행중인 계약수
+export const getContractListByMember = async memberId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/management/members/contracts/${memberId}`);
+    return res;
+  } catch (err) {
+    console.error('회원 삭제 - 회원의 진행중인 계약수 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 회원 삭제 - 회원의 진행중인 청구수
+export const getBillingListByMember = async memberId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/management/members/${memberId}/billing`);
+    return res;
+  } catch (err) {
+    console.error('회원 삭제 - 회원의 진행중인 청구수 => ', err.response.data);
     throw err;
   }
 };

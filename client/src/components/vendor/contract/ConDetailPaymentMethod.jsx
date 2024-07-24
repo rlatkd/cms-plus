@@ -2,41 +2,45 @@ import InputWeb from '@/components/common/inputs/InputWeb';
 import ConDetailPaymentCard from './ConDetailPaymentCard';
 import ConDetailPaymentCMS from './ConDetailPaymentCMS';
 import ConDetailPaymentVirtual from './ConDetailPaymentVirtual';
+import dayjs from 'dayjs';
 
 const ConDetailPaymentMethod = ({ contractData }) => {
-
   const paymentTypeInfo = contractData.paymentTypeInfo;
   const paymentType = paymentTypeInfo.paymentType.code;
 
+  // <------ 공통화 필요 여부 고려중 ------>
+  const formatDateTime = dateTime => {
+    return dayjs(dateTime).format('YYYY-MM-DD HH:mm:ss');
+  };
 
   const componentMap = {
     AUTO: () => {
       const paymentMethodInfo = contractData.paymentMethodInfo;
-      const paymentMethod = (paymentMethodInfo) ? paymentMethodInfo.paymentMethod : null;
-      const paymentMethodCode = (paymentMethod) ? paymentMethod.code : '';
-      
+      const paymentMethod = paymentMethodInfo ? paymentMethodInfo.paymentMethod : null;
+      const paymentMethodCode = paymentMethod ? paymentMethod.code : '';
+
       let res;
       if (paymentMethodCode === 'CARD') {
-        res = <ConDetailPaymentCard contractData={contractData}/>
+        res = <ConDetailPaymentCard contractData={contractData} />;
       } else if (paymentMethodCode === 'CMS') {
-        res = <ConDetailPaymentCMS contractData={contractData}/>
+        res = <ConDetailPaymentCMS contractData={contractData} />;
       }
-      
+
       return (
         <>
           {res}
           <InputWeb
-          id='simpConsentInfo'
-          label='간편동의여부'
-          value={`${paymentTypeInfo.consentStatus.title} (${paymentTypeInfo.simpleConsentReqDateTime})`}
-          type='text'
-          classContainer='w-1/2'
-          disabled={true}
-        />
+            id='simpConsentInfo'
+            label='간편동의여부'
+            value={`${paymentTypeInfo.consentStatus.title} (${formatDateTime(paymentTypeInfo.simpleConsentReqDateTime)})`}
+            type='text'
+            classContainer='w-1/2'
+            disabled={true}
+          />
         </>
       );
     },
-    VIRTUAL: () => <ConDetailPaymentVirtual contractData={contractData} />
+    VIRTUAL: () => <ConDetailPaymentVirtual contractData={contractData} />,
   };
 
   const Content = componentMap[paymentType] || (() => '');

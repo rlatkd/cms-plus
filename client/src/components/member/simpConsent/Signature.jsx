@@ -18,7 +18,20 @@ const Signature = () => {
     return signatureRef.current && signatureRef.current.isEmpty();
   };
 
-  const saveSignature = () => {
+  const handleUploadSignature = async blob => {
+    try {
+      const formData = new FormData();
+      formData.append('file', blob, 'signature.png');
+
+      const fileUrl = await uploadSignature(formData);
+      return fileUrl;
+    } catch (error) {
+      console.error('Error uploading signature:', error);
+      throw error;
+    }
+  };
+
+  const saveSignature = async () => {
     if (signatureRef.current) {
       if (isSignatureEmpty()) {
         alert('서명을 먼저 생성해주세요.');
@@ -26,7 +39,7 @@ const Signature = () => {
       }
 
       const canvas = signatureRef.current.getCanvas();
-      canvas.toBlob(blob => {
+      canvas.toBlob(async blob => {
         const url = URL.createObjectURL(blob);
         setUserData({
           contractDTO: {
@@ -35,50 +48,28 @@ const Signature = () => {
             signatureBlob: blob,
           },
         });
-        closeModal();
-      }, 'image/png');
-    }
-  };
 
-  const handleUploadSignature = async blob => {
-    setIsUploading(true);
-    setUploadStatus('업로드 중...');
-    try {
-      const formData = new FormData();
-      formData.append('file', blob, 'signature.png');
-
-      const fileUrl = await uploadSignature(formData);
-
-      setUploadStatus('업로드 성공!');
-      return fileUrl;
-    } catch (error) {
-      console.error('Error uploading signature:', error);
-      setUploadStatus('업로드 실패. 다시 시도해주세요.');
-      return null;
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const saveSignatureAsPNG = async () => {
-    if (userData.contractDTO.signatureBlob) {
-      try {
-        const fileUrl = await handleUploadSignature(userData.contractDTO.signatureBlob);
-        if (fileUrl) {
-          const link = document.createElement('a');
-          link.href = fileUrl;
-          link.download = 'signature.png';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          setUploadStatus('다운로드 완료!');
+        try {
+          setIsUploading(true);
+          setUploadStatus('업로드 중...');
+          const fileUrl = await handleUploadSignature(blob);
+          if (fileUrl) {
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.download = 'signature.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setUploadStatus('다운로드 완료!');
+          }
+        } catch (error) {
+          console.error('Error saving signature:', error);
+          setUploadStatus('서명 저장 중 오류가 발생했습니다.');
+        } finally {
+          setIsUploading(false);
+          closeModal();
         }
-      } catch (error) {
-        console.error('Error saving signature:', error);
-        setUploadStatus('서명 저장 중 오류가 발생했습니다.');
-      }
-    } else {
-      setUploadStatus('서명을 먼저 생성해주세요.');
+      }, 'image/png');
     }
   };
 
@@ -165,7 +156,12 @@ const Signature = () => {
 
       {isModalOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='rounded-lg bg-white p-4'>
+          <div className='relative rounded-lg bg-white p-4'>
+            <button
+              onClick={closeModal}
+              className='absolute right-2 top-2 text-gray-500 hover:text-gray-700'>
+              ✕
+            </button>
             <h3 className='mb-2 text-base font-semibold'>서명하기</h3>
             <SignatureCanvas
               ref={signatureRef}
@@ -181,31 +177,18 @@ const Signature = () => {
               </button>
               <button
                 onClick={saveSignature}
-                className='rounded-lg bg-mint px-4 py-2 text-sm text-white'>
-                저장하기
-              </button>
-              <button onClick={closeModal} className='rounded-lg bg-gray-200 px-4 py-2 text-sm'>
-                취소
+                disabled={isUploading}
+                className={`rounded-lg ${isUploading ? 'bg-gray-400' : 'bg-mint'} px-4 py-2 text-sm text-white`}>
+                {isUploading ? '처리 중...' : '저장 및 다운로드'}
               </button>
             </div>
+            {uploadStatus && (
+              <p
+                className={`mt-2 text-sm ${uploadStatus.includes('실패') ? 'text-red-500' : 'text-green-500'}`}>
+                {uploadStatus}
+              </p>
+            )}
           </div>
-        </div>
-      )}
-
-      {userData.contractDTO.signatureUrl && (
-        <div>
-          <button
-            onClick={saveSignatureAsPNG}
-            disabled={isUploading}
-            className={`mt-4 w-full rounded-lg ${isUploading ? 'bg-gray-400' : 'bg-mint'} px-4 py-2 text-sm text-white`}>
-            {isUploading ? '업로드 중...' : '서명 이미지 다운로드'}
-          </button>
-          {uploadStatus && (
-            <p
-              className={`mt-2 text-sm ${uploadStatus.includes('실패') ? 'text-red-500' : 'text-green-500'}`}>
-              {uploadStatus}
-            </p>
-          )}
         </div>
       )}
     </div>

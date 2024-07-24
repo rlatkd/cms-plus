@@ -32,3 +32,14 @@ export const requestVirtualAccountPayment = async paymentData => {
     throw err;
   }
 };
+
+// 회원 수정 - 결제 정보
+export const updatePaymentDetail = async (contractId, data) => {
+  try {
+    const res = await privateAxios.put(`/v1/vendor/management/members/payment/${contractId}`, data);
+    return res;
+  } catch (err) {
+    console.error('회원 수정 - 결제 정보 => ', err.response.data);
+    throw err;
+  }
+};

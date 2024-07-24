@@ -2,14 +2,8 @@ import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import FileUpload from '@/components/common/FileUpload';
-import { useEffect, useState } from 'react';
-import { formatBirth } from '@/utils/formatBirth';
-
-const cardOptions = [
-  { value: '', label: '--- 선택 ---' },
-  { value: 'KOOKMIN', label: '국민은행' },
-  { value: 'SHINHAN', label: '신한은행' },
-];
+import InputCalendar from '@/components/common/inputs/InputCalendar';
+import bankOptions from '@/utils/bank/cardOptions';
 
 const CmsMethodForm = ({ paymentMethod, formType }) => {
   const {
@@ -35,6 +29,7 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
     // TODO
     // simpleConsentReqDateTime 동의 요청시간 일단은 현재시각으로 설정
     const currentTime = new Date().toISOString();
+    console.log(URL.createObjectURL(file));
     setPaymentTypeInfoReq_Auto({
       consentImgUrl: URL.createObjectURL(file),
       consetImgName: file.name,
@@ -53,8 +48,8 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
             label='은행'
             classContainer='w-1/4'
             classLabel='text-15 text-text_black font-700 ml-2'
-            classSelect='py-3 pr-20 p-4 rounded-lg'
-            options={cardOptions}
+            classSelect='py-3 p-4 rounded-lg'
+            options={bankOptions}
             required
             value={paymentMethodInfoReq_Cms.bank}
             onChange={handleChangeSelect}
@@ -88,16 +83,16 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
         </div>
       </div>
       <div className='flex'>
-        <InputWeb
+        <InputCalendar
           id='accountOwnerBirth'
           label='생년월일'
           placeholder='생년월일8자리'
-          type='text'
           required
+          height='45px'
+          width='100%'
           classContainer='flex-1'
-          classInput='py-3 pr-20'
-          value={formatBirth(paymentMethodInfoReq_Cms.accountOwnerBirth)}
-          onChange={handleChangeInput}
+          value={paymentMethodInfoReq_Cms.accountOwnerBirth}
+          handleChangeValue={handleChangeInput}
         />
         <div className='relative flex flex-1 items-end ml-5'>
           <InputWeb

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import Input from '@/components/common/inputs/Input';
 import SelectField from '@/components/common/selects/SelectField';
-import { useUserDataStore } from '@/stores/useUserDataStore';
+import { verifyCMS } from '@/apis/validation';
 
 const bankOptions = [
+  { value: '', label: '은행을 선택해주세요' },
   { value: 'SHINHAN', label: '신한은행' },
   { value: 'KB', label: '국민은행' },
   { value: 'WOORI', label: '우리은행' },
@@ -18,38 +19,45 @@ const bankOptions = [
   { value: 'KNB', label: '경남은행' },
 ];
 
-const PaymentCMS = () => {
-  const { userData, setUserData } = useUserDataStore();
-  const [localData, setLocalData] = useState({
-    bank: userData.paymentDTO.bank || '',
-    accountHolder: userData.paymentDTO.accountHolder || '',
-    accountOwnerBirth: userData.paymentDTO.accountOwnerBirth || '',
-    accountNumber: userData.paymentDTO.accountNumber || '',
-  });
+const PaymentCMS = ({ localData, onInputChange, onVerificationComplete, isVerified }) => {
+  const handleCMSVerification = useCallback(async () => {
+    try {
+      const cmsData = {
+        paymentMethod: 'CMS',
+        accountNumber: localData.accountNumber,
+        accountOwner: localData.accountHolder,
+        accountOwnerBirth: localData.accountOwnerBirth,
+      };
 
-  useEffect(() => {
-    setLocalData({
-      bank: userData.paymentDTO.bank || '',
-      accountHolder: userData.paymentDTO.accountHolder || '',
-      accountOwnerBirth: userData.paymentDTO.accountOwnerBirth || '',
-      accountNumber: userData.paymentDTO.accountNumber || '',
-    });
-  }, [userData.paymentDTO]);
+      const result = await verifyCMS(cmsData);
 
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    if (name === 'accountOwnerBirth') {
-      const formattedValue = formatBirthDate(value);
-      setLocalData(prev => ({ ...prev, [name]: formattedValue }));
-    } else {
-      setLocalData(prev => ({ ...prev, [name]: value }));
+      if (result === true) {
+        onVerificationComplete(true);
+        alert('계좌 인증이 성공적으로 완료되었습니다.');
+      } else {
+        onVerificationComplete(false);
+        alert('계좌 인증에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('CMS verification error:', error);
+      onVerificationComplete(false);
+      alert('계좌 인증에 실패했습니다. 다시 시도해주세요.');
     }
-  };
+  }, [localData, onVerificationComplete]);
 
-  const handleBlur = e => {
-    const { name, value } = e.target;
-    setUserData({ paymentDTO: { ...userData.paymentDTO, [name]: value } });
-  };
+  const handleInputChange = useCallback(
+    e => {
+      const { name, value } = e.target;
+      let formattedValue = value;
+
+      if (name === 'accountOwnerBirth') {
+        formattedValue = formatBirthDate(value);
+      }
+
+      onInputChange(name, formattedValue);
+    },
+    [onInputChange]
+  );
 
   const formatBirthDate = value => {
     const cleaned = value.replace(/\D/g, '');
@@ -75,7 +83,6 @@ const PaymentCMS = () => {
           options={bankOptions}
           value={localData.bank}
           onChange={handleInputChange}
-          onBlur={handleBlur}
         />
         <Input
           label='예금주명'
@@ -85,7 +92,6 @@ const PaymentCMS = () => {
           placeholder='최대 20자리'
           value={localData.accountHolder}
           onChange={handleInputChange}
-          onBlur={handleBlur}
           maxLength={20}
         />
         <Input
@@ -96,7 +102,6 @@ const PaymentCMS = () => {
           placeholder='YYYY-MM-DD (예: 1990-01-01)'
           value={localData.accountOwnerBirth}
           onChange={handleInputChange}
-          onBlur={handleBlur}
           maxLength={10}
         />
         <Input
@@ -107,16 +112,21 @@ const PaymentCMS = () => {
           placeholder='최대 20자리'
           value={localData.accountNumber}
           onChange={handleInputChange}
-          onBlur={handleBlur}
           maxLength={20}
         />
       </form>
-
-      <button className='mt-4 w-full rounded-lg border border-teal-400 bg-white py-2 text-sm font-normal text-teal-400 transition-colors hover:bg-teal-50'>
-        계좌 인증하기
+      <button
+        className={`mt-4 w-full rounded-lg border py-2 text-sm font-normal transition-colors ${
+          isVerified
+            ? 'border-green-400 bg-green-50 text-green-400'
+            : 'border-teal-400 bg-white text-teal-400 hover:bg-teal-50'
+        }`}
+        onClick={handleCMSVerification}
+        disabled={isVerified}>
+        {isVerified ? '인증 완료' : '계좌 인증하기'}
       </button>
     </div>
   );
 };
 
-export default PaymentCMS;
+export default React.memo(PaymentCMS);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import Main from '@/components/member/simpConsent/Main';
 import BasicInfo from '@/components/member/simpConsent/BasicInfo';
@@ -28,19 +28,82 @@ const SimpConsentPage = () => {
 
   const userData = useUserDataStore(state => state.userData);
   const setUserData = useUserDataStore(state => state.setUserData);
+  const [isCardVerified, setIsCardVerified] = useState(false);
+  const paymentInfoRef = useRef();
+  const contractInfoRef = useRef();
+
+  const handleCardVerificationComplete = verified => {
+    setIsCardVerified(verified);
+  };
 
   const prepareData = data => {
     return {
       ...data,
       contractDay: parseInt(data.contractDay, 10),
       totalPrice: parseInt(data.totalPrice, 10),
-      signatureUrl: null, // 또는 적절한 이미지 데이터로 변경
-      signatureBlob: null, // 필요 없다면 제거
+      signatureUrl: null,
+      signatureBlob: null,
     };
   };
 
+  const validateBasicInfo = () => {
+    const { name, phone, email } = userData.memberDTO;
+    const missingFields = [];
+
+    if (!name) missingFields.push('회원명');
+    if (!phone) missingFields.push('휴대전화');
+    if (!email) missingFields.push('이메일');
+
+    return missingFields;
+  };
+
+  const validateSignatureInfo = () => {
+    const { signatureUrl } = userData.contractDTO;
+    const missingFields = [];
+
+    if (!signatureUrl) missingFields.push('서명');
+
+    return missingFields;
+  };
+
   const handleClickNext = async () => {
+    if (status === 1) {
+      const missingFields = validateBasicInfo();
+      if (missingFields.length > 0) {
+        alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
+        return;
+      }
+    }
+
+    if (status === 2) {
+      if (contractInfoRef.current) {
+        const missingFields = contractInfoRef.current.validateContractInfo();
+        if (missingFields.length > 0) {
+          alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
+          return;
+        }
+      }
+    }
+
+    if (status === 3) {
+      if (paymentInfoRef.current) {
+        const missingFields = paymentInfoRef.current.validatePaymentInfo();
+
+        if (missingFields.length > 0) {
+          alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
+          return;
+        }
+        paymentInfoRef.current.handleNextClick();
+      }
+    }
+
     if (status === 4) {
+      const missingFields = validateSignatureInfo();
+      if (missingFields.length > 0) {
+        alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
+        return;
+      }
+
       try {
         setStatus(5); // Show loading
         const preparedData = prepareData(userData);
@@ -56,7 +119,6 @@ const SimpConsentPage = () => {
         if (response.status === 200) {
           setStatus(6); // Show success
         } else {
-          // Handle error
           console.error('API request failed');
           setStatus(4); // Go back to signature page
         }
@@ -72,8 +134,10 @@ const SimpConsentPage = () => {
   const componentMap = {
     0: Main,
     1: () => <BasicInfo userData={userData} setUserData={setUserData} />,
-    2: () => <ContractInfo userData={userData} setUserData={setUserData} />,
-    3: () => <PaymentInfo userData={userData} setUserData={setUserData} />,
+    2: () => <ContractInfo ref={contractInfoRef} />,
+    3: () => (
+      <PaymentInfo ref={paymentInfoRef} onVerificationComplete={handleCardVerificationComplete} />
+    ),
     4: () => <Signature userData={userData} setUserData={setUserData} />,
     5: () => <Loading content={'등록중...'} />,
     6: () => <Success userData={userData} />,

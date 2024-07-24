@@ -37,8 +37,6 @@ services:
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_BROKER_ID: 1
-      #도커 네트워크 내부에선 컨테이너들이 kafka:29092로 접근
-      #외부 애플리케이션(스프링부트)에선 localhost:9092로 접근
       KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://0.0.0.0:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -113,11 +111,12 @@ services:
     restart: unless-stopped
 
   kafdrop:
+    container_name: kafdrop
     image: obsidiandynamics/kafdrop
     ports: 
       - '9001:9000'
     environment:
-      KAFKA_BROKER_CONNECT: "kafka3:29094"
+      KAFKA_BROKER_CONNECT: 'kafka3:29094'
     depends_on:
       - kafka1
       - kafka2

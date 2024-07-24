@@ -1,11 +1,14 @@
-import formatNumber from "@/utils/formatNumber";
+import formatNumber from '@/utils/format/formatNumber';
 
 const BillingSummary = ({ billingInfo, month }) => (
   <div className='bg-white rounded-xl shadow-md p-6'>
     <div className='flex justify-between items-center mb-6 border-b pb-2'>
       <h2 className='text-xl font-bold text-gray-800'>{month}월 청구 현황</h2>
       <p className='text-sm font-medium text-gray-600'>
-        총 <span className='font-bold text-indigo-600'>{formatNumber(billingInfo.totalBillingAmount)}건</span>
+        총{' '}
+        <span className='font-bold text-indigo-600'>
+          {formatNumber(billingInfo.totalBillingAmount)}건
+        </span>
       </p>
     </div>
     <div className='space-y-6'>
@@ -16,23 +19,39 @@ const BillingSummary = ({ billingInfo, month }) => (
         </p>
       </div>
       <div className='bg-gray-50 rounded-lg p-4'>
-      <p className='text-sm font-medium text-gray-700 mb-3'>청구 상태</p>
-      <div className='grid grid-cols-2 gap-4'>
-        {[
-          { label: '완납', value: billingInfo.statusCounts.PAID, color: 'bg-emerald-100 text-emerald-800' },
-          { label: '수납 대기중', value: billingInfo.statusCounts.WAITING_PAYMENT, color: 'bg-amber-100 text-amber-800' },
-          { label: '미납', value: billingInfo.statusCounts.NON_PAID, color: 'bg-rose-100 text-rose-800' },
-          { label: '생성', value: billingInfo.statusCounts.CREATED, color: 'bg-sky-100 text-sky-800' },
-        ].map(({ label, value, color }) => (
-          <div key={label} className={`${color} rounded-md p-3 shadow-sm`}>
-            <p className='text-xs font-medium mb-1'>{label}</p>
-            <p className='text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis'>
-              {formatNumber(value || 0)}건
-            </p>
-          </div>
-        ))}
+        <p className='text-sm font-medium text-gray-700 mb-3'>청구 상태</p>
+        <div className='grid grid-cols-2 gap-4'>
+          {[
+            {
+              label: '완납',
+              value: billingInfo.statusCounts.PAID,
+              color: 'bg-emerald-100 text-emerald-800',
+            },
+            {
+              label: '수납 대기중',
+              value: billingInfo.statusCounts.WAITING_PAYMENT,
+              color: 'bg-amber-100 text-amber-800',
+            },
+            {
+              label: '미납',
+              value: billingInfo.statusCounts.NON_PAID,
+              color: 'bg-rose-100 text-rose-800',
+            },
+            {
+              label: '생성',
+              value: billingInfo.statusCounts.CREATED,
+              color: 'bg-sky-100 text-sky-800',
+            },
+          ].map(({ label, value, color }) => (
+            <div key={label} className={`${color} rounded-md p-3 shadow-sm`}>
+              <p className='text-xs font-medium mb-1'>{label}</p>
+              <p className='text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis'>
+                {formatNumber(value || 0)}건
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
     </div>
   </div>
 );

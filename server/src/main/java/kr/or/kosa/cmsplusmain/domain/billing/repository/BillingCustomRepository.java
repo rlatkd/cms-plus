@@ -9,6 +9,7 @@ import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -21,7 +22,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
@@ -69,7 +69,8 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				paymentTypeEq(search.getPaymentType()),
 				billingDateEq(search.getBillingDate()),
 				productNameContainsInBilling(search.getProductName()),
-				contractIdEq(search.getContractId())
+				contractIdEq(search.getContractId()),
+				memberIdEq(search.getMemberId())
 			)
 			.groupBy(billing.id, member.name, member.phone, billing.billingStatus, payment.paymentType, billing.billingDate)
 			.having(billingPriceLoe(search.getBillingPrice()))
@@ -99,7 +100,8 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				paymentTypeEq(search.getPaymentType()),
 				billingDateEq(search.getBillingDate()),
 				productNameContainsInBilling(search.getProductName()),
-				contractIdEq(search.getContractId())
+				contractIdEq(search.getContractId()),
+				memberIdEq(search.getMemberId())
 			)
 			.groupBy(billing.id)
 			.having(billingPriceLoe(search.getBillingPrice()))
@@ -170,6 +172,38 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.limit(pageable.getSize())
 			.fetch();
 	}
+	/*
+	 * 회원 삭제 - 청구 목록 조회
+	 * */
+	public List<Billing> findBillingListByMemberId(Long vendorId, Long memberId){
+		return jpaQueryFactory
+			.selectFrom(billing)
+			.join(billing.contract, contract)
+			.where(
+					contract.vendor.id.eq(vendorId),
+					contract.member.id.eq(memberId),
+					contractNotDel(),
+					billingNotDel()
+			)
+			.fetch();
+	}
+
+	/**
+	 * 회원의 완납 건을 제외한 청구 수
+	 * */
+	public int countInProgressBillingsByMember(Long memberId) {
+		Long res = jpaQueryFactory
+			.select(billing.countDistinct())
+			.from(billing)
+			.join(billing.contract, contract)
+			.where(
+				contract.member.id.eq(memberId),
+				billing.deleted.isFalse(),
+				billing.billingStatus.ne(BillingStatus.PAID)
+			)
+			.fetchOne();
+		return (res != null) ? res.intValue() : 0;
+	}
 
 	/*
 	 * 회원 상세 - 기본정보(청구수)
@@ -182,11 +216,30 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.where(
 					contract.vendor.id.eq(vendorId),
 					contract.member.id.eq(memberId),
-					contractNotDel()
+					contractNotDel(),
+					billingNotDel()
 			)
 			.fetchOne();
 
 		return (res == null) ? 0 : res.intValue();
+	}
+
+	/*
+	 * 회원 상세 - 기본정보(청구금액)
+  	 * */
+	public Long findBillingPriceByMemberId(Long vendorId, Long memberId){
+		return jpaQueryFactory
+				.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
+				.from(billingProduct)
+				.join(billingProduct.billing, billing)
+				.join(billing.contract, contract)
+				.where(
+						contract.vendor.id.eq(vendorId),
+						contract.member.id.eq(memberId),
+						contractNotDel(),
+						billingProductNotDel()
+				)
+				.fetchOne();
 	}
 
 	/*
@@ -203,24 +256,6 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 			.fetchOne();
 
 		return (res != null) ? res.intValue() : 0;
-	}
-
-	/*
-	 회원 상세 - 기본정보(청구금액)
-	  */
-	public Long findBillingPriceByMemberId(Long vendorId, Long memberId){
-		return jpaQueryFactory
-				.select(billingProduct.price.longValue().multiply(billingProduct.quantity).sum())
-				.from(billingProduct)
-				.join(billingProduct.billing, billing)
-				.join(billing.contract, contract)
-				.where(
-						contract.vendor.id.eq(vendorId),
-						contract.member.id.eq(memberId),
-						contractNotDel(),
-						billingProductNotDel()
-				)
-				.fetchOne();
 	}
 
 	/*
@@ -302,5 +337,8 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	}
 	private BooleanExpression contractIdEq(Long contractId) {
 		return contractId != null ? contract.id.eq(contractId) : null;
+	}
+	private BooleanExpression memberIdEq(Long memberId) {
+		return memberId != null ? member.id.eq(memberId) : null;
 	}
 }

@@ -4,7 +4,7 @@ import Table from '@/components/common/tables/Table';
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { cols } from '@/utils/tableElements/memberContractElement';
-import { formatProducts } from '@/utils/formatProducts';
+import { formatProducts } from '@/utils/format/formatProducts';
 
 const MemDetailContractList = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록

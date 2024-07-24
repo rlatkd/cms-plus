@@ -1,8 +1,9 @@
 import { updateMemberBaic } from '@/apis/member';
 import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
+import { useStatusStore } from '@/stores/useStatusStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const MemberInfoUpdatePage = () => {
