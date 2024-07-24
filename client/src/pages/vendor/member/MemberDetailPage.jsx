@@ -3,17 +3,17 @@ import MemDetailBasicInfo from '@/components/vendor/member/details/MemDetailBasi
 import MemDetailContractList from '@/components/vendor/member/details/MemDetailContractList';
 import MemDetailDisplay from '@/components/vendor/member/details/MemDetailDisplay';
 import MemDetailHeader from '@/components/vendor/member/details/MemDetailHeader';
+import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import { useMemberDetailStore } from '@/stores/useMemberDetailStore';
-import { useMemberStore } from '@/stores/useMemberStore';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 const MemberDetailPage = () => {
   const { memberData, setMemberInfo } = useMemberDetailStore();
-  const { setBasicInfo } = useMemberStore();
+  const { setBasicInfo } = useMemberBasicStore();
   const memberId = useParams();
 
-  // 회원 상세 조회
+  // <------ 회원 상세 조회 ------>
   const axiosMemberDetail = async () => {
     try {
       const res = await getMemberDetail(memberId.id);
@@ -37,7 +37,7 @@ const MemberDetailPage = () => {
     }
   };
 
-  // 회원 정보 저장
+  // <------ 회원 정보 저장 ------>
   const setMemberBasicInfo = data => {
     setBasicInfo(data);
   };

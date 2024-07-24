@@ -31,7 +31,7 @@ const MemberListPage = () => {
 
   const navigate = useNavigate();
 
-  // 회원 목록 조회
+  // <--------회원 목록 조회-------->
   const axiosMemberList = useCallback(
     async (
       searchParams = {},
@@ -58,7 +58,7 @@ const MemberListPage = () => {
     [currentPage, currentorder, currentorderBy]
   );
 
-  // 데이터 변환
+  // <--------데이터 변환-------->
   const transformMemberListItem = data => {
     return data.map(member => {
       const { contractPrice, contractCount, memberPhone } = member;
@@ -72,7 +72,7 @@ const MemberListPage = () => {
     });
   };
 
-  // 검색 변경 핸들러
+  // <--------검색 변경 핸들러-------->
   const handleChangeSearch = (key, value) => {
     const updatedSearch = search.map(searchItem =>
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
@@ -89,20 +89,19 @@ const MemberListPage = () => {
     setCurrentSearchParams(searchParams);
   };
 
-  // 검색 클릭 이벤트 핸들러
+  // <--------검색 클릭 이벤트 핸들러-------->
   const handleClickSearch = async () => {
     axiosMemberList(debouncedSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
 
-  // 회원 상세 조회 페이지 이동
+  // <--------회원 상세 조회 페이지 이동-------->
   const MoveMemberDetail = async memberId => {
-    console.log(memberId);
     navigate(`detail/${memberId}`);
   };
 
-  // 디바운스 커스텀훅
+  // <--------디바운스 커스텀훅-------->
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);
 
   useEffect(() => {
@@ -114,7 +113,7 @@ const MemberListPage = () => {
   }, [currentPage]);
 
   return (
-    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full '>
+    <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center '>
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>

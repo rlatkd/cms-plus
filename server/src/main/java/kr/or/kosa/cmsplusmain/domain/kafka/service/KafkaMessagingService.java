@@ -8,16 +8,17 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Service
+// @Service
 @RequiredArgsConstructor
 public class KafkaMessagingService {
 
 	@Value("${kafkaTopic.messagingTopic}")
 	private String messagingTopic;
-	private final KafkaTemplate<String, MessageDto> kafkaTemplate;
+
+	private final KafkaTemplate<String, MessageDto> messagingkafkaTemplate;
 
 	public void produceMessaging(MessageDto messageDto) {
-		kafkaTemplate.send(messagingTopic, messageDto);
+		messagingkafkaTemplate.send(messagingTopic, messageDto);
 	}
 
 }

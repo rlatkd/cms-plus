@@ -5,9 +5,11 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class BillingProductReq {
 	@NotNull
 	private Long productId;			// 상품 ID

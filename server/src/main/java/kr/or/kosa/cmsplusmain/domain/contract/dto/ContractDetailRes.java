@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
 import lombok.Builder;
@@ -28,6 +30,12 @@ public class ContractDetailRes {
 	private final PaymentTypeInfoRes paymentTypeInfo;               // 결제방식
 	private final PaymentMethodInfoRes paymentMethodInfo;			// 결제수단
 
+	private final Boolean autoBilling;								// 자동 청구 생성
+	private final Boolean autoInvoiceSend;							// 자동 청구서 발송
+	private final MessageSendMethod invoiceSendMethod;				// 청구서 발송 수단
+	private final String payerPhone;								// 납부자 휴대전화
+	private final String payerEmail;								// 납부자 이메일
+
 	private final Long totalBillingCount;							// 청구 총 개수
 	private final Long totalBillingPrice;							// 청구 총 금액
 
@@ -42,6 +50,8 @@ public class ContractDetailRes {
 			.map(ContractProductRes::fromEntity)
 			.toList();
 
+		final Member member = contract.getMember();
+
 		return ContractDetailRes.builder()
 			.contractId(contract.getId())
 			.contractName(contract.getContractName())
@@ -54,6 +64,11 @@ public class ContractDetailRes {
 			.contractDay(contract.getContractDay())
 			.paymentTypeInfo(paymentTypeInfoRes)
 			.paymentMethodInfo(paymentMethodInfoRes)
+			.autoBilling(member.isAutoBilling())
+			.autoInvoiceSend(member.isAutoInvoiceSend())
+			.invoiceSendMethod(member.getInvoiceSendMethod())
+			.payerPhone(member.getPhone())
+			.payerEmail(member.getEmail())
 			.totalBillingCount(totalBillingCount)
 			.totalBillingPrice(totalBillingPrice)
 			.build();

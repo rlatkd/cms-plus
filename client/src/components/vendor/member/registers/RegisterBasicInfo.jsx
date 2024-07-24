@@ -1,9 +1,9 @@
 import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
 
-const RegisterBasicInfo = () => {
+const RegisterBasicInfo = ({ formType }) => {
   return (
     <>
-      <BasicInfoForm formType='CREATE' />
+      <BasicInfoForm formType={formType} />
     </>
   );
 };

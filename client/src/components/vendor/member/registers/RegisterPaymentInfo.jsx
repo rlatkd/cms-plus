@@ -1,11 +1,12 @@
-const RegisterPaymentInfo = () => {
+import React from 'react';
+import PaymentInfoForm from '@/components/common/memberForm/PaymentInfoForm';
+
+const RegisterContractInfo = ({ formType }) => {
   return (
-    <div>
-      RegisterPaymentInfo
-      <br />
-      회원 등록 결제정보
-    </div>
+    <>
+      <PaymentInfoForm formType={formType} />
+    </>
   );
 };
 
-export default RegisterPaymentInfo;
+export default RegisterContractInfo;

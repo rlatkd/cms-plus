@@ -34,7 +34,7 @@ const BillingListPage = () => {
 
   const navigate = useNavigate();
 
-  // 청구 목록 조회
+  // <--------청구 목록 조회-------->
   const axiosBillingList = useCallback(
     async (
       searchParams = {},
@@ -61,7 +61,7 @@ const BillingListPage = () => {
     [currentPage]
   );
 
-  // 데이터 변환
+  // <--------데이터 변환-------->
   const transformBillingListItem = data => {
     return data.map(billing => {
       const { billingPrice, billingProducts, paymentType, billingStatus, memberPhone } = billing;
@@ -77,7 +77,7 @@ const BillingListPage = () => {
     });
   };
 
-  // 검색 변경 핸들러
+  // <--------검색 변경 핸들러-------->
   const handleChangeSearch = (key, value) => {
     const updatedSearch = search.map(searchItem =>
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
@@ -94,14 +94,14 @@ const BillingListPage = () => {
     setCurrentSearchParams(searchParams);
   };
 
-  // 검색 클릭 이벤트 핸들러
+  // <--------검색 클릭 이벤트 핸들러-------->
   const handleClickSearch = async () => {
     axiosBillingList(debouncedSearchParams);
     setCurrentPage(1); // 검색 후 현재 페이지 초기화
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
 
-  // 청구 상세 조회 페이지 이동
+  // <--------청구 상세 조회 페이지 이동-------->
   const MoveBillingDetail = async billingId => {
     console.log(billingId);
     navigate(`detail/${billingId}`);
@@ -112,7 +112,7 @@ const BillingListPage = () => {
       navigate(`create`);
     };
 
-  // 디바운스 커스텀훅
+  // <--------디바운스 커스텀훅-------->
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);
 
   useEffect(() => {
@@ -124,7 +124,7 @@ const BillingListPage = () => {
   }, [currentPage]);
 
   return (
-    <div className='primary-dashboard flex flex-col h-1500 desktop:h-full'>
+    <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>
       <div className='flex justify-between pt-2 pb-4 w-full'>
         <div className='flex items-center'>
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>

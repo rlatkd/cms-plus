@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export const useMemberBasicStore = create(set => ({
-  // <---------- 기본정보 ---------->
+  // <------ 기본정보 ------>
   basicInfo: {
     memberName: '',
     memberPhone: '',
@@ -16,10 +16,10 @@ export const useMemberBasicStore = create(set => ({
     memberMemo: '',
   },
 
-  // 객체를 한번에 Set
-  setBasicInfo: Data => set({ basicInfo: Data }),
+  // <------ 객체를 한번에 Set ------>
+  setBasicInfo: data => set({ basicInfo: data }),
 
-  // 데이터 하나씩 Set
+  // <------ 데이터 하나씩 Set ------>
   setBasicInfoItem: data =>
     set(state => ({
       basicInfo: {
@@ -28,7 +28,7 @@ export const useMemberBasicStore = create(set => ({
       },
     })),
 
-  // Address 데이터 하나씩 set
+  // <------ Address 데이터 하나씩 set ------>
   setAddressInfoItem: data =>
     set(state => ({
       basicInfo: {
@@ -40,7 +40,7 @@ export const useMemberBasicStore = create(set => ({
       },
     })),
 
-  // 데이터 Reset
+  // <------ 데이터 Reset ------>
   resetBasicInfo: () =>
     set({
       basicInfo: {

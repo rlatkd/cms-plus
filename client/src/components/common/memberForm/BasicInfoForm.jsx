@@ -1,47 +1,51 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import TextArea from '../inputs/TextArea';
 import { formatPhone, removeDashes } from '@/utils/formatPhone';
-import { useEffect } from 'react';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
+import InputCalendar from '@/components/common/inputs/InputCalendar';
 
 // formType : CREATE, UPDATE, DETAIL
 const BasicInfoForm = ({ formType }) => {
-  const { basicInfo, resetBasicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
+  const { basicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
 
-  // 사용자 입력값
+  // <------ 인풋 필드 입력값 변경 ------>
   const handleChangeValue = e => {
     const { id, value } = e.target;
+    console.log('id', id);
+    console.log('value', value);
+    console.log(basicInfo);
 
-    if (id === 'zipcode' || id === 'address' || id === 'addressDetail') {
-      setAddressInfoItem({
-        [id]: value,
-      });
-    } else if (id === 'memberPhone' || id === 'memberHomePhone') {
+    if (id === 'memberPhone' || id === 'memberHomePhone') {
       setBasicInfoItem({
-        [id]: removeDashes(value === '' ? null : value),
+        [id]: removeDashes(value === '' ? '' : value),
       });
     } else {
       setBasicInfoItem({
-        [id]: value === '' ? null : value,
+        [id]: value === '' ? '' : value,
       });
     }
   };
 
-  // 공백입력 막기
+  // <------ 주소 필드 입력값 변경 ------>
+  const handleChangeAddress = (id, value) => {
+    setAddressInfoItem({
+      [id]: value,
+    });
+  };
+
+  // TODO
+  // <------ 정규표현식 예외처리 ------>
+
+  // <------ 공백입력 불가 ------>
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
   };
 
-  // formType : DETAIL일 경우 입력창 비활성화
+  // <------ formType : DETAIL일 경우 입력창 비활성화 ------>
   const isDisabled = formType === 'DETAIL';
 
-  // formType : CREATE일 경우 basicInfo를 reset
-  useEffect(() => {
-    if (formType === 'CREATE') resetBasicInfo();
-  }, []);
-
   return (
-    <div className='flex h-full p-5'>
+    <div className='flex flex-col pt-5 px-2 desktop:flex-row desktop:h-[calc(100%-100px)] extra_desktop:h-[520px]'>
       <div className='flex flex-col justify-between flex-1 '>
         <InputWeb
           id='memberName'
@@ -65,16 +69,17 @@ const BasicInfoForm = ({ formType }) => {
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
         />
-        <InputWeb
+        <InputCalendar
           id='memberEnrollDate'
           label='가입일'
           placeholder='ex) 2024-11-02'
-          type='text'
-          value={basicInfo.memberEnrollDate}
           required
+          height='55px'
+          width='100%'
+          classContainer='w-full'
           disabled={isDisabled}
-          onChange={handleChangeValue}
-          onKeyDown={handleKeyDown}
+          value={basicInfo.memberEnrollDate}
+          handleChangeValue={handleChangeValue}
         />
         <InputWeb
           id='memberHomePhone'
@@ -98,7 +103,9 @@ const BasicInfoForm = ({ formType }) => {
           onKeyDown={handleKeyDown}
         />
       </div>
-      <div className='flex-1 ml-10'>
+      {/* TODO */}
+      {/* 주소 입력 받기 */}
+      <div className='flex-1 desktop:ml-10'>
         <div className='flex items-end mb-5'>
           <InputWeb
             id='zipcode'
@@ -109,8 +116,7 @@ const BasicInfoForm = ({ formType }) => {
             classContainer='mr-5'
             disabled={isDisabled}
             readOnly
-            onChange={handleChangeValue}
-            onKeyDown={handleKeyDown}
+            handleChangeAddress={handleChangeAddress}
           />
           <InputWeb
             id='address'
@@ -120,8 +126,7 @@ const BasicInfoForm = ({ formType }) => {
             disabled={isDisabled}
             classContainer='w-full'
             readOnly
-            onChange={handleChangeValue}
-            onKeyDown={handleKeyDown}
+            onChange={handleChangeAddress}
           />
         </div>
         <InputWeb
@@ -132,10 +137,8 @@ const BasicInfoForm = ({ formType }) => {
           value={basicInfo.memberAddress.addressDetail}
           disabled={isDisabled}
           classContainer='mb-3'
-          onChange={handleChangeValue}
-          onKeyDown={handleKeyDown}
+          onChange={e => handleChangeAddress(e.target.id, e.target.value)}
         />
-
         <TextArea
           id='memberMemo'
           label='메모'

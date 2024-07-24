@@ -18,17 +18,20 @@ public class KafkaProducerConfig {
 
     // 결제결과 메인서버에 발송
     @Bean
-    public KafkaTemplate<String, PaymentResultDto> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, PaymentResultDto> paymentResultkafkaTemplate() {
+        return new KafkaTemplate<>(paymentResultproducerFactory());
     }
 
     @Bean
-    public ProducerFactory<String, PaymentResultDto> producerFactory() {
+    public ProducerFactory<String, PaymentResultDto> paymentResultproducerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(ProducerConfig.ACKS_CONFIG, "0"); // 가장 빠른 큐잉
+        props.put(ProducerConfig.ACKS_CONFIG, "all");
+        props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "100000");
+        props.put(ProducerConfig.BATCH_SIZE_CONFIG, "100000");
+        props.put(ProducerConfig.LINGER_MS_CONFIG, "500");
         return new DefaultKafkaProducerFactory<>(props);
     }
 

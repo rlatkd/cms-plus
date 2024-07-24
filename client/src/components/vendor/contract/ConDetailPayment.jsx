@@ -1,14 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import edit from '@/assets/edit.svg';
-import InputWeb from '@/components/common/inputs/InputWeb';
 import ConDetailPaymentType from './ConDetailPaymentType';
 import ConDetailPaymentMethod from './ConDetailPaymentMethod';
 
 const ConDetailPayment = ({ contractData }) => {
   const navigate = useNavigate();
 
+  const { id: contractId } = useParams();
+
   const handleButtonClick = () => {
-    navigate('/vendor/contracts/payment/update/1');
+    navigate(`/vendor/contracts/payment/update/${contractId}`);
   };
 
   return (

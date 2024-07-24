@@ -34,6 +34,7 @@ spring:
       host: localhost
       port: 6379
 
+
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
@@ -52,3 +53,4 @@ kafkaTopic:
   messagingTopic: ${MESSAGING_TOPIC}
   paymentTopic: ${PAYMENT_TOPIC}
   paymentResultTopic: ${PAYMENT_RESULT_TOPIC}
+  monitoringTopic: ${MONITORING_TOPIC}

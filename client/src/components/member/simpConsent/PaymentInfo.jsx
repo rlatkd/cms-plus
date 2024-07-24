@@ -13,6 +13,7 @@ const PaymentInfo = () => {
   ];
 
   const handlePaymentMethodChange = value => {
+    console.log(value);
     clearPaymentInfo(); // 결제 방법이 변경될 때 기존 결제 정보 초기화
     setUserData({ paymentDTO: { ...userData.paymentDTO, paymentMethod: value } });
   };

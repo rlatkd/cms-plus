@@ -30,7 +30,7 @@ public class PageReq {
 	/*
 	* 오름차순, 내림차순
 	* */
-	private enum Order {
+	public enum Order {
 		ASC, DESC
 	}
 }
