@@ -1,9 +1,12 @@
+import { postResetPassword } from '@/apis/auth';
 import BaseModal from '@/components/common/BaseModal';
 import InputWeb from '@/components/common/inputs/InputWeb';
-import { useState } from 'react';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
+import { useContext, useEffect, useState } from 'react';
 
-const ResetPasswordModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => {
+const ResetPasswordModal = ({ icon, isShowModal, findedId, setIsShowModal, modalTitle }) => {
   const [passwordFormData, setPasswordFormData] = useState({
+    username: '',
     newPassword: null,
     newPasswordCheck: null,
   });
@@ -19,7 +22,27 @@ const ResetPasswordModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =
     e.key === ' ' && e.preventDefault();
   };
 
-  // 비밀번호 재설정 완료 함수정의 ( 비밀번호 확인 까지 )
+  // <---- 비밀번호 재설정 API ---->
+  const axiosResetPassword = async () => {
+    try {
+      const res = await postResetPassword(passwordFormData);
+      console.log('!----비밀번호 찾기 요청 성공----!'); // 삭제예정
+      setIsShowModal(false);
+      onAlertClick('비밀번호 재설정이 완료되었습니다!');
+    } catch (err) {
+      console.error('axiosFindPassword => ', err.response.data);
+    }
+  };
+
+  // <---- 비밀번호 재설정 Alert ---->
+  const { alert: alertComp } = useContext(AlertContext);
+  const onAlertClick = async message => {
+    const result = await alertComp(message);
+  };
+
+  useEffect(() => {
+    setPasswordFormData(prev => ({ ...prev, username: findedId }));
+  }, [findedId]);
 
   return (
     <BaseModal
@@ -52,7 +75,8 @@ const ResetPasswordModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =
         />
         <button
           className='font-700 bg-mint px-4 py-3  text-white rounded-xl  
-            transition-all duration-200 hover:bg-mint_hover'>
+            transition-all duration-200 hover:bg-mint_hover'
+          onClick={axiosResetPassword}>
           비밀번호 재설정
         </button>
       </div>

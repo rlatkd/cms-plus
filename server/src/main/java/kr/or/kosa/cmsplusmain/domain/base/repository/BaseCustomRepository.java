@@ -7,6 +7,7 @@ import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
+import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.vendor;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
@@ -105,6 +106,9 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 
 	protected BooleanExpression memberNotDel() {
 		return member.deleted.isFalse();
+	}
+	protected BooleanExpression vendorNotDel() {
+		return vendor.deleted.isFalse();
 	}
 
 

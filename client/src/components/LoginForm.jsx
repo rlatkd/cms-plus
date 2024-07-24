@@ -1,24 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
-import { postLogin } from '@/apis/auth';
+import { postLogin, postRequestAuthenticationNumber } from '@/apis/auth';
 import { useState } from 'react';
 import FindVendoPasswordModal from '@/components/vendor/modal/FIndVendorPasswordModal';
 import FindVendorIdModal from '@/components/vendor/modal/FindVendorIdModal';
 import ResetPasswordModal from '@/components/vendor/modal/ResetPasswordModal';
+import SuccessFindIdModal from '@/components/vendor/modal/SuccessFindIdModal';
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [isShowIdModal, setIsShowIdModal] = useState(false);
   const [isShowPasswordModal, setIsShowPasswordModal] = useState(false);
   const [isShowResetPasswordModal, setIsShowResetPasswordModal] = useState(false);
+  const [isShowSuccessFindIdModal, setIsShowSuccessFindIdModal] = useState(false);
+  const [findedId, setFindedId] = useState('');
   const [vendorFormData, setVendorFormData] = useState({
-    username: null,
-    password: null,
+    username: '',
+    password: '',
   });
 
   // Todo
   // 로그인 실패시 로그인 실패 경고 빨간글씨
-  // 로그인 성공 시 Alert창
 
   // 사용자 입력값
   const handleChangeValue = e => {
@@ -49,6 +51,21 @@ const LoginForm = () => {
     }
   };
 
+  // <---- 인증번호 요청 API ---->
+  const axiosRequestAuthenticationNumber = async formData => {
+    try {
+      const data = {
+        userInfo: formData.name ? formData.name : formData.username,
+        methodInfo: formData.method === 'SMS' ? formData.phone : formData.email,
+        method: formData.method,
+      };
+      const res = await postRequestAuthenticationNumber(data);
+      console.log('!----인증번호 요청 성공----!'); // 삭제예정
+    } catch (err) {
+      console.error('axiosRequestAuthenticationNumber => ', err.response.data);
+    }
+  };
+
   return (
     <div className='absolute left-0 top-0 h-[100vh] mobile:h-full w-full mobile:w-[56vw] flex justify-center items-center'>
       <form onSubmit={handleSubmit} className=' w-480 h-640 flex flex-col justify-around p-16'>
@@ -61,6 +78,7 @@ const LoginForm = () => {
             type='text'
             placeholder='아이디를 입력해 주세요.'
             classInput='mb-4'
+            value={vendorFormData.username}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
           />
@@ -69,6 +87,7 @@ const LoginForm = () => {
             label='비밀번호'
             type='password'
             placeholder='비밀번호를 입력해 주세요.'
+            value={vendorFormData.password}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             classInput='relative'
@@ -99,6 +118,9 @@ const LoginForm = () => {
       <FindVendorIdModal
         isShowModal={isShowIdModal}
         setIsShowModal={setIsShowIdModal}
+        setFindedId={setFindedId}
+        setIsShowSuccessFindIdModal={setIsShowSuccessFindIdModal}
+        axiosRequestAuthenticationNumber={axiosRequestAuthenticationNumber}
         icon='/src/assets/user.svg'
         modalTitle={'아이디 찾기'}
       />
@@ -106,14 +128,25 @@ const LoginForm = () => {
         isShowModal={isShowPasswordModal}
         setIsShowModal={setIsShowPasswordModal}
         setIsShowResetPasswordModal={setIsShowResetPasswordModal}
+        axiosRequestAuthenticationNumber={axiosRequestAuthenticationNumber}
+        setFindedId={setFindedId}
         icon='/src/assets/password.svg'
         modalTitle={'비밀번호 찾기'}
       />
       <ResetPasswordModal
         isShowModal={isShowResetPasswordModal}
         setIsShowModal={setIsShowResetPasswordModal}
+        findedId={findedId}
         icon='/src/assets/password.svg'
         modalTitle={'비밀번호 재설정'}
+      />
+      <SuccessFindIdModal
+        isShowModal={isShowSuccessFindIdModal}
+        setIsShowModal={setIsShowSuccessFindIdModal}
+        setVendorFormData={setVendorFormData}
+        findedId={findedId}
+        icon='/src/assets/user.svg'
+        modalTitle={'아이디확인'}
       />
     </div>
   );

@@ -43,7 +43,7 @@ const PagiNation = ({
           className={`${buttonBaseStyle} h-8 ${pageGroup === 0 && 'invisible'} `}
           onClick={handlePrevPageGroup}
           disabled={pageGroup === 0}>
-          <Arrow rotation={'-90'} />
+          <Arrow rotation={'90'} />
           <span className='mx-1  hover:border-b border-text_black '>이전</span>
         </button>
 
@@ -69,7 +69,7 @@ const PagiNation = ({
           onClick={handleNextPageGroup}
           disabled={endPage >= totalPages}>
           <span className='mx-1 hover:border-b border-text_black '>다음</span>
-          <Arrow rotation={'90'} />
+          <Arrow rotation={'270'} />
         </button>
       </div>
     </div>
