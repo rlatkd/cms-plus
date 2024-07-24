@@ -45,15 +45,13 @@ jobs:
         docker compose -f ${{ env.COMPOSE_FILE }} build
         docker compose -f ${{ env.COMPOSE_FILE }} push
 
-    - name: Configure AWS CLI
+    - name: Create ECS context
       run: |
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ env.AWS_REGION }}
-
-    - name: Create and Use ECS context
-      run: |
-        docker context create ecs myecscontext --description "ECS context for Kafka" --region ${{ env.AWS_REGION }} --cluster ${{ env.ECS_CLUSTER }}
+        aws ecs describe-clusters --clusters ${{ env.ECS_CLUSTER }} --region ${{ env.AWS_REGION }}
+        docker context create ecs myecscontext
         docker context use myecscontext
 
     - name: Deploy to ECS
