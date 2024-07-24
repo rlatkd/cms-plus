@@ -84,7 +84,7 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
       <div className='flex space-x-4'>
         <div className='w-full'>
           <div className='flex justify-between'>
-            <div className='w-2/6 flex-row mb-3'>
+            <div className={`w-2/6 flex-row mb-3 ${editable ? 'visible' : 'invisible'}`}>
               <label className={`block text-text_black text-15 font-700 mb-2 ml-2`}>
                 상품 추가
               </label>
@@ -107,6 +107,7 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
                 disabled={!editable}
               />
             </div>
+
             <div className='flex items-end'>
               <p className='font-bold text-lg mr-2'>합계:</p>
               <p className='text-right font-bold text-lg border-none'>{`${calcBillingPrice(localBillingProducts).toLocaleString()}원`}</p>
