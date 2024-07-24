@@ -1,4 +1,4 @@
-name: MESSAGING CICD
+name: Messaging CICD
 
 on:
   push:
