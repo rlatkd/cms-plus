@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.payment.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.base.RandomNumberGenerator;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
@@ -244,7 +245,7 @@ public class PaymentService {
 		else if(paymentTypeInfoReq instanceof VirtualAccountTypeReq virtualAccountTypeReq){
 
 			// 가상계좌 14자리 랜덤으로 생성
-			String accountNumber = generateRandomAccountNumber(14);
+			String accountNumber = RandomNumberGenerator.generateRandomNumber(14);
 
 			// 가상계좌 DB에 저장
 			VirtualAccountPaymentType virtualAccountPaymentType =  virtualAccountTypeReq.toEntity(accountNumber);
@@ -273,17 +274,6 @@ public class PaymentService {
 		}
 
 		return paymentMethodInfo;
-	}
-
-	/*
-	 * 가상 계좌 랜덤 생성
-	 */
-	private static String generateRandomAccountNumber(int length) {
-		StringBuilder accountNumber = new StringBuilder(length);
-		for (int i = 0; i < length; i++) {
-			accountNumber.append(ThreadLocalRandom.current().nextInt(10));
-		}
-		return accountNumber.toString();
 	}
 
 	/*

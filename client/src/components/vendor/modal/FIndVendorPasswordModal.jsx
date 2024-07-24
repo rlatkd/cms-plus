@@ -27,7 +27,7 @@ const FindVendoPasswordModal = ({
     authenticationNumber: '',
   });
 
-  // 사용자 입력값
+  // <---- 사용자 입력값 ---->
   const handleChangeValue = e => {
     const { id, value } = e.target;
     if (id === 'phone') {
@@ -44,7 +44,7 @@ const FindVendoPasswordModal = ({
     }
   };
 
-  // 공백입력 막기
+  // <---- 공백입력 막기 ---->
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
   };
