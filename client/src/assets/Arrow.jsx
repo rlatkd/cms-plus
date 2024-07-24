@@ -1,9 +1,9 @@
 const Arrow = ({ rotation = 0, ...props }) => (
-  <div className='flex items-center justify-center w-8'>
+  <div className='flex items-center justify-center  border border-red-400'>
     <svg
-      width='22'
-      height='18'
-      viewBox='0 0 16 15'
+      width='20'
+      height='20'
+      viewBox='0 0 20 20'
       xmlns='http://www.w3.org/2000/svg'
       style={{ transform: `rotate(${rotation}deg)`, transition: 'transform 0.3s ease-in-out' }}
       {...props}>

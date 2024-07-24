@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
+import kr.or.kosa.cmsplusmain.domain.base.RandomNumberGenerator;
 import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
@@ -188,7 +188,7 @@ public class VendorService {
 		IdFindRes idFindRes = null;
 
 		// SMS 요청
-		if (idFindReq.getMethod().equals(MessageSendMethod.SMS)) {
+		if (idFindReq.getMethod() == MessageSendMethod.SMS) {
 			SmsIdFindReq smsIdFindReq = (SmsIdFindReq) idFindReq;
 			key = smsIdFindReq.getName() +":"+smsIdFindReq.getPhone();
 
@@ -200,7 +200,7 @@ public class VendorService {
 		}
 
 		// EMAIL 요청
-		else if (idFindReq.getMethod().equals(MessageSendMethod.EMAIL)) {
+		else if (idFindReq.getMethod() == MessageSendMethod.EMAIL) {
 			EmailIdFindReq emailIdFindReq = (EmailIdFindReq) idFindReq;
 			key = emailIdFindReq.getName()+":"+emailIdFindReq.getEmail();
 
@@ -225,7 +225,7 @@ public class VendorService {
 		Vendor vendor = null;
 
 		// SMS 요청
-		if (pwFindReq.getMethod().equals(MessageSendMethod.SMS)) {
+		if (pwFindReq.getMethod() == MessageSendMethod.SMS) {
 			SmsPwFindReq smsPwFindReq = (SmsPwFindReq) pwFindReq;
 			key = smsPwFindReq.getUsername() +":"+smsPwFindReq.getPhone();
 
@@ -237,7 +237,7 @@ public class VendorService {
 		}
 
 		// EMAIL 요청
-		else if (pwFindReq.getMethod().equals(MessageSendMethod.EMAIL)) {
+		else if (pwFindReq.getMethod() == MessageSendMethod.EMAIL) {
 			EmailPwFindReq emailPwFindReq = (EmailPwFindReq) pwFindReq;
 			key = emailPwFindReq.getUsername()+":"+emailPwFindReq.getEmail();
 
@@ -273,8 +273,7 @@ public class VendorService {
 	public void requestAuthenticationNumber(NumberReq numberReq) {
 
 		// 인증번호 생성 (6자리)
-		Random random = new Random();
-		String authenticationNumber = String.valueOf( random.nextInt(900000) + 100000);
+		String authenticationNumber = RandomNumberGenerator.generateRandomNumber(6);
 
 		// 메세지 문구 생성
 		String messageText = String.format("안녕하세요 효성CMS#입니다. 인증번호[%s]를 입력해 주세요.", authenticationNumber);

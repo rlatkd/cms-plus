@@ -11,13 +11,12 @@ const ResetPasswordModal = ({ icon, isShowModal, findedId, setIsShowModal, modal
     newPasswordCheck: null,
   });
 
-  // 사용자 입력값
+  // <---- 사용자 입력값 ---->
   const handleChangeValue = e => {
     const { id, value } = e.target;
     setPasswordFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
   };
-
-  // 공백입력 막기
+  // <---- 공백입력 막기 ---->
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
   };
@@ -25,7 +24,14 @@ const ResetPasswordModal = ({ icon, isShowModal, findedId, setIsShowModal, modal
   // <---- 비밀번호 재설정 API ---->
   const axiosResetPassword = async () => {
     try {
-      const res = await postResetPassword(passwordFormData);
+      // TODO
+      // 예외처리 안내문이 필요할듯
+      if (passwordFormData.newPassword !== passwordFormData.newPasswordCheck) {
+        alert('비밀번호가 일치하지 않습니다.');
+        return;
+      }
+      const { newPasswordCheck, ...data } = passwordFormData;
+      const res = await postResetPassword(data);
       console.log('!----비밀번호 찾기 요청 성공----!'); // 삭제예정
       setIsShowModal(false);
       onAlertClick('비밀번호 재설정이 완료되었습니다!');

@@ -16,13 +16,8 @@ public class PwResetReq {
     @Password
     private final String newPassword;
 
-    @NotNull
-    @Password
-    private final String newPasswordCheck;
-
     public PwResetReq(String username, String newPassword, String newPasswordCheck) {
         this.username = username;
         this.newPassword = newPassword;
-        this.newPasswordCheck = newPasswordCheck;
     }
 }
