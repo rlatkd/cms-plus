@@ -6,10 +6,6 @@ on:
     types:
       - completed
 
-concurrency:
-  group: be-cd
-  cancel-in-progress: true
-
 env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: t3-back-apiecr2
@@ -21,8 +17,10 @@ env:
 
   S3_BUCKET: t3-back-cicdbucket
 
-permissions:
-  contents: read
+permissions: #github actions bot에게 권한 열기
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   be-cd:
