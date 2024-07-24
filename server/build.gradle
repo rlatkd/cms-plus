@@ -110,7 +110,7 @@ asciidoctor {
 }
 
 // REST Docs
-task copyDocs(type: Copy) {
+tasks.register('copyDocs', Copy) {
     dependsOn asciidoctor
     from "${asciidoctor.outputDir}"
     into "src/main/resources/static/docs"   // src/main/resources/static/docs로 복사
