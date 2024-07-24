@@ -32,16 +32,19 @@ public class KafkaController {
 
     @PostMapping("/payment/card")
     public void getCardPaymentResult(@RequestBody CardPaymentDto cardPaymentDto) {
+        log.error("cardPaymentDto: {}", cardPaymentDto);
         kafkaPaymentService.producePayment(cardPaymentDto);
     }
 
     @PostMapping("/payment/account")
     public void getAccountPaymentResult(@RequestBody AccountPaymentDto accountPaymentDto) {
+        log.error("accountPaymentDto: {}", accountPaymentDto);
         kafkaPaymentService.producePayment(accountPaymentDto);
     }
 
     @PostMapping("/payment/virtual-account")
     public void getVirtualAccountPaymentResult(@RequestBody VirtualAccountPaymentDto virtualAccountPaymentDto) {
+        log.error("virtualAccountPaymentDto: {}", virtualAccountPaymentDto);
         kafkaPaymentService.producePayment(virtualAccountPaymentDto);
     }
 
