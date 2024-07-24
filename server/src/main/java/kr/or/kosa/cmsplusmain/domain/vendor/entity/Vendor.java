@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.vendor.entity;
 
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import jakarta.persistence.CascadeType;
@@ -24,11 +25,6 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Username;
 import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Comment("고객 (학원의 원장 - 사용자)")
 @Entity
@@ -64,6 +60,7 @@ public class Vendor extends BaseEntity {
 	@Comment("고객 로그인 비밀번호")
 	@Column(name = "vendor_password", nullable = false)
 	@NotNull
+	@Setter
 	private String password;
 
 	@Comment("고객 이름")

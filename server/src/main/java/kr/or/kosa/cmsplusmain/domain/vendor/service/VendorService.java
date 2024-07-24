@@ -2,16 +2,30 @@ package kr.or.kosa.cmsplusmain.domain.vendor.service;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
+import kr.or.kosa.cmsplusmain.domain.base.RandomNumberGenerator;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
-import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.EmailIdFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindRes;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.SmsIdFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.authenticationNumber.NumberReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.EmailPwFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwResetReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.SmsPwFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,6 +54,7 @@ public class VendorService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
+//	private final KafkaMessagingService kafkaMessagingService;
 
 	@Transactional
 	public void join(SignupReq signupReq) {
@@ -152,9 +167,6 @@ public class VendorService {
 			.build();
 	}
 
-	public boolean isExistUsername(String username) {
-		return vendorCustomRepository.isExistUsername(username);
-	}
 
 	private Cookie createCookie(String key, String value) {
 
@@ -165,5 +177,138 @@ public class VendorService {
 		cookie.setHttpOnly(true);
 
 		return cookie;
+	}
+
+	/*
+	 * 아이디 찾기
+	 * */
+	public IdFindRes findIdentifire(IdFindReq idFindReq) {
+		String key = null;
+		Vendor vendor = null;
+		IdFindRes idFindRes = null;
+
+		// SMS 요청
+		if (idFindReq.getMethod() == MessageSendMethod.SMS) {
+			SmsIdFindReq smsIdFindReq = (SmsIdFindReq) idFindReq;
+			key = smsIdFindReq.getName() +":"+smsIdFindReq.getPhone();
+
+			// 인증번호 일치여부 검증
+			String value = redisTemplate.opsForValue().get(key);
+			if(value != null && value.equals(smsIdFindReq.getAuthenticationNumber())){
+				vendor = vendorCustomRepository.findByNameAndPhone(smsIdFindReq.getName(), smsIdFindReq.getPhone());
+			}
+		}
+
+		// EMAIL 요청
+		else if (idFindReq.getMethod() == MessageSendMethod.EMAIL) {
+			EmailIdFindReq emailIdFindReq = (EmailIdFindReq) idFindReq;
+			key = emailIdFindReq.getName()+":"+emailIdFindReq.getEmail();
+
+			// 인증번호 일치여부 검증
+			String value = redisTemplate.opsForValue().get(key);
+			if(value != null && value.equals(emailIdFindReq.getAuthenticationNumber())){
+				vendor = vendorCustomRepository.findByNameAndEmail(emailIdFindReq.getName(), emailIdFindReq.getEmail());
+			}
+		}
+		redisTemplate.delete(key);
+		if(vendor != null) {
+			idFindRes = new IdFindRes(vendor.getUsername());
+		}
+		return idFindRes;
+	}
+
+	/*
+	 * 비밀번호 찾기
+	 * */
+	public boolean findPassword(PwFindReq pwFindReq) {
+		String key = null;
+		Vendor vendor = null;
+
+		// SMS 요청
+		if (pwFindReq.getMethod() == MessageSendMethod.SMS) {
+			SmsPwFindReq smsPwFindReq = (SmsPwFindReq) pwFindReq;
+			key = smsPwFindReq.getUsername() +":"+smsPwFindReq.getPhone();
+
+			// 인증번호 일치여부 검증
+			String value = redisTemplate.opsForValue().get(key);
+			if(value != null && value.equals(smsPwFindReq.getAuthenticationNumber())){
+				vendor = vendorCustomRepository.findByUsername(smsPwFindReq.getUsername());
+			}
+		}
+
+		// EMAIL 요청
+		else if (pwFindReq.getMethod() == MessageSendMethod.EMAIL) {
+			EmailPwFindReq emailPwFindReq = (EmailPwFindReq) pwFindReq;
+			key = emailPwFindReq.getUsername()+":"+emailPwFindReq.getEmail();
+
+			// 인증번호 일치여부 검증
+			String value = redisTemplate.opsForValue().get(key);
+			if(value != null && value.equals(emailPwFindReq.getAuthenticationNumber())){
+				vendor = vendorCustomRepository.findByUsername(emailPwFindReq.getUsername());
+			}
+		}
+		redisTemplate.delete(key);
+		if(vendor != null) {
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * 비밀번호 재설정
+	 * */
+	@Transactional
+	public void resetPassword(PwResetReq pwResetReq) {
+
+		// 고객 여부 확인
+		validateVendorUser(pwResetReq.getUsername());
+
+		Vendor vendor = vendorCustomRepository.findByUsername(pwResetReq.getUsername());
+		vendor.setPassword(bCryptPasswordEncoder.encode(pwResetReq.getNewPassword()));
+	}
+
+	/*
+	 * 인증번호 요청
+	 * */
+	public void requestAuthenticationNumber(NumberReq numberReq) {
+
+		// 인증번호 생성 (6자리)
+		String authenticationNumber = RandomNumberGenerator.generateRandomNumber(6);
+
+		// 메세지 문구 생성
+		String messageText = String.format("안녕하세요 효성CMS#입니다. 인증번호[%s]를 입력해 주세요.", authenticationNumber);
+
+		// Redis에 저장 (5분 유효)
+		String key = numberReq.getUserInfo() +":"+ numberReq.getMethodInfo();
+        redisTemplate.opsForValue().set(key, authenticationNumber, 5, TimeUnit.MINUTES);
+
+		// 다형성을 이용한 메시지 전송 (SMS, EMAIL)
+		MessageDto messageDto;
+		if (numberReq.getMethod().equals(MessageSendMethod.SMS)) {
+			messageDto = new SmsMessageDto(messageText, numberReq.getMethodInfo());
+		} else {
+			messageDto = new EmailMessageDto(messageText, numberReq.getMethodInfo());
+		}
+//		kafkaMessagingService.produceMessaging(messageDto);
+
+		// Redis에서 저장된 값 확인
+		String storedValue = redisTemplate.opsForValue().get(key);
+		System.out.println("<-----Redis 저장 확인---->");
+		System.out.println("Key: " + key);
+		System.out.println("Value: " + storedValue);
+	}
+
+
+	public boolean isExistUsername(String username) {
+		return vendorCustomRepository.isExistUsername(username);
+	}
+
+	/*
+	 * 고객 Username 존재여부
+	 * */
+	private void validateVendorUser(String username) {
+		if(!vendorCustomRepository.isExistUsername(username)) {
+			throw new EntityNotFoundException("고객 없음(" + username + ")");
+		}
 	}
 }
