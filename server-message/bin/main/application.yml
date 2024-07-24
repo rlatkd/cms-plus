@@ -1,0 +1,17 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: cmsplusmessage
+
+sms:
+  key: ${SMS_API_KEY}
+  secret: ${SMS_API_SECRET}
+  domain: ${SMS_DOMAIN}
+  phone: ${SMS_PHONE}
+
+email:
+  username: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
+  emailAddress: ${MAIL_EMAILADDRESS}

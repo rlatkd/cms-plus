@@ -11,6 +11,7 @@ import SelectField from '@/components/common/selects/SelectField';
 import ProductItem from '@/components/common/ProductItem';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 import { getAvailableOptions } from '@/apis/simpleConsent';
+import InputCalendar from '@/components/common/inputs/InputCalendar';
 
 const ContractInfo = forwardRef((props, ref) => {
   const { userData, setUserData } = useUserDataStore();
@@ -202,22 +203,20 @@ const ContractInfo = forwardRef((props, ref) => {
           </span>
         </label>
         <div className='flex w-full items-center'>
-          <Input
-            type='date'
+          <InputCalendar
+            id='startDate'
             value={localData.startDate}
-            onChange={e => handleDateChange(e, 'startDate')}
-            min='2024-01-01'
-            max='2024-12-31'
-            className='flex-1'
+            handleChangeValue={e => handleDateChange(e, 'startDate')}
+            placeholder='시작 날짜'
+            width='100%'
           />
           <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
-          <Input
-            type='date'
+          <InputCalendar
+            id='endDate'
             value={localData.endDate}
-            onChange={e => handleDateChange(e, 'endDate')}
-            min={localData.startDate}
-            max='2024-12-31'
-            className='flex-1'
+            handleChangeValue={e => handleDateChange(e, 'endDate')}
+            placeholder='종료 날짜'
+            width='100%'
           />
         </div>
       </div>
