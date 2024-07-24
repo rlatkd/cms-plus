@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.billing.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
@@ -28,7 +31,7 @@ public class BillingController {
 
 	private final BillingService billingService;
 
-	/*
+	/**
 	 * 청구생성
 	 * */
 	@PostMapping
@@ -68,15 +71,15 @@ public class BillingController {
 		billingService.cancelPayBilling(vendorId, billingId);
 	}
 
-	/*
+	/**
 	 * 청구목록 조회
 	 * */
 	@GetMapping
 	public PageRes<BillingListItemRes> getBillingListWithCondition(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		return billingService.searchBillings(vendorId, search, pageReq);
+		return billingService.getBillingListWithCondition(vendorId, search, pageReq);
 	}
 
-	/*
+	/**
 	 * 청구상세 조회
 	 * */
 	@GetMapping("/{billingId}")
@@ -84,7 +87,15 @@ public class BillingController {
 		return billingService.getBillingDetail(vendorId, billingId);
 	}
 
-	/*
+	/**
+	 * 청구상품 조회
+	 * */
+	@GetMapping("products/{billingId}")
+	public List<BillingProductRes> getBillingProducts(@VendorId Long vendorId, @PathVariable Long billingId) {
+		return billingService.getBillingProducts(vendorId, billingId);
+	}
+
+	/**
 	* 청구 수정
 	* */
 	@PutMapping("/{billingId}")
@@ -92,7 +103,7 @@ public class BillingController {
 		billingService.updateBilling(vendorId, billingId, billingUpdateReq);
 	}
 
-	/*
+	/**
 	* 청구 삭제
 	* */
 	@DeleteMapping("/{billingId}")

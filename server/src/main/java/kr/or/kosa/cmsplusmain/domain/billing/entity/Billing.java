@@ -28,7 +28,6 @@ import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusExcep
 import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidUpdateBillingException;
 import kr.or.kosa.cmsplusmain.domain.billing.validator.InvoiceMessage;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -95,6 +94,8 @@ public class Billing extends BaseEntity {
 	private LocalDateTime paidDateTime;
 
 	/* 청구 상품 목록 */
+	// 청구 상품은 상품 ID 별로 하나만 존재할 수 있다.
+	// 동일 상품 추가 안됨
 	@OneToMany(mappedBy = "billing", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private List<BillingProduct> billingProducts = new ArrayList<>();
@@ -102,7 +103,7 @@ public class Billing extends BaseEntity {
 	public Billing(Contract contract, BillingType billingType, LocalDate billingDate, int contractDay, List<BillingProduct> billingProducts) {
 		// 청구는 최소 한 개의 상품을 가져야한다.
 		if (billingProducts.isEmpty()) {
-			throw new EmptyBillingProductException("청구는 최소 한 개 이상의 상품을 지녀야합니다");
+			throw new EmptyBillingProductException("청구는 최소 한 개 이상의 상품을 가져야합니다");
 		}
 
 		this.contract = contract;
@@ -127,7 +128,7 @@ public class Billing extends BaseEntity {
 	 * */
 	public void removeBillingProduct(BillingProduct billingProduct) {
 		if (billingProducts.size() == MIN_BILLING_PRODUCT_NUMBER) {
-			throw new EmptyBillingProductException("청구는 최소 한 개 이상의 상품을 지녀야합니다");
+			throw new EmptyBillingProductException("청구는 최소 한 개 이상의 상품을 가져야합니다");
 		}
 		billingProduct.delete();
 		billingProducts.remove(billingProduct);
@@ -153,13 +154,17 @@ public class Billing extends BaseEntity {
 	}
 
 	/**
-	* 청구서 발송 가능 상태여부 | 청구서는 최대 1번 [생성, 미납] 상태에서만 발송 가능하다.
-	 * @return 청구상태가 [생성, 미납]이 아니거나 청구서가 발송된 적이 있는 경우 false, 나머지 true
-	* */
-	public boolean canSendInvoice() {
-		return (billingStatus == BillingStatus.CREATED
-			|| billingStatus == BillingStatus.NON_PAID)
-			&& invoiceSendDateTime == null;
+	 * 청구 결제일 수정 | 청구의 결제일은 오늘 이후 날짜로만 수정가능하다.
+	 * @throws InvalidUpdateBillingException 청구 결제일 수정 불가
+	 * */
+	public void updateBillingDate(LocalDate billingDate) {
+		if (this.billingDate.equals(billingDate)) {
+			return;
+		}
+		if (LocalDate.now().isAfter(this.billingDate)) {
+			throw new InvalidUpdateBillingException("청구 결제일은 이미 지난 날짜로 설정될 수 없습니다");
+		}
+		this.billingDate = billingDate;
 	}
 
 	/**
@@ -167,122 +172,58 @@ public class Billing extends BaseEntity {
 	 * @throws InvalidBillingStatusException 청구서 발송 불가능인경우
 	* */
 	public void setInvoiceSent() {
-		if (!canSendInvoice()) {
-			throw new InvalidBillingStatusException("청구서 발송이 불가능한 상태입니다");
-		}
+		BillingState.Field.SEND_INVOICE.validateState(this);
 		billingStatus = BillingStatus.WAITING_PAYMENT;
 		invoiceSendDateTime = LocalDateTime.now();
 	}
 
 	/**
-	* 청구소 발송 취소 가능여부 | 청구서는 [수납대기] 상태에서만 취소 가능하다.
- 	* @return 청구상태가 [수납대기]이 아닌경우 false, 나머지 true
-	* */
-	public boolean canCancelInvoice() {
-		return billingStatus == BillingStatus.WAITING_PAYMENT;
-	}
-
-	/**
 	 * 청구서 발송 취소 상태 변경 | 청구생성 상태로 돌아간다.
 	 * @throws InvalidBillingStatusException 청구서 발송 취소가 불가능한 경우
-	 * */
+	 */
 	public void setInvoiceCancelled() {
-		if (!canCancelInvoice()) {
-			throw new InvalidBillingStatusException("청구서 발송 취소가 불가능합니다");
-		}
+		BillingState.Field.CANCEL_INVOICE.validateState(this);
 		billingStatus = BillingStatus.CREATED;
 		invoiceSendDateTime = null;
 	}
 
 	/**
-	* 청구 결제일 수정 | 청구의 결제일은 청구서 발송 전에만 수정 가능하다.
-	 * @throws InvalidUpdateBillingException 청구 결제일 수정 불가
-	* */
-	public void updateBillingDate(LocalDate billingDate) {
-		if (this.billingDate.equals(billingDate)) {
-			return;
-		}
-		if (!billingStatus.equals(BillingStatus.CREATED)) {
-			throw new InvalidUpdateBillingException("청구 결제일은 청구서 발송 전에만 수정 가능합니다");
-		}
-
-		this.billingDate = billingDate;
-	}
-
-	/**
-	* 청구 실시간 결제 가능 여부 | 실시간 결제는 생성 및 수납대기 상태에서만 가능하다.
-	* */
-	public boolean canPayRealtime() {
-		if (!(billingStatus == BillingStatus.WAITING_PAYMENT
-			|| billingStatus == BillingStatus.CREATED)) {
-			return false;
-		}
-
-		Payment payment = contract.getPayment();
-		return payment.canPayRealtime();
-	}
-
-	/**
-	* 청구 실시간 결제 완료 상태변경
+	 * 청구 실시간 결제 완료 상태변경
 	 * @throws InvalidBillingStatusException 이미 결제된 청구인 경우
-	* */
+	 */
 	public void setPaid() {
-		if (billingStatus == BillingStatus.PAID) {
-			throw new InvalidBillingStatusException("이미 결제된 청구입니다.");
-		}
+		BillingState.Field.PAY_REALTIME.validateState(this);
 		billingStatus = BillingStatus.PAID;
 		paidDateTime = LocalDateTime.now();
 	}
 
 	/**
-	* 청구 결제 취소 가능 | 납부 상태 그리고 취소가능 결제수단 여부
-	* */
-	public boolean canCancelPaid() {
-		if (billingStatus != BillingStatus.PAID) {
-			return false;
-		}
-
-		Payment payment = contract.getPayment();
-		return payment.canCancel();
-	}
-
-	/**
 	 * 청구 결제 취소 상태 변경
 	 * @throws InvalidBillingStatusException 결제 취소가 불가능한 경우
-	 * */
+	 */
 	public void setPayCanceled() {
-		if (!canCancelPaid()) {
-			throw new InvalidBillingStatusException("결제 취소가 불가능합니다.");
-		}
+		BillingState.Field.CANCEL_PAYMENT.validateState(this);
 		billingStatus = BillingStatus.WAITING_PAYMENT;
 		paidDateTime = null;
 	}
 
 	/**
-	* 청구 수정 가능여부 | 생성 및 수납대기 상태에서만 가능
-	* */
-	public boolean canBeUpdated() {
-		return this.billingStatus == BillingStatus.CREATED
-			|| billingStatus == BillingStatus.WAITING_PAYMENT;
-	}
-
-	/**
-	* 청구 삭제 가능여부 | 생성 수납대기 상태에서만 가능
-	* */
-	public boolean canBeDeleted() {
-		return this.billingStatus == BillingStatus.CREATED || billingStatus == BillingStatus.WAITING_PAYMENT;
-	}
-
-	/**
-	* 청구 삭제 | 청구 상품도 같이 삭제한다.
- 	* @throws InvalidBillingStatusException 납부 전에만 삭제가능
-	* */
+	 * 청구 삭제 | 연관된 청구상품도 삭제된다.
+	 * @throws InvalidBillingStatusException 납부 전에만 삭제가능
+	 */
 	@Override
 	public void delete() {
-		if (billingStatus == BillingStatus.CREATED || billingStatus == BillingStatus.WAITING_PAYMENT) {
-			throw new InvalidBillingStatusException("청구는 납부 전에만 삭제가 가능합니다");
-		}
+		BillingState.Field.DELETE.validateState(this);
 		super.delete();
-		billingProducts.forEach(BaseEntity::delete);
+		billingProducts.forEach(BillingProduct::delete);
+	}
+
+	/**
+	 * 청구 삭제 | 연관된 청구상품은 삭제되지 않는다.
+	 * @throws InvalidBillingStatusException 납부 전에만 삭제가능
+	 */
+	public void deleteWithoutProducts() {
+		BillingState.Field.DELETE.validateState(this);
+		super.delete();
 	}
 }
