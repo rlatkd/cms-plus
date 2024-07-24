@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
-// @Service
+@Service
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaPaymentService {
