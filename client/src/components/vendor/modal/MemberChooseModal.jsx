@@ -54,7 +54,7 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
       try {
         const res = await getMemberBasicInfoList({
           [searchType]: searchTerm,
-          currentPage,
+          page: currentPage,
           size: 8,
         });
         setMemberList(res.data.content);
