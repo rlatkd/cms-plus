@@ -1,5 +1,5 @@
 const Arrow = ({ rotation = 0, ...props }) => (
-  <div className='flex items-center justify-center  w-8'>
+  <div className='flex items-center justify-center w-8'>
     <svg
       width='22'
       height='18'
