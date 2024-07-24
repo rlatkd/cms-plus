@@ -12,7 +12,9 @@ env:
   ECR_REPOSITORY: t3-back-kafka
   COMPOSE_FILE: server-kafka/docker-compose.yml
   ECS_CLUSTER: t3-back-ecscluster
-  
+  ECS_SERVICE_NAME: t3-back-kafkaservice
+  AWS_DEFAULT_REGION: ap-northeast-2
+
 permissions:
   contents: read
 
@@ -30,7 +32,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}    
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -45,12 +47,10 @@ jobs:
 
     - name: Create ECS context
       run: |
-        docker context create ecs myecscontext \
-          --cluster ${{ env.ECS_CLUSTER }} \
-          --region ${{ env.AWS_REGION }}
+        aws ecs create-cluster --cluster-name ${{ env.ECS_CLUSTER }} || true
+        docker context create ecs myecscontext
         docker context use myecscontext
 
     - name: Deploy to ECS
       run: |
         docker compose -f ${{ env.COMPOSE_FILE }} up
-
