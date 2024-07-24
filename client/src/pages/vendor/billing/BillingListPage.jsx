@@ -1,4 +1,4 @@
-import { getBillingList, payRealTimeBilling } from '@/apis/billing';
+import { getBillingList, payRealTimeBilling, sendInvoice } from '@/apis/billing';
 import MoveButton from '@/components/common/buttons/MoveButton';
 import PagiNation from '@/components/common/PagiNation';
 import SortSelect from '@/components/common/selects/SortSelect';
@@ -14,6 +14,7 @@ import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billin
 import { formatPhone } from '@/utils/format/formatPhone';
 import { formatProductsForList } from '@/utils/format/formatProducts';
 import PayRealtimeErrorModal from '@/components/vendor/modal/PayRealtimeErrorModal';
+import SendInvoiceErrorModal from '@/components/vendor/modal/SendInvoiceErrorModal';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
@@ -31,6 +32,9 @@ const BillingListPage = () => {
 
   const [payErrors, setPayErrors] = useState();
   const [isShowPayErrorModal, setIsShowPayErrorModal] = useState(false);
+
+  const [invoiceErrors, setInvoiceErrors] = useState();
+  const [isShowInvoiceErrorModal, setIsShowInvoiceErrorModal] = useState(false);
 
   const [selectedBillings, setSelectedBillings] = useState([]); // 선택된 청구 목록
 
@@ -130,6 +134,7 @@ const BillingListPage = () => {
         errors.push({
           from: billing,
           res: err.response.data,
+          total: selectedBillings.length,
         });
       }
     }
@@ -141,6 +146,36 @@ const BillingListPage = () => {
       setIsShowPayErrorModal(true);
     } else {
       alert(`${selectedBillings.length}개의 청구 결제를 성공했습니다.`);
+    }
+  };
+
+  // 청구서 발송
+  const handleInvoiceSend = async () => {
+    if (!selectedBillings || selectedBillings.length === 0) {
+      alert('선택된 청구가 없습니다!');
+      return;
+    }
+
+    const errors = [];
+    for (const billing of selectedBillings) {
+      try {
+        await sendInvoice(billing.billingId);
+      } catch (err) {
+        errors.push({
+          from: billing,
+          res: err.response.data,
+          total: selectedBillings.length,
+        });
+      }
+    }
+
+    console.log(errors);
+    // 실패항목이 있는 경우
+    if (errors.length !== 0) {
+      setInvoiceErrors(errors);
+      setIsShowInvoiceErrorModal(true);
+    } else {
+      alert(`${selectedBillings.length}개의 청구서 발송을 성공했습니다.`);
     }
   };
 
@@ -191,7 +226,12 @@ const BillingListPage = () => {
               buttonText='실시간 결제'
               onClick={handleRealtimePay}
             />
-            <MoveButton imgSrc={send} color='mint' buttonText='청구서 발송' />
+            <MoveButton
+              imgSrc={send}
+              color='mint'
+              buttonText='청구서 발송'
+              onClick={handleInvoiceSend}
+            />
             <MoveButton
               imgSrc={addItem}
               color='mint'
@@ -228,6 +268,15 @@ const BillingListPage = () => {
           icon={card}
           setIsShowModal={setIsShowPayErrorModal}
           modalTitle={'실시간 결제'}
+        />
+      )}
+      {isShowInvoiceErrorModal && (
+        <SendInvoiceErrorModal
+          errors={invoiceErrors}
+          isShowModal={isShowInvoiceErrorModal}
+          icon={card}
+          setIsShowModal={setIsShowInvoiceErrorModal}
+          modalTitle={'청구서 발송'}
         />
       )}
     </div>

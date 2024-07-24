@@ -6,7 +6,7 @@ import 'react-tooltip/dist/react-tooltip.css';
 import BaseModal from '@/components/common/BaseModal';
 import { FaExclamationCircle } from 'react-icons/fa';
 
-const PayRealtimeErrorModal = ({ errors, isShowModal, icon, setIsShowModal, modalTitle }) => {
+const SendInvoiceErrorModal = ({ errors, isShowModal, icon, setIsShowModal, modalTitle }) => {
   return (
     <BaseModal
       isShowModal={isShowModal}
@@ -17,7 +17,7 @@ const PayRealtimeErrorModal = ({ errors, isShowModal, icon, setIsShowModal, moda
       width={'w-5/6'}>
       <div className='flex flex-col h-full'>
         <div className='mb-4 text-lg font-semibold text-red-500'>
-          {errors && errors[0].total}건 중 {errors.length}건의 실시간 결제가 실패했습니다.
+          {errors && errors[0].total}건 중 {errors.length}건의 청구서 발송이 실패했습니다.
         </div>
         <div className='flex-grow overflow-auto'>
           <table className='w-full mb-3'>
@@ -27,6 +27,7 @@ const PayRealtimeErrorModal = ({ errors, isShowModal, icon, setIsShowModal, moda
                 <th className='p-2 text-left text-text_black'>청구번호</th>
                 <th className='p-2 text-left text-text_black'>회원이름</th>
                 <th className='p-2 text-left text-text_black'>휴대전화</th>
+                <th className='p-2 text-left text-text_black'>청구상태</th>
                 <th className='p-2 text-left text-text_black'>결제일</th>
               </tr>
             </thead>
@@ -53,6 +54,9 @@ const PayRealtimeErrorModal = ({ errors, isShowModal, icon, setIsShowModal, moda
                     {formatPhone(from.memberPhone)}
                   </td>
                   <td className='border-b border-ipt_border p-2 text-text_black'>
+                    {from.billingStatus}
+                  </td>
+                  <td className='border-b border-ipt_border p-2 text-text_black'>
                     {from.billingDate}
                   </td>
                 </tr>
@@ -72,4 +76,4 @@ const PayRealtimeErrorModal = ({ errors, isShowModal, icon, setIsShowModal, moda
   );
 };
 
-export default PayRealtimeErrorModal;
+export default SendInvoiceErrorModal;
