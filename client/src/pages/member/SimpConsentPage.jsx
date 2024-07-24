@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
 import Main from '@/components/member/simpConsent/Main';
 import BasicInfo from '@/components/member/simpConsent/BasicInfo';
 import ContractInfo from '@/components/member/simpConsent/ContractInfo';
@@ -14,6 +13,7 @@ import PreviousButton from '@/components/common/buttons/StatusPreButton';
 import { useStatusStore } from '@/stores/useStatusStore';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 import useStatusStepper from '@/hooks/useStatusStepper';
+import { sendSimpleConsentData } from '@/apis/simpleConsent';
 
 const SimpConsentPage = () => {
   const start = 0;
@@ -104,26 +104,13 @@ const SimpConsentPage = () => {
       }
 
       try {
-        setStatus(5); // Show loading
+        setStatus(5); // 로딩
         const preparedData = prepareData(userData);
-        const response = await axios.post(
-          'http://localhost:8080/api/v1/simple-consent',
-          preparedData,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        if (response.status === 200) {
-          setStatus(6); // Show success
-        } else {
-          console.error('API request failed');
-          setStatus(4); // Go back to signature page
-        }
+        await sendSimpleConsentData(preparedData);
+        setStatus(6); // 성공
       } catch (error) {
-        console.error('API request failed', error.response?.data || error.message);
-        setStatus(4); // Go back to signature page
+        console.error('API request failed', error);
+        setStatus(4); // 서명페이지로 다시 보내기
       }
     } else {
       originalHandleClickNext();
