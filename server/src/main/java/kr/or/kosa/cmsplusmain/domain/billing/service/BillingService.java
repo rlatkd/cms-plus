@@ -114,11 +114,21 @@ public class BillingService {
 		billing.setInvoiceCancelled();
 	}
 
-	/*
-	* 청구 실시간 결제
-	* */
 	@Transactional
 	public void payBilling(Long vendorId, Long billingId) {
+		Billing billing = validateAndGetBilling(vendorId, billingId);
+		BillingState.Field.PAY_REALTIME.validateState(billing);
+
+		// TODO: 결제 프로세스 구현
+
+		billing.setPaid();
+	}
+
+	/*
+	 * 청구 실시간 결제
+	 * */
+	@Transactional
+	public void payRealTimeBilling(Long vendorId, Long billingId) {
 		Billing billing = validateAndGetBilling(vendorId, billingId);
 		BillingState.Field.PAY_REALTIME.validateState(billing);
 
