@@ -8,17 +8,19 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: t3-back-mainecr
-  ECS_CLUSTER: t3-back-ecscluster
-  ECS_CONTAINER: t3-back-maincontainer
-  ECS_SERVICE: t3-back-mainservice
+  ECR_REPOSITORY: t3-back-apiecr3
+  ECS_CLUSTER: t3-back-ecscluster2
+  ECS_CONTAINER: t3-back-apicontainer3
+  ECS_SERVICE: t3-back-ecscluster2/t3-back-apiservice3
 
   ECS_TASK_DEFINITION: task-definition.json
 
   S3_BUCKET: t3-back-cicdbucket
 
-permissions:
-  contents: read
+permissions: #github actions bot에게 권한 열기
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   be-cd:
@@ -38,7 +40,10 @@ jobs:
 
       - name: Download from S3
         run: |
-          aws s3 cp s3://${{ env.S3_BUCKET }}/server-0.0.1-SNAPSHOT.jar ./server/build/libs/server-0.0.1-SNAPSHOT.jar
+          aws s3 cp s3://${{ env.S3_BUCKET }}/cmsplus-main-0.0.1-SNAPSHOT.jar ./server/build/libs/cmsplus-main-0.0.1-SNAPSHOT.jar
+
+      - name: Inject secure
+        run: echo "${{ secrets.BE_SECURE_DEV }}" > server/src/main/resources/secure.properties
 
       - name: Replace AWS ID
         run: |

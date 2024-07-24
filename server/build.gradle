@@ -104,10 +104,13 @@ asciidoctor {
     }
     // 경로를 baseDir로 맞춰줌
     baseDirFollowsSourceFile()
+    doFirst {
+        file(snippetsDir).mkdirs()
+    }
 }
 
 // REST Docs
-task copyDocs(type: Copy) {
+tasks.register('copyDocs', Copy) {
     dependsOn asciidoctor
     from "${asciidoctor.outputDir}"
     into "src/main/resources/static/docs"   // src/main/resources/static/docs로 복사
@@ -116,6 +119,10 @@ task copyDocs(type: Copy) {
 // REST Docs
 build {
     dependsOn copyDocs
+}
+
+bootJar {
+    mainClass = 'kr.or.kosa.cmsplusmain.CmsplusMainApplication' // 실제 메인 클래스 이름으로 변경
 }
 
 /**

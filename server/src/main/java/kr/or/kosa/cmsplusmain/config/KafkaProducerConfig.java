@@ -14,7 +14,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.HashMap;
 import java.util.Map;
 
-// @Configuration
+ @Configuration
 public class KafkaProducerConfig {
 
     // SMS. EMAIL 메시징 서버에 보냄
@@ -26,7 +26,7 @@ public class KafkaProducerConfig {
     @Bean
     public ProducerFactory<String, MessageDto> messagingProducerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-3-39-232-243.ap-northeast-2.compute.amazonaws.com:9094");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ProducerConfig.ACKS_CONFIG, "all"); // 메시지 Leader가 모든 Replica까지 Commit되면 ack를 보냄(가장 느린 속도 / 가장 높은 보장성)
@@ -45,7 +45,7 @@ public class KafkaProducerConfig {
     @Bean
     public ProducerFactory<String, PaymentDto> paymentProducerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-3-39-232-243.ap-northeast-2.compute.amazonaws.com:9094");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ProducerConfig.ACKS_CONFIG, "all");

@@ -5,14 +5,14 @@ import java.util.List;
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.excel.service.ExcelHandler;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
@@ -46,6 +46,14 @@ public class MemberController {
     public PageRes<MemberListItemRes> getMemberList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, MemberSearchReq memberSearch, PageReq pageable) {
         Long vendorId = userDetails.getId();
         return memberService.searchMembers(vendorId, memberSearch, pageable);
+    }
+
+    /*
+     * 회원 기본정보 목록 조회
+     * */
+    @GetMapping("/basicinfo/members")
+    public PageRes<MemberDto> getMemberBasicInfoList(@VendorId Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
+        return memberService.findAllMemberBasicInfo(vendorId, memberSearch, pageable);
     }
 
     /*
@@ -112,12 +120,12 @@ public class MemberController {
     }
 
     /*
-     * 회원 삭제 - 회원의 청구 목록
+     * 회원 삭제 - 회원의 진행중인 청구 개수
      * */
     @GetMapping("/members/{memberId}/billing")
-    public List<BillingListItemRes> getBillingList(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @PathVariable Long memberId) {
+    public int getInProgressBillingCount(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @PathVariable Long memberId) {
         Long vendorId = userDetails.getId();
-        return memberService.getBillingByMember(vendorId, memberId);
+        return memberService.countAllInProgressBillingByMember(vendorId, memberId);
     }
 
     /*

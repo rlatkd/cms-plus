@@ -2,13 +2,15 @@ const RadioGroup = ({
   label,
   name,
   options,
+  classContainer,
   classLabel,
+  classRadio,
   selectedOption,
   onChange,
   required = false,
 }) => {
   return (
-    <div className='mb-4'>
+    <div className={`${classContainer} mb-4`}>
       <label className={`${classLabel} mb-2 block `}>
         <span
           className={`block text-15 font-700 text-text_black ${
@@ -19,7 +21,7 @@ const RadioGroup = ({
       </label>
       <div className='flex items-center'>
         {options.map(option => (
-          <label key={option.value} className='mr-4 flex items-center cursor-pointer'>
+          <label key={option.value} className='mr-4  flex items-center cursor-pointer'>
             <div className='relative flex items-center'>
               <input
                 type='radio'
@@ -35,7 +37,9 @@ const RadioGroup = ({
                   <div className='h-2 w-2 rounded-full bg-teal-400' />
                 )}
               </div>
-              <span className='text-sm text-text_black'>{option.label}</span>
+              <span className={`${classRadio ? classRadio : 'text-sm '} text-text_black`}>
+                {option.label}
+              </span>
             </div>
           </label>
         ))}

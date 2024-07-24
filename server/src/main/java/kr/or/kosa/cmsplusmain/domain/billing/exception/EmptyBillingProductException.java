@@ -1,7 +1,10 @@
 package kr.or.kosa.cmsplusmain.domain.billing.exception;
 
-public class EmptyBillingProductException extends RuntimeException {
-	public EmptyBillingProductException() {
-		super("청구는 최소 한개의 상품을 포함해야합니다.");
+import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
+import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
+
+public class EmptyBillingProductException extends BusinessException {
+	public EmptyBillingProductException(String message) {
+		super(message, ErrorCode.EMPTY_BILLING_PRODUCT);
 	}
 }

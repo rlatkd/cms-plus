@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-import { privateAxios, publicAxios, testAxios } from '.';
+import { privateAxios, testAxios } from '.';
 
 // 상품 등록
 export const createProduct = async productData => {

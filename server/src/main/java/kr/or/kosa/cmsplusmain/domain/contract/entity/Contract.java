@@ -124,7 +124,7 @@ public class Contract extends BaseEntity {
 	public void removeContractProduct(ContractProduct contractProduct) {
 		// 계약은 최소 한 개 이상의 상품을 가져야한다.
 		if (contractProducts.size() == MIN_CONTRACT_PRODUCT_NUMBER) {
-			throw new EmptyContractProductException();
+			throw new EmptyContractProductException("계약은 최소 한 개 이상의 상품을 가져야합니다");
 		}
 		contractProduct.delete();
 		contractProducts.remove(contractProduct);

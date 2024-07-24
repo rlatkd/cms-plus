@@ -45,12 +45,6 @@ jobs:
         run: |
           apt-get update && apt-get install -y git-lfs
           git lfs install
-
-      - name: PR Test Result
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: ${{ always() }}
-        with:
-          files: server/build/test-results/**/*.xml
           
       - name: Copy
         run: |
@@ -61,16 +55,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      
-      # - name: Track JAR with LFS
-      #   run: |
-      #     cd DEPLOY_FILE/server
-      #     git lfs track "*.jar"
-      #     git add .gitattributes
-      #     git add *.jar
-      #     git commit -m "Track JAR files with LFS"
-      #     cd ../..
-
+  
       - name: Build
         run: |
           timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
