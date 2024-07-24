@@ -33,7 +33,7 @@ jobs:
           echo "프론트엔드 배포 로그" >> "$log_file"
           git add "$log_file"
           git commit -m "release: $timestamp FE 배포 완료"
-          git push --force origin dev
+          git push origin dev
 
       - name: Merge to Prod
         run: |
