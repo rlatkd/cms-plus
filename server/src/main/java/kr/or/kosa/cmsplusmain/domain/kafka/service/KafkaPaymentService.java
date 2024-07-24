@@ -48,6 +48,7 @@ public class KafkaPaymentService {
     public void consumePaymentResult(List<ConsumerRecord<String, PaymentResultDto>> records) {
         for (ConsumerRecord<String, PaymentResultDto> record : records) {
             PaymentResultDto paymentResultDto = record.value();
+            log.error("[컨슘한 DTO 결과]: {}", paymentResultDto.toString());
             MessageDto messageDto = new SmsMessageDto(paymentResultDto.getResult(), paymentResultDto.getPhoneNumber());
             Billing billing = billingRepository.findById(paymentResultDto.getBillingId())
                     .orElseThrow(() -> new EntityNotFoundException(paymentResultDto.getBillingId().toString()));
