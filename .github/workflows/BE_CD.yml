@@ -12,10 +12,10 @@ concurrency:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: t3-back-mainecr
+  ECR_REPOSITORY: t3-back-apiecr2
   ECS_CLUSTER: t3-back-ecscluster
-  ECS_CONTAINER: t3-back-maincontainer
-  ECS_SERVICE: t3-back-mainservice
+  ECS_CONTAINER: t3-back-apicontainer2
+  ECS_SERVICE: t3-back-apiservice2
 
   ECS_TASK_DEFINITION: task-definition.json
 

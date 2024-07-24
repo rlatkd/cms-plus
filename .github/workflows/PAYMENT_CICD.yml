@@ -9,10 +9,10 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: t3-back-paymentecr
+  ECR_REPOSITORY: t3-back-paymentecr2
   ECS_CLUSTER: t3-back-ecscluster
-  ECS_CONTAINER: t3-back-paymentcontainer
-  ECS_SERVICE: t3-back-paymentservice
+  ECS_CONTAINER: t3-back-paymentcontainer2
+  ECS_SERVICE: t3-back-paymentservice2
   ECS_TASK_DEFINITION: task-definition-payment.json
 
 permissions:
