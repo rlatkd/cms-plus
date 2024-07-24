@@ -20,7 +20,7 @@ const Test = () => {
     const result = await confrimComp('회원정보가 수정되었습니다!');
   };
 
-  console.log("2211111112321113112");
+  console.log("1111");
 
   return (
     <div>

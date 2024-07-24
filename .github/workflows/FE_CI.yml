@@ -58,10 +58,10 @@ jobs:
           mkdir -p DEPLOY_FILE/client
           cp -r client/dist/* DEPLOY_FILE/client/
 
-      # - name: Git Config
-      #   run: |
-      #     git config --global user.name 'github-actions[bot]'
-      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Git Config
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Git Operations
         run: |
