@@ -61,24 +61,20 @@ const BillingDetailButtons = ({
               ) : (
                 <>
                   {field === 'CANCEL_INVOICE' && (
-                    <>
-                      <p>
-                        청구서 발송 시간:{' '}
-                        <span className='text-yellow-300 font-bold'>
-                          {formatDateTime(invoiceSendTime)}
-                        </span>
-                      </p>
-                    </>
+                    <p>
+                      청구서 발송 시간:{' '}
+                      <span className='text-yellow-300 font-bold'>
+                        {formatDateTime(invoiceSendTime)}
+                      </span>
+                    </p>
                   )}
                   {field === 'CANCEL_PAYMENT' && (
-                    <>
-                      <p>
-                        결제 시간:{' '}
-                        <span className='text-yellow-300 font-bold'>
-                          {formatDateTime(paidDateTime)}
-                        </span>
-                      </p>
-                    </>
+                    <p>
+                      결제 시간:{' '}
+                      <span className='text-yellow-300 font-bold'>
+                        {formatDateTime(paidDateTime)}
+                      </span>
+                    </p>
                   )}
                 </>
               )}
