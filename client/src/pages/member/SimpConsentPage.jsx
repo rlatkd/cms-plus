@@ -68,7 +68,8 @@ const SimpConsentPage = () => {
 
   const handleClickNext = async () => {
     if (status === 1) {
-      const missingFields = validateBasicInfo();
+      //const missingFields = validateBasicInfo();
+      const missingFields = [];
       if (missingFields.length > 0) {
         alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
         return;
@@ -77,7 +78,8 @@ const SimpConsentPage = () => {
 
     if (status === 2) {
       if (contractInfoRef.current) {
-        const missingFields = contractInfoRef.current.validateContractInfo();
+        //const missingFields = contractInfoRef.current.validateContractInfo();
+        const missingFields = [];
         if (missingFields.length > 0) {
           alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
           return;
@@ -87,8 +89,8 @@ const SimpConsentPage = () => {
 
     if (status === 3) {
       if (paymentInfoRef.current) {
-        const missingFields = paymentInfoRef.current.validatePaymentInfo();
-
+        // const missingFields = paymentInfoRef.current.validatePaymentInfo();
+        const missingFields = [];
         if (missingFields.length > 0) {
           alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
           return;

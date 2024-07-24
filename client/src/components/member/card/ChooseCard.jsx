@@ -3,11 +3,9 @@ import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import React, { useState } from 'react';
 
 const ChooseCard = () => {
-  const setSelectedCard = useInvoiceStore((state) => state.setSelectedCard);
-  const selectedCard = useInvoiceStore((state) => state.selectedCard);
-  const invoiceInfo = useInvoiceStore((state) => state.invoiceInfo);
-
-  console.log('choosecard', invoiceInfo);
+  const setSelectedCard = useInvoiceStore(state => state.setSelectedCard);
+  const selectedCard = useInvoiceStore(state => state.selectedCard);
+  const invoiceInfo = useInvoiceStore(state => state.invoiceInfo);
 
   const cardOptions = [
     '현대카드',
@@ -38,7 +36,9 @@ const ChooseCard = () => {
       <h4 className='text-sm text-gray-500 mb-2 font-semibold'>결제금액</h4>
       <div className='mb-4 h-24 border border-mint rounded-lg p-4 flex flex-col justify-between'>
         <div>
-          <p className='text-base font-semibold'>{convertToProductSummary(invoiceInfo.billingProducts)}</p>
+          <p className='text-base font-semibold'>
+            {convertToProductSummary(invoiceInfo.billingProducts)}
+          </p>
           <p className='text-xs text-gray-500'>{invoiceInfo.billingDate}</p>
         </div>
         <div className='self-end'>
