@@ -7,7 +7,7 @@ import {
   sendInvoice,
   updateBilling,
   cancelSendInvoice,
-  payBilling,
+  payRealTimeBilling,
   cancelPayBilling,
   getBillingProducts,
 } from '@/apis/billing';
@@ -159,7 +159,7 @@ const BillingDetailPage = () => {
 
   const handlePay = async () => {
     try {
-      await payBilling(billingId);
+      await payRealTimeBilling(billingId);
       alert('청구가 결제되었습니다.');
       fetchBillingDetail();
     } catch (err) {

@@ -24,21 +24,6 @@ const BillingRegisterPage = () => {
   const [selectedContract, setSelectedContract] = useState(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-<<<<<<< HEAD
-  const fetchContractList = useCallback(async (page = currentPage) => {
-    try {
-      const res = await getContractList({
-        [searchType]: searchTerm,
-        page,
-        size: 10,
-      });
-      setContractList(res.data.content);
-      setTotalPages(res.data.totalPage || 1);
-    } catch (err) {
-      console.error('Failed to fetch contract list:', err);
-    }
-  }, [searchType, searchTerm, currentPage]);
-=======
   const [products, setProducts] = useState([]); // 전체 상품 목록
 
   /**
@@ -66,7 +51,6 @@ const BillingRegisterPage = () => {
     },
     [searchType, searchTerm, currentPage]
   );
->>>>>>> 1f47c2f5016f864c536cb650099adeeaf3be9549
 
   const fetchAllProducts = useCallback(async () => {
     try {
@@ -87,16 +71,12 @@ const BillingRegisterPage = () => {
     fetchAllProducts();
   }, [debouncedSearchTerm]);
 
-<<<<<<< HEAD
-  const calculatePaymentDate = (contractDay) => {
-=======
   const navigate = useNavigate();
 
   /**
    * 선택한 계약의 약정일을 기반으로 청구의 결제일을 계산한다.
    */
   const calculateBillingDate = contractDay => {
->>>>>>> 1f47c2f5016f864c536cb650099adeeaf3be9549
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
@@ -188,13 +168,8 @@ const BillingRegisterPage = () => {
         <div className='w-px bg-ipt_border'></div>
 
         {/* 오른쪽: 청구 생성 정보 */}
-<<<<<<< HEAD
-        <div className="w-3/5 p-6 overflow-auto">
-          <h2 className="text-2xl mb-4">청구 생성 정보</h2>
-=======
         <div className='w-3/5 p-6 flex flex-col h-full overflow-hidden'>
           <h2 className='text-2xl font-semibold mb-4 text-text_black'>청구 생성 정보</h2>
->>>>>>> 1f47c2f5016f864c536cb650099adeeaf3be9549
           {selectedContract ? (
             <div className='flex-1 overflow-hidden flex flex-col'>
               <BillingForm

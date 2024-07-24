@@ -1,9 +1,8 @@
-import { getBillingList } from '@/apis/billing';
+import { getBillingList, payRealTimeBilling } from '@/apis/billing';
 import MoveButton from '@/components/common/buttons/MoveButton';
 import PagiNation from '@/components/common/PagiNation';
 import SortSelect from '@/components/common/selects/SortSelect';
 import Table from '@/components/common/tables/Table';
-import BillingRegisterModal from '@/components/vendor/modal/BillingRegisterModal';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import addItem from '@/assets/addItem.svg';
@@ -14,6 +13,7 @@ import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billingElement';
 import { formatPhone } from '@/utils/format/formatPhone';
 import { formatProductsForList } from '@/utils/format/formatProducts';
+import PayRealtimeErrorModal from '@/components/vendor/modal/PayRealtimeErrorModal';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
@@ -29,7 +29,10 @@ const BillingListPage = () => {
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
   const buttonCount = 5; // 버튼 갯수
 
-  const [isShowModal, setIsShowModal] = useState(false);
+  const [payErrors, setPayErrors] = useState();
+  const [isShowPayErrorModal, setIsShowPayErrorModal] = useState(false);
+
+  const [selectedBillings, setSelectedBillings] = useState([]); // 선택된 청구 목록
 
   const navigate = useNavigate();
 
@@ -107,6 +110,40 @@ const BillingListPage = () => {
     setPageGroup(0); // 검색 후 페이지 그룹 초기화
   };
 
+  // 청구 선택 항목
+  const handleChangeSelection = newSelections => {
+    setSelectedBillings(newSelections);
+  };
+
+  // 실시간 결제
+  const handleRealtimePay = async () => {
+    if (!selectedBillings || selectedBillings.length === 0) {
+      alert('선택된 청구가 없습니다!');
+      return;
+    }
+
+    const errors = [];
+    for (const billing of selectedBillings) {
+      try {
+        await payRealTimeBilling(billing.billingId);
+      } catch (err) {
+        errors.push({
+          from: billing,
+          res: err.response.data,
+        });
+      }
+    }
+
+    console.log(errors);
+    // 실패항목이 있는 경우
+    if (errors.length !== 0) {
+      setPayErrors(errors);
+      setIsShowPayErrorModal(true);
+    } else {
+      alert(`${selectedBillings.length}개의 청구 결제를 성공했습니다.`);
+    }
+  };
+
   // <--------청구 상세 조회 페이지 이동-------->
   const MoveBillingDetail = async billingId => {
     console.log(billingId);
@@ -148,7 +185,12 @@ const BillingListPage = () => {
 
         <div>
           <div className='flex'>
-            <MoveButton imgSrc={card} color='white' buttonText='실시간 결제' />
+            <MoveButton
+              imgSrc={card}
+              color='white'
+              buttonText='실시간 결제'
+              onClick={handleRealtimePay}
+            />
             <MoveButton imgSrc={send} color='mint' buttonText='청구서 발송' />
             <MoveButton
               imgSrc={addItem}
@@ -168,6 +210,7 @@ const BillingListPage = () => {
         handleChangeSearch={handleChangeSearch}
         handleClickSearch={handleClickSearch}
         onRowClick={item => MoveBillingDetail(item.billingId)}
+        handleChangeSelection={handleChangeSelection}
       />
 
       <PagiNation
@@ -178,13 +221,15 @@ const BillingListPage = () => {
         setPageGroup={setPageGroup}
         buttonCount={buttonCount}
       />
-
-      <BillingRegisterModal
-        isShowModal={isShowModal}
-        icon={card}
-        setIsShowModal={setIsShowModal}
-        modalTitle={'청구생성'}
-      />
+      {isShowPayErrorModal && (
+        <PayRealtimeErrorModal
+          errors={payErrors}
+          isShowModal={isShowPayErrorModal}
+          icon={card}
+          setIsShowModal={setIsShowPayErrorModal}
+          modalTitle={'실시간 결제'}
+        />
+      )}
     </div>
   );
 };

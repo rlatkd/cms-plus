@@ -32,12 +32,6 @@ const ContractList = ({
   setPageGroup,
 }) => {
   return (
-<<<<<<< HEAD
-    <div className="w-2/5 p-6 overflow-auto">
-      <h2 className="text-xl text-text_black font-800 mb-4">계약 목록</h2>
-      <div className="flex space-x-2 mb-4">
-        <select
-=======
     <div className='w-2/5 p-6 overflow-auto'>
       <h2 className='text-2xl font-semibold mb-4 text-text_black'>계약 목록</h2>
       <div className='flex justify-between w-full my-2 '>
@@ -46,7 +40,6 @@ const ContractList = ({
           classContainer='mr-5 w-1/3 h-full'
           classLabel='text-15 text-text_black font-700'
           classSelect='py-4 rounded-lg'
->>>>>>> 1f47c2f5016f864c536cb650099adeeaf3be9549
           value={searchType}
           options={typeOtions}
           onChange={e => setSearchType(e.target.value)}
