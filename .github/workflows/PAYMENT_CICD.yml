@@ -12,7 +12,7 @@ env:
   ECR_REPOSITORY: t3-back-paymentecr2
   ECS_CLUSTER: t3-back-ecscluster
   ECS_CONTAINER: t3-back-paymentcontainer2
-  ECS_SERVICE: t3-back-paymentservice2
+  ECS_SERVICE: t3-back-ecscluster2/t3-back-paymentservice2
   ECS_TASK_DEFINITION: task-definition-payment.json
 
 permissions:
