@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.domain.contract.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.*;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -69,17 +70,14 @@ public class ContractService {
 	 * 내용:
 	 * 	존재여부 확인, 계약 조회, 계약상품 목록 조회(+? batch_size=100), 전체 개수 조회
 	 * */
-	public PageRes<BillingListItemRes> getBillingsByContract(
-		Long vendorId, Long contractId, PageReq pageReq)
-	{
-		// 고객의 계약 여부 확인
+	public PageRes<BillingListItemRes> getBillingsByContract(Long vendorId, Long contractId, PageReq pageReq) {
 		validateContractUser(contractId, vendorId);
 
-		List<BillingListItemRes> content = billingCustomRepository.findBillingsByContractId(contractId, pageReq)
-			.stream()
-			.map(BillingListItemRes::fromEntity)
-			.toList();
+		BillingSearchReq search = new BillingSearchReq();
+		search.setContractId(contractId);
 
+		List<BillingListItemRes> content =
+			billingCustomRepository.findBillingListWithCondition(vendorId, search, pageReq);
 		int totalContentCount = billingCustomRepository.countAllBillingsByContract(contractId);
 
 		return new PageRes<>(
@@ -160,12 +158,10 @@ public class ContractService {
 		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
 
 		// 청구 상품 목록
-		List<ContractProduct> contractProducts = contractProductReqs
+		return contractProductReqs
 			.stream()
 			.map(dto -> dto.toEntity(productIdToName.get(dto.getProductId())))
 			.toList();
-
-		return contractProducts;
 	}
 
 	/*

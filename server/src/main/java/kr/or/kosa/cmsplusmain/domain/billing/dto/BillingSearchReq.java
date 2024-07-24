@@ -20,6 +20,7 @@ public class BillingSearchReq {
 	private BillingStatus billingStatus;	// 청구상태 일치
 	private PaymentType paymentType;		// 결제방식 일치
 	private LocalDate billingDate;			// 청구 결제일 일치
+	private Long contractId;				// 계약 ID
 
 	/****** 정렬 가능 항목 *******/
 	// memberName

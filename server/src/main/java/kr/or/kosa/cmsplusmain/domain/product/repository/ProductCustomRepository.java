@@ -16,6 +16,8 @@ import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import kr.or.kosa.cmsplusmain.domain.product.entity.ProductStatus;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,6 +217,9 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
             return null;
         }
         return contractProduct.contract.countDistinct().loe(contractNumber);
+    }
+    private BooleanExpression productNameContains(String productName) {
+        return StringUtils.hasText(productName) ? product.name.contains(productName) : null;
     }
 }
 

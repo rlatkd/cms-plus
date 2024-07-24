@@ -6,8 +6,6 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
@@ -182,21 +180,11 @@ public class MemberService {
     }
 
     /*
-     * 회원 삭제 - 회원의 청구 목록 조회
+     * 회원 삭제 - 회원의 진행중인 청구 개수 조회
      * */
-    public List<BillingListItemRes> getBillingByMember(Long vendorId, Long memberId) {
-
-        // 고객의 회원 여부 확인
+    public int countAllInProgressBillingByMember(Long vendorId, Long memberId) {
         validateMemberUser(vendorId, memberId);
-
-        // 청구 목록 조회
-        List<Billing> billingList = billingCustomRepository.findBillingListByMemberId(vendorId, memberId);
-
-        // 빌더 패턴을 사용하여 BillingListItemRes로 변환
-        return billingList.stream()
-                .map(BillingListItemRes::fromEntity)
-                .collect(Collectors.toList());
-
+        return billingCustomRepository.countInProgressBillingsByMember(memberId);
     }
 
     /*
