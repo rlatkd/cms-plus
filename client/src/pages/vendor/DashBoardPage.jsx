@@ -15,6 +15,14 @@ import DashBoardCalendar, {
 import BillingSummary from '@/components/vendor/dashboard/DashBoardBillingSummary';
 import formatNumber from '@/utils/format/formatNumber';
 
+// 상태값 별 색상 정의
+export const STATUS_COLORS = {
+  PAID: 'bg-emerald-100 text-emerald-800',
+  WAITING_PAYMENT: 'bg-cyan-100 text-cyan-800',
+  NON_PAID: 'bg-rose-100 text-rose-800',
+  CREATED: 'bg-mint text-white',
+};
+
 const StatItem = ({ icon, title, value, subStat }) => (
   <div className='bg-white rounded-xl shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg'>
     <div className='flex items-center mb-4'>
@@ -162,12 +170,22 @@ const DashBoardPage = () => {
       <div className='container mx-auto px-4'>
         <Stats statInfo={statInfo} />
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>
-          <div className='lg:col-span-3'>{memoizedCalendar}</div>
-          <BillingSummary billingInfo={billingInfo} month={date.getMonth() + 1} />
+          <div className='lg:col-span-3'>
+            <div className='bg-white rounded-xl shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg'>
+              {memoizedCalendar}
+            </div>
+          </div>
+          <div className='bg-white rounded-xl shadow-md transition duration-300 ease-in-out hover:shadow-lg'>
+            <BillingSummary billingInfo={billingInfo} month={date.getMonth() + 1} />
+          </div>
         </div>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-          <TopMembers topFive={topFive.topFiveMemberRes} />
-          <RecentContracts contracts={topFive.recentFiveContracts} />
+          <div className='bg-white rounded-xl shadow-md transition duration-300 ease-in-out hover:shadow-lg'>
+            <TopMembers topFive={topFive.topFiveMemberRes} />
+          </div>
+          <div className='bg-white rounded-xl shadow-md transition duration-300 ease-in-out hover:shadow-lg'>
+            <RecentContracts contracts={topFive.recentFiveContracts} />
+          </div>
         </div>
       </div>
     </div>

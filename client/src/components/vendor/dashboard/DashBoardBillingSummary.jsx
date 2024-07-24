@@ -1,3 +1,4 @@
+import { STATUS_COLORS } from '@/pages/vendor/DashBoardPage';
 import formatNumber from '@/utils/format/formatNumber';
 
 const BillingSummary = ({ billingInfo, month }) => (
@@ -25,22 +26,22 @@ const BillingSummary = ({ billingInfo, month }) => (
             {
               label: '완납',
               value: billingInfo.statusCounts.PAID,
-              color: 'bg-emerald-100 text-emerald-800',
+              color: STATUS_COLORS.PAID,
             },
             {
               label: '수납 대기중',
               value: billingInfo.statusCounts.WAITING_PAYMENT,
-              color: 'bg-amber-100 text-amber-800',
+              color: STATUS_COLORS.WAITING_PAYMENT,
             },
             {
               label: '미납',
               value: billingInfo.statusCounts.NON_PAID,
-              color: 'bg-rose-100 text-rose-800',
+              color: STATUS_COLORS.NON_PAID,
             },
             {
               label: '생성',
               value: billingInfo.statusCounts.CREATED,
-              color: 'bg-sky-100 text-sky-800',
+              color: STATUS_COLORS.CREATED,
             },
           ].map(({ label, value, color }) => (
             <div key={label} className={`${color} rounded-md p-3 shadow-sm`}>

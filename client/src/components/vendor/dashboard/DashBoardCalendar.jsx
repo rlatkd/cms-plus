@@ -3,6 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import formatNumber from '@/utils/format/formatNumber';
+import { STATUS_COLORS } from '@/pages/vendor/DashBoardPage';
 
 const getEventPriorityStatus = statusCounts => {
   if (statusCounts.NON_PAID > 0) return 'NON_PAID';
@@ -15,15 +16,15 @@ const getEventPriorityStatus = statusCounts => {
 const getEventColor = status => {
   switch (status) {
     case 'NON_PAID':
-      return '#FCA5A5';
+      return STATUS_COLORS.NON_PAID.split(' ')[0]; // bg 색상만 사용
     case 'WAITING_PAYMENT':
-      return '#FCD34D';
+      return STATUS_COLORS.WAITING_PAYMENT.split(' ')[0];
     case 'PAID':
-      return '#6EE7B7';
+      return STATUS_COLORS.PAID.split(' ')[0];
     case 'CREATED':
-      return '#93C5FD';
+      return STATUS_COLORS.CREATED.split(' ')[0];
     default:
-      return '#E5E7EB';
+      return 'bg-gray-200';
   }
 };
 
@@ -130,7 +131,7 @@ const DashBoardCalendar = ({ events, onEventClick, calendarRef, onNext, onPrev }
           const backgroundColor = getEventColor(priorityStatus);
 
           return (
-            <div className={`p-1 text-xs rounded-sm`} style={{ backgroundColor }}>
+            <div className={`p-1 text-xs rounded-sm ${backgroundColor} text-text_black`}>
               <div className='font-bold whitespace-nowrap overflow-hidden text-ellipsis'>
                 {formatNumber(totalCount)}건
               </div>
@@ -142,7 +143,8 @@ const DashBoardCalendar = ({ events, onEventClick, calendarRef, onNext, onPrev }
         }}
         eventMouseEnter={handleEventMouseEnter}
         eventMouseLeave={handleEventMouseLeave}
-        eventBorderColor='black'
+        eventBorderColor='transparent'
+        eventBackgroundColor='transparent'
         dayCellDidMount={arg => {
           arg.el.style.height = '100px';
         }}
