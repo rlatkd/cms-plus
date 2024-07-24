@@ -141,22 +141,23 @@ const MemberRegisterPage = () => {
   useEffect(() => {
     return () => {
       reset();
+      resetBasicInfo();
+      resetBillingInfo();
+      resetContractInfo();
+      resetPaymentType();
+      resetPaymentMethod();
+      resetPaymentTypeInfoReq_Virtual();
+      resetPaymentTypeInfoReq_Buyer();
+      resetPaymentTypeInfoReq_Auto();
+      resetPaymentMethodInfoReq_Cms();
+      resetPaymentMethodInfoReq_Card();
     };
   }, []);
 
   // <------ 회원등록 입력 데이터 reset------>
-  useEffect(() => {
-    resetBasicInfo();
-    resetBillingInfo();
-    resetContractInfo();
-    resetPaymentType();
-    resetPaymentMethod();
-    resetPaymentTypeInfoReq_Virtual();
-    resetPaymentTypeInfoReq_Buyer();
-    resetPaymentTypeInfoReq_Auto();
-    resetPaymentMethodInfoReq_Cms();
-    resetPaymentMethodInfoReq_Card();
-  }, []);
+  // useEffect(() => {
+
+  // }, []);
 
   return (
     <>

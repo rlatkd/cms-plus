@@ -50,6 +50,21 @@ export const getMemberList = async (searchParams = {}) => {
   }
 };
 
+// 회원 기본정보 목록 조회
+export const getMemberBasicInfoList = async (searchParams = {}) => {
+  try {
+    const res = await privateAxios.get('/v1/vendor/management/basicinfo/members', {
+      params: {
+        ...searchParams,
+      },
+    });
+    return res;
+  } catch (err) {
+    console.error('회원 기보정보 목록 조회 실패 => ', err.response);
+    throw err;
+  }
+};
+
 // 회원 상세 조회
 export const getMemberDetail = async memberId => {
   try {
