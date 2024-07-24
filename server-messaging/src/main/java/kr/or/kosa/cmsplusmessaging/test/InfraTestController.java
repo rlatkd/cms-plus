@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class InfraTestController {
 
-    @GetMapping("/infra-test")
+    @GetMapping("/infra-test-msg")
     public String infraTest() {
         return "infra-test 333";
     }
