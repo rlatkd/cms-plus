@@ -88,6 +88,16 @@ public class BillingState {
 				return new BillingState(PAY_REALTIME, true);
 			}
 		},
+		PAY {
+			@Override
+			public BillingState checkState(Billing billing) {
+				if (billing.getBillingStatus() == BillingStatus.PAID) {
+					return new BillingState(PAY, false,
+							"이미 결제된 청구입니다");
+				}
+				return new BillingState(PAY, true);
+			}
+		},
 		CANCEL_PAYMENT {
 			@Override
 			public BillingState checkState(Billing billing) {

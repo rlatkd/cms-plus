@@ -12,14 +12,14 @@ services:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped
 
-  # redis:
-  #   image: redis:latest
-  #   container_name: redis
-  #   ports:
-  #     - '6379:6379'
-  #   volumes:
-  #     - redis_data:/data
-  #   restart: unless-stopped
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
 
   # zookeeper:
   #   container_name: zookeeper
