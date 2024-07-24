@@ -1,20 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+  useMemo,
+} from 'react';
 import Input from '@/components/common/inputs/Input';
 import SelectField from '@/components/common/selects/SelectField';
 import ProductItem from '@/components/common/ProductItem';
 import { useUserDataStore } from '@/stores/useUserDataStore';
+import { getAvailableOptions } from '@/apis/simpleConsent';
+import InputCalendar from '@/components/common/inputs/InputCalendar';
 
-const ContractInfo = () => {
+const ContractInfo = forwardRef((props, ref) => {
   const { userData, setUserData } = useUserDataStore();
+  const [availableProducts, setAvailableProducts] = useState([]);
   const [localData, setLocalData] = useState({
-    contractName: userData.contractDTO.contractName || '',
-    selectedProduct: userData.contractDTO.selectedProduct || '',
-    items: userData.contractDTO.items || [],
-    startDate: userData.contractDTO.startDate || '',
-    endDate: userData.contractDTO.endDate || '',
-    contractDay: userData.contractDTO.contractDay || 1,
+    contractName: '',
+    selectedProduct: '',
+    items: [],
+    startDate: '',
+    endDate: '',
+    contractDay: 1,
   });
 
+  // 초기 userData 로드
   useEffect(() => {
     setLocalData({
       contractName: userData.contractDTO.contractName || '',
@@ -24,82 +35,122 @@ const ContractInfo = () => {
       endDate: userData.contractDTO.endDate || '',
       contractDay: userData.contractDTO.contractDay || 1,
     });
-  }, [userData.contractDTO]);
+  }, [userData]);
 
-  const productOptions = [
-    { value: '', label: '상품을 선택해주세요' },
-    { value: '10', label: '상품 10(3,000원)' },
-    { value: '20', label: '상품 20(4,000원)' },
-  ];
+  useEffect(() => {
+    const fetchAvailableOptions = async () => {
+      try {
+        const options = await getAvailableOptions();
+        setAvailableProducts(options.availableProducts);
+      } catch (error) {
+        console.error('상품 리스트 업데이트 실패:', error);
+      }
+    };
 
-  const handleInputChange = e => {
+    fetchAvailableOptions();
+  }, []);
+
+  const updateUserData = useCallback(() => {
+    setUserData({
+      contractDTO: {
+        ...localData,
+      },
+    });
+  }, [localData, setUserData]);
+
+  useImperativeHandle(ref, () => ({
+    validateContractInfo: () => {
+      const missingFields = [];
+
+      if (!localData.contractName) missingFields.push('계약명');
+      if (!localData.selectedProduct) missingFields.push('상품');
+      if (localData.items.length === 0) missingFields.push('선택된 상품');
+      if (!localData.startDate) missingFields.push('시작 날짜');
+      if (!localData.endDate) missingFields.push('종료 날짜');
+      if (!localData.contractDay) missingFields.push('약정일');
+
+      // 유효성 검사 후 userData 업데이트
+      updateUserData();
+
+      return missingFields;
+    },
+  }));
+
+  const handleInputChange = useCallback(e => {
     const { name, value } = e.target;
     setLocalData(prev => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const handleBlur = e => {
-    const { name, value } = e.target;
-    setUserData({ contractDTO: { ...userData.contractDTO, [name]: value } });
-  };
+  const handleProductChange = useCallback(
+    e => {
+      const productId = e.target.value;
+      if (productId) {
+        const selectedProduct = availableProducts.find(p => p.productId.toString() === productId);
+        const newProduct = {
+          productId: selectedProduct.productId,
+          productName: selectedProduct.productName,
+          price: selectedProduct.productPrice,
+          quantity: 1,
+        };
 
-  const handleProductChange = e => {
-    const productId = e.target.value;
-    if (productId) {
-      const selectedProduct = productOptions.find(option => option.value === productId);
-      const newProduct = {
-        productId: parseInt(productId),
-        productName: selectedProduct.label.split('(')[0],
-        price: selectedProduct.label.includes('3,000') ? 3000 : 4000,
-        quantity: 1,
-      };
-
-      if (!localData.items.some(item => item.productId === newProduct.productId)) {
-        const newItems = [...localData.items, newProduct];
-        setLocalData(prev => ({
-          ...prev,
-          selectedProduct: productId,
-          items: newItems,
-        }));
-        setUserData({
-          contractDTO: {
-            ...userData.contractDTO,
+        if (!localData.items.some(item => item.productId === newProduct.productId)) {
+          setLocalData(prev => ({
+            ...prev,
             selectedProduct: productId,
-            items: newItems,
-          },
-        });
+            items: [...prev.items, newProduct],
+          }));
+        }
+      } else {
+        setLocalData(prev => ({ ...prev, selectedProduct: '' }));
       }
-    } else {
-      setLocalData(prev => ({ ...prev, selectedProduct: '' }));
-      setUserData({ contractDTO: { ...userData.contractDTO, selectedProduct: '' } });
-    }
-  };
+    },
+    [availableProducts, localData.items]
+  );
 
-  const updateQuantity = (index, change) => {
-    const newItems = [...localData.items];
-    newItems[index].quantity = Math.max(1, newItems[index].quantity + change);
-    setLocalData(prev => ({ ...prev, items: newItems }));
-    setUserData({ contractDTO: { ...userData.contractDTO, items: newItems } });
-  };
+  const updateQuantity = useCallback((index, change) => {
+    setLocalData(prev => {
+      const newItems = [...prev.items];
+      newItems[index].quantity = Math.max(1, newItems[index].quantity + change);
+      return { ...prev, items: newItems };
+    });
+  }, []);
 
-  const removeItem = index => {
-    const newItems = localData.items.filter((_, i) => i !== index);
-    setLocalData(prev => ({ ...prev, items: newItems }));
-    setUserData({ contractDTO: { ...userData.contractDTO, items: newItems } });
-  };
+  const removeItem = useCallback(index => {
+    setLocalData(prev => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index),
+    }));
+  }, []);
 
-  const handleDateChange = (e, field) => {
-    const newDate = e.target.value;
-    setLocalData(prev => ({ ...prev, [field]: newDate }));
-    setUserData({ contractDTO: { ...userData.contractDTO, [field]: newDate } });
+  const handleDateChange = useCallback(
+    (e, field) => {
+      const newDate = e.target.value;
+      setLocalData(prev => ({ ...prev, [field]: newDate }));
 
-    if (field === 'startDate' && new Date(newDate) > new Date(localData.endDate)) {
-      setLocalData(prev => ({ ...prev, endDate: newDate }));
-      setUserData({ contractDTO: { ...userData.contractDTO, endDate: newDate } });
-    } else if (field === 'endDate' && new Date(newDate) < new Date(localData.startDate)) {
-      setLocalData(prev => ({ ...prev, startDate: newDate }));
-      setUserData({ contractDTO: { ...userData.contractDTO, startDate: newDate } });
-    }
-  };
+      if (field === 'startDate' && new Date(newDate) > new Date(localData.endDate)) {
+        setLocalData(prev => ({ ...prev, endDate: newDate }));
+      } else if (field === 'endDate' && new Date(newDate) < new Date(localData.startDate)) {
+        setLocalData(prev => ({ ...prev, startDate: newDate }));
+      }
+    },
+    [localData.endDate, localData.startDate]
+  );
+
+  const productOptions = useMemo(
+    () => [
+      { value: '', label: '상품을 선택해주세요' },
+      ...availableProducts.map(product => ({
+        value: product.productId.toString(),
+        label: `${product.productName}(${product.productPrice.toLocaleString()}원)`,
+      })),
+    ],
+    [availableProducts]
+  );
+
+  const totalPrice = useMemo(
+    () => localData.items.reduce((sum, item) => sum + item.quantity * item.price, 0),
+    [localData.items]
+  );
 
   return (
     <div className='flex flex-col bg-white p-1'>
@@ -120,7 +171,6 @@ const ContractInfo = () => {
         className='pb-6'
         value={localData.contractName}
         onChange={handleInputChange}
-        onBlur={handleBlur}
         maxLength={20}
       />
 
@@ -142,7 +192,7 @@ const ContractInfo = () => {
       ))}
 
       <div className='mb-4 text-right text-sm font-semibold'>
-        합계: {localData.items.reduce((sum, item) => sum + item.quantity * item.price, 0)}원
+        합계: {totalPrice.toLocaleString()}원
       </div>
 
       <div className='mb-4'>
@@ -153,22 +203,20 @@ const ContractInfo = () => {
           </span>
         </label>
         <div className='flex w-full items-center'>
-          <Input
-            type='date'
+          <InputCalendar
+            id='startDate'
             value={localData.startDate}
-            onChange={e => handleDateChange(e, 'startDate')}
-            min='2024-01-01'
-            max='2024-12-31'
-            className='flex-1'
+            handleChangeValue={e => handleDateChange(e, 'startDate')}
+            placeholder='시작 날짜'
+            width='100%'
           />
           <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
-          <Input
-            type='date'
+          <InputCalendar
+            id='endDate'
             value={localData.endDate}
-            onChange={e => handleDateChange(e, 'endDate')}
-            min={localData.startDate}
-            max='2024-12-31'
-            className='flex-1'
+            handleChangeValue={e => handleDateChange(e, 'endDate')}
+            placeholder='종료 날짜'
+            width='100%'
           />
         </div>
       </div>
@@ -181,11 +229,10 @@ const ContractInfo = () => {
         onChange={e => {
           const value = parseInt(e.target.value);
           setLocalData(prev => ({ ...prev, contractDay: value }));
-          setUserData({ contractDTO: { ...userData.contractDTO, contractDay: value } });
         }}
       />
     </div>
   );
-};
+});
 
 export default ContractInfo;

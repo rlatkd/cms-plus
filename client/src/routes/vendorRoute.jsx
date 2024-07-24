@@ -101,7 +101,7 @@ const vendorRoute = () => {
           element: <PaymentInfoUpdate />,
         },
         {
-          path: 'billings/update/:id',
+          path: 'billings/update/:contractId/:memberId',
           name: '청구 정보 수정',
           menu: false,
           element: <BillingInfoUpdate />,

@@ -12,117 +12,116 @@ services:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped
 
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - '6379:6379'
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
+  # redis:
+  #   image: redis:latest
+  #   container_name: redis
+  #   ports:
+  #     - '6379:6379'
+  #   volumes:
+  #     - redis_data:/data
+  #   restart: unless-stopped
 
-  zookeeper:
-    container_name: zookeeper
-    image: wurstmeister/zookeeper
-    ports:
-      - 2181:2181
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ALLOW_ANONYMOUS_LOGIN: yes
-    restart: unless-stopped
+  # zookeeper:
+  #   container_name: zookeeper
+  #   image: wurstmeister/zookeeper
+  #   ports:
+  #     - 2181:2181
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #     ALLOW_ANONYMOUS_LOGIN: yes
+  #   restart: unless-stopped
 
-  kafka1:
-    container_name: kafka1
-    image: wurstmeister/kafka
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_BROKER_ID: 1
-      #도커 네트워크 내부에선 컨테이너들이 kafka:29092로 접근
-      #외부 애플리케이션(스프링부트)에선 localhost:9092로 접근
-      KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-    ports:
-      - '9092:9092'
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - zookeeper
-    restart: unless-stopped
+  # kafka1:
+  #   container_name: kafka1
+  #   image: wurstmeister/kafka
+  #   environment:
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://0.0.0.0:9092
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9092
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  #     KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+  #     KAFKA_ADVERTISED_PORT: 9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+  #   ports:
+  #     - '9092:9092'
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   depends_on:
+  #     - zookeeper
+  #   restart: unless-stopped
 
-  kafka2:
-    container_name: kafka2
-    image: wurstmeister/kafka
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_BROKER_ID: 2
-      KAFKA_LISTENERS: PLAINTEXT://:29093,PLAINTEXT_HOST://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29093,PLAINTEXT_HOST://localhost:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-    ports:
-      - '9093:9093'
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - zookeeper
-    restart: unless-stopped
+  # kafka2:
+  #   container_name: kafka2
+  #   image: wurstmeister/kafka
+  #   environment:
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_BROKER_ID: 2
+  #     KAFKA_LISTENERS: PLAINTEXT://:29093,PLAINTEXT_HOST://0.0.0.0:9093
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29093,PLAINTEXT_HOST://localhost:9093
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  #     KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+  #     KAFKA_ADVERTISED_PORT: 9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+  #   ports:
+  #     - '9093:9093'
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   depends_on:
+  #     - zookeeper
+  #   restart: unless-stopped
 
-  kafka3:
-    container_name: kafka3
-    image: wurstmeister/kafka
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_BROKER_ID: 3
-      KAFKA_LISTENERS: PLAINTEXT://:29094,PLAINTEXT_HOST://0.0.0.0:9094
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:29094,PLAINTEXT_HOST://localhost:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-    ports:
-      - '9094:9094'
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - zookeeper
-    restart: unless-stopped
+  # kafka3:
+  #   container_name: kafka3
+  #   image: wurstmeister/kafka
+  #   environment:
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_BROKER_ID: 3
+  #     KAFKA_LISTENERS: PLAINTEXT://:29094,PLAINTEXT_HOST://0.0.0.0:9094
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:29094,PLAINTEXT_HOST://localhost:9094
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  #     KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+  #     KAFKA_ADVERTISED_PORT: 9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+  #   ports:
+  #     - '9094:9094'
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   depends_on:
+  #     - zookeeper
+  #   restart: unless-stopped
 
-  kafkaui:
-    container_name: kafkaui
-    image: provectuslabs/kafka-ui:latest
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-    ports:
-      - '9000:8080'
-    environment:
-      - DYNAMIC_CONFIG_ENABLED=true
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:29092, kafka2:29093, kafka3:29094
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
-    restart: unless-stopped
+  # kafkaui:
+  #   container_name: kafkaui
+  #   image: provectuslabs/kafka-ui:latest
+  #   depends_on:
+  #     - kafka1
+  #     - kafka2
+  #     - kafka3
+  #   ports:
+  #     - '9000:8080'
+  #   environment:
+  #     - DYNAMIC_CONFIG_ENABLED=true
+  #     - KAFKA_CLUSTERS_0_NAME=local
+  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:29092, kafka2:29093, kafka3:29094
+  #     - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+  #   restart: unless-stopped
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop
-    ports: 
-      - '9001:9000'
-    environment:
-      KAFKA_BROKER_CONNECT: "kafka3:29094"
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-    restart: unless-stopped
+  # kafdrop:
+  #   container_name: kafdrop
+  #   image: obsidiandynamics/kafdrop
+  #   ports: 
+  #     - '9001:9000'
+  #   environment:
+  #     KAFKA_BROKER_CONNECT: 'kafka3:29094'
+  #   depends_on:
+  #     - kafka1
+  #     - kafka2
+  #     - kafka3
+  #   restart: unless-stopped
 
 volumes:
   mysql_data:

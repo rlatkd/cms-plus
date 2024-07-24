@@ -5,13 +5,14 @@ import java.util.List;
 import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
+import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.excel.service.ExcelHandler;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
@@ -45,6 +46,14 @@ public class MemberController {
     public PageRes<MemberListItemRes> getMemberList(@AuthenticationPrincipal VendorUserDetailsDto userDetails, MemberSearchReq memberSearch, PageReq pageable) {
         Long vendorId = userDetails.getId();
         return memberService.searchMembers(vendorId, memberSearch, pageable);
+    }
+
+    /*
+     * 회원 기본정보 목록 조회
+     * */
+    @GetMapping("/basicinfo/members")
+    public PageRes<MemberDto> getMemberBasicInfoList(@VendorId Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
+        return memberService.findAllMemberBasicInfo(vendorId, memberSearch, pageable);
     }
 
     /*
@@ -83,14 +92,6 @@ public class MemberController {
         memberService.updateMember(vendorId, memberId, memberUpdateReq);
     }
 
-        /*
-      * 회원 엑셀 -> json 변환
-    * */
-    @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public List<MemberExcelDto> conventMembersByExcel(MultipartFile file) {
-        return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
-    }
-
     /*
      * 회원 수정 - 청구 정보
      * */
@@ -107,6 +108,32 @@ public class MemberController {
     public void updateMemberPayment(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @RequestBody @Valid PaymentUpdateReq paymentUpdateReq, @PathVariable Long contractId) {
         Long vendorId = userDetails.getId();
         paymentService.updatePayment(vendorId, contractId, paymentUpdateReq);
+    }
+
+    /*
+     * 회원 삭제
+     * */
+    @DeleteMapping("/members/{memberId}")
+    public void deleteMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails ,  @PathVariable Long memberId) {
+        Long vendorId = userDetails.getId();
+        memberService.deleteMember(vendorId, memberId);
+    }
+
+    /*
+     * 회원 삭제 - 회원의 진행중인 청구 개수
+     * */
+    @GetMapping("/members/{memberId}/billing")
+    public int getInProgressBillingCount(@AuthenticationPrincipal VendorUserDetailsDto userDetails , @PathVariable Long memberId) {
+        Long vendorId = userDetails.getId();
+        return memberService.countAllInProgressBillingByMember(vendorId, memberId);
+    }
+
+    /*
+     * 회원 엑셀 -> json 변환
+     * */
+    @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public List<MemberExcelDto> conventMembersByExcel(MultipartFile file) {
+        return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
     }
 
     /*

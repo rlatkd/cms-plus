@@ -7,11 +7,13 @@ import {
   faChartLine,
 } from '@fortawesome/free-solid-svg-icons';
 import { getMonthBillingInfo, getStatInfo, getTopInfo } from '@/apis/dashboard';
-import formatNumber from '@/utils/formatNumber';
 import TopMembers from '@/components/vendor/dashboard/DashBoardTopMembers';
 import RecentContracts from '@/components/vendor/dashboard/DashBoardRecentContracts';
-import DashBoardCalendar, { convertToCalendarEvents } from '@/components/vendor/dashboard/DashBoardCalendar';
+import DashBoardCalendar, {
+  convertToCalendarEvents,
+} from '@/components/vendor/dashboard/DashBoardCalendar';
 import BillingSummary from '@/components/vendor/dashboard/DashBoardBillingSummary';
+import formatNumber from '@/utils/format/formatNumber';
 
 const StatItem = ({ icon, title, value, subStat }) => (
   <div className='bg-white rounded-xl shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg'>
@@ -67,13 +69,13 @@ const DashBoardPage = () => {
     billingPriceGrowth: 0,
     memberGrowth: 0,
   });
-  
+
   const [billingInfo, setBillingInfo] = useState({
     totalBillingPrice: 0,
     statusPrices: {},
     totalBillingAmount: 0,
     statusCounts: {},
-    dayBillingRes: []
+    dayBillingRes: [],
   });
   const [topFive, setTopFive] = useState({});
   const [date, setDate] = useState(new Date());
@@ -122,7 +124,7 @@ const DashBoardPage = () => {
     setDate(calendarApi.getDate());
   }, []);
 
-  const handleCalendarEventClicked = useCallback(async (info) => {
+  const handleCalendarEventClicked = useCallback(async info => {
     const date = info.event.start;
     if (date) {
       // TODO: Implement event click handling
@@ -142,24 +144,25 @@ const DashBoardPage = () => {
     fetchData();
   }, []);
 
-  const memoizedCalendar = useMemo(() => (
-    <DashBoardCalendar
-      events={events}
-      onEventClick={handleCalendarEventClicked}
-      calendarRef={calendarRef}
-      onNext={calendarGoNext}
-      onPrev={calendarGoPrev}
-    />
-  ), [events, handleCalendarEventClicked, calendarGoNext, calendarGoPrev]);
+  const memoizedCalendar = useMemo(
+    () => (
+      <DashBoardCalendar
+        events={events}
+        onEventClick={handleCalendarEventClicked}
+        calendarRef={calendarRef}
+        onNext={calendarGoNext}
+        onPrev={calendarGoPrev}
+      />
+    ),
+    [events, handleCalendarEventClicked, calendarGoNext, calendarGoPrev]
+  );
 
   return (
     <div className='min-h-screen py-8 bg-gray-100'>
       <div className='container mx-auto px-4'>
         <Stats statInfo={statInfo} />
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>
-          <div className='lg:col-span-3'>
-            {memoizedCalendar}
-          </div>
+          <div className='lg:col-span-3'>{memoizedCalendar}</div>
           <BillingSummary billingInfo={billingInfo} month={date.getMonth() + 1} />
         </div>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>

@@ -1,61 +1,89 @@
 import React from 'react';
 import PagiNation from '@/components/common/PagiNation';
-import { formatProducts } from '@/utils/formatProducts';
+import SelectField from '@/components/common/selects/SelectField';
+import InputWeb from '@/components/common/inputs/InputWeb';
+import { formatProducts } from '@/utils/format/formatProducts';
 
-const ContractList = ({ 
-  searchType, 
-  setSearchType, 
-  searchTerm, 
-  setSearchTerm, 
-  contractList, 
-  handleSelectContract, 
-  currentPage, 
-  setCurrentPage, 
-  totalPages, 
-  pageGroup, 
-  setPageGroup 
+const typeOtions = [
+  { value: 'memberName', label: '회원명' },
+  { value: 'contractDay', label: '약정일' },
+  { value: 'contractProducts', label: '상품명' },
+  { value: 'contractPrice', label: '계약금액' },
+];
+
+const typePlaceholers = {
+  memberName: '회원명 입력',
+  contractDay: '약정일 입력',
+  contractProducts: '상품명 입력',
+  contractPrice: '계약금액 이하',
+};
+
+const ContractList = ({
+  searchType,
+  setSearchType,
+  searchTerm,
+  setSearchTerm,
+  contractList,
+  handleSelectContract,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  pageGroup,
+  setPageGroup,
 }) => {
   return (
+<<<<<<< HEAD
     <div className="w-2/5 p-6 overflow-auto">
       <h2 className="text-xl text-text_black font-800 mb-4">계약 목록</h2>
       <div className="flex space-x-2 mb-4">
         <select
+=======
+    <div className='w-2/5 p-6 overflow-auto'>
+      <h2 className='text-2xl font-semibold mb-4 text-text_black'>계약 목록</h2>
+      <div className='flex justify-between w-full my-2 '>
+        <SelectField
+          label=''
+          classContainer='mr-5 w-1/3 h-full'
+          classLabel='text-15 text-text_black font-700'
+          classSelect='py-4 rounded-lg'
+>>>>>>> 1f47c2f5016f864c536cb650099adeeaf3be9549
           value={searchType}
-          onChange={(e) => setSearchType(e.target.value)}
-          className="p-2 border rounded"
-        >
-          <option value="memberName">회원이름</option>
-          <option value="contractDay">약정일</option>
-          <option value="contractProducts">상품</option>
-          <option value="contractPrice">계약금액</option>
-        </select>
-        <input
-          placeholder="검색어 입력"
+          options={typeOtions}
+          onChange={e => setSearchType(e.target.value)}
+        />
+        <InputWeb
+          id='searchTerm'
+          type='text'
+          label=''
+          classContainer='w-full'
+          placeholder={typePlaceholers[searchType]}
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 p-2 border rounded"
+          onChange={e => setSearchTerm(e.target.value)}
         />
       </div>
-      <table className="w-full">
+      <table className='w-full mb-3'>
         <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 text-left">회원이름</th>
-            <th className="p-2 text-left">약정일</th>
-            <th className="p-2 text-left">상품</th>
-            <th className="p-2 text-left">계약금액</th>
+          <tr className='bg-table_col'>
+            <th className='p-2 text-left text-text_black'>회원명</th>
+            <th className='p-2 text-left text-text_black'>약정일</th>
+            <th className='p-2 text-left text-text_black'>상품</th>
+            <th className='p-2 text-left text-text_black'>계약금액</th>
           </tr>
         </thead>
         <tbody>
-          {contractList.map((contract) => (
+          {contractList.map(contract => (
             <tr
               key={contract.contractId}
               onClick={() => handleSelectContract(contract)}
-              className="cursor-pointer hover:bg-gray-50"
-            >
-              <td className="border p-2">{contract.memberName}</td>
-              <td className="border p-2">{`${contract.contractDay}일`}</td>
-              <td className="border p-2">{formatProducts(contract.contractProducts)}</td>
-              <td className="border p-2">{`${contract.contractPrice.toLocaleString()}원`}</td>
+              className='cursor-pointer hover:bg-gray-100'>
+              <td className='border-b border-ipt_border p-2 text-text_black'>
+                {contract.memberName}
+              </td>
+              <td className='border-b border-ipt_border p-2 text-text_black'>{`${contract.contractDay}일`}</td>
+              <td className='border-b border-ipt_border p-2 text-text_black'>
+                {formatProducts(contract.contractProducts)}
+              </td>
+              <td className='border-b border-ipt_border p-2 text-text_black'>{`${contract.contractPrice.toLocaleString()}원`}</td>
             </tr>
           ))}
         </tbody>

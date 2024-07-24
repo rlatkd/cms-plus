@@ -12,6 +12,7 @@ import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import { useStatusStore } from '@/stores/useStatusStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
+import { formatCardYearForStorage } from '@/utils/format/formatCardDate';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +22,7 @@ const MemberRegisterPage = () => {
   const { status } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const navigate = useNavigate();
+  const { reset } = useStatusStore();
 
   // <------ 회원등록 입력 데이터 ------>
   const { basicInfo, resetBasicInfo } = useMemberBasicStore();
@@ -105,13 +107,13 @@ const MemberRegisterPage = () => {
     const paymentCreateReq = {
       paymentTypeInfoReq: {
         paymentType,
+        ...(paymentType === 'VIRTUAL' && paymentTypeInfoReq_Virtual),
+        ...(paymentType === 'BUYER' && paymentTypeInfoReq_Buyer),
         ...(paymentType === 'AUTO' &&
           (() => {
             const { consetImgName, ...rest } = paymentTypeInfoReq_Auto;
             return rest;
           })()),
-        ...(paymentType === 'BUYER' && paymentTypeInfoReq_Buyer),
-        ...(paymentType === 'VIRTUAL' && paymentTypeInfoReq_Virtual),
       },
     };
 
@@ -119,7 +121,10 @@ const MemberRegisterPage = () => {
       paymentCreateReq.paymentMethodInfoReq = {
         paymentMethod,
         ...(paymentMethod === 'CMS' && paymentMethodInfoReq_Cms),
-        ...(paymentMethod === 'CARD' && paymentMethodInfoReq_Card),
+        ...(paymentMethod === 'CARD' && {
+          ...paymentMethodInfoReq_Card,
+          cardYear: formatCardYearForStorage(paymentMethodInfoReq_Card.cardYear),
+        }),
       };
     }
 
@@ -132,22 +137,27 @@ const MemberRegisterPage = () => {
     await alertComp('회원정보가 등록되었습니다!');
   };
 
-  // TODO
   // <------ 페이지 이탈 시 Status reset ------>
+  useEffect(() => {
+    return () => {
+      reset();
+      resetBasicInfo();
+      resetBillingInfo();
+      resetContractInfo();
+      resetPaymentType();
+      resetPaymentMethod();
+      resetPaymentTypeInfoReq_Virtual();
+      resetPaymentTypeInfoReq_Buyer();
+      resetPaymentTypeInfoReq_Auto();
+      resetPaymentMethodInfoReq_Cms();
+      resetPaymentMethodInfoReq_Card();
+    };
+  }, []);
 
   // <------ 회원등록 입력 데이터 reset------>
-  useEffect(() => {
-    resetBasicInfo();
-    resetBillingInfo();
-    resetContractInfo();
-    resetPaymentType();
-    resetPaymentMethod();
-    resetPaymentTypeInfoReq_Virtual();
-    resetPaymentTypeInfoReq_Buyer();
-    resetPaymentTypeInfoReq_Auto();
-    resetPaymentMethodInfoReq_Cms();
-    resetPaymentMethodInfoReq_Card();
-  }, []);
+  // useEffect(() => {
+
+  // }, []);
 
   return (
     <>

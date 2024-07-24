@@ -37,6 +37,17 @@ export const getBillingDetail = async billingId => {
   }
 };
 
+// 청구 상세 조회
+export const getBillingProducts = async billingId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/billing/products/${billingId}`);
+    return res;
+  } catch (err) {
+    console.error('청구상품 조회 실패 => ', err.response);
+    throw err;
+  }
+};
+
 // 청구 수정
 export const updateBilling = async (billingId, billingReq) => {
   try {
@@ -104,10 +115,10 @@ export const cancelPayBilling = async billingId => {
 };
 
 // 회원 수정 - 청구 정보
-export const updateMemberBilling = async (contractId, billingData) => {
+export const updateMemberBilling = async (memberId, billingData) => {
   try {
     const res = await privateAxios.put(
-      `/v1/vendor/management/members/billing/${contractId}`,
+      `/v1/vendor/management/members/billing/${memberId}`,
       billingData
     );
     return res;

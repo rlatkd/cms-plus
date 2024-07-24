@@ -4,6 +4,7 @@ import PagiNation from '@/components/common/PagiNation';
 import { cols } from '@/utils/tableElements/billingElement';
 import { useEffect, useState } from 'react';
 import { getContractDetailBillingList } from '@/apis/contract';
+import { formatProductsForList } from '@/utils/format/formatProducts';
 
 const ConDetailBillingList = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
@@ -30,7 +31,6 @@ const ConDetailBillingList = () => {
       setBillingList(transformdData);
       setTotalCount(res.data.totalCount);
       setTotalPages(res.data.totalPage || 1);
-
     } catch (err) {
       console.error('axiosContractDetailBillingList => ', err);
     }
@@ -42,26 +42,23 @@ const ConDetailBillingList = () => {
       const {
         memberName,
         memberPhone,
-        billingProducts,
+        firstProductName,
+        totalProductCount,
         billingPrice,
         billingDate,
         paymentType,
         billingStatus,
       } = billing;
 
-      
-      const firstProduct = billingProducts[0];
-      const additionalProductsCount = billingProducts.length - 1;
-
       return {
         ...billing,
         memberName: memberName,
         memberPhone: memberPhone,
-        billingProducts: `${firstProduct.name} + ${additionalProductsCount}`,
+        billingProducts: formatProductsForList(firstProductName, totalProductCount),
         billingPrice: `${billingPrice.toLocaleString()}원`,
         billingDate: billingDate,
         paymentType: paymentType.title,
-        billingStatus: billingStatus.title
+        billingStatus: billingStatus.title,
       };
     });
   };
@@ -77,25 +74,24 @@ const ConDetailBillingList = () => {
   }, [currentPage]);
 
   return (
-  <div className='h-640 flex flex-col mb-5  pb-3'>
-    
-    <div className='flex flex-col h-full justify-between pt-5 px-5 '>
-      <Table
-        cols={cols}
-        rows={billingList}
-        currentPage={currentPage}
-        onRowClick={item => MoveBillingDetail(item.billingId)}
-      />
-      <PagiNation
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        pageGroup={pageGroup}
-        setPageGroup={setPageGroup}
-        buttonCount={buttonCount}
-      />
+    <div className='h-640 flex flex-col mb-5  pb-3'>
+      <div className='flex flex-col h-full justify-between pt-5 px-5 '>
+        <Table
+          cols={cols}
+          rows={billingList}
+          currentPage={currentPage}
+          onRowClick={item => MoveBillingDetail(item.billingId)}
+        />
+        <PagiNation
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          pageGroup={pageGroup}
+          setPageGroup={setPageGroup}
+          buttonCount={buttonCount}
+        />
+      </div>
     </div>
-  </div>
   );
 };
 

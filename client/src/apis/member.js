@@ -11,30 +11,6 @@ export const postCreateMember = async memberData => {
   }
 };
 
-// 회원 엑셀 -> json
-export const convertMember = async formData => {
-  try {
-    const res = await privateAxios.post('/v1/vendor/management/convert', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return res;
-  } catch (err) {
-    console.error('회원 엑셀 -> json 실패', err.response);
-    throw err;
-  }
-};
-
-// 회원 json -> 저장
-export const uploadMembers = async members => {
-  try {
-    const res = await privateAxios.post('/v1/vendor/management/upload', members);
-    return res;
-  } catch (err) {
-    console.error('회원 json -> 저장 실패', err.response);
-    throw err;
-  }
-};
-
 // 회원 목록 조회
 export const getMemberList = async (searchParams = {}) => {
   try {
@@ -46,6 +22,21 @@ export const getMemberList = async (searchParams = {}) => {
     return res;
   } catch (err) {
     console.error('회원 목록 조회 실패 => ', err.response);
+    throw err;
+  }
+};
+
+// 회원 기본정보 목록 조회
+export const getMemberBasicInfoList = async (searchParams = {}) => {
+  try {
+    const res = await privateAxios.get('/v1/vendor/management/basicinfo/members', {
+      params: {
+        ...searchParams,
+      },
+    });
+    return res;
+  } catch (err) {
+    console.error('회원 기보정보 목록 조회 실패 => ', err.response);
     throw err;
   }
 };
@@ -90,10 +81,56 @@ export const updateMemberBaic = async (memberId, memberData) => {
 // 회원 삭제
 export const deleteMember = async memberId => {
   try {
-    const res = await privateAxios.delete(`/v1/vendor/members/${memberId}`);
+    const res = await privateAxios.delete(`/v1/vendor/management/members/${memberId}`);
     return res;
   } catch (err) {
     console.error('회원 삭제 실패 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 회원 삭제 - 회원의 진행중인 계약수
+export const getContractListByMember = async memberId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/management/members/contracts/${memberId}`);
+    return res;
+  } catch (err) {
+    console.error('회원 삭제 - 회원의 진행중인 계약수 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 회원 삭제 - 회원의 진행중인 청구수
+export const getBillingListByMember = async memberId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/management/members/${memberId}/billing`);
+    return res;
+  } catch (err) {
+    console.error('회원 삭제 - 회원의 진행중인 청구수 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 회원 엑셀 -> json
+export const convertMember = async formData => {
+  try {
+    const res = await privateAxios.post('/v1/vendor/management/convert', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res;
+  } catch (err) {
+    console.error('회원 엑셀 -> json 실패', err.response);
+    throw err;
+  }
+};
+
+// 회원 json -> 저장
+export const uploadMembers = async members => {
+  try {
+    const res = await privateAxios.post('/v1/vendor/management/upload', members);
+    return res;
+  } catch (err) {
+    console.error('회원 json -> 저장 실패', err.response);
     throw err;
   }
 };

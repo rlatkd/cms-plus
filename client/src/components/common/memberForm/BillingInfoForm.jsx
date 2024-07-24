@@ -1,6 +1,6 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 import RadioGroup from '@/components/common//inputs/RadioGroup';
 import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
 
@@ -24,6 +24,7 @@ const BillingInfoForm = ({ formType }) => {
   // <------ Radio 원하는 선택지 서택 ------>
   const handleChangeValue = (value, name) => {
     setBillingInfoItem({ [name]: value });
+    console.log(billingInfo);
   };
 
   return (

@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --open",
+    "dev": "vite",
+    "dev2": "vite --host",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -20,7 +21,9 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@headlessui/react": "^2.1.2",
     "antd": "^5.19.3",
+    "aos": "^2.3.4",
     "axios": "^1.7.2",
+    "dayjs": "^1.11.12",
     "firebase": "^10.12.3",
     "path-browserify": "^1.0.1",
     "qrcode.react": "^3.1.0",

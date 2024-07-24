@@ -7,6 +7,7 @@ import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
+import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.vendor;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
@@ -103,11 +104,11 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return product.vendor.id.eq(vendorId);
 	}
 
-	protected BooleanExpression billingNotDel() {
-		return billing.deleted.isFalse();
-
-	}protected BooleanExpression memberNotDel() {
+	protected BooleanExpression memberNotDel() {
 		return member.deleted.isFalse();
+	}
+	protected BooleanExpression vendorNotDel() {
+		return vendor.deleted.isFalse();
 	}
 
 
@@ -135,21 +136,6 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return hasText(memberPhone) ? member.phone.containsIgnoreCase(memberPhone) : null;
 	}
 
-	protected BooleanExpression productNameContainsInGroup(String productName) {
-		if (productName == null)
-			return null;
-		return Expressions.booleanTemplate(
-			"MAX(CASE WHEN {0} LIKE {1} THEN 1 ELSE 0 END) = 1",
-			product.name, "%" + productName + "%"
-		);
-	}
-
-	protected BooleanExpression billingPriceLoeInGroup(Long billingPrice) {
-		if (billingPrice == null)
-			return null;
-		return billingProduct.price.multiply(billingProduct.quantity).sum().loe(billingPrice);
-	}
-
 	protected BooleanExpression contractPriceLoeInGroup(Long contractPrice) {
 		if (contractPrice == null)
 			return null;
@@ -164,22 +150,9 @@ public abstract class BaseCustomRepository<T extends BaseEntity> {
 		return (contractDay != null) ? contract.contractDay.eq(contractDay) : null;
 	}
 
-
-	protected BooleanExpression billingStatusEq(BillingStatus billingStatus) {
-		return (billingStatus != null) ? billing.billingStatus.eq(billingStatus) : null;
-	}
-
-	protected BooleanExpression billingDateEq(LocalDate billingDate) {
-		return (billingDate != null) ? billing.billingDate.eq(billingDate) : null;
-	}
-
 	// protected BooleanExpression consentStatusEq(ConsentStatus consentStatus) {
 	// 	return (consentStatus != null) ? payment.consentStatus.eq(consentStatus) : null;
 	// }
-
-	protected BooleanExpression productNameContains(String productName) {
-		return hasText(productName) ? product.name.containsIgnoreCase(productName) : null;
-	}
 
 	protected  BooleanExpression productMemoContains(String productMemo) {
 		return hasText(productMemo) ? product.memo.containsIgnoreCase(productMemo) : null;

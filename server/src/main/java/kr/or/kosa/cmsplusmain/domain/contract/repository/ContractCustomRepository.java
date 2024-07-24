@@ -63,7 +63,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 
 			.groupBy(contract.id)
 			.having(
-				productNameContainsInGroup(search.getProductName()),
+				// productNameContainsInGroup(search.getProductName()),
 				contractPriceLoeInGroup(search.getContractPrice())
 			)
 
@@ -103,7 +103,7 @@ public class ContractCustomRepository extends BaseCustomRepository<Contract> {
 
 			.groupBy(contract.id)
 			.having(
-				productNameContainsInGroup(search.getProductName()),
+				// productNameContainsInGroup(search.getProductName()),
 				contractPriceLoeInGroup(search.getContractPrice())
 			);
 

@@ -1,35 +1,30 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getContractList } from '@/apis/contract';
 import { getAllProductList } from '@/apis/product';
 import useDebounce from '@/hooks/useDebounce';
-import { formatProducts } from '@/utils/formatProducts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import BillingForm from '@/components/vendor/billing/register/BillingRegisterBillingForm';
 import ContractList from '@/components/vendor/billing/register/BillingRegisterContractList';
 import { createBilling } from '@/apis/billing';
+import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
+import convertBadReqMsg from '@/utils/dialog/alertwidth/convertBadReqMsg';
 
 const BillingRegisterPage = () => {
-  const navigate = useNavigate();
+  /**
+   * 계약 목록 페이징
+   */
   const [contractList, setContractList] = useState([]);
   const [searchType, setSearchType] = useState('memberName');
   const [searchTerm, setSearchTerm] = useState('');
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageGroup, setPageGroup] = useState(0);
-
   const [selectedContract, setSelectedContract] = useState(null);
-  const [billingData, setBillingData] = useState({
-    billingId: null,
-    billingType: 'REGULAR',
-    paymentDate: '',
-    products: [],
-  });
-  const [products, setProducts] = useState([]);
-
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+<<<<<<< HEAD
   const fetchContractList = useCallback(async (page = currentPage) => {
     try {
       const res = await getContractList({
@@ -43,50 +38,87 @@ const BillingRegisterPage = () => {
       console.error('Failed to fetch contract list:', err);
     }
   }, [searchType, searchTerm, currentPage]);
+=======
+  const [products, setProducts] = useState([]); // 전체 상품 목록
+
+  /**
+   * 청구 생성 정보
+   */
+  const [billingData, setBillingData] = useState({
+    billingType: '',
+    billingDate: '',
+    products: [],
+  });
+
+  const fetchContractList = useCallback(
+    async (page = currentPage) => {
+      try {
+        const res = await getContractList({
+          [searchType]: searchTerm,
+          page,
+          size: 10,
+        });
+        setContractList(res.data.content);
+        setTotalPages(res.data.totalPage || 1);
+      } catch (err) {
+        console.error('청구 생성 - 계약 목록 조회 실패', err);
+      }
+    },
+    [searchType, searchTerm, currentPage]
+  );
+>>>>>>> 1f47c2f5016f864c536cb650099adeeaf3be9549
 
   const fetchAllProducts = useCallback(async () => {
     try {
       const res = await getAllProductList();
       setProducts(res.data);
     } catch (err) {
-      console.error('Failed to fetch product list:', err);
+      console.error('청구 생성 - 상품 목록 조회 실패', err);
     }
   }, []);
+
+  const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
+  const onAlertWidthClick = async msg => {
+    const result = await alertWidthComp(msg);
+  };
 
   useEffect(() => {
     fetchContractList();
     fetchAllProducts();
-  }, [fetchContractList, fetchAllProducts, debouncedSearchTerm]);
+  }, [debouncedSearchTerm]);
 
+<<<<<<< HEAD
   const calculatePaymentDate = (contractDay) => {
+=======
+  const navigate = useNavigate();
+
+  /**
+   * 선택한 계약의 약정일을 기반으로 청구의 결제일을 계산한다.
+   */
+  const calculateBillingDate = contractDay => {
+>>>>>>> 1f47c2f5016f864c536cb650099adeeaf3be9549
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
     const day = parseInt(contractDay);
 
-    let paymentDate = new Date(year, month, day);
+    let billingDate = new Date(year, month, day);
 
     // 결제일은 오늘 이후 날짜여야한다.
-    if (paymentDate < today) {
-      paymentDate.setMonth(paymentDate.getMonth() + 1);
+    if (billingDate < today) {
+      billingDate.setMonth(billingDate.getMonth() + 1);
     }
-    
-    return paymentDate.toISOString().split('T')[0];
+
+    return billingDate.toISOString().split('T')[0];
   };
 
-  const handleSelectContract = (contract) => {
+  const handleSelectContract = contract => {
     setSelectedContract(contract);
-    const paymentDate = calculatePaymentDate(contract.contractDay);
     setBillingData(prev => ({
       ...prev,
       contractId: contract.contractId,
-      paymentDate: paymentDate,
-      products: contract.contractProducts.map(product => ({
-        productId: product.productId,
-        name: product.name,
-        price: product.price,
-        quantity: product.quantity,
-      })),
+      billingDate: calculateBillingDate(contract.contractDay),
+      products: contract.contractProducts,
     }));
   };
 
@@ -94,7 +126,7 @@ const BillingRegisterPage = () => {
     setBillingData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleProductAdd = (newProduct) => {
+  const handleProductAdd = newProduct => {
     if (!newProduct) return;
     setBillingData(prev => ({
       ...prev,
@@ -102,21 +134,16 @@ const BillingRegisterPage = () => {
     }));
   };
 
-  const handleProductChange = (idx, column, to) => {
+  const handleProductInfoChange = (idx, column, to) => {
     const newBillingProducts = [...billingData.products];
-    if (column === 'price') {
-      newBillingProducts[idx].price = to;
-    } else if (column === 'quantity') {
-      newBillingProducts[idx].quantity = to;
-    }
-
+    newBillingProducts[idx] = { ...newBillingProducts[idx], [column]: to };
     setBillingData(prev => ({
       ...prev,
       products: newBillingProducts,
     }));
   };
 
-  const handleProductRemove = (productId) => {
+  const handleProductRemove = productId => {
     setBillingData(prev => ({
       ...prev,
       products: prev.products.filter(p => p.productId !== productId),
@@ -125,17 +152,24 @@ const BillingRegisterPage = () => {
 
   const handleBillingSubmit = async () => {
     try {
-        await createBilling(billingData);
-        alert('청구 생성했습니다.');
-        navigate(-1);
-      } catch (err) {
-        alert('청구 생성에 실패했습니다.');
-        console.error('axiosBillingCreate => ', err.response.data);
+      await createBilling(billingData);
+      onAlertWidthClick('청구가 생성되었습니다.');
+      navigate(-1);
+    } catch (err) {
+      console.log(err);
+      if (err.response.status === 400) {
+        onAlertWidthClick(convertBadReqMsg(err));
+      } else {
+        onAlertWidthClick(err.response.data.message);
       }
+      console.error('axiosBillingCreate => ', err.response.data);
+    }
   };
+
   return (
     <div className='primary-dashboard flex flex-col h-full'>
-      <div className="flex">
+      <div className='flex flex-1 overflow-hidden'>
+        {/* 왼쪽: 계약 목록 */}
         <ContractList
           searchType={searchType}
           setSearchType={setSearchType}
@@ -149,43 +183,51 @@ const BillingRegisterPage = () => {
           pageGroup={pageGroup}
           setPageGroup={setPageGroup}
         />
-        
+
         {/* 중앙 구분선 */}
-        <div className="w-px bg-gray-300"></div>
+        <div className='w-px bg-ipt_border'></div>
 
         {/* 오른쪽: 청구 생성 정보 */}
+<<<<<<< HEAD
         <div className="w-3/5 p-6 overflow-auto">
           <h2 className="text-2xl mb-4">청구 생성 정보</h2>
+=======
+        <div className='w-3/5 p-6 flex flex-col h-full overflow-hidden'>
+          <h2 className='text-2xl font-semibold mb-4 text-text_black'>청구 생성 정보</h2>
+>>>>>>> 1f47c2f5016f864c536cb650099adeeaf3be9549
           {selectedContract ? (
-            <BillingForm
-              billingData={billingData}
-              handleBillingDataChange={handleBillingDataChange}
-              products={products}
-              handleProductAdd={handleProductAdd}
-              handleProductChange={handleProductChange}
-              handleProductRemove={handleProductRemove}
-            />
+            <div className='flex-1 overflow-hidden flex flex-col'>
+              <BillingForm
+                billingData={billingData}
+                handleBillingDataChange={handleBillingDataChange}
+                products={products}
+                handleProductAdd={handleProductAdd}
+                handleProductChange={handleProductInfoChange}
+                handleProductRemove={handleProductRemove}
+              />
+            </div>
           ) : (
-            <p>왼쪽에서 계약을 선택해주세요.</p>
+            <div className='flex-1 flex items-center justify-center'>
+              <p className='text-center text-xl text-gray-500'>계약을 선택해주세요.</p>
+            </div>
           )}
         </div>
       </div>
-      
+
       {/* 하단 버튼 영역 */}
-      <div className="flex justify-end space-x-4 p-6 bg-gray-100">
+      <div className='flex justify-end space-x-4 p-6 bg-white'>
         <button
-          type="button"
+          type='button'
           onClick={() => navigate(-1)}
-          className="flex items-center px-4 py-2 text-negative border-negative hover:bg-negative hover:text-white rounded"
-        >
-          <FontAwesomeIcon icon={faTimes} className="mr-2" />
+          className='flex justify-between items-center px-4 py-2 ml-2 
+    font-700 rounded-md border cursor-pointer transition-all duration-200 ease-in-out text-red-500 border-red-500 hover:bg-red-50'>
+          <FontAwesomeIcon icon={faTimes} className='mr-2' />
           <p>취소</p>
         </button>
         <button
           onClick={handleBillingSubmit}
-          className="flex items-center px-4 py-2 text-white bg-mint hover:bg-mint_hover rounded"
-        >
-          <FontAwesomeIcon icon={faSave} className="mr-2" />
+          className='flex items-center px-4 py-2 text-white border border-mint bg-mint hover:bg-mint_hover rounded'>
+          <FontAwesomeIcon icon={faSave} className='mr-2' />
           <p>청구 생성</p>
         </button>
       </div>

@@ -1,14 +1,26 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import edit from '@/assets/edit.svg';
 import InputWeb from '@/components/common/inputs/InputWeb';
+import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
+import { formatPhone } from '@/utils/format/formatPhone';
 
 const ConDetailBilling = ({ contractData, children }) => {
+  const { setBillingInfoItem } = useMemberBillingStore(); // 청구정보 - 수정목적
   const navigate = useNavigate();
 
-  const { id: contractId } = useParams();
-
   const handleButtonClick = () => {
-    navigate(`/vendor/contracts/billings/update/${contractId}`);
+    navigate(
+      `/vendor/contracts/billings/update/${contractData.contractId}/${contractData.memberId}`
+    );
+  };
+
+  // <------ 회원 청구 정보 zustand에 입력 ------>
+  const updateBillingInfo = data => {
+    setBillingInfoItem({
+      invoiceSendMethod: data.invoiceSendMethod.code,
+      autoInvoiceSend: data.autoInvoiceSend,
+      autoBilling: data.autoBilling,
+    });
   };
 
   return (
@@ -16,7 +28,10 @@ const ConDetailBilling = ({ contractData, children }) => {
       <div className='flex justify-between items-center border-b border-ipt_border px-2 pt-1 pb-3'>
         <p className='text-text_black text-xl font-800'>청구정보</p>
         <button
-          onClick={handleButtonClick}
+          onClick={() => {
+            updateBillingInfo(contractData);
+            handleButtonClick();
+          }}
           className='flex justify-between items-center px-4 py-2 ml-4 text-mint
             font-700 rounded-md border border-mint cursor-pointer'>
           <img src={edit} alt='edit' className='mr-2 ' />
@@ -27,29 +42,35 @@ const ConDetailBilling = ({ contractData, children }) => {
         <InputWeb
           id='autobilling'
           label='청구 자동 생성'
-          value='수동'
+          value={`${contractData.autoBilling ? '자동' : '수동'}`}
           type='text'
           disabled={true}
         />
-        <InputWeb id='autosend' label='청구서 자동 발송' value='수동' type='text' disabled={true} />
+        <InputWeb
+          id='autosend'
+          label='청구서 자동 발송'
+          value={`${contractData.autoInvoiceSend ? '자동' : '수동'}`}
+          type='text'
+          disabled={true}
+        />
         <InputWeb
           id='memberPhone'
-          label='납부자 업체연락처'
-          value='010-1234-5678'
+          label='납부자 휴대번호'
+          value={formatPhone(contractData.payerPhone || '')}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='memberEmail'
           label='납부자 이메일'
-          value='hyosung123@gmail.com'
+          value={contractData.payerEmail || ''}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='sendMethod'
           label='청구서 발송 수단'
-          value='휴대전화'
+          value={contractData.invoiceSendMethod.title}
           type='text'
           disabled={true}
         />

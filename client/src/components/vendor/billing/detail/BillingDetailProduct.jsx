@@ -1,133 +1,158 @@
-import { getAllProductList } from '@/apis/product';
-import InputWeb from '@/components/common/inputs/InputWeb';
+import React, { useState, useEffect } from 'react';
 import { ProductSelectField2 } from '@/components/common/selects/ProductSelectField';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import BillingDetailProductTable from './BillingDetailProductTable';
-import { cols } from '@/utils/tableElements/billingProductElement';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const BillingDetailProduct = ({ billingData, products, editable, onChange: onBillingProductsChange, billingId }) => {
-  const billingProducts = billingData?.billingProducts || [];
+const BillingDetailProduct = ({ billingProducts, products, editable, onChange, billingId }) => {
+  const [localBillingProducts, setLocalBillingProducts] = useState(billingProducts);
+  const [editingState, setEditingState] = useState({});
 
-  // select field option에는
-  // 청구상품 형태로 상품들이 저장된다.
-  // 상품 -> 청구상품으로 변환 후 option에 저장
-
-  // 상품 데이터 -> select field option 변환
-  const transformProductToOption = products => {
-    return products.map(item => {
-      return {
-        value: {
-          productId: item.productId,
-          name: item.name,
-          price: item.price,
-          quantity: 1,
-        },
-        label: `${item.name}(${item.price.toLocaleString()}원)`,
-      };
-    });
-  };
-
-  // 청구상품 데이터 -> select field option 변환
-  const transformBillingProductToOption = billingProducts => {
-    return billingProducts.map(item => {
-      return {
-        value: {
-          productId: item.productId,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-        },
-        label: `${item.name} (${item.price.toLocaleString()}원)`,
-      };
-    });
-  };
+  useEffect(() => {
+    setLocalBillingProducts(billingProducts);
+  }, [billingProducts]);
 
   const calcBillingPrice = mBillingProducts => {
-    return mBillingProducts.reduce((sum, bp) => {
-      return sum + bp.price * bp.quantity;
-    }, 0);
-  };
-
-  const handleBillingProductListChange = items => {
-    console.log('handlechange', items);
-    const newBillingProducts = items.map(item => {
-      return {
-        billingId: billingId.id,
-        productId: item.productId,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-      };
-    });
-    onBillingProductsChange(newBillingProducts);
+    return mBillingProducts.reduce((sum, bp) => sum + bp.price * bp.quantity, 0);
   };
 
   const handleSelectedProductListChange = newOptions => {
-    handleBillingProductListChange(newOptions.map(option => option.value));
+    const newBillingProducts = newOptions.map(option => ({
+      billingId: billingId,
+      productId: option.value.productId,
+      name: option.value.name,
+      price: option.value.price,
+      quantity: option.value.quantity || 1,
+    }));
+    setLocalBillingProducts(newBillingProducts);
+    onChange(newBillingProducts);
   };
 
-  const handleInputChange = (idx, column, to) => {
-    const newBillingProducts = [...billingProducts];
-    if (column === 'price') {
-      newBillingProducts[idx].price = to;
-    } else if (column === 'quantity') {
-      newBillingProducts[idx].quantity = to;
-    }
-    onBillingProductsChange(newBillingProducts);
+  const handleInputChange = (idx, field, value) => {
+    const newBillingProducts = [...localBillingProducts];
+    newBillingProducts[idx][field] = parseInt(value, 10);
+    setLocalBillingProducts(newBillingProducts);
+    onChange(newBillingProducts);
   };
 
-  const handleRemove = idx => {
-    if (billingProducts.length === 1) {
+  const handleRemove = productId => {
+    if (localBillingProducts.length === 1) {
       alert('최소 1개 이상의 상품이 필요합니다!');
       return;
     }
-    onBillingProductsChange([
-      ...billingProducts.slice(0, idx),
-      ...billingProducts.slice(idx + 1, billingProducts.length),
-    ]);
+    const newBillingProducts = localBillingProducts.filter(
+      product => product.productId !== productId
+    );
+    setLocalBillingProducts(newBillingProducts);
+    onChange(newBillingProducts);
+  };
+
+  const handleEditClick = (idx, field) => {
+    if (editable) {
+      setEditingState(prev => ({ ...prev, [idx]: { ...prev[idx], [field]: true } }));
+    }
+  };
+
+  const handleBlur = (idx, field) => {
+    setEditingState(prev => ({ ...prev, [idx]: { ...prev[idx], [field]: false } }));
+  };
+
+  const renderEditableField = (item, idx, field) => {
+    const isEditing = editable && editingState[idx]?.[field];
+    const value = item[field];
+
+    return isEditing ? (
+      <input
+        type='number'
+        value={value}
+        onChange={e => handleInputChange(idx, field, e.target.value)}
+        onBlur={() => handleBlur(idx, field)}
+        className='text-center w-3/4 p-4 focus:border-mint focus:outline-none 
+                    focus:ring-mint focus:ring-1 rounded-lg'
+        autoFocus
+      />
+    ) : (
+      <div
+        onClick={() => handleEditClick(idx, field)}
+        className={`${editable ? 'cursor-pointer border rounded-lg focus:border-mint focus:outline-none focus:ring-mint focus:ring-1' : ''} p-4 w-3/4 text-center`}>
+        {`${value.toLocaleString()}${field === 'price' ? '원' : '개'}`}
+      </div>
+    );
   };
 
   return (
-    <>
-      <div className='flex justify-between mb-5'>
-        <div className='w-2/6 flex-row'>
-          <label className={`block text-text_black text-15 font-700 mb-2 ml-2 `}>상품 추가</label>
-          <ProductSelectField2
-            label={
-              products[0] &&
-              `${products[0].name} (${products[0].price.toLocaleString()}원)`
-            }
-            options={transformProductToOption(products)}
-            selectedOptions={transformBillingProductToOption(billingProducts)}
-            onChange={handleSelectedProductListChange}
-            disabled={!editable}
-          />
-        </div>
-
-        <div className='flex items-center bg-ipt_disa border border-ipt_border rounded-lg px-3'>
-            <span className='mr-2 font-bold text-lg'>합계:</span>
-            <InputWeb
-              id='billingTotal'
-              label=''
-              value={`${calcBillingPrice(billingProducts).toLocaleString()}원`}
-              type='text'
-              disabled={true}
-              classInput='text-right font-bold text-lg border-none'
-            />
+    <div className='flex flex-col h-full space-y-4'>
+      <div className='flex space-x-4'>
+        <div className='w-full'>
+          <div className='flex justify-between'>
+            <div className='w-2/6 flex-row mb-3'>
+              <label className={`block text-text_black text-15 font-700 mb-2 ml-2`}>
+                상품 추가
+              </label>
+              <ProductSelectField2
+                label='상품을 선택하세요'
+                options={products.map(p => ({
+                  value: {
+                    productId: p.productId,
+                    name: p.name,
+                    price: p.price,
+                    quantity: 1,
+                  },
+                  label: `${p.name}(${p.price.toLocaleString()}원)`,
+                }))}
+                selectedOptions={localBillingProducts.map(p => ({
+                  value: p,
+                  label: `${p.name} (${p.price.toLocaleString()}원)`,
+                }))}
+                onChange={handleSelectedProductListChange}
+                disabled={!editable}
+              />
+            </div>
+            <div className='flex items-end'>
+              <p className='font-bold text-lg mr-2'>합계:</p>
+              <p className='text-right font-bold text-lg border-none'>{`${calcBillingPrice(localBillingProducts).toLocaleString()}원`}</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className='flex flex-col h-full justify-between'>
-        <BillingDetailProductTable
-          cols={cols}
-          data={billingProducts}
-          editable={editable}
-          handleInputChange={handleInputChange}
-          handleRemove={handleRemove}
-        />
+      <div className='flex-1 overflow-auto'>
+        <table className='w-full'>
+          <thead>
+            <tr className='bg-gray-100'>
+              <th className='p-2 text-left'>상품명</th>
+              <th className='p-2 text-left'>단가</th>
+              <th className='p-2 text-left'>수량</th>
+              <th className='p-2 text-left'>금액</th>
+              {editable && <th className='p-2 text-left'></th>}
+            </tr>
+          </thead>
+          <tbody>
+            {localBillingProducts.map((product, idx) => (
+              <tr key={product.productId} className='border-b'>
+                <td className='p-2'>{product.name}</td>
+                <td className='p-2' onClick={() => handleEditClick(idx, 'price')}>
+                  {renderEditableField(product, idx, 'price')}
+                </td>
+                <td className='p-2' onClick={() => handleEditClick(idx, 'quantity')}>
+                  {renderEditableField(product, idx, 'quantity')}
+                </td>
+                <td className='p-2'>{(product.price * product.quantity).toLocaleString()}원</td>
+                {editable && (
+                  <td className='p-2'>
+                    <button
+                      type='button'
+                      onClick={() => handleRemove(product.productId)}
+                      className='text-red-500 hover:text-red-700'>
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    </>
+    </div>
   );
 };
 

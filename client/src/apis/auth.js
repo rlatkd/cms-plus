@@ -56,3 +56,48 @@ export const postRefreshToken = async () => {
     throw err;
   }
 };
+
+// 인증번호 요청
+export const postRequestAuthenticationNumber = async data => {
+  try {
+    const res = await publicAxios.post('/v1/vendor/auth/request-number', data);
+    return res;
+  } catch (err) {
+    console.error('인증번호 요청 실패', err.response.data);
+    throw err;
+  }
+};
+
+// 아이디 찾기
+export const postFindIdentifier = async data => {
+  try {
+    const res = await publicAxios.post('/v1/vendor/auth/id-inquiry', data);
+    return res;
+  } catch (err) {
+    console.error('아이디 찾기 실패', err.response.data);
+    throw err;
+  }
+};
+
+// 비밀번호 찾기
+export const postFindPassword = async data => {
+  try {
+    const res = await publicAxios.post('/v1/vendor/auth/pw-inquiry', data);
+    return res;
+  } catch (err) {
+    console.error('비밀번호 찾기 실패', err.response.data);
+    throw err;
+  }
+};
+
+// 비밀번호 재설정
+export const postResetPassword = async data => {
+  try {
+    console.log(data);
+    const res = await publicAxios.post('/v1/vendor/auth/pw-reset', data);
+    return res;
+  } catch (err) {
+    console.error('비밀번호 재설정 실패', err.response.data);
+    throw err;
+  }
+};

@@ -10,11 +10,10 @@ import addItem from '@/assets/addItem.svg';
 import card from '@/assets/card.svg';
 import send from '@/assets/send.svg';
 import Card from '@/assets/Card';
-import { formatPhone } from '@/utils/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billingElement';
-import { formatProducts } from '@/utils/formatProducts';
-import BillingRegisterPage from './BillingRegisterPage';
+import { formatPhone } from '@/utils/format/formatPhone';
+import { formatProductsForList } from '@/utils/format/formatProducts';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
@@ -55,7 +54,7 @@ const BillingListPage = () => {
         setBillingListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
-        console.error('axiosMemberList => ', err.response.data);
+        console.error('axiosMemberList => ', err);
       }
     },
     [currentPage]
@@ -64,12 +63,19 @@ const BillingListPage = () => {
   // <--------데이터 변환-------->
   const transformBillingListItem = data => {
     return data.map(billing => {
-      const { billingPrice, billingProducts, paymentType, billingStatus, memberPhone } = billing;
+      const {
+        billingPrice,
+        firstProductName,
+        totalProductCount,
+        paymentType,
+        billingStatus,
+        memberPhone,
+      } = billing;
 
       return {
         ...billing,
         billingPrice: `${billingPrice.toLocaleString()}원`,
-        billingProducts: formatProducts(billingProducts),
+        billingProducts: formatProductsForList(firstProductName, totalProductCount),
         paymentType: paymentType.title,
         billingStatus: billingStatus.title,
         memberPhone: formatPhone(memberPhone),
@@ -107,10 +113,10 @@ const BillingListPage = () => {
     navigate(`detail/${billingId}`);
   };
 
-    // 청구 생성 페이지 이동
-    const MoveBillingCreate = async () => {
-      navigate(`create`);
-    };
+  // 청구 생성 페이지 이동
+  const MoveBillingCreate = async () => {
+    navigate(`create`);
+  };
 
   // <--------디바운스 커스텀훅-------->
   const debouncedSearchParams = useDebounce(currentSearchParams, 500);

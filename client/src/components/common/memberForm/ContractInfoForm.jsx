@@ -65,13 +65,19 @@ const ContractInfoForm = ({ formType }) => {
     }
   };
 
+  const calcContractPrice = mContractProducts => {
+    return mContractProducts.reduce((sum, cp) => {
+      return sum + cp.price * cp.quantity;
+    }, 0);
+  };
+
   useEffect(() => {
     axiosProductList();
   }, []);
 
   return (
     <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>
-      <div className='flex justify-between w-1/2 mb-5 '>
+      <div className='flex justify-between items-end mb-5'>
         <ProductSelectFieldcopy
           label='상품추가'
           placeholder='상품을 선택해주세요.'
@@ -79,7 +85,7 @@ const ContractInfoForm = ({ formType }) => {
           options={options}
           onChange={handleProductChange}
           selectedOptions={contractInfo.contractProducts}
-          classContainer='w-2/5 mr-8'
+          classContainer='w-1/3 mr-8'
           classButton='w-full'
         />
         <InputWeb
@@ -88,10 +94,14 @@ const ContractInfoForm = ({ formType }) => {
           placeholder='계약정보명( 최대 20자 )'
           type='text'
           required
-          classContainer='w-3/5'
+          classContainer='w-1/3'
           value={contractInfo.contractName}
           onChange={handleChangeValue}
         />
+        <div className='flex items-center ml-auto bg-background border border-ipt_border rounded-lg p-3 mr-2'>
+          <p className='font-bold text-lg mr-2 text-text_black'>합계:</p>
+          <p className='text-right font-bold text-lg text-text_black'>{`${calcContractPrice(contractInfo.contractProducts).toLocaleString()}원`}</p>
+        </div>
       </div>
 
       <div className='relative flex flex-col h-full text-text_black overflow-y-scroll scrollbar-custom border-b border-ipt_border ml-2'>

@@ -26,4 +26,17 @@ public abstract class PaymentTypeInfo extends BaseEntity {
 	@Convert(converter = PaymentTypeConverter.class)
 	@Column(name = "payment_type", updatable = false, insertable = false)
 	private PaymentType paymentType;
+
+	/*
+	* 결제방식 정보 삭제
+	* */
+	@Override
+	public void delete(){
+		// TODO
+		/*
+		 * 결제 방식 정보 삭제에서 예외 케이스 있는지 고려
+		 * 자동결제, 납부자결제, 가상계좌
+		 * */
+		super.delete();
+	}
 }

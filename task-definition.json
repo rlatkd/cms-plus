@@ -1,13 +1,13 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:457625770137:task-definition/rlatkdtask5:1",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-apitask3:1",
     "containerDefinitions": [
         {
-            "name": "rlatkdcontainer5",
-            "image": "457625770137.dkr.ecr.ap-northeast-2.amazonaws.com/rlatkdecr5:latest",
-            "cpu": 0,
+            "name": "t3-back-apicontainer3",
+            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-apiecr3:latest",
+            "cpu": 8192,
             "portMappings": [
                 {
-                    "name": "rlatkdcontainer5-8080-tcp",
+                    "name": "t3-back-apicontainer3-8080-tcp",
                     "containerPort": 8080,
                     "hostPort": 8080,
                     "protocol": "tcp",
@@ -23,7 +23,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/rlatkdtask5",
+                    "awslogs-group": "/ecs/t3-back-apitask3",
                     "awslogs-create-group": "true",
                     "awslogs-region": "ap-northeast-2",
                     "awslogs-stream-prefix": "ecs"
@@ -33,8 +33,9 @@
             "systemControls": []
         }
     ],
-    "family": "rlatkdtask5",
-    "executionRoleArn": "arn:aws:iam::457625770137:role/ecsTaskExecutionRole",
+    "family": "t3-back-apitask3",
+    "taskRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "revision": 1,
     "volumes": [],
@@ -51,6 +52,12 @@
         },
         {
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.increased-task-cpu-limit"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
         },
         {
             "name": "ecs.capability.execution-role-ecr-pull"
@@ -73,13 +80,13 @@
     "requiresCompatibilities": [
         "FARGATE"
     ],
-    "cpu": "1024",
-    "memory": "3072",
+    "cpu": "8192",
+    "memory": "16384",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-07-04T05:29:56.212Z",
-    "registeredBy": "arn:aws:iam::457625770137:root",
+    "registeredAt": "2024-07-24T07:18:52.270Z",
+    "registeredBy": "arn:aws:iam::891376922202:user/fms-kosa-tema3",
     "tags": []
 }

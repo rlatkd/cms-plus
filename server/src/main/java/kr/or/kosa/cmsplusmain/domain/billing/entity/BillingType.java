@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum BillingType implements BaseEnum {
-	REGULAR("정기"), IRREGULAR("추가");
+	REGULAR("정기청구"), IRREGULAR("추가청구");
 
 	private final String title;
 

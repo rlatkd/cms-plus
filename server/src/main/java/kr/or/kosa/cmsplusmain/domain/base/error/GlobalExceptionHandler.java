@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.base.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +36,16 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorRes> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 		log.error("handleMethodArgumentNotValidException", e);
 		final ErrorRes response = ErrorRes.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 * Enum 타입 json 변환 실패
+	 */
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	protected ResponseEntity<ErrorRes> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+		log.error("handleHttpMessageNotReadableException", e);
+		final ErrorRes response = ErrorRes.of(e);
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
@@ -80,7 +91,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorRes> handleException(Exception e) {
-		log.error("handleEntityNotFoundException", e);
+		log.error("handleUnknownException", e);
 		final ErrorRes response = ErrorRes.of(ErrorCode.INTERNAL_SERVER_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}

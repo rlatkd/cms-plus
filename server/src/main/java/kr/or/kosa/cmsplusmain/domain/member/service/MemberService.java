@@ -16,6 +16,7 @@ import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
@@ -60,12 +61,23 @@ public class MemberService {
         int countMemberListItem = memberCustomRepository.countAllMemberByVendor(vendorId, memberSearch);
 
         List<MemberListItemRes> memberListItemRes = memberCustomRepository
-                .findAllMemberByVendor(vendorId, memberSearch, pageable)
+                .searchAllMemberByVendor(vendorId, memberSearch, pageable)
                 .stream()
                 .map(MemberListItemRes::fromEntity)
                 .toList();
 
         return new PageRes<>(countMemberListItem, pageable.getSize(), memberListItemRes);
+    }
+
+    /**
+     * 해당 고객 회원의 기본정보 목록 조회
+     * */
+    public PageRes<MemberDto> findAllMemberBasicInfo(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
+        int totalCount = memberCustomRepository.countAllMembers(vendorId, memberSearch);
+        List<MemberDto> members = memberCustomRepository.findAllMembers(vendorId, memberSearch, pageable).stream()
+            .map(MemberDto::fromEntity)
+            .toList();
+        return new PageRes<>(totalCount, pageable.getSize(), members);
     }
 
     /*
@@ -151,7 +163,6 @@ public class MemberService {
 
     /*
      * 회원 수정 - 청구 정보
-     *
      * */
     @Transactional
     public void updateMemberBilling(Long vendorId, Long memberId, MemberBillingUpdateReq memberBillingUpdateReq){
@@ -167,13 +178,25 @@ public class MemberService {
     }
 
     /*
-     * 회원 ID 존재여부
-     * 회원이 현재 로그인 고객의 회원인지 여부
+     * 회원 삭제
      * */
-    private void validateMemberUser(Long vendorId, Long memberId) {
-        if(!memberCustomRepository.isExistMemberById(memberId, vendorId)) {
-            throw new EntityNotFoundException("회원 ID 없음(" + memberId + ")");
-        }
+    @Transactional
+    public void deleteMember(Long vendorId, Long memberId) {
+
+        // 고객의 회원 여부 확인
+        validateMemberUser(vendorId, memberId);
+
+        // 고객정보 삭제
+        Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
+        member.delete();
+    }
+
+    /*
+     * 회원 삭제 - 회원의 진행중인 청구 개수 조회
+     * */
+    public int countAllInProgressBillingByMember(Long vendorId, Long memberId) {
+        validateMemberUser(vendorId, memberId);
+        return billingCustomRepository.countInProgressBillingsByMember(memberId);
     }
 
     /*
@@ -224,4 +247,15 @@ public class MemberService {
 
         return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }
+
+    /*
+     * 회원 ID 존재여부
+     * 회원이 현재 로그인 고객의 회원인지 여부
+     * */
+    private void validateMemberUser(Long vendorId, Long memberId) {
+        if(!memberCustomRepository.isExistMemberById(memberId, vendorId)) {
+            throw new EntityNotFoundException("회원 ID 없음(" + memberId + ")");
+        }
+    }
+
 }

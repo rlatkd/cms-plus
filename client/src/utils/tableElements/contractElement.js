@@ -22,7 +22,7 @@ export const initialSearch = [
     width: 'w-1/12',
     options: Array.from({ length: 31 }, (_, i) => ({ key: i + 1, value: `${i + 1}일` })),
   },
-  { key: 'contractProducts', type: 'text', value: '', width: 'w-2/12' },
+  { key: 'productName', type: 'text', value: '', width: 'w-2/12' },
   { key: 'contractPrice', type: 'num', value: '', width: 'w-2/12' },
   {
     key: 'paymentType',

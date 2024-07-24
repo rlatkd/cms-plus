@@ -10,10 +10,10 @@ import file from '@/assets/file.svg';
 import sign from '@/assets/sign.svg';
 import user from '@/assets/user.svg';
 import File from '@/assets/File';
-import { formatPhone } from '@/utils/formatPhone';
+import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/contractElement';
-import { formatProducts } from '@/utils/formatProducts';
+import { formatProducts } from '@/utils/format/formatProducts';
 
 const ContractListPage = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록
