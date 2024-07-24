@@ -1,5 +1,5 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
-import { formatId } from '@/utils/formatId';
+import { formatId } from '@/utils/format/formatId';
 
 const BillingDetailPayment = ({ contractId, paymentType, paymentMethod }) => {
   return (

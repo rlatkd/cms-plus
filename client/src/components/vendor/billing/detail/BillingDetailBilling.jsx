@@ -4,9 +4,9 @@ import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from '@/components/common/inputs/DatePicker';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import TextArea from '@/components/common/inputs/TextArea';
-import { formatDate } from '@/utils/formatDate';
-import { formatId } from '@/utils/formatId';
 import dayjs from 'dayjs';
+import { formatDate } from '@/utils/format/formatDate';
+import { formatId } from '@/utils/format/formatId';
 
 const BillingDetailBilling = ({
   billingData,
