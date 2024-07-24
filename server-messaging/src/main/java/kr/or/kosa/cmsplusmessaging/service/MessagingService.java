@@ -81,6 +81,7 @@
          List<EmailMessageDto> emailMessages = new ArrayList<>();
          for (ConsumerRecord<String, MessageDto> consumerRecord : consumerRecords) {
              MessageDto messageDto = consumerRecord.value();
+             log.error("[컨슘 DTO]:  {}", messageDto.toString());
              switch (messageDto.getMethod()) {
                  case SMS -> smsMessages.add((SmsMessageDto) messageDto);
                  case EMAIL -> emailMessages.add((EmailMessageDto) messageDto);
