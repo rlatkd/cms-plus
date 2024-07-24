@@ -10,4 +10,5 @@ public class InfraTestController {
     public String infraTest() {
         return "infra-test 12312a";
 
+    }
 }
