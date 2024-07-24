@@ -50,7 +50,7 @@ const AddressInput = () => {
 
   return (
     <div className='block'>
-      <span className='mb-1 block text-smfont-medium text-slate-700'>주소</span>
+      <span className='mb-1 block text-sm font-medium text-slate-700'>주소</span>
       <div className='mb-2 flex'>
         <input
           type='text'
