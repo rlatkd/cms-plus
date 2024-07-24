@@ -1,7 +1,7 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { formatPhone } from '@/utils/format/formatPhone';
 
-const BillingDetailMember = ({ billingData }) => {
+const BillingDetailMember = ({ memberData }) => {
   return (
     <>
       <p className='text-text_black text-xl font-800'>회원정보</p>
@@ -9,21 +9,21 @@ const BillingDetailMember = ({ billingData }) => {
         <InputWeb
           id='memberId'
           label='회원번호'
-          value={String(billingData.memberId).padStart(8, '0')}
+          value={String(memberData.id).padStart(8, '0')}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='memberName'
           label='회원명'
-          value={billingData.memberName}
+          value={memberData.name}
           type='text'
           disabled={true}
         />
         <InputWeb
           id='memberPhone'
           label='휴대전화'
-          value={formatPhone(billingData.memberPhone)}
+          value={formatPhone(memberData.phone)}
           type='text'
           disabled={true}
         />

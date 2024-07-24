@@ -14,7 +14,7 @@ const BillingDetailProductTable = ({
   const [editingState, setEditingState] = useState({});
 
   const handleClickCheckBox = value => {
-    setSelection(prev => 
+    setSelection(prev =>
       prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]
     );
   };
@@ -50,7 +50,8 @@ const BillingDetailProductTable = ({
         autoFocus
       />
     ) : (
-      <div className={`${editable ? 'border rounded-lg focus:border-mint focus:outline-none focus:ring-mint focus:ring-1' : ''} p-4 w-3/4 text-center`}>
+      <div
+        className={`${editable ? 'border rounded-lg focus:border-mint focus:outline-none focus:ring-mint focus:ring-1' : ''} p-4 w-3/4 text-center`}>
         {`${value.toLocaleString()}${field === 'price' ? '원' : '개'}`}
       </div>
     );
@@ -67,9 +68,8 @@ const BillingDetailProductTable = ({
         <tbody className='bg-white divide-y divide-gray-200'>
           {data.map((item, idx) => (
             <tr
-              key={idx}
-              className={`text-text_black flex items-center border-b border-ipt_border ${selection.includes(item) ? 'bg-gray-200' : ''}`}
-            >
+              key={item.billingProductId}
+              className={`text-text_black flex items-center border-b border-ipt_border ${selection.includes(item) ? 'bg-gray-200' : ''}`}>
               <td className='w-16 py-4 text-sm font-700 flex justify-center'>
                 <input
                   className='w-4 h-4'
@@ -81,10 +81,14 @@ const BillingDetailProductTable = ({
               </td>
               <td className='w-16 py-4 text-sm font-700 flex justify-center'>{idx + 1}</td>
               <td className='w-2/12 py-4 text-sm font-700 flex justify-center'>{item.name}</td>
-              <td className='w-2/12 py-4 text-sm font-700 flex justify-center' onClick={() => handleEditClick(idx, 'price')}>
+              <td
+                className='w-2/12 py-4 text-sm font-700 flex justify-center'
+                onClick={() => handleEditClick(idx, 'price')}>
                 {renderEditableField(item, idx, 'price')}
               </td>
-              <td className='w-2/12 py-4 text-sm font-700 flex justify-center' onClick={() => handleEditClick(idx, 'quantity')}>
+              <td
+                className='w-2/12 py-4 text-sm font-700 flex justify-center'
+                onClick={() => handleEditClick(idx, 'quantity')}>
                 {renderEditableField(item, idx, 'quantity')}
               </td>
               <td className='w-2/12 py-4 text-sm font-700 flex justify-center'>
@@ -94,9 +98,8 @@ const BillingDetailProductTable = ({
                 <td className='w-1/12 py-4 text-sm font-700 flex justify-center'>
                   <button onClick={() => handleRemove(idx)}>
                     <div className='flex'>
-                    <FontAwesomeIcon icon={faTrashAlt} className="text-red-500 text-xl mr-3" />
-                    <p className='text-red-500 text-l font-extrabold'>삭제</p>
-
+                      <FontAwesomeIcon icon={faTrashAlt} className='text-red-500 text-xl mr-3' />
+                      <p className='text-red-500 text-l font-extrabold'>삭제</p>
                     </div>
                   </button>
                 </td>
