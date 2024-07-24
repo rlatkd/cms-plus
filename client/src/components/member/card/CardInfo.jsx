@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Input from '@/components/common/inputs/Input';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { verifyCard } from '@/apis/validation';
+import { formatBirthDate } from '@/utils/format/formatBirth';
 
 const CardInfo = ({ cardInfo, setCardInfo }) => {
   const selectedCard = useInvoiceStore(state => state.selectedCard);
@@ -9,20 +10,6 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState(null);
-
-  const formatBirthDate = value => {
-    const cleaned = value.replace(/\D/g, '');
-    let formatted = cleaned;
-
-    if (cleaned.length > 4) {
-      formatted = `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`;
-    }
-    if (cleaned.length > 6) {
-      formatted = `${formatted.slice(0, 7)}-${formatted.slice(7)}`;
-    }
-
-    return formatted.slice(0, 10);
-  };
 
   const formatExpiryDate = value => {
     const cleaned = value.replace(/\D/g, '');

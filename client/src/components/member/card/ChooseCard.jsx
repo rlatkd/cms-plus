@@ -3,10 +3,6 @@ import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import React, { useState } from 'react';
 
 const ChooseCard = () => {
-  // const setSelectedCard = useInvoiceStore(state => state.setSelectedCard);
-  // const selectedCard = useInvoiceStore(state => state.selectedCard);
-  // const invoiceInfo = useInvoiceStore(state => state.invoiceInfo);
-
   const { setSelectedCard, selectedCard, invoiceInfo } = useInvoiceStore();
 
   const cardOptions = [
