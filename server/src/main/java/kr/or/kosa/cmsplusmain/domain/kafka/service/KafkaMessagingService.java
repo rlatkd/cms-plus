@@ -18,7 +18,6 @@ public class KafkaMessagingService {
 	private final KafkaTemplate<String, MessageDto> messagingkafkaTemplate;
 
 	public void produceMessaging(MessageDto messageDto) {
-		log.error("[프로듀스 DTO]:  {}", messageDto.toString());
 		messagingkafkaTemplate.send(messagingTopic, messageDto);
 	}
 
