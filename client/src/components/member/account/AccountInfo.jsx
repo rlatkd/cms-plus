@@ -28,12 +28,8 @@ const AccountInfo = ({ accountInfo, setAccountInfo }) => {
     const { name, value } = e.target;
     let formattedValue = value;
 
-    switch (name) {
-      case 'accountOwnerBirth':
-        formattedValue = formatBirthDate(value);
-        break;
-      default:
-        break;
+    if (name == 'accountOwnerBirth') {
+      formattedValue = formatBirthDate(value);
     }
 
     setAccountInfo(prevState => ({
