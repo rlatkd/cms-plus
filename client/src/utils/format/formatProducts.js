@@ -8,3 +8,7 @@ export const formatProducts = contractProducts => {
     ? `${firstProduct.name} + ${additionalProductsCount}`
     : firstProduct.name;
 };
+
+export const formatProductsForList = (firstProductName, totalProductCount) => {
+  return firstProductName + (totalProductCount > 1 ? ' +' + totalProductCount : '');
+};
