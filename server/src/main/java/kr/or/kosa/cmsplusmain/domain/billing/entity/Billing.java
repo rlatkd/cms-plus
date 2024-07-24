@@ -188,11 +188,11 @@ public class Billing extends BaseEntity {
 	}
 
 	/**
-	 * 청구 실시간 결제 완료 상태변경
+	 * 청구 결제 완료 상태변경
 	 * @throws InvalidBillingStatusException 이미 결제된 청구인 경우
 	 */
 	public void setPaid() {
-		BillingState.Field.PAY_REALTIME.validateState(this);
+		BillingState.Field.PAY.validateState(this);
 		billingStatus = BillingStatus.PAID;
 		paidDateTime = LocalDateTime.now();
 	}
