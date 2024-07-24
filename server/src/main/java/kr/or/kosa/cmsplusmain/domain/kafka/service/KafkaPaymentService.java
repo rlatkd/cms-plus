@@ -59,6 +59,7 @@ public class KafkaPaymentService {
                     log.error("결제실패");
                 }
                 produceMessaging(messageDto); // 메인서버->메시징서버; 결제결과문자 전달
+                log.error("[프로듀스 DTO]:  {}", messageDto.toString());
             } catch (EntityNotFoundException e) {
                 log.error(e.getMessage());
             }
