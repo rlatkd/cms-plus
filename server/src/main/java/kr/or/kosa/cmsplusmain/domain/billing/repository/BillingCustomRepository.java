@@ -69,8 +69,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				paymentTypeEq(search.getPaymentType()),
 				billingDateEq(search.getBillingDate()),
 				productNameContainsInBilling(search.getProductName()),
-				contractIdEq(search.getContractId()),
-				memberIdEq(search.getMemberId())
+				contractIdEq(search.getContractId())
 			)
 			.groupBy(billing.id, member.name, member.phone, billing.billingStatus, payment.paymentType, billing.billingDate)
 			.having(billingPriceLoe(search.getBillingPrice()))
@@ -100,8 +99,7 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 				paymentTypeEq(search.getPaymentType()),
 				billingDateEq(search.getBillingDate()),
 				productNameContainsInBilling(search.getProductName()),
-				contractIdEq(search.getContractId()),
-				memberIdEq(search.getMemberId())
+				contractIdEq(search.getContractId())
 			)
 			.groupBy(billing.id)
 			.having(billingPriceLoe(search.getBillingPrice()))
@@ -337,8 +335,5 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	}
 	private BooleanExpression contractIdEq(Long contractId) {
 		return contractId != null ? contract.id.eq(contractId) : null;
-	}
-	private BooleanExpression memberIdEq(Long memberId) {
-		return memberId != null ? member.id.eq(memberId) : null;
 	}
 }
