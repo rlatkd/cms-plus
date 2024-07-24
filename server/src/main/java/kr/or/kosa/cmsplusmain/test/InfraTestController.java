@@ -8,7 +8,7 @@ public class InfraTestController {
 
     @GetMapping("/infra-test")
     public String infraTest() {
-        return "infra-test 222";
+        return "infra-test 123123123123";
     }
 
 }
