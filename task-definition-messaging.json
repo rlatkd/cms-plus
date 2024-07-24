@@ -1,12 +1,10 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-messagingtask:8",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-messagingtask:11",
     "containerDefinitions": [
         {
             "name": "t3-back-messagingcontainer",
-            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-messagingecr:latest",
-            "cpu": 2048,
-            "memory": 8192,
-            "memoryReservation": 4096,
+            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-messagingecr",
+            "cpu": 0,
             "portMappings": [
                 {
                     "name": "t3-back-messagingcontainer-8090-tcp",
@@ -18,8 +16,10 @@
             ],
             "essential": true,
             "environment": [],
+            "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
+            "ulimits": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
@@ -27,7 +27,8 @@
                     "awslogs-create-group": "true",
                     "awslogs-region": "ap-northeast-2",
                     "awslogs-stream-prefix": "ecs"
-                }
+                },
+                "secretOptions": []
             },
             "systemControls": []
         }
@@ -36,7 +37,7 @@
     "taskRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 8,
+    "revision": 11,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -51,9 +52,6 @@
         },
         {
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
         },
         {
             "name": "com.amazonaws.ecs.capability.task-iam-role"
@@ -79,13 +77,13 @@
     "requiresCompatibilities": [
         "FARGATE"
     ],
-    "cpu": "2048",
-    "memory": "8192",
+    "cpu": "1024",
+    "memory": "3072",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-07-24T02:17:50.571Z",
+    "registeredAt": "2024-07-24T04:06:00.249Z",
     "registeredBy": "arn:aws:iam::891376922202:user/fms-kosa-tema3",
     "tags": []
 }
