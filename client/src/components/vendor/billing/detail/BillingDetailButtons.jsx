@@ -39,6 +39,7 @@ const BillingDetailButtons = ({
 
   const renderButton = (label, field, onClick, tooltipId, icon, isCancel = false) => {
     const state = fieldToState[field];
+    if (!state) return;
     const isDisabled = !state.enabled;
 
     const showTooltip = isDisabled || isCancel;

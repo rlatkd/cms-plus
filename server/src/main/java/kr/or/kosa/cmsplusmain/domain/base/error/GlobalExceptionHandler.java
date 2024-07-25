@@ -12,6 +12,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.error.exception.EntityNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusException;
 import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
@@ -89,7 +90,6 @@ public class GlobalExceptionHandler {
 		final ErrorRes response = ErrorRes.of(e);
 		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 	}
-
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorRes> handleException(Exception e) {

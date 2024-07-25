@@ -60,7 +60,7 @@ public class BillingController {
 	* */
 	@GetMapping("payment/{billingId}")
 	public void payRealtimeBilling(@VendorId Long vendorId, @PathVariable Long billingId) {
-		billingService.payBilling(vendorId, billingId);
+		billingService.payRealTimeBilling(vendorId, billingId);
 	}
 
 	/*

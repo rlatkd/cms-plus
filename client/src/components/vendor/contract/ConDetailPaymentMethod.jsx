@@ -2,16 +2,11 @@ import InputWeb from '@/components/common/inputs/InputWeb';
 import ConDetailPaymentCard from './ConDetailPaymentCard';
 import ConDetailPaymentCMS from './ConDetailPaymentCMS';
 import ConDetailPaymentVirtual from './ConDetailPaymentVirtual';
-import dayjs from 'dayjs';
+import formatDateTime from '@/utils/format/formatDateTime';
 
 const ConDetailPaymentMethod = ({ contractData }) => {
   const paymentTypeInfo = contractData.paymentTypeInfo;
   const paymentType = paymentTypeInfo.paymentType.code;
-
-  // <------ 공통화 필요 여부 고려중 ------>
-  const formatDateTime = dateTime => {
-    return dayjs(dateTime).format('YYYY-MM-DD HH:mm:ss');
-  };
 
   const componentMap = {
     AUTO: () => {

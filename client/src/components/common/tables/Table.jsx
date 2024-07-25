@@ -11,6 +11,7 @@ const Table = ({
   handleChangeSearch,
   onRowClick,
   handleClickSearch,
+  handleChangeSelection = newSelection => {},
 }) => {
   const [selection, setSelection] = useState([]);
   const itemKey = cols[0].key;
@@ -26,6 +27,7 @@ const Table = ({
       newSelection.push(value);
     }
     setSelection(newSelection);
+    handleChangeSelection(newSelection);
   };
 
   // 모든 체크박스 선택
@@ -33,8 +35,10 @@ const Table = ({
     if (e.target.checked) {
       const allCheckedSelection = rows.map(item => item);
       setSelection(allCheckedSelection);
+      handleChangeSelection(allCheckedSelection);
     } else {
       setSelection([]);
+      handleChangeSelection([]);
     }
   };
 
@@ -57,19 +61,20 @@ const Table = ({
             handleClickSearch={handleClickSearch}
           />
         )}
-        {rows.map((row, index) => (
-          <TableRow
-            key={index}
-            index={index}
-            row={row}
-            cols={cols}
-            currentPage={currentPage}
-            itemKey={itemKey}
-            selection={selection}
-            handleClickCheckBox={handleClickCheckBox}
-            onRowClick={onRowClick} // onRowClick 이벤트 전달
-          />
-        ))}
+        {rows &&
+          rows.map((row, index) => (
+            <TableRow
+              key={index}
+              index={index}
+              row={row}
+              cols={cols}
+              currentPage={currentPage}
+              itemKey={itemKey}
+              selection={selection}
+              handleClickCheckBox={handleClickCheckBox}
+              onRowClick={onRowClick} // onRowClick 이벤트 전달
+            />
+          ))}
       </tbody>
     </table>
   );

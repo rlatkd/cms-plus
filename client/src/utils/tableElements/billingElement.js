@@ -39,9 +39,6 @@ export const initialSearch = [
       { key: 'WAITING_PAYMENT', value: '수납대기' },
       { key: 'PAID', value: '완납' },
       { key: 'NON_PAID', value: '미납' },
-      '',
-      '',
-      '미납',
     ],
   },
 ];

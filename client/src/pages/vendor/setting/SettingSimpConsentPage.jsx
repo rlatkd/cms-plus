@@ -92,7 +92,7 @@ const SettingSimpConsentPage = () => {
 
   return (
     <div className='primary-dashboard relative h-full w-full '>
-      <div className='mx-8 my-8 flex h-[90%] flex-col '>
+      <div className='mx-2 my-8 flex h-[90%] flex-col '>
         <h2 className='mb-8 text-xl font-bold'>간편서명동의 설정</h2>
 
         <div className='flex flex-grow flex-col justify-between'>
@@ -158,7 +158,7 @@ const SettingSimpConsentPage = () => {
             </div>
           </div>
 
-          <div className='mt-auto flex justify-end pt-4'>
+          <div className='mt-auto flex justify-end pt-4 absolute bottom-5 right-5'>
             <button
               className='mr-2 rounded-lg bg-teal-400 px-6 py-2 font-bold text-white'
               onClick={handleSave}>

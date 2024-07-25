@@ -55,6 +55,10 @@ public class ErrorRes {
 		return new ErrorRes(code);
 	}
 
+	public static ErrorRes of(final ErrorCode code, final String message) {
+		return new ErrorRes(code, message);
+	}
+
 	public static ErrorRes of(final ErrorCode code, final List<FieldError> errors) {
 		return new ErrorRes(code, errors);
 	}

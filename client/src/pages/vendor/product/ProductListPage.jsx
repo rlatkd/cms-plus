@@ -10,6 +10,8 @@ import addItem from '@/assets/addItem.svg';
 import Item from '@/assets/Item';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/productElement';
+import formatLongText from '@/utils/format/formatLongText';
+import item from '@/assets/item.svg';
 
 const ProductListPage = () => {
   const [productList, setProductList] = useState([]); // 상품 목록
@@ -18,7 +20,7 @@ const ProductListPage = () => {
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
 
-  const [currentorder, setCurrentOrder] = useState(''); // 정렬 방향
+  const [currentorder, setCurrentOrder] = useState('ASC'); // 정렬 방향
   const [currentorderBy, setCurrentOrderBy] = useState(''); // 정렬 항목
 
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
@@ -52,11 +54,12 @@ const ProductListPage = () => {
         });
         const transformdData = transformProductListItem(res.data.content);
 
+        console.log(transformdData);
         setProductList(transformdData);
         setProductListListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
-        console.error('axiosProductList => ', err.response.data);
+        console.error('axiosProductList => ', err);
       }
     },
     [currentPage]
@@ -64,11 +67,13 @@ const ProductListPage = () => {
 
   // <--------데이터 변환-------->
   const transformProductListItem = data => {
+    if (!data) return;
     return data.map(product => {
       const { productPrice, contractNumber } = product;
 
       return {
         ...product,
+        productMemo: `${formatLongText(product.productMemo, 15) || '-'}`,
         productPrice: `${productPrice.toLocaleString()}원`,
         contractNumber: `${contractNumber.toLocaleString()}건`,
       };
@@ -203,9 +208,11 @@ const ProductListPage = () => {
         isShowModal={isShowModal}
         setIsShowModal={setIsShowModal}
         modalTitle={modalTitle}
-        icon='/src/assets/item.svg'
+        icon={item}
         productDetailData={productDetailData}
-        refreshProductList={() => axiosProductList(currentSearchParams, currentPage)} // 모달에서 상품 등록 완료되면 추가된거 포함해서 상품 목록 다시 렌더링
+        refreshProductList={() =>
+          axiosProductList({ searchParams: currentSearchParams, page: currentPage })
+        } // 모달에서 상품 등록 완료되면 추가된거 포함해서 상품 목록 다시 렌더링
       />
     </div>
   );
