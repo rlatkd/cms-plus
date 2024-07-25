@@ -21,15 +21,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
-      },
-    },
-    chunkSizeWarningLimit: 5000,
-    assetsInlineLimit: Number.MAX_SAFE_INTEGER,
-  },
 });
