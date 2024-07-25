@@ -124,7 +124,7 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
               <th className='p-2 text-left'>단가</th>
               <th className='p-2 text-left'>수량</th>
               <th className='p-2 text-left'>금액</th>
-              {editable && <th className='p-2 text-left'></th>}
+              {editable && <th className='p-2 text-left' />}
             </tr>
           </thead>
           <tbody>
