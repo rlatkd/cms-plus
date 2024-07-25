@@ -25,7 +25,7 @@
      @Bean
      public ProducerFactory<String, PaymentResultDto> paymentResultproducerFactory() {
          Map<String, Object> props = new HashMap<>();
-         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "15.165.198.250:9094");
+         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-15-165-198-250.ap-northeast-2.compute.amazonaws.com:9094");
          props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
          props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
          props.put(ProducerConfig.ACKS_CONFIG, "all");
