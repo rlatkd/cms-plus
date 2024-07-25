@@ -39,7 +39,7 @@ const ProgressBar = ({ steps }) => {
         {steps.map((step, index) => (
           <span
             key={index}
-            className={`text-15 transition-colors duration-300 ease-in-out cursor-pointer ${
+            className={`text-15 font-700 transition-colors duration-300 ease-in-out cursor-pointer ${
               animatedStatus >= index ? 'text-text_black' : 'text-ipt_border'
             }`}
             onClick={() => setStatus(index)}>

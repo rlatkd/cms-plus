@@ -6,21 +6,21 @@ import { useContext } from 'react';
 const Test = () => {
   // 결제
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async () => {
-    const result = await alertComp('회원정보가 수정되었습니다!');
+  const onAlertClick = async message => {
+    const result = await alertComp(message);
   };
 
   const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidthClick = async () => {
-    const result = await alertWidthComp('회원정보가 수정되었습니다!');
+  const onAlertWidthClick = async message => {
+    const result = await alertWidthComp(message);
   };
 
   const { confirm: confrimComp } = useContext(ConfirmContext);
-  const confirmClick = async () => {
-    const result = await confrimComp('회원정보가 수정되었습니다!');
+  const confirmClick = async message => {
+    const result = await confrimComp(message);
   };
 
-  console.log("1111231231");
+  console.log('1111231231');
 
   return (
     <div>
@@ -41,17 +41,17 @@ const Test = () => {
       <div style={{ display: 'flex' }}>
         <button
           style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}
-          onClick={onAlertClick}>
+          onClick={() => onAlertClick('회원정보가 수정되었습니다!')}>
           alert
         </button>
         <button
           style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}
-          onClick={onAlertWidthClick}>
+          onClick={() => onAlertWidthClick('회원정보가 수정되었습니다!')}>
           alertwide
         </button>
         <button
           style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}
-          onClick={confirmClick}>
+          onClick={() => confirmClick('회원정보가 수정되었습니다!')}>
           confirm
         </button>
       </div>

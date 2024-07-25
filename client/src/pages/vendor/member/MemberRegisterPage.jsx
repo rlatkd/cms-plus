@@ -20,10 +20,9 @@ import { useNavigate } from 'react-router-dom';
 const MemberRegisterPage = () => {
   const start = 0;
   const end = 4;
-  const { status } = useStatusStore();
+  const { status, reset } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const navigate = useNavigate();
-  const { reset } = useStatusStore();
 
   // <------ 회원등록 입력 데이터 ------>
   const { basicInfo, resetBasicInfo } = useMemberBasicStore();
@@ -39,6 +38,7 @@ const MemberRegisterPage = () => {
     paymentMethodInfoReq_Card,
     ...paymentResetFunctions
   } = useMemberPaymentStore();
+
   // <------ 등록 폼 교체 ------>
   const componentMap = {
     0: { title: '기본정보', component: RegisterBasicInfo }, // 기본정보

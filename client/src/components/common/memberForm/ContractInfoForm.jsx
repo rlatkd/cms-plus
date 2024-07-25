@@ -115,7 +115,7 @@ const ContractInfoForm = ({ formType }) => {
         {contractInfo.contractProducts.map((product, idx) => (
           <div
             key={idx}
-            className='flex justify-between items-center py-3 border-b border-ipt_border text-sm'>
+            className='flex justify-between items-center py-3 border-b border-ipt_border text-sm  '>
             <p className='w-1/5 text-center'>{product.name}</p>
             <input
               id='price'

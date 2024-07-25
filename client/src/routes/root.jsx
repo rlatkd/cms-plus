@@ -3,8 +3,8 @@ import vendorRoute from '@/routes/vendorRoute';
 import memberRoute from '@/routes/memberRoute';
 import Login from '@/pages/LoginPage'; // 로그인
 import Signup from '@/pages/SignupPage'; // 회원가입
-import VendorIndex from '@/pages/vendor/VenIndexPage'; // 고객 중첩 라우팅
-import MemberIndex from '@/pages/member/MemIndexPage'; // 회원 중첩 라우팅
+import Vendor from '@/pages/vendor/VenIndex'; // 고객 중첩 라우팅
+import Member from '@/pages/member/MemIndex'; // 회원 중첩 라우팅
 import Test from '@/labs/Test';
 
 const root = createBrowserRouter([
@@ -22,12 +22,12 @@ const root = createBrowserRouter([
   },
   {
     path: 'vendor',
-    element: <VendorIndex />,
+    element: <Vendor />,
     children: vendorRoute(),
   },
   {
     path: 'member',
-    element: <MemberIndex />,
+    element: <Member />,
     children: memberRoute(),
   },
   {
