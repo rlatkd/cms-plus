@@ -1,6 +1,7 @@
 import LoginForm from '@/components/LoginForm';
 import backgroundImgSide from '@/assets/backgroundImgSide.svg';
 
+
 const LoginPage = () => {
   return (
     <>
