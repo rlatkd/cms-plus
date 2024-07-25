@@ -80,12 +80,14 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ErrorCode.HANDLE_ACCESS_DENIED.getStatus()));
 	}
 
+	/**
+	 * 비즈니스 예외처리 | 정의된 메시지 필수
+	 * */
 	@ExceptionHandler(BusinessException.class)
 	protected ResponseEntity<ErrorRes> handleBusinessException(final BusinessException e) {
 		log.error("handleBusinessException", e);
-		final ErrorCode errorCode = e.getErrorCode();
-		final ErrorRes response = ErrorRes.of(errorCode);
-		return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
+		final ErrorRes response = ErrorRes.of(e);
+		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 	}
 
 
