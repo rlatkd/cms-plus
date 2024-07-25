@@ -39,8 +39,8 @@ public class V2BillingController {
 	 * 청구목록 조회
 	 * */
 	@GetMapping
-	public PageRes<BillingListItemRes> getBillingListWithCondition(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		return newBillingService.getBillingListWithCondition(vendorId, search, pageReq);
+	public PageRes<BillingListItemRes> searchBillings(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
+		return newBillingService.searchBillings(vendorId, search, pageReq);
 	}
 
 	/**
