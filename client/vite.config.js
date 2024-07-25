@@ -29,6 +29,7 @@ export default defineConfig({
         },
       },
     },
-    chunkSizeWarningLimit: 2500,
+    chunkSizeWarningLimit: 5000,
+    assetsInlineLimit: Number.MAX_SAFE_INTEGER,
   },
 });
