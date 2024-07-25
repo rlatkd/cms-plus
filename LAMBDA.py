@@ -29,7 +29,7 @@ def lambda_handler(event, context):
     log_content = f'백엔드 배포 로그'
     
     #GitHub 정보
-    github_token = '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'
+    github_token = '****'
     github_user = 'rlatkd'
     github_org = 'Try-AngIe'
     github_repo = 'cms-plus'
