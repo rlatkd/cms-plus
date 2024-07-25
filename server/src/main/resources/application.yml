@@ -34,7 +34,12 @@ cloud:
       accessKey: ${S3_ACCESS_KEY}
       secretKey: ${S3_SECRET_KEY}
 
+kafkaServer:
+  ip: ${KAFKASERVER_IP}
+
+kafkaGroup:
+  paymentResultGroup: ${PAYMENT_RESULT_GROUP}
+
 kafkaTopic:
   messagingTopic: ${MESSAGING_TOPIC}
   paymentTopic: ${PAYMENT_TOPIC}
-  paymentResultTopic: ${PAYMENT_RESULT_TOPIC}
