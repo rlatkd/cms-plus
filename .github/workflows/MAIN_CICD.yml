@@ -1,11 +1,11 @@
-name: Messaging CICD
+name: Main CICD
 
 on:
   push:
     branches:
       - dev
     paths:
-      - 'server-messaging/**'
+      - 'server/**'
 
 env:
   AWS_REGION: ap-northeast-2
@@ -41,14 +41,14 @@ jobs:
         java-version: '17'
 
     - name: Grant Grant Permission
-      run: chmod +x server-messaging/gradlew
+      run: chmod +x server/gradlew
 
     - name: Inject secure
-      run: echo "${{ secrets.MESSAGING_SECURE_DEV }}" > server-messaging/src/main/resources/secure.properties
+      run: echo "${{ secrets.BE_SECURE_DEV }}" > server/src/main/resources/secure.properties
 
     - name: Build with Gradle
       run: |
-        cd server-messaging
+        cd server
         ./gradlew clean build
 
     - name: Replace AWS ID
@@ -65,7 +65,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server-messaging
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
