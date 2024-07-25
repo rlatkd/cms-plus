@@ -43,4 +43,3 @@ kafkaTopic:
   messagingTopic: ${MESSAGING_TOPIC}
   paymentTopic: ${PAYMENT_TOPIC}
   paymentResultTopic: ${PAYMENT_RESULT_TOPIC}
-  monitoringTopic: ${MONITORING_TOPIC}
