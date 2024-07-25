@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import BaseModal from '@/components/common/BaseModal';
 import QRCode from 'qrcode.react';
+import { formatPhone } from '@/utils/format/formatPhone';
 
 const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
   const [url, setUrl] = useState('https://google.com');
@@ -81,7 +82,7 @@ const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
           <div className='flex flex-col sm:flex-row'>
             <input
               type='text'
-              value={phoneNumber}
+              value={formatPhone(phoneNumber)}
               onChange={e => setPhoneNumber(e.target.value)}
               className='mb-2 flex-grow rounded-lg border border-gray-300 px-3 py-2 sm:mb-0 sm:mr-2'
             />

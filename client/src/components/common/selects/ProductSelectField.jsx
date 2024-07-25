@@ -136,8 +136,8 @@ const ProductSelectField = ({ label, required, options, onChange, selectedOption
           </div>
           <ul className='h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700'>
             {filteredOptions.map((option, index) => (
-              <li key={index}>
-                <div className='flex items-center font-medium p-2 ps-2 rounded hover:bg-gray-100'>
+              <li key={index} className='cursor-pointer'>
+                <div className='flex items-center font-medium p-2 ps-2 rounded hover:bg-gray-100 cursor-pointer'>
                   <Checkbox
                     name={`checkbox-item-${index}`}
                     label={option.label}
