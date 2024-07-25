@@ -11,6 +11,7 @@ import Item from '@/assets/Item';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/productElement';
 import formatLongText from '@/utils/format/formatLongText';
+import item from '@/assets/item.svg';
 
 const ProductListPage = () => {
   const [productList, setProductList] = useState([]); // 상품 목록
@@ -207,7 +208,7 @@ const ProductListPage = () => {
         isShowModal={isShowModal}
         setIsShowModal={setIsShowModal}
         modalTitle={modalTitle}
-        icon='/src/assets/item.svg'
+        icon={item.svg}
         productDetailData={productDetailData}
         refreshProductList={() =>
           axiosProductList({ searchParams: currentSearchParams, page: currentPage })

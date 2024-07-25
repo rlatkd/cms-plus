@@ -12,6 +12,7 @@ import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/memberElement';
 import MemberExcelModal from '@/components/vendor/modal/MemberExcelModal';
+import user from '@/assets/user.svg';
 
 const MemberListPage = () => {
   const [memberList, setMemberList] = useState([]); // 회원 목록
@@ -167,7 +168,7 @@ const MemberListPage = () => {
         isShowModal={isShowExcelModal}
         setIsShowModal={setIsShowExcelModal}
         // TODO 아이콘 변경 필요
-        icon='/src/assets/user.svg'
+        icon={user}
         modalTitle={'대량 회원 등록'}
         axiosMemberList={axiosMemberList}
       />
