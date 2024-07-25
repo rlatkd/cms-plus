@@ -1,6 +1,8 @@
 import Search from '@/assets/Search';
 import { useState, useRef } from 'react';
 import PostCodeModal from '@/components/vendor/modal/PostCodeModal';
+import openeye from '@/assets/openeye.svg';
+import closeeye from '@/assets/closeeye.svg';
 
 const InputWeb = ({
   id,
@@ -67,7 +69,7 @@ const InputWeb = ({
         />
         {type === 'password' && (
           <img
-            src={showPassword ? '/src/assets/openeye.svg' : '/src/assets/closeeye.svg'}
+            src={showPassword ? { openeye } : { closeeye }}
             alt='Toggle password visibility'
             className='absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer w-6'
             onClick={handleTogglePassword}
