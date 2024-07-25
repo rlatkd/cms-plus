@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getContractList } from '@/apis/contract';
 import { getAllProductList } from '@/apis/product';
 import useDebounce from '@/hooks/useDebounce';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faSave } from '@fortawesome/free-solid-svg-icons';
 import BillingForm from '@/components/vendor/billing/register/BillingRegisterBillingForm';
 import ContractList from '@/components/vendor/billing/register/BillingRegisterContractList';
 import { createBilling } from '@/apis/billing';
@@ -63,13 +63,22 @@ const BillingRegisterPage = () => {
 
   const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
   const onAlertWidthClick = async msg => {
-    const result = await alertWidthComp(msg);
+    await alertWidthComp(msg);
   };
 
   useEffect(() => {
-    fetchContractList();
     fetchAllProducts();
+  }, [fetchAllProducts]);
+
+  useEffect(() => {
+    fetchContractList();
+    setCurrentPage(1);
+    setPageGroup(0);
   }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    fetchContractList(currentPage);
+  }, [currentPage, fetchContractList]);
 
   const navigate = useNavigate();
 
@@ -165,7 +174,7 @@ const BillingRegisterPage = () => {
         />
 
         {/* 중앙 구분선 */}
-        <div className='w-px bg-ipt_border'></div>
+        <div className='w-px bg-ipt_border' />
 
         {/* 오른쪽: 청구 생성 정보 */}
         <div className='w-3/5 p-6 flex flex-col h-full overflow-hidden'>

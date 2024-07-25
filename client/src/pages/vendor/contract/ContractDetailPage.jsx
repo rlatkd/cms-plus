@@ -53,7 +53,7 @@ const ContractDetailPage = () => {
   return (
     <div>
       <ConDetailHeader contractData={contractData} />
-      <div className='flex gap-6 mb-6'>
+      <div className='flex gap-6 mb-6 h-730'>
         <ConDetailContract contractData={contractData} />
         <ConDetailPayment contractData={contractData} />
       </div>
