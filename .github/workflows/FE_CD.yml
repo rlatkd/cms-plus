@@ -7,13 +7,7 @@ on:
     paths:
       - 'client/**'
 
-# on:
-#   workflow_run:
-#     workflows: [ "FE PIPELINE" ]
-#     types:
-#       - completed
-
-permissions: #github actions bot에게 권한 열기
+permissions:
   contents: write
   pages: write
   id-token: write
