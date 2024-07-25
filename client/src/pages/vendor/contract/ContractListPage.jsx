@@ -14,6 +14,7 @@ import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/contractElement';
 import { formatProducts } from '@/utils/format/formatProducts';
+import ReqSimpConsentErrorModal from '@/components/vendor/modal/ReqSimpConsentErrorModal';
 
 const ContractListPage = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록
@@ -30,6 +31,9 @@ const ContractListPage = () => {
   const buttonCount = 5; // 버튼 갯수
 
   const [isShowModal, setIsShowModal] = useState(false);
+
+  const [simpErrors, setSimpErrors] = useState();
+  const [isShowSimpModal, setIsShowSimpModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -96,6 +100,37 @@ const ContractListPage = () => {
     setCurrentSearchParams(searchParams);
   };
 
+  // <--------간편동의 버튼 클릭 핸들러-------->
+  const handleClickSimpConsent = async () => {
+    setIsShowSimpModal(true);
+    // if (!selectedBillings || selectedBillings.length === 0) {
+    //   alert('선택된 청구가 없습니다!');
+    //   return;
+    // }
+
+    // const errors = [];
+    // for (const billing of selectedBillings) {
+    //   try {
+    //     await payRealTimeBilling(billing.billingId);
+    //   } catch (err) {
+    //     errors.push({
+    //       from: billing,
+    //       res: err.response.data,
+    //       total: selectedBillings.length,
+    //     });
+    //   }
+    // }
+
+    // console.log(errors);
+    // // 실패항목이 있는 경우
+    // if (errors.length !== 0) {
+    //   setPayErrors(errors);
+    //   setIsShowPayErrorModal(true);
+    // } else {
+    //   alert(`${selectedBillings.length}개의 청구 결제를 성공했습니다.`);
+    // }
+  };
+
   // <--------검색 클릭 이벤트 핸들러-------->
   const handleClickSearch = async () => {
     axiosContractList(debouncedSearchParams);
@@ -138,7 +173,12 @@ const ContractListPage = () => {
 
         <div>
           <div className='flex'>
-            <MoveButton imgSrc={sign} color='white' buttonText='간편 서명 동의' />
+            <MoveButton
+              imgSrc={sign}
+              color='white'
+              buttonText='간편 서명 동의'
+              onClick={handleClickSimpConsent}
+            />
             <MoveButton
               imgSrc={file}
               color='mint'
@@ -179,6 +219,13 @@ const ContractListPage = () => {
         icon={user}
         setIsShowModal={setIsShowModal}
         modalTitle={'회원선택'}
+      />
+
+      <ReqSimpConsentErrorModal
+        errors={simpErrors}
+        isShowModal={isShowSimpModal}
+        setIsShowModal={setIsShowSimpModal}
+        modalTitle={'간편동의 요청'}
       />
     </div>
   );

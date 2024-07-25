@@ -15,6 +15,7 @@ import { formatPhone } from '@/utils/format/formatPhone';
 import { formatProductsForList } from '@/utils/format/formatProducts';
 import PayRealtimeErrorModal from '@/components/vendor/modal/PayRealtimeErrorModal';
 import SendInvoiceErrorModal from '@/components/vendor/modal/SendInvoiceErrorModal';
+import ReqSimpConsentErrorModal from '@/components/vendor/modal/ReqSimpConsentErrorModal';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
@@ -271,7 +272,7 @@ const BillingListPage = () => {
         />
       )}
       {isShowInvoiceErrorModal && (
-        <SendInvoiceErrorModal
+        <ReqSimpConsentErrorModal
           errors={invoiceErrors}
           isShowModal={isShowInvoiceErrorModal}
           icon={card}
