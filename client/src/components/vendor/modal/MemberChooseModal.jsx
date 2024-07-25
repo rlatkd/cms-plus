@@ -59,6 +59,8 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
         });
         setMemberList(res.data.content);
         setTotalPages(res.data.totalPage || 1);
+        setCurrentPage(1);
+        setPageGroup(0);
       } catch (err) {
         console.error('계약생성 - 회원 기본정보 목록 조회 실패', err);
       }

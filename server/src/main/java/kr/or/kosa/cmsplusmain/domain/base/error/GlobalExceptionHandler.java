@@ -12,6 +12,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.error.exception.EntityNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusException;
 import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
@@ -80,6 +81,14 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ErrorCode.HANDLE_ACCESS_DENIED.getStatus()));
 	}
 
+	@ExceptionHandler(InvalidBillingStatusException.class)
+	protected ResponseEntity<ErrorRes> handleInvalidBillingStatusException(final InvalidBillingStatusException e) {
+		log.error("handleInvalidBillingStatusException", e);
+		final ErrorCode errorCode = e.getErrorCode();
+		final ErrorRes response = ErrorRes.of(errorCode, e.getMessage());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
+	}
+
 	@ExceptionHandler(BusinessException.class)
 	protected ResponseEntity<ErrorRes> handleBusinessException(final BusinessException e) {
 		log.error("handleBusinessException", e);
@@ -87,7 +96,6 @@ public class GlobalExceptionHandler {
 		final ErrorRes response = ErrorRes.of(errorCode);
 		return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
 	}
-
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorRes> handleException(Exception e) {
