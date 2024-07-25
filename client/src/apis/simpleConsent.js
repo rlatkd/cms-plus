@@ -7,7 +7,7 @@ export const getSimpleConsent = async () => {
     const res = await privateAxios.get('/v1/vendor/simple-consent');
     return res.data;
   } catch (err) {
-    console.err('간편서명동의 데이터 가져오기 실패:', err);
+    console.error('간편서명동의 데이터 가져오기 실패:', err);
     throw err;
   }
 };
@@ -36,7 +36,7 @@ export const getAllProducts = async () => {
 
     return allProducts;
   } catch (err) {
-    console.err('모든 상품 가져오기 실패:', err);
+    console.error('모든 상품 가져오기 실패:', err);
     throw err;
   }
 };
@@ -47,7 +47,7 @@ export const updateSimpleConsent = async data => {
     const res = await privateAxios.put('/v1/vendor/simple-consent', data);
     return res.data;
   } catch (err) {
-    console.err('간편서명동의 설정 업데이트 실패:', err);
+    console.error('간편서명동의 설정 업데이트 실패:', err);
     throw err;
   }
 };
@@ -58,7 +58,18 @@ export const getAvailableOptions = async () => {
     const res = await privateAxios.get('/v1/vendor/simple-consent/available-options');
     return res.data;
   } catch (err) {
-    console.err('간편서명동의 가능한 옵션 가져오기 실패:', err);
+    console.error('간편서명동의 가능한 옵션 가져오기 실패:', err);
+    throw err;
+  }
+};
+
+/* 간편서명동의 링크 발송하기 */
+export const sendReqSimpConsent = async contractId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/simple-consent/send/${contractId}`);
+    return res.data;
+  } catch (err) {
+    console.error('간편서명동의 요청 링크 발송 실패:', err);
     throw err;
   }
 };
@@ -73,7 +84,7 @@ export const sendSimpleConsentData = async userData => {
     });
     return res.data;
   } catch (err) {
-    console.err('간편서명동의 회원 데이터 보내기 실패:', err);
+    console.error('간편서명동의 회원 데이터 보내기 실패:', err);
     throw err;
   }
 };

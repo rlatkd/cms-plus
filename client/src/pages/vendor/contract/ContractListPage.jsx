@@ -15,6 +15,7 @@ import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/contractElement';
 import { formatProducts } from '@/utils/format/formatProducts';
 import ReqSimpConsentErrorModal from '@/components/vendor/modal/ReqSimpConsentErrorModal';
+import { sendReqSimpConsent } from '@/apis/simpleConsent';
 
 const ContractListPage = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록
@@ -29,6 +30,8 @@ const ContractListPage = () => {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [pageGroup, setPageGroup] = useState(0); // 현재 페이지 그룹
   const buttonCount = 5; // 버튼 갯수
+
+  const [selectedContracts, setSelectedContracts] = useState([]); // 선택된 계약 목록
 
   const [isShowModal, setIsShowModal] = useState(false);
 
@@ -100,35 +103,39 @@ const ContractListPage = () => {
     setCurrentSearchParams(searchParams);
   };
 
+  // <--------계약 선택 핸들러-------->
+  const handleChangeSelection = newSelections => {
+    setSelectedContracts(newSelections);
+  };
+
   // <--------간편동의 버튼 클릭 핸들러-------->
   const handleClickSimpConsent = async () => {
-    setIsShowSimpModal(true);
-    // if (!selectedBillings || selectedBillings.length === 0) {
-    //   alert('선택된 청구가 없습니다!');
-    //   return;
-    // }
+    if (!selectedContracts || selectedContracts.length === 0) {
+      alert('선택된 계약이 없습니다!');
+      return;
+    }
 
-    // const errors = [];
-    // for (const billing of selectedBillings) {
-    //   try {
-    //     await payRealTimeBilling(billing.billingId);
-    //   } catch (err) {
-    //     errors.push({
-    //       from: billing,
-    //       res: err.response.data,
-    //       total: selectedBillings.length,
-    //     });
-    //   }
-    // }
+    const errors = [];
+    for (const contract of selectedContracts) {
+      try {
+        await sendReqSimpConsent(contract.contractId);
+      } catch (err) {
+        errors.push({
+          from: contract,
+          res: err.response.data,
+          total: selectedContracts.length,
+        });
+      }
+    }
 
-    // console.log(errors);
-    // // 실패항목이 있는 경우
-    // if (errors.length !== 0) {
-    //   setPayErrors(errors);
-    //   setIsShowPayErrorModal(true);
-    // } else {
-    //   alert(`${selectedBillings.length}개의 청구 결제를 성공했습니다.`);
-    // }
+    console.log(errors);
+    // 실패항목이 있는 경우
+    if (errors.length !== 0) {
+      setSimpErrors(errors);
+      setIsShowSimpModal(true);
+    } else {
+      alert(`${selectedContracts.length}개의 청구 결제를 성공했습니다.`);
+    }
   };
 
   // <--------검색 클릭 이벤트 핸들러-------->
@@ -203,6 +210,7 @@ const ContractListPage = () => {
         handleChangeSearch={handleChangeSearch}
         handleClickSearch={handleClickSearch}
         onRowClick={item => MoveContractDetail(item.contractId)}
+        handleChangeSelection={handleChangeSelection}
       />
 
       <PagiNation

@@ -24,10 +24,10 @@ const ReqSimpConsentErrorModal = ({ errors, isShowModal, icon, setIsShowModal, m
             <thead>
               <tr className='bg-table_col'>
                 <th className='p-2 text-left text-text_black w-8' />
-                <th className='p-2 text-left text-text_black'>회원번호</th>
                 <th className='p-2 text-left text-text_black'>회원이름</th>
                 <th className='p-2 text-left text-text_black'>휴대전화</th>
                 <th className='p-2 text-left text-text_black'>결제방식</th>
+                <th className='p-2 text-left text-text_black'>약정일</th>
                 <th className='p-2 text-left text-text_black'>계약상태</th>
               </tr>
             </thead>
@@ -45,9 +45,7 @@ const ReqSimpConsentErrorModal = ({ errors, isShowModal, icon, setIsShowModal, m
                         <Tooltip id={`error-${idx}`} place='top' type='error' effect='solid' />
                       </div>
                     </td>
-                    <td className='border-b border-ipt_border p-2 text-text_black'>
-                      {formatId(from.memberId)}
-                    </td>
+
                     <td className='border-b border-ipt_border p-2 text-text_black'>
                       {from.memberName}
                     </td>
@@ -56,6 +54,9 @@ const ReqSimpConsentErrorModal = ({ errors, isShowModal, icon, setIsShowModal, m
                     </td>
                     <td className='border-b border-ipt_border p-2 text-text_black'>
                       {from.paymentType}
+                    </td>
+                    <td className='border-b border-ipt_border p-2 text-text_black'>
+                      {from.contractDay}
                     </td>
                     <td className='border-b border-ipt_border p-2 text-text_black'>
                       {from.contractStatus}
