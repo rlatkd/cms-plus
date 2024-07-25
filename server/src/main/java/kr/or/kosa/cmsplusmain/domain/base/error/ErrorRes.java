@@ -64,7 +64,7 @@ public class ErrorRes {
 	}
 
 	public static ErrorRes of(final BusinessException e) {
-		return new ErrorRes(e.getErrorCode());
+		return new ErrorRes(e.getErrorCode(), e.getMessage());
 	}
 
 	public static ErrorRes of(MethodArgumentTypeMismatchException e) {
