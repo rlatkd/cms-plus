@@ -208,7 +208,7 @@ const ProductListPage = () => {
         isShowModal={isShowModal}
         setIsShowModal={setIsShowModal}
         modalTitle={modalTitle}
-        icon={item.svg}
+        icon={item}
         productDetailData={productDetailData}
         refreshProductList={() =>
           axiosProductList({ searchParams: currentSearchParams, page: currentPage })
