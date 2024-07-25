@@ -20,7 +20,7 @@ const Test = () => {
     const result = await confrimComp('회원정보가 수정되었습니다!');
   };
 
-  console.log("testv7");
+  console.log('testv77');
 
   return (
     <div>
