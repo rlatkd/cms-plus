@@ -1,6 +1,7 @@
 import { postCreateMember } from '@/apis/member';
 import NextButton from '@/components/common/buttons/StatusNextButton';
 import PreviousButton from '@/components/common/buttons/StatusPreButton';
+import ProgressBar from '@/components/common/ProgressBar';
 import RegisterBasicInfo from '@/components/vendor/member/registers/RegisterBasicInfo';
 import RegisterBillingInfo from '@/components/vendor/member/registers/RegisterBillingInfo';
 import RegisterContractInfo from '@/components/vendor/member/registers/RegisterContractInfo';
@@ -36,15 +37,8 @@ const MemberRegisterPage = () => {
     paymentTypeInfoReq_Auto,
     paymentMethodInfoReq_Cms,
     paymentMethodInfoReq_Card,
-    resetPaymentType,
-    resetPaymentMethod,
-    resetPaymentTypeInfoReq_Virtual,
-    resetPaymentTypeInfoReq_Buyer,
-    resetPaymentTypeInfoReq_Auto,
-    resetPaymentMethodInfoReq_Cms,
-    resetPaymentMethodInfoReq_Card,
+    ...paymentResetFunctions
   } = useMemberPaymentStore();
-
   // <------ 등록 폼 교체 ------>
   const componentMap = {
     0: { title: '기본정보', component: RegisterBasicInfo }, // 기본정보
@@ -58,7 +52,6 @@ const MemberRegisterPage = () => {
     component: () => 'error',
   };
 
-  // TODO
   // <------ 회원등록 API ------>
   const axiosCreateMember = async () => {
     try {
@@ -68,7 +61,6 @@ const MemberRegisterPage = () => {
         paymentCreateReq: transformPaymentInfo(), // 결제정보
         ...billingInfo, // 청구정보
       };
-      console.log(data);
       if (status === 3) {
         const res = await postCreateMember(data);
         console.log('!----회원등록 성공----!'); // 삭제예정
@@ -131,38 +123,38 @@ const MemberRegisterPage = () => {
     return paymentCreateReq;
   };
 
-  // <--------기본정보 수정 성공 Alert창-------->
+  // <----- 기본정보 수정 성공 Alert창 ------>
   const { alert: alertComp } = useContext(AlertContext);
   const onAlertClick = async () => {
     await alertComp('회원정보가 등록되었습니다!');
   };
 
-  // <------ 페이지 이탈 시 Status reset ------>
+  // <----- 페이지 이탈 시 Status reset ----->
   useEffect(() => {
     return () => {
       reset();
       resetBasicInfo();
       resetBillingInfo();
       resetContractInfo();
-      resetPaymentType();
-      resetPaymentMethod();
-      resetPaymentTypeInfoReq_Virtual();
-      resetPaymentTypeInfoReq_Buyer();
-      resetPaymentTypeInfoReq_Auto();
-      resetPaymentMethodInfoReq_Cms();
-      resetPaymentMethodInfoReq_Card();
+      paymentResetFunctions.resetPaymentType();
+      paymentResetFunctions.resetPaymentMethod();
+      paymentResetFunctions.resetPaymentTypeInfoReq_Virtual();
+      paymentResetFunctions.resetPaymentTypeInfoReq_Buyer();
+      paymentResetFunctions.resetPaymentTypeInfoReq_Auto();
+      paymentResetFunctions.resetPaymentMethodInfoReq_Cms();
+      paymentResetFunctions.resetPaymentMethodInfoReq_Card();
     };
   }, []);
 
-  // <------ 회원등록 입력 데이터 reset------>
+  // <----- 회원등록 입력 데이터 reset ----->
   // useEffect(() => {
 
   // }, []);
 
   return (
     <>
-      <div className='up-dashboard relative mb-4 w-full desktop:h-[18%]'>
-        progressivee
+      <div className='up-dashboard relative flex justify-center items-center mb-4 w-full desktop:h-[18%]'>
+        <ProgressBar steps={['기본정보', '계약정보', '결제정보', '청구정보']} />
         <img
           src='/src/assets/close.svg'
           alt='back'

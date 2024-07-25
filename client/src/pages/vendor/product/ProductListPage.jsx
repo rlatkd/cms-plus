@@ -81,16 +81,12 @@ const ProductListPage = () => {
       searchItem.key === key ? { ...searchItem, value: value } : searchItem
     );
 
-    console.log(updatedSearch);
-
     let searchParams = {};
     updatedSearch.forEach(searchMember => {
       if (searchMember.value) {
         searchParams[searchMember.key] = searchMember.value;
       }
     });
-
-    console.log(searchParams);
 
     setSearch(updatedSearch);
     setCurrentSearchParams(searchParams);
@@ -189,7 +185,6 @@ const ProductListPage = () => {
         onRowClick={item => handleDetailModalOpen(item.productId)}
       />
 
-      {/* 페이지네이션*/}
       <PagiNation
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

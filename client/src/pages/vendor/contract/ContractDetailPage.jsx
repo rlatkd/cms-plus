@@ -39,7 +39,6 @@ const ContractDetailPage = () => {
       console.log('!----계약 상세 조회 성공----!');
       setContractData(res.data);
       setLoading(false);
-      console.log(res.data);
     } catch (err) {
       console.log('effect');
       console.error('axiosContrctDetail => ', err.response.data);

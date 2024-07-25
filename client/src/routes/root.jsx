@@ -1,6 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
-import vendorRoute from './vendorRoute';
-import memberRoute from './memberRoute';
+import vendorRoute from '@/routes/vendorRoute';
+import memberRoute from '@/routes/memberRoute';
 import Login from '@/pages/LoginPage'; // 로그인
 import Signup from '@/pages/SignupPage'; // 회원가입
 import VendorIndex from '@/pages/vendor/VenIndexPage'; // 고객 중첩 라우팅
