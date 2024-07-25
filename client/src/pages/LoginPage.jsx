@@ -6,7 +6,7 @@ const LoginPage = () => {
       <LoginForm />
       <img
         className=' absolute right-0 top-0 h-[88vh] w-[44vw] hidden mobile:block'
-        src='./backgroundImgSide.png'
+        src='/src/assets/backgroundImgSide.png'
         alt='background'
       />
     </>
