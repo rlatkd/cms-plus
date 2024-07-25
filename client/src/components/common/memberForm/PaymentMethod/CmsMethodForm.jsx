@@ -4,6 +4,9 @@ import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import bankOptions from '@/utils/bank/bankOptions';
 import FileUpload from '../../inputs/FileUpload';
+import { verifyCMS } from '@/apis/validation';
+import { useContext } from 'react';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
 
 const CmsMethodForm = ({ paymentMethod, formType }) => {
   const {
@@ -13,18 +16,17 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
     setPaymentTypeInfoReq_Auto,
   } = useMemberPaymentStore();
 
-  // <------ 셀렉터 필드 은행명 변경 ------>
+  // <----- 셀렉터 필드 은행명 변경 ----->
   const handleChangeSelect = e => {
     setPaymentMethodInfoReq_Cms({ bank: e.target.value });
   };
-
-  // <------ 인풋 필드 입력값 변경 ------>
+  // <----- 인풋 필드 입력값 변경 ----->
   const handleChangeInput = e => {
     const { id, value } = e.target;
     setPaymentMethodInfoReq_Cms({ [id]: value });
   };
 
-  // <------ 파일 업로드 ------>
+  // <----- 파일 업로드 ----->
   const handleUploadFile = file => {
     // TODO
     // simpleConsentReqDateTime 동의 요청시간 일단은 현재시각으로 설정
@@ -34,6 +36,30 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
       consetImgName: file.name,
       simpleConsentReqDateTime: currentTime,
     });
+  };
+
+  // <----- 실시간 CMS 계좌인증 API ----->
+  const axiosVerifyCMS = async () => {
+    try {
+      const { bank, ...paymentCmsinfo } = paymentMethodInfoReq_Cms;
+      const transformPaymentCms = {
+        paymentMethod: paymentMethod,
+        ...paymentCmsinfo,
+      };
+      console.log(transformPaymentCms);
+      const res = await verifyCMS(transformPaymentCms);
+      console.log('!----실시간 CMS 계좌인증 API----!'); // 삭제예정
+      onAlertClick('계좌인증에 성공하셨습니다!');
+    } catch (err) {
+      console.error('axiosVerifyCMS => ', err.response.data);
+      onAlertClick('계좌인증에 실패하셨습니다.');
+    }
+  };
+
+  // <----- 계좌인증 성공여부 Alert창 ------>
+  const { alert: alertComp } = useContext(AlertContext);
+  const onAlertClick = async message => {
+    await alertComp(message);
   };
 
   // TODO
@@ -105,7 +131,9 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
             value={paymentMethodInfoReq_Cms.accountNumber}
             onChange={handleChangeInput}
           />
-          <button className='h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover ml-3'>
+          <button
+            className='h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover ml-3'
+            onClick={axiosVerifyCMS}>
             계좌번호 인증
           </button>
         </div>
