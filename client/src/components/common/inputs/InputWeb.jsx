@@ -69,7 +69,7 @@ const InputWeb = ({
         />
         {type === 'password' && (
           <img
-            src={showPassword ? { openeye } : { closeeye }}
+            src={showPassword ? openeye : closeeye}
             alt='Toggle password visibility'
             className='absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer w-6'
             onClick={handleTogglePassword}
