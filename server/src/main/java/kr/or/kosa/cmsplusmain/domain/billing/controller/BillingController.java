@@ -22,6 +22,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
+import kr.or.kosa.cmsplusmain.domain.billing.service.NewBillingService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,13 +31,15 @@ import lombok.RequiredArgsConstructor;
 public class BillingController {
 
 	private final BillingService billingService;
+	private final NewBillingService newBillingService;
 
 	/**
 	 * 청구생성
 	 * */
 	@PostMapping
 	public void createBilling(@VendorId Long vendorId, @RequestBody @Valid BillingCreateReq billingCreateReq) {
-		billingService.createBilling(vendorId, billingCreateReq);
+		// billingService.createBilling(vendorId, billingCreateReq);
+		newBillingService.createBilling(vendorId, billingCreateReq);
 	}
 
 	/*
@@ -76,7 +79,8 @@ public class BillingController {
 	 * */
 	@GetMapping
 	public PageRes<BillingListItemRes> getBillingListWithCondition(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		return billingService.getBillingListWithCondition(vendorId, search, pageReq);
+		// return billingService.getBillingListWithCondition(vendorId, search, pageReq);
+		return newBillingService.getBillingListWithCondition(vendorId, search, pageReq);
 	}
 
 	/**
@@ -84,7 +88,8 @@ public class BillingController {
 	 * */
 	@GetMapping("/{billingId}")
 	public BillingDetailRes getBillingDetail(@VendorId Long vendorId, @PathVariable Long billingId) {
-		return billingService.getBillingDetail(vendorId, billingId);
+		// return billingService.getBillingDetail(vendorId, billingId);
+		return newBillingService.getBillingDetail(vendorId, billingId);
 	}
 
 	/**
@@ -100,7 +105,8 @@ public class BillingController {
 	* */
 	@PutMapping("/{billingId}")
 	public void updateBilling(@VendorId Long vendorId, @PathVariable Long billingId, @RequestBody @Valid BillingUpdateReq billingUpdateReq) {
-		billingService.updateBilling(vendorId, billingId, billingUpdateReq);
+		// billingService.updateBilling(vendorId, billingId, billingUpdateReq);
+		newBillingService.updateBilling(vendorId, billingId, billingUpdateReq);
 	}
 
 	/**

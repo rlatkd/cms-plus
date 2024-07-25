@@ -1,25 +1,24 @@
 package kr.or.kosa.cmsplusmain.domain.base.repository;
 
-
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.billing;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.billingProduct;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
-import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
-import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.vendor;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
+import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.vendor.entity.QVendor.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-import com.querydsl.core.types.Path;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparablePath;
 import com.querydsl.core.types.dsl.EntityPathBase;
@@ -31,10 +30,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-
 import lombok.RequiredArgsConstructor;
 
+/**
+ * @deprecated 대신 NewBaseRepository 사용
+ * */
+@Deprecated
 @Repository
 @RequiredArgsConstructor
 public abstract class BaseCustomRepository<T extends BaseEntity> {
