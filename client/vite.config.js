@@ -22,6 +22,13 @@ export default defineConfig({
     },
   },
   build: {
-    assetsInlineLimit: 0,
-  }
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 2500,
+  },
 });
