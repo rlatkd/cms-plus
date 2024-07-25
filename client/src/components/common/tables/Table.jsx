@@ -57,19 +57,20 @@ const Table = ({
             handleClickSearch={handleClickSearch}
           />
         )}
-        {rows.map((row, index) => (
-          <TableRow
-            key={index}
-            index={index}
-            row={row}
-            cols={cols}
-            currentPage={currentPage}
-            itemKey={itemKey}
-            selection={selection}
-            handleClickCheckBox={handleClickCheckBox}
-            onRowClick={onRowClick} // onRowClick 이벤트 전달
-          />
-        ))}
+        {rows &&
+          rows.map((row, index) => (
+            <TableRow
+              key={index}
+              index={index}
+              row={row}
+              cols={cols}
+              currentPage={currentPage}
+              itemKey={itemKey}
+              selection={selection}
+              handleClickCheckBox={handleClickCheckBox}
+              onRowClick={onRowClick} // onRowClick 이벤트 전달
+            />
+          ))}
       </tbody>
     </table>
   );
