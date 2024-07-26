@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
 import { postLogin, postRequestAuthenticationNumber } from '@/apis/auth';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import FindVendoPasswordModal from '@/components/vendor/modal/FIndVendorPasswordModal';
 import FindVendorIdModal from '@/components/vendor/modal/FindVendorIdModal';
 import ResetPasswordModal from '@/components/vendor/modal/ResetPasswordModal';
 import SuccessFindIdModal from '@/components/vendor/modal/SuccessFindIdModal';
 import user from '@/assets/user.svg';
 import password from '@/assets/password.svg';
+import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -63,9 +64,15 @@ const LoginForm = () => {
       };
       const res = await postRequestAuthenticationNumber(data);
       console.log('!----인증번호 요청 성공----!'); // 삭제예정
+      onAlertWidthClick('인증번호가 발송되었습니다.');
     } catch (err) {
       console.error('axiosRequestAuthenticationNumber => ', err.response.data);
     }
+  };
+
+  const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
+  const onAlertWidthClick = async message => {
+    const result = await alertWidthComp(message);
   };
 
   return (

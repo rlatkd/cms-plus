@@ -54,7 +54,7 @@ const InputWeb = ({
           {label}
         </label>
       )}
-      <div className='relative '>
+      <div className='relative'>
         <input
           ref={inputRef}
           className={`${classInput} placeholder:text-text_grey text-black border
