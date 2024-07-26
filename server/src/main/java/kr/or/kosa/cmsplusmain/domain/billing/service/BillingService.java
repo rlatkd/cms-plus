@@ -182,7 +182,7 @@ public class BillingService {
 	 * 청구목록 조회 |
 	 * 3+x회 쿼리 발생 | 청구목록조회, 청구상품조회 * x(배치사이즈: 100), 전체 개수(페이징)
 	 * */
-	public PageRes<BillingListItemRes> getBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
+	public PageRes<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		List<BillingListItemRes> content =
 			billingCustomRepository.findBillingListWithCondition(vendorId, search, pageReq);
 

@@ -6,6 +6,9 @@ import Signup from '@/pages/SignupPage'; // 회원가입
 import Vendor from '@/pages/vendor/VenIndex'; // 고객 중첩 라우팅
 import Member from '@/pages/member/MemIndex'; // 회원 중첩 라우팅
 import Test from '@/labs/Test';
+import NotFoundPage from '@/pages/utils/error/NotFoundPage';
+import InternalServerErrorPage from '@/pages/utils/error/InternalServerErrorPage';
+import ForbiddenErrorPage from '@/pages/utils/error/ForbiddenErrorPage';
 import ChartTest from '@/labs/ChartTest';
 
 const root = createBrowserRouter([
@@ -34,6 +37,18 @@ const root = createBrowserRouter([
   {
     path: 'test',
     element: <Test />,
+  },
+  {
+    path: 'error/notfound',
+    element: <NotFoundPage />,
+  },
+  {
+    path: 'error/interal',
+    element: <InternalServerErrorPage />,
+  },
+  {
+    path: 'error/forbidden',
+    element: <ForbiddenErrorPage />,
   },
   {
     path: 'chart',
