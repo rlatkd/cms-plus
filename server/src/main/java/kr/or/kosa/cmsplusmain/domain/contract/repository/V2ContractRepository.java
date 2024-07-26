@@ -43,7 +43,7 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 			))
 			.groupBy(member.name, member.phone, contract.contractDay, payment.paymentType, contract.contractStatus);
 
-		return applyPagingAndSort(query, pageReq).fetch();
+		return applyPaging(query, pageReq).fetch();
 	}
 
 	/**
