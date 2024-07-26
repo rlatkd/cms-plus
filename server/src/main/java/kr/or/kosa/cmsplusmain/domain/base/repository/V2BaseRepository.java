@@ -51,6 +51,9 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 	protected final JPAQuery<?> from(EntityPath<? extends BaseEntity> entity) {
 		return queryFactory.from(entity).where(isNotDeleted(entity));
 	}
+	protected final JPAQuery<E> selectFrom(EntityPath<E> entity) {
+		return queryFactory.selectFrom(entity).where(isNotDeleted(entity));
+	}
 	protected final JPAQuery<Integer> selectOneFrom(EntityPath<? extends BaseEntity> entity) {
 		return queryFactory.selectOne().from(entity).where(isNotDeleted(entity));
 	}

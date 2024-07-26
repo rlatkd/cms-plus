@@ -1,7 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.contract.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
@@ -63,6 +61,9 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 		return searchQuery(vendorId, search).fetchCount();
 	}
 
+	/**
+	 * 검색 조건 생성
+	 * */
 	private JPAQuery<?> searchQuery(Long vendorId, ContractSearchReq search) {
 		return from(contract)
 			.join(contract.member, member)
@@ -80,6 +81,16 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 			)
 			.groupBy(contract.id)
 			.having(contractPriceLoe(search.getContractPrice()));
+	}
+
+	/**
+	 * 해당 고객에게 계약이 존재하는지 여부
+	 * */
+	public boolean existsContractByVendorId(Long vendorId, Long contractId) {
+		Integer res = selectOneFrom(contract)
+			.where(contractVendorIdEq(vendorId))
+			.fetchOne();
+		return res != null;
 	}
 
 	/*********** 조건 ************/
