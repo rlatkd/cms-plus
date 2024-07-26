@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Input from '@/components/common/inputs/Input';
 import AddressInput from '@/components/common/inputs/AddressInput';
 import { useUserDataStore } from '@/stores/useUserDataStore';
@@ -37,13 +37,13 @@ const BasicInfo = () => {
     setUserData({ memberDTO: { ...userData.memberDTO, [name]: value } });
   };
 
-  const handleAddressChange = (field, value) => {
-    setLocalData(prev => ({ ...prev, [field]: value }));
-    setUserData(prev => ({
-      ...prev,
-      memberDTO: { ...prev.memberDTO, [field]: value },
-    }));
-  };
+  // const handleAddressChange = (field, value) => {
+  //   setLocalData(prev => ({ ...prev, [field]: value }));
+  //   setUserData(prev => ({
+  //     ...prev,
+  //     memberDTO: { ...prev.memberDTO, [field]: value },
+  //   }));
+  // };
 
   return (
     <div className='flex flex-col bg-white p-1'>
@@ -100,10 +100,10 @@ const BasicInfo = () => {
           maxLength={50}
         />
         <AddressInput
-          zipcode={localData.zipcode}
-          address={localData.address}
-          addressDetail={localData.addressDetail}
-          onAddressChange={handleAddressChange}
+        // zipcode={localData.zipcode}
+        // address={localData.address}
+        // addressDetail={localData.addressDetail}
+        // onAddressChange={handleAddressChange}
         />
       </form>
     </div>
