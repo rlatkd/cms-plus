@@ -20,7 +20,7 @@ const Test = () => {
     const result = await confrimComp(message);
   };
 
-  console.log('testv11');
+  console.log('testv1');
 
   return (
     <div>
