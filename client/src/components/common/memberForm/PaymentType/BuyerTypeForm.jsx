@@ -14,6 +14,13 @@ const BuyerTypeForm = ({ paymentType, formType }) => {
     const updatedMethods = paymentTypeInfoReq_Buyer.availableMethods.includes(value)
       ? paymentTypeInfoReq_Buyer.availableMethods.filter(m => m !== value)
       : [...paymentTypeInfoReq_Buyer.availableMethods, value];
+
+    // 납부자결제 수단은 최소 한 개 이상
+    if (!updatedMethods || updatedMethods.length < 1) {
+      alert('최소 한 개 이상의 수단이 등록되어야 합니다.');
+      return;
+    }
+
     setAvailableMethods(updatedMethods);
   };
   return (
