@@ -1,4 +1,4 @@
-const NextButton = ({ onClick, status, type = '', end, onPayment }) => {
+const NextButton = ({ onClick, status, type = '', end, onPayment, onVirtualPayment }) => {
   let buttonText = '다음';
 
   if (status === 0) {
@@ -17,6 +17,11 @@ const NextButton = ({ onClick, status, type = '', end, onPayment }) => {
       await onPayment();
       console.log('API호출');
     }
+    // 가상계좌에서 마지막 결제 완료 루트 하나 줄어들면 아래꺼 추가
+    // else if (status === end - 1 && onVirtualPayment) {
+    //   await onVirtualPayment();
+    //   console.log('API호출');
+    // }
     onClick();
   };
 
