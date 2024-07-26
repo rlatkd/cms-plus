@@ -29,6 +29,7 @@ import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwResetReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.SmsPwFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
+import kr.or.kosa.cmsplusmain.domain.vendor.exception.VendorUsernameDuplicationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -68,8 +69,9 @@ public class VendorService {
 		// 중복된 아이디가 입력된 경우 예외처리
 		boolean isExist = vendorCustomRepository.isExistUsername(username);
 		if (isExist) {
-			throw new IllegalArgumentException("Username already exists.");
+			throw new VendorUsernameDuplicationException("아이디 중복되었습니다");
 		}
+		
 
 		Vendor vendor = signupReq.toEntity(username, password, role);
 

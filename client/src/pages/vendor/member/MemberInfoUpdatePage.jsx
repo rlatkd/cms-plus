@@ -9,7 +9,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 const MemberInfoUpdatePage = () => {
   const { basicInfo } = useMemberBasicStore();
   const navigate = useNavigate();
-
   const memberId = useParams();
 
   // <--------기본 정보 수정 API-------->

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Main from '@/components/member/simpConsent/Main';
 import BasicInfo from '@/components/member/simpConsent/BasicInfo';
 import ContractInfo from '@/components/member/simpConsent/ContractInfo';
@@ -18,18 +18,18 @@ import { sendSimpleConsentData } from '@/apis/simpleConsent';
 const SimpConsentPage = () => {
   const start = 0;
   const end = 6;
-  const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
-    'simpconsent',
-    start,
-    end
-  );
-
   const { status, setStatus, reset } = useStatusStore();
   const { userData, setUserData } = useUserDataStore();
 
   const [isCardVerified, setIsCardVerified] = useState(false);
   const paymentInfoRef = useRef();
   const contractInfoRef = useRef();
+
+  const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
+    'simpconsent',
+    start,
+    end
+  );
 
   const handleCardVerificationComplete = verified => {
     setIsCardVerified(verified);
@@ -136,6 +136,11 @@ const SimpConsentPage = () => {
   };
 
   const Content = componentMap[status] || (() => 'error');
+
+  // <----- 페이지 렌더링 시 초기화 ----->
+  useEffect(() => {
+    reset();
+  }, []);
 
   return (
     <>

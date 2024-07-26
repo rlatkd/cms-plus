@@ -30,6 +30,7 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
       chunks.push(cleaned.slice(i, i + 4));
     }
 
+    console.log(chunks.join('-').slice(0, 19));
     return chunks.join('-').slice(0, 19);
   };
 

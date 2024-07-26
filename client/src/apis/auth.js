@@ -16,6 +16,7 @@ export const postJoin = async info => {
 export const postLogin = async info => {
   try {
     const res = await publicAxios.post('/v1/vendor/auth/login', info);
+
     return res;
   } catch (err) {
     console.error('로그인 실패 =>', err.response.data);

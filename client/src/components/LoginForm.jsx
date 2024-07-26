@@ -9,6 +9,7 @@ import SuccessFindIdModal from '@/components/vendor/modal/SuccessFindIdModal';
 import user from '@/assets/user.svg';
 import password from '@/assets/password.svg';
 import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
+import { useVendorInfo } from '@/stores/useVendorInfo';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const LoginForm = () => {
   const [isShowResetPasswordModal, setIsShowResetPasswordModal] = useState(false);
   const [isShowSuccessFindIdModal, setIsShowSuccessFindIdModal] = useState(false);
   const [findedId, setFindedId] = useState('');
+  const { setVendorInfo } = useVendorInfo();
   const [vendorFormData, setVendorFormData] = useState({
     username: '',
     password: '',
@@ -46,8 +48,10 @@ const LoginForm = () => {
   const axiosLogin = async data => {
     try {
       const res = await postLogin(data);
+      const [accessToken, ...vendorInfo] = res.data;
+      localStorage.setItem('access_token', accessToken);
+      setVendorInfo(vendorInfo);
       console.log('!----로그인 성공----!'); // 삭제예정
-      localStorage.setItem('access_token', res.data.accessToken);
       navigate('/vendor/dashboard');
     } catch (err) {
       console.error('axiosJoin => ', err.response.data);
