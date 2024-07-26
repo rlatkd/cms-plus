@@ -62,6 +62,7 @@ const MemberRegisterPage = () => {
         paymentCreateReq: transformPaymentInfo(), // 결제정보
         ...billingInfo, // 청구정보
       };
+      console.log(data);
       if (status === 3) {
         const res = await postCreateMember(data);
         console.log('!----회원등록 성공----!'); // 삭제예정

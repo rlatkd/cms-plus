@@ -23,6 +23,17 @@ const BuyerTypeForm = ({ paymentType, formType }) => {
 
     setAvailableMethods(updatedMethods);
   };
+
+  const makeAvailableMethods = methods => {
+    if (!methods) {
+      methods = [];
+    }
+    if (methods.length < 1) {
+      methods.push('CARD');
+    }
+    return methods;
+  };
+
   return (
     <>
       <p className='mb-4 ml-1 text-15 text-text_black font-700'>
@@ -34,7 +45,9 @@ const BuyerTypeForm = ({ paymentType, formType }) => {
             <Checkbox
               name={method.value}
               label={method.label}
-              checked={paymentTypeInfoReq_Buyer.availableMethods.includes(method.value)}
+              checked={makeAvailableMethods(paymentTypeInfoReq_Buyer.availableMethods).includes(
+                method.value
+              )}
               onChange={() => handleChangeCheckbox(method.value)}
             />
           </div>
