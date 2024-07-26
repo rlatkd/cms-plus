@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEnum;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import lombok.Getter;
@@ -12,17 +14,24 @@ import lombok.RequiredArgsConstructor;
 /* 결제방식 */
 @RequiredArgsConstructor
 public enum PaymentType implements BaseEnum {
-	AUTO("자동결제", List.of(PaymentMethod.CMS, PaymentMethod.CARD)),
-	BUYER("납부자결제", List.of(PaymentMethod.CARD, PaymentMethod.ACCOUNT)),
-	VIRTUAL("가상계좌", Collections.emptyList());
+	AUTO("자동결제", List.of(PaymentMethod.CMS, PaymentMethod.CARD), true),
+	BUYER("납부자결제", List.of(PaymentMethod.CARD, PaymentMethod.ACCOUNT), false),
+	VIRTUAL("가상계좌", Collections.emptyList(), false);
 
 	private final String title;
 	private final List<PaymentMethod> availablePaymentMethods;
+
+	@JsonIgnore
+	private final boolean canReqSimpConsent;
 
 	public static class Const {
 		public static final String AUTO = "AUTO";
 		public static final String BUYER = "BUYER";
 		public static final String VIRTUAL = "VIRTUAL";
+	}
+
+	public boolean canReqSimpConsent() {
+		return canReqSimpConsent;
 	}
 
 	/* 자동결제수단 확인용 */
