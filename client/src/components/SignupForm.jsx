@@ -42,7 +42,6 @@ const SignupForm = () => {
     } else {
       setVendorFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
     }
-    console.log(vendorFormData);
   };
 
   // <----- 아이디 중복확인 ----->
@@ -54,13 +53,15 @@ const SignupForm = () => {
 
     let isChecked = true;
     try {
-      isChecked = (await getCheckUsername(vendorFormData.username)).data;
+      const res = await getCheckUsername(vendorFormData.username);
+      isChecked = res.data;
       console.log('!----아이디 중복확인 성공----!'); // 삭제예정
     } catch (err) {
       console.error('axiosJoin => ', err.response.data);
     }
 
     // <----- false면 중복된 아이디 없다. ----->
+    console.log(isChecked);
     if (isChecked === false) {
       setCheckedUsername(vendorFormData.username);
       alert('Tmp : 사용가능한 아이디 입니다.');
@@ -140,7 +141,6 @@ const SignupForm = () => {
             value={vendorFormData.name}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            maxlength={40}
           />
           <div className='w-1/2 flex items-end'>
             <InputWeb
@@ -155,7 +155,6 @@ const SignupForm = () => {
               value={vendorFormData.username}
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
-              maxlength={20}
             />
             <button
               className={`ml-3  w-32 rounded-lg text-white text-sm font-700 h-46
@@ -183,7 +182,6 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             autoComplete='off'
-            maxlength={16}
           />
           <InputWeb
             id='passwordCheck'
@@ -198,7 +196,6 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             autoComplete='off'
-            maxlength={16}
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -214,7 +211,6 @@ const SignupForm = () => {
             value={vendorFormData.email}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            maxlength={40}
           />
           <InputWeb
             id='phone'
@@ -228,7 +224,6 @@ const SignupForm = () => {
             value={formatPhone(vendorFormData.phone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            maxlength={11}
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -243,7 +238,6 @@ const SignupForm = () => {
             classInput='py-3  placeholder:text-xs'
             value={vendorFormData.department}
             onChange={handleChangeValue}
-            maxlength={40}
           />
           <InputWeb
             id='homePhone'
@@ -256,7 +250,6 @@ const SignupForm = () => {
             value={formatPhone(vendorFormData.homePhone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            maxlength={10}
           />
         </div>
 

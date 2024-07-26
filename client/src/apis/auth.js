@@ -3,6 +3,7 @@ import { publicAxios } from '.';
 // 회원가입
 export const postJoin = async info => {
   try {
+    console.log(info);
     const res = await publicAxios.post('/v1/vendor/auth/join', info);
     return res;
   } catch (err) {

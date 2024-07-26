@@ -70,7 +70,6 @@ export const publicUploadFileAxios = axios.create({
 // });
 
 // 삭제되면 안됩니다.
-
 // // 요청 인터셉터 설정
 // privateAxios.interceptors.request.use(
 //   config => {

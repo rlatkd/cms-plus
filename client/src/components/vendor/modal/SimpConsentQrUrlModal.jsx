@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import BaseModal from '@/components/common/BaseModal';
 import QRCode from 'qrcode.react';
-import { formatPhone } from '@/utils/format/formatPhone';
 
 // 전화번호 포맷팅 함수 import
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
