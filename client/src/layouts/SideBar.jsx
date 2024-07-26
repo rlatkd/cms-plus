@@ -1,13 +1,19 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import vendorRoute from '@/routes/vendorRoute';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSideBarActiveStore } from '@/stores/useSideBarActiveStore';
 import tmplogo from '@/assets/tmplogo.svg';
 
 const SideBar = () => {
+  const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { sideBarMenus, toggle } = useSideBarActiveStore();
+
+  const move = () => {
+    navigate('/vendor/dashboard');
+  };
 
   return (
     <div className='hidden h-full w-72  py-6 pl-4 mr-4 sticky desktop:block desktop:animate-slideIn '>
@@ -25,7 +31,7 @@ const SideBar = () => {
               <NavLink
                 to={route.path}
                 className={({ isActive }) =>
-                  `mb-2 flex cursor-pointer ${isActive ? 'rounded-xl bg-white shadow-sidebars' : 'bg-transparent'} px-3 py-2`
+                  ` ${isActive && ' bg-white shadow-sidebars'} flex  rounded-xl cursor-pointer mb-2 px-3 py-2`
                 }>
                 {({ isActive }) => (
                   <div className='flex h-full w-full items-center justify-between'>

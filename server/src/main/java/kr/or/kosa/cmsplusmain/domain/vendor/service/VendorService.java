@@ -13,9 +13,11 @@ import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
 import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.EmailIdFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindReq;
@@ -51,10 +53,11 @@ import lombok.RequiredArgsConstructor;
 public class VendorService {
 	private final VendorRepository vendorRepository;
 	private final VendorCustomRepository vendorCustomRepository;
+	private final ProductRepository productRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
-//	private final KafkaMessagingService kafkaMessagingService;
+	private final KafkaMessagingService kafkaMessagingService;
 
 	@Transactional
 	public void join(SignupReq signupReq) {
@@ -63,37 +66,32 @@ public class VendorService {
 		UserRole role = UserRole.ROLE_VENDOR;
 
 		// 중복된 아이디가 입력된 경우 예외처리
-		// Custom exception도 좋고
-
 		boolean isExist = vendorCustomRepository.isExistUsername(username);
 		if (isExist) {
 			throw new IllegalArgumentException("Username already exists.");
 		}
-
-		// TODO
-		// 상품 하나 추가
-		// 상품을 토대로 기본 설정 추가
-		//vendorRepository.save(signupDto.toEntity(username, password, role));
 
 		Vendor vendor = signupReq.toEntity(username, password, role);
 
 		// 간편동의 설정 초기화
 		SimpConsentSetting simpConsentSetting = createDefaultSimpConsentSetting();
 		vendor.setSimpConsentSetting(simpConsentSetting);
+
 		Vendor mVendor = vendorRepository.save(vendor);
 
-		Product sampleProduct = Product.builder()
+		// 상품 하나 추가
+		Product sampleProduct = productRepository.save(Product.builder()
 			.name("기본상품")
 			.vendor(mVendor)
 			.price(0)
-			.build();
+			.build());
 
-		simpConsentSetting.addProduct(sampleProduct);
+		mVendor.getSimpConsentSetting().addProduct(sampleProduct);
 	}
 
 	// 간편동의 설정 기본값
 	private SimpConsentSetting createDefaultSimpConsentSetting() {
-		SimpConsentSetting setting = SimpConsentSetting.builder().build();
+		SimpConsentSetting setting = new SimpConsentSetting();
 
 		// 전체 자동결제 수단 추가
 		Set<PaymentMethod> autoPaymentMethods = new HashSet<>(PaymentType.getAutoPaymentMethods());
@@ -286,10 +284,12 @@ public class VendorService {
 		MessageDto messageDto;
 		if (numberReq.getMethod().equals(MessageSendMethod.SMS)) {
 			messageDto = new SmsMessageDto(messageText, numberReq.getMethodInfo());
+			System.out.println("[문자메세지]" + messageDto.toString());
 		} else {
 			messageDto = new EmailMessageDto(messageText, numberReq.getMethodInfo());
+			System.out.println("[이메일메세지]" + messageDto.toString());
 		}
-//		kafkaMessagingService.produceMessaging(messageDto);
+		kafkaMessagingService.produceMessaging(messageDto);
 
 		// Redis에서 저장된 값 확인
 		String storedValue = redisTemplate.opsForValue().get(key);

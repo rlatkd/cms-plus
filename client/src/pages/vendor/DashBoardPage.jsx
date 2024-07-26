@@ -26,6 +26,7 @@ const StatItem = ({ icon, title, value, subStat }) => (
   </div>
 );
 
+// <----- React.memo displayName 명시 ----->
 const Stats = React.memo(({ statInfo }) => (
   <div className='mb-10 grid grid-cols-1 md:grid-cols-4 gap-6'>
     <StatItem
@@ -54,6 +55,9 @@ const Stats = React.memo(({ statInfo }) => (
     />
   </div>
 ));
+
+// react개발 도구에서 해당 컴포넌트의 이름을 볼 수 있어 디버깅에 도움됨
+Stats.displayName = 'Stats';
 
 const DashBoardPage = () => {
   const [statInfo, setStatInfo] = useState({

@@ -1,3 +1,5 @@
+// <----- 청구상세 - 상품테이블 ----->
+
 export const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
   { key: 'productName', label: '상품', width: 'w-2/12' },

@@ -1,26 +1,15 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import edit from '@/assets/edit.svg';
 import InputWeb from '@/components/common/inputs/InputWeb';
-import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
 import { formatPhone } from '@/utils/format/formatPhone';
+import { useStatusStore } from '@/stores/useStatusStore';
 
-const ConDetailBilling = ({ contractData, children }) => {
-  const { setBillingInfoItem } = useMemberBillingStore(); // 청구정보 - 수정목적
+const ConDetailBilling = ({ contractData, updateAllInfo, children }) => {
+  const { setStatus } = useStatusStore();
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate(
-      `/vendor/contracts/billings/update/${contractData.contractId}/${contractData.memberId}`
-    );
-  };
-
-  // <------ 회원 청구 정보 zustand에 입력 ------>
-  const updateBillingInfo = data => {
-    setBillingInfoItem({
-      invoiceSendMethod: data.invoiceSendMethod.code,
-      autoInvoiceSend: data.autoInvoiceSend,
-      autoBilling: data.autoBilling,
-    });
+    navigate(`/vendor/contracts/update/${contractData.contractId}/${contractData.memberId}`);
   };
 
   return (
@@ -29,8 +18,9 @@ const ConDetailBilling = ({ contractData, children }) => {
         <p className='text-text_black text-xl font-800'>청구정보</p>
         <button
           onClick={() => {
-            updateBillingInfo(contractData);
             handleButtonClick();
+            updateAllInfo();
+            setStatus(2);
           }}
           className='flex justify-between items-center px-4 py-2 ml-4 text-mint
             font-700 rounded-md border border-mint cursor-pointer'>

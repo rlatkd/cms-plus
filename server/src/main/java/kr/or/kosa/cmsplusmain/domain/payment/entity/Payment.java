@@ -60,6 +60,13 @@ public class Payment extends BaseEntity {
 		return paymentMethod != null && paymentMethod.getCanPayRealtime();
 	}
 
+	/**
+	 * 간편동의 요청 가능 여부
+	 * */
+	public boolean canReqSimpConsent() {
+		return paymentType.canReqSimpConsent();
+	}
+
 	/*
 	* 결제 취소 가능 여부
 	* */

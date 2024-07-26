@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.base.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.util.StringUtils;
 
 public class MemoValidator implements ConstraintValidator<Memo, String> {
 
@@ -13,7 +14,7 @@ public class MemoValidator implements ConstraintValidator<Memo, String> {
 
 	@Override
 	public boolean isValid(String memo, ConstraintValidatorContext context) {
-		if (memo == null) {
+		if (!StringUtils.hasText(memo)) {
 			return true; // null 값은 다른 어노테이션으로 처리
 		}
 		return memo.length() <= MAX_MEMO_LENGTH;

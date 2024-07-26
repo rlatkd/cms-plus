@@ -1,3 +1,5 @@
+// <----- 상품테이블 ----->
+
 export const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
   { key: 'productName', label: '상품명', width: 'w-3/12' },

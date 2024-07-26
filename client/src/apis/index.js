@@ -86,6 +86,34 @@ export const publicUploadFileAxios = axios.create({
 // );
 
 // // 응답 인터셉터 설정
+
+[publicAxios, publicUploadFileAxios, privateAxios].forEach(instance => {
+  instance.interceptors.response.use(
+    response => response,
+    err => {
+      if (err.response) {
+        switch (err.response.status) {
+          // case 400:
+          //   window.location.href = '/error/badrequest';
+          //   break;
+          case 403:
+            window.location.href = '/error/forbidden';
+            break;
+          case 404:
+            window.location.href = '/error/notfound';
+            break;
+          case 500:
+            window.location.href = '/error/internal';
+            break;
+          default:
+            break;
+        }
+      }
+      return Promise.reject(err);
+    }
+  );
+});
+
 // privateAxios.interceptors.response.use(
 //   response => {
 //     return response;

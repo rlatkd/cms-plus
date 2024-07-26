@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.contract.controller;
 
+import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +16,6 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import lombok.RequiredArgsConstructor;
 
-// TODO security
-
 @RestController
 @RequestMapping("/api/v1/vendor/contract")
 @RequiredArgsConstructor
@@ -28,8 +27,7 @@ public class ContractController {
 	 * 계약 목록 조회
 	 * */
 	@GetMapping
-	public PageRes<ContractListItemRes> getContractListWithCondition(ContractSearchReq contractSearchReq, PageReq pageReq) {
-		Long vendorId = 1L;
+	public PageRes<ContractListItemRes> getContractListWithCondition(@VendorId Long vendorId, ContractSearchReq contractSearchReq, PageReq pageReq) {
 		return contractService.searchContracts(vendorId, contractSearchReq, pageReq);
 	}
 
@@ -40,8 +38,7 @@ public class ContractController {
 	 * (청구정보에서 청구서 발송 수단, 자동 청구서 발송, 자동 청구 생성은 포함되어서 보내진다.)
 	 * */
 	@GetMapping("/{contractId}")
-	public ContractDetailRes getContractDetail(@PathVariable Long contractId) {
-		Long vendorId = 1L;
+	public ContractDetailRes getContractDetail(@VendorId Long vendorId, @PathVariable Long contractId) {
 		return contractService.getContractDetail(vendorId, contractId);
 	}
 
@@ -49,8 +46,7 @@ public class ContractController {
 	 * 계약 상세 조회 - 청구 목록
 	 * */
 	@GetMapping("/{contractId}/billing")
-	public PageRes<BillingListItemRes> getBillingListByContract(@PathVariable Long contractId, PageReq pageReq) {
-		Long vendorId = 1L;
+	public PageRes<BillingListItemRes> getBillingListByContract(@VendorId Long vendorId, @PathVariable Long contractId, PageReq pageReq) {
 		return contractService.getBillingsByContract(vendorId, contractId, pageReq);
 	}
 
@@ -61,7 +57,6 @@ public class ContractController {
 	 * 나오는 수정 화면에서 호출해서 정보를 수정한다.
 	 * 즉, 계약과 결제 수정에 사용된다.
 	 *
-	 * TODO 생성 -> 수정으로 수정하기
 	 * */
 	@PutMapping("/{contractId}")
 	public void updateContract(@PathVariable Long contractId, @RequestBody @Valid ContractUpdateReq contractUpdateReq) {

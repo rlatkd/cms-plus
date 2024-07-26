@@ -1,20 +1,22 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
 import { getCheckUsername, postJoin } from '@/apis/auth';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
 
 const SignupForm = () => {
   const navigate = useNavigate();
   const [checkedUsername, setCheckedUsername] = useState('');
   const [vendorFormData, setVendorFormData] = useState({
-    name: null,
+    name: '',
     username: '',
-    password: null,
-    passwordCheck: null,
-    email: null,
-    phone: null,
-    department: null,
-    homePhone: null,
+    password: '',
+    passwordCheck: '',
+    email: '',
+    phone: '',
+    department: '',
+    homePhone: '',
   });
 
   // TODO
@@ -27,19 +29,23 @@ const SignupForm = () => {
   // 유선 전화번호 정규식
   // 부서명 정규식
 
-  // 공백입력 막기
+  // <----- 공백입력 막기 ----->
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
   };
 
-  // 사용자 입력값
+  // <----- 사용자 입력값 ----->
   const handleChangeValue = e => {
     const { id, value } = e.target;
-
-    setVendorFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
+    if (id === 'phone' || id === 'homePhone') {
+      setVendorFormData(prev => ({ ...prev, [id]: removeDashes(value == '' ? null : value) }));
+    } else {
+      setVendorFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
+    }
+    console.log(vendorFormData);
   };
 
-  // 아이디 중복확인
+  // <----- 아이디 중복확인 ----->
   const handleCheckUsername = async () => {
     if (vendorFormData.username.length <= 4) {
       alert('잘못된 형식입니다.');
@@ -54,7 +60,7 @@ const SignupForm = () => {
       console.error('axiosJoin => ', err.response.data);
     }
 
-    // false면 중복된 아이디 없다.
+    // <----- false면 중복된 아이디 없다. ----->
     if (isChecked === false) {
       setCheckedUsername(vendorFormData.username);
       alert('Tmp : 사용가능한 아이디 입니다.');
@@ -64,7 +70,7 @@ const SignupForm = () => {
     }
   };
 
-  // 회원가입
+  // <----- 회원가입 ----->
   const handleSubmit = async () => {
     // 아이디 중복확인 여부 확인
     if (vendorFormData.username !== checkedUsername) {
@@ -87,22 +93,28 @@ const SignupForm = () => {
     axiosJoin(dataWithoutPasswordCheck);
   };
 
-  // 회원가입 버튼 활성화
+  // <----- 회원가입 버튼 활성화 ----->
   const isSignupBtnActive = () => {
     const { name, username, password, email, phone, department } = vendorFormData;
 
     return name && username && password && email && phone && department;
   };
 
-  // 회원가입 API
+  // <----- 회원가입 API ----->
   const axiosJoin = async data => {
     try {
       const res = await postJoin(data);
       console.log('!----회원가입 성공----!'); // 삭제예정
+      onAlertClick('회원가입에 성공하셨습니다!');
       navigate('/login');
     } catch (err) {
       console.error('axiosJoin => ', err.response.data);
     }
+  };
+
+  const { alert: alertComp } = useContext(AlertContext);
+  const onAlertClick = async message => {
+    const result = await alertComp(message);
   };
 
   return (
@@ -113,7 +125,7 @@ const SignupForm = () => {
         <p className='my-1'>아이디 만들기는 효성 FMS의 미리 계약된 고객만</p>
         <p>진행하실 수 있습니다.</p>
       </div>
-      <div className='h-580 w-680 shadow-modal bg-white rounded-xl p-6 flex flex-col items-center justify-around relative'>
+      <div className='h-580 w-720 shadow-modal bg-white rounded-xl p-6 flex flex-col items-center justify-around relative'>
         <p className='text-text_black text-xl  font-800'>아이디 만들기</p>
         <div className='w-full justify-between flex'>
           <InputWeb
@@ -124,9 +136,11 @@ const SignupForm = () => {
             required
             classContainer='w-1/2 mr-5'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3 placeholder:text-xs'
+            value={vendorFormData.name}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxlength={40}
           />
           <div className='w-1/2 flex items-end'>
             <InputWeb
@@ -137,9 +151,11 @@ const SignupForm = () => {
               required
               classContainer='w-full'
               classLabel='text-sm'
-              classInput='py-3'
+              classInput='py-3  placeholder:text-xs'
+              value={vendorFormData.username}
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
+              maxlength={20}
             />
             <button
               className={`ml-3  w-32 rounded-lg text-white text-sm font-700 h-46
@@ -162,10 +178,12 @@ const SignupForm = () => {
             required
             classContainer='w-1/2 mr-5'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={vendorFormData.password}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             autoComplete='off'
+            maxlength={16}
           />
           <InputWeb
             id='passwordCheck'
@@ -175,10 +193,12 @@ const SignupForm = () => {
             required
             classContainer='w-1/2'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={vendorFormData.passwordCheck}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             autoComplete='off'
+            maxlength={16}
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -190,21 +210,25 @@ const SignupForm = () => {
             required
             classContainer='w-1/2 mr-5'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={vendorFormData.email}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxlength={40}
           />
           <InputWeb
             id='phone'
             label='휴대전화번호'
             type='text'
-            placeholder='ex) 010-9999-9999'
+            placeholder='숫자만 입력해주세요.'
             required
             classContainer='w-1/2'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={formatPhone(vendorFormData.phone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxlength={11}
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -216,19 +240,23 @@ const SignupForm = () => {
             required
             classContainer='w-1/2 mr-5'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={vendorFormData.department}
             onChange={handleChangeValue}
+            maxlength={40}
           />
           <InputWeb
             id='homePhone'
             label='유선전화번호'
             type='text'
-            placeholder='ex) 02-432-7777'
+            placeholder='숫자만 입력해주세요.'
             classContainer='w-1/2'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={formatPhone(vendorFormData.homePhone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxlength={10}
           />
         </div>
 

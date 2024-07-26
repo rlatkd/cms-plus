@@ -1,9 +1,9 @@
 import { updateMemberBaic } from '@/apis/member';
 import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
+import ProgressBar from '@/components/common/ProgressBar';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
-import { useStatusStore } from '@/stores/useStatusStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const MemberInfoUpdatePage = () => {
@@ -32,7 +32,9 @@ const MemberInfoUpdatePage = () => {
 
   return (
     <>
-      <div className='up-dashboard relative mb-4 w-full desktop:h-[18%]'>progressivee</div>
+      <div className='up-dashboard relative flex justify-center items-center mb-4 w-full desktop:h-[18%]'>
+        <ProgressBar steps={['기본정보']} />
+      </div>
       <div className='primary-dashboard flex flex-col relative h-[1000px] large_desktop:h-[80%] '>
         <div className='flex items-center h-[50px] px-2 pb-[10px] '>
           <p className='text-text_black text-xl font-800'>기본정보</p>
