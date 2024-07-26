@@ -73,7 +73,7 @@ export const deleteBilling = async billingId => {
 // 청구서 발송
 export const sendInvoice = async billingId => {
   try {
-    const res = await privateAxios.get(`/v1/vendor/billing/invoice/${billingId}`);
+    const res = await privateAxios.get(`/v1/vendor/billing/send-invoice/${billingId}`);
     return res;
   } catch (err) {
     console.error('청구서 발송 실패 => ', err.response.data);
