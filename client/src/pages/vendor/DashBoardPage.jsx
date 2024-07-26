@@ -49,8 +49,8 @@ const Stats = React.memo(({ statInfo }) => (
     <StatItem
       icon={faChartLine}
       title='전월 대비 매출'
-      value={`${statInfo.billingPriceGrowth > 0 ? '+' : ''}${statInfo.billingPriceGrowth.toFixed(1)}%`}
-      subStat={`회원: ${statInfo.memberGrowth >= 0 ? '+' : ''}${statInfo.memberGrowth.toFixed(1)}%`}
+      value={`${statInfo.billingPriceGrowth > 0 ? '+' : ''}${statInfo.billingPriceGrowth?.toFixed(1)}%`}
+      subStat={`회원: ${statInfo.memberGrowth >= 0 ? '+' : ''}${statInfo.memberGrowth?.toFixed(1)}%`}
     />
   </div>
 ));
@@ -160,7 +160,7 @@ const DashBoardPage = () => {
   return (
     <div className='min-h-screen py-8 bg-gray-100'>
       <div className='container mx-auto px-4'>
-        <Stats statInfo={statInfo} />
+        {statInfo && <Stats statInfo={statInfo} />}
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>
           <div className='lg:col-span-3'>{memoizedCalendar}</div>
           <BillingSummary billingInfo={billingInfo} month={date.getMonth() + 1} />
