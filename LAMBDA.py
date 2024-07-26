@@ -20,10 +20,10 @@ def lambda_handler(event, context):
     
     #현재 날짜와 시간
     now = datetime.now()
-    current_time = now.strftime("%Y-%m-%d %H:%M:%S")
+    current_time = now.strftime("%Y-%m-%d_%H-%M-%S")
     
     #로그 파일명
-    log_file_name = f'BE_CD_LOG-{current_time}.log'
+    log_file_name = f'BE_CD_LOG_{current_time}.log'
     
     #로그 내용
     log_content = f'백엔드 배포 로그'
@@ -39,7 +39,7 @@ def lambda_handler(event, context):
     commit_message = f'release: 배포 완료'
     
     #GitHub API 엔드포인트
-    url = f'https://api.github.com/repos/{github_org}/{github_repo}/contents/DEPLOY_LOG/{log_file_name}'
+    url = f'https://api.github.com/repos/{github_org}/{github_repo}/contents/DEPLOY_LOG/server/{log_file_name}'
     
     #로그 내용 인코딩
     content_encoded = base64.b64encode(log_content.encode('utf-8')).decode('utf-8')

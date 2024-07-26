@@ -1,3 +1,5 @@
+// <----- 청구테이블 ----->
+
 export const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
   { key: 'memberName', label: '회원이름', width: 'w-2/12' },
@@ -39,9 +41,6 @@ export const initialSearch = [
       { key: 'WAITING_PAYMENT', value: '수납대기' },
       { key: 'PAID', value: '완납' },
       { key: 'NON_PAID', value: '미납' },
-      '',
-      '',
-      '미납',
     ],
   },
 ];

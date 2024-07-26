@@ -8,13 +8,11 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: t3-back-apiecr3
-  ECS_CLUSTER: t3-back-ecscluster2
-  ECS_CONTAINER: t3-back-apicontainer3
-  ECS_SERVICE: t3-back-ecscluster2/t3-back-apiservice3
-
+  ECR_REPOSITORY: t3-back-mainecr5
+  ECS_CLUSTER: t3-back-ecscluster5
+  ECS_CONTAINER: t3-back-maincontainer5
+  ECS_SERVICE: t3-back-ecscluster5/t3-back-mainservice5
   ECS_TASK_DEFINITION: task-definition.json
-
   S3_BUCKET: t3-back-cicdbucket
 
 permissions: #github actions bot에게 권한 열기

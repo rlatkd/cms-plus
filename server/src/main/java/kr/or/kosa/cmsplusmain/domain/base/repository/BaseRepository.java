@@ -12,6 +12,10 @@ import org.springframework.data.repository.NoRepositoryBean;
 import jakarta.annotation.Nonnull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 
+/**
+ * @deprecated 대신 NewBaseRepository 사용
+ * */
+@Deprecated
 @NoRepositoryBean
 public interface BaseRepository<T extends BaseEntity, ID extends Serializable> extends JpaRepository<T, ID> {
 

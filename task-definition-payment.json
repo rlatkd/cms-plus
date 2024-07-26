@@ -1,13 +1,13 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-paymenttask2:1",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-paymenttask5:1",
     "containerDefinitions": [
         {
-            "name": "t3-back-paymentcontainer2",
-            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-paymentecr2:latest",
+            "name": "t3-back-paymentcontainer5",
+            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-paymentecr5:latest",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "t3-back-paymentcontainer2-8070-tcp",
+                    "name": "t3-back-paymentcontainer5-8070-tcp",
                     "containerPort": 8070,
                     "hostPort": 8070,
                     "protocol": "tcp",
@@ -23,7 +23,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/t3-back-paymenttask2",
+                    "awslogs-group": "/ecs/t3-back-paymenttask5",
                     "awslogs-create-group": "true",
                     "awslogs-region": "ap-northeast-2",
                     "awslogs-stream-prefix": "ecs"
@@ -33,7 +33,7 @@
             "systemControls": []
         }
     ],
-    "family": "t3-back-paymenttask2",
+    "family": "t3-back-paymenttask5",
     "taskRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
@@ -83,7 +83,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-07-24T04:46:08.999Z",
+    "registeredAt": "2024-07-25T00:13:45.236Z",
     "registeredBy": "arn:aws:iam::891376922202:user/fms-kosa-tema3",
     "tags": []
 }

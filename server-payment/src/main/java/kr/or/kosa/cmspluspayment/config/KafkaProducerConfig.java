@@ -3,6 +3,7 @@
  import kr.or.kosa.cmspluspayment.dto.PaymentResultDto;
  import org.apache.kafka.clients.producer.ProducerConfig;
  import org.apache.kafka.common.serialization.StringSerializer;
+ import org.springframework.beans.factory.annotation.Value;
  import org.springframework.context.annotation.Bean;
  import org.springframework.context.annotation.Configuration;
  import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -16,6 +17,9 @@
  @Configuration
  public class KafkaProducerConfig {
 
+     @Value("${kafkaServer.ip}")
+     private String kafkaServerIp;
+
      // 결제결과 메인서버에 발송
      @Bean
      public KafkaTemplate<String, PaymentResultDto> paymentResultkafkaTemplate() {
@@ -25,7 +29,7 @@
      @Bean
      public ProducerFactory<String, PaymentResultDto> paymentResultproducerFactory() {
          Map<String, Object> props = new HashMap<>();
-         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-3-39-232-243.ap-northeast-2.compute.amazonaws.com:9094");
+         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerIp);
          props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
          props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
          props.put(ProducerConfig.ACKS_CONFIG, "all");

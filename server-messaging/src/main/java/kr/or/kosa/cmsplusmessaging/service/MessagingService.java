@@ -77,11 +77,13 @@
 
      @KafkaListener(topics = "messaging-topic", groupId = "messaging-group", containerFactory = "messagingKafkaListenerContainerFactory")
      public void consumeMessage(List<ConsumerRecord<String, MessageDto>> consumerRecords) {
+         log.error("컨슘 메시징 시작");
+         log.error(consumerRecords.toString());
          List<SmsMessageDto> smsMessages = new ArrayList<>();
          List<EmailMessageDto> emailMessages = new ArrayList<>();
          for (ConsumerRecord<String, MessageDto> consumerRecord : consumerRecords) {
              MessageDto messageDto = consumerRecord.value();
-             log.error("[컨슘 DTO]:  {}", messageDto.toString());
+
              switch (messageDto.getMethod()) {
                  case SMS -> smsMessages.add((SmsMessageDto) messageDto);
                  case EMAIL -> emailMessages.add((EmailMessageDto) messageDto);

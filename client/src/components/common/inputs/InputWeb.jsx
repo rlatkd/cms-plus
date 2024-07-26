@@ -1,6 +1,8 @@
 import Search from '@/assets/Search';
 import { useState, useRef } from 'react';
 import PostCodeModal from '@/components/vendor/modal/PostCodeModal';
+import openeye from '@/assets/openeye.svg';
+import closeeye from '@/assets/closeeye.svg';
 
 const InputWeb = ({
   id,
@@ -21,7 +23,7 @@ const InputWeb = ({
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const inputRef = useRef(null);
 
-  // <------ 비밀번호 표시 여부 ------>
+  // <----- 비밀번호 표시 여부 ----->
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
     if (inputRef.current) {
@@ -29,13 +31,13 @@ const InputWeb = ({
     }
   };
 
-  // <------ 주소 찾기 입력창 ------>
+  // <----- 주소 찾기 입력창 ----->
   const handleSearchAddress = () => {
     if (disabled) return;
     setIsAddressModalOpen(true);
   };
 
-  // <------ 주소 선택 시 핸들러 ------>
+  // <----- 주소 선택 시 핸들러 ----->
   const handleSelectAddress = data => {
     handleChangeAddress('zipcode', data.zonecode);
     handleChangeAddress('address', data.address);
@@ -67,7 +69,7 @@ const InputWeb = ({
         />
         {type === 'password' && (
           <img
-            src={showPassword ? '/src/assets/openeye.svg' : '/src/assets/closeeye.svg'}
+            src={showPassword ? openeye : closeeye}
             alt='Toggle password visibility'
             className='absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer w-6'
             onClick={handleTogglePassword}
@@ -94,33 +96,3 @@ const InputWeb = ({
 };
 
 export default InputWeb;
-
-// {type === 'calendar' && (
-//   <div onClick={handleToggleCalendar}>
-//     <button
-//       className='absolute right-2 top-1/2 transform -translate-y-1/2'
-//       onClick={() => {
-//         setSelectedDate('');
-//         setIsCalendarOpen(!isCalendarOpen);
-//       }}
-//       tabIndex='-1'>
-//       <img src={calender} alt='search' className='w-5 h-5' />
-//     </button>
-//     <DatePicker
-//       selectedDate={selectedDate}
-//       onDateChange={date => {
-//         setSelectedDate(date);
-//       }}
-//       isOpen={isCalendarOpen}
-//       onToggle={() => setIsCalendarOpen(!isCalendarOpen)}
-//     />
-//   </div>
-// )}
-
-// <------ DatePicker 열기/닫기 ------>
-// const handleToggleCalendar = () => {
-//   setIsCalendarOpen(!isCalendarOpen);
-// };
-
-// const [selectedDate, setSelectedDate] = useState('');
-// const [isCalendarOpen, setIsCalendarOpen] = useState(false);

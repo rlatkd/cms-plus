@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.util.StringUtils;
 
 public class UsernameValidator implements ConstraintValidator<Username, String> {
 
@@ -17,7 +18,7 @@ public class UsernameValidator implements ConstraintValidator<Username, String> 
 
 	@Override
 	public boolean isValid(String username, ConstraintValidatorContext context) {
-		if (username == null) {
+		if (!StringUtils.hasText(username)) {
 			return true; // null 값은 다른 어노테이션으로 처리
 		}
 		return USERNAME_PATTERN.matcher(username).matches();

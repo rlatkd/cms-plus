@@ -1,8 +1,8 @@
 ---
-name: "🔄 CI"
-about: 'CI 작업 사항을 입력해주세요.'
+name: "🔄 CICD"
+about: 'CIcD 작업 사항을 입력해주세요.'
 title: ''
-labels: 'ci'
+labels: 'cicd'
 assignees: ''
 ---
 
