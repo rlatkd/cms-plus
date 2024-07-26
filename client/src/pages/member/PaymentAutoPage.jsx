@@ -8,14 +8,9 @@ const PaymentAuto = () => {
     return <div>로딩 중...</div>; // 또는 다른 적절한 로딩 표시
   }
 
-  //자동결제 청구상태 확인
-  const getAutoStatus = status => {
-    if (status == '완납') {
-      return '된';
-    } else {
-      return '될';
-    }
-  };
+  // 자동결제 청구상태 확인
+  const getAutoStatus = status =>
+    status === '완납' ? '자동결제 된 청구입니다.' : '자동결제 될 청구입니다.';
 
   return (
     <div className='flex flex-col items-center justify-between h-screen bg-white p-3'>
@@ -24,7 +19,7 @@ const PaymentAuto = () => {
         <h3 className='font-semibold text-gray-700 text-base mb-8'>
           아쿠르트에서 회원님께
           <br />
-          자동결제 {getAutoStatus(invoiceInfo.billingStatus)} 청구입니다.
+          {getAutoStatus(invoiceInfo.billingStatus)}
         </h3>
       </div>
 
