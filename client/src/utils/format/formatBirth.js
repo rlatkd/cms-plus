@@ -1,4 +1,5 @@
-// <------ 생년월일 포맷팅 함수 ------ >
+// <----- 생년월일 포맷팅 함수 ----- >
+
 export const formatBirth = birth => {
   if (!birth) return '';
 

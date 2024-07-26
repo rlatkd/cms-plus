@@ -14,9 +14,7 @@ import MemberInfoUpdate from '@/pages/vendor/member/MemberInfoUpdatePage';
 import ContractIndex from '@/pages/vendor/contract/ContractIndex';
 import ContractList from '@/pages/vendor/contract/ContractListPage';
 import ContractDetail from '@/pages/vendor/contract/ContractDetailPage';
-import ProductInfoUpdate from '@/pages/vendor/contract/ProductInfoUpdatePage';
-import BillingInfoUpdate from '@/pages/vendor/contract/BillingInfoUpdatePage';
-import PaymentInfoUpdate from '@/pages/vendor/contract/PaymentInfoUpdatePage';
+import ContractUpdatePage from '@/pages/vendor/contract/ContractUpdatePage';
 import BillingIndex from '@/pages/vendor/billing/BillingIndex';
 import BillingList from '@/pages/vendor/billing/BillingListPage';
 import BillingDetail from '@/pages/vendor/billing/BillingDetailPage';
@@ -89,22 +87,10 @@ const vendorRoute = () => {
           element: <ContractDetail />,
         },
         {
-          path: 'product/update/:id',
+          path: 'update/:contractId/:memberId',
           name: '계약 정보 수정',
           menu: false,
-          element: <ProductInfoUpdate />,
-        },
-        {
-          path: 'payment/update/:id',
-          name: '결제 정보 수정',
-          menu: false,
-          element: <PaymentInfoUpdate />,
-        },
-        {
-          path: 'billings/update/:contractId/:memberId',
-          name: '청구 정보 수정',
-          menu: false,
-          element: <BillingInfoUpdate />,
+          element: <ContractUpdatePage />,
         },
       ],
     },

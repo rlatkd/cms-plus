@@ -21,7 +21,7 @@ const ProductItem = ({ item, onUpdateQuantity, onRemove }) => {
           ×
         </button>
       </div>
-      <div className='border-b border-gray-200 w-full mb-2'></div>
+      <div className='border-b border-gray-200 w-full mb-2' />
     </div>
   );
 };

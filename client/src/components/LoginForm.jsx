@@ -83,6 +83,7 @@ const LoginForm = () => {
             value={vendorFormData.username}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxlength={20}
           />
           <InputWeb
             id='password'
@@ -93,6 +94,7 @@ const LoginForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             classInput='relative'
+            maxlength={16}
           />
         </div>
         <div className='text-text_grey text-sm  w-full flex justify-end cursor-pointer'>

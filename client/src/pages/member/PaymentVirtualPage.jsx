@@ -37,9 +37,7 @@ const PaymentVirtualPage = () => {
     number: number,
   };
 
-
-
-  console.log(invoiceInfo.billing.billingId)
+  console.log(invoiceInfo.billing.billingId);
 
   const axiosVirtualAccountPayment = async () => {
     try {
