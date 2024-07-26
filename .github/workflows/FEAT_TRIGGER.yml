@@ -3,7 +3,7 @@ name: Feat Trigger
 on:
   push:
     branches:
-      - feat/** #feat브랜치만
+      - feat/**
 
 jobs:
   feat-trigger:
@@ -28,4 +28,4 @@ jobs:
       uses: atlassian/gajira-transition@master
       with:
         issue: ${{ steps.issue-key.outputs.issue }}
-        transition: "검토 중" #Jira 보드의 워크플로 관리에 있는 이름을 적어야함
+        transition: "검토 중"

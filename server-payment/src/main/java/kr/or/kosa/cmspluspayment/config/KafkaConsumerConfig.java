@@ -3,6 +3,7 @@
  import kr.or.kosa.cmspluspayment.dto.PaymentDto;
  import org.apache.kafka.clients.consumer.ConsumerConfig;
  import org.apache.kafka.common.serialization.StringDeserializer;
+ import org.springframework.beans.factory.annotation.Value;
  import org.springframework.context.annotation.Bean;
  import org.springframework.context.annotation.Configuration;
  import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -15,6 +16,12 @@
 
  @Configuration
  public class KafkaConsumerConfig {
+
+     @Value("${kafkaServer.ip}")
+     private String kafkaServerIp;
+
+     @Value("${kafkaGroup.paymentGroup}")
+     private String paymentGroup;
 
      // 결제데이터 메인서버에서 받음
      @Bean
@@ -31,10 +38,10 @@
      @Bean
      public ConsumerFactory<String, PaymentDto> paymentConsumerFactory() {
          Map<String, Object> props = new HashMap<>();
-         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-3-39-232-243.ap-northeast-2.compute.amazonaws.com:9094");
+         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerIp);
          props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
          props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-         props.put(ConsumerConfig.GROUP_ID_CONFIG, "payment-group");
+         props.put(ConsumerConfig.GROUP_ID_CONFIG, paymentGroup);
          props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
          props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
          JsonDeserializer<PaymentDto> jsonDeserializer = new JsonDeserializer<>(PaymentDto.class, false);

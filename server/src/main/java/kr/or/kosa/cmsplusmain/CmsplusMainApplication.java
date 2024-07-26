@@ -8,11 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @SpringBootApplication
 @PropertySource("classpath:secure.properties")
-
 public class CmsplusMainApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(CmsplusMainApplication.class, args);
 	}
-
 }

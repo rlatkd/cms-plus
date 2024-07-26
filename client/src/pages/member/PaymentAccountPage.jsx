@@ -45,7 +45,7 @@ const PaymentAccountPage = () => {
   const phoneNumber = '01026270378'; // 테스트용 (실제로는 주스탄드에서 가져옴)
 
   const paymentData = {
-    billingId: invoiceInfo.billingId,
+    billingId: invoiceInfo.billing.billingId,
     phoneNumber: phoneNumber,
     method: method,
     number: number,

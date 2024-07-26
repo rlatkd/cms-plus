@@ -15,3 +15,9 @@ email:
   username: ${MAIL_USERNAME}
   password: ${MAIL_PASSWORD}
   emailAddress: ${MAIL_EMAILADDRESS}
+
+kafkaGroup:
+  messagingGroup: ${MESSAGING_GROUP}
+
+kafkaServer:
+  ip: ${KAFKASERVER_IP}

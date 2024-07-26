@@ -16,6 +16,7 @@ import AlertContext from '@/utils/dialog/alert/AlertContext';
 import { formatCardYearForStorage } from '@/utils/format/formatCard';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import close from '@/assets/close.svg';
 
 const MemberRegisterPage = () => {
   const start = 0;
@@ -156,7 +157,7 @@ const MemberRegisterPage = () => {
       <div className='up-dashboard relative flex justify-center items-center mb-4 w-full desktop:h-[18%]'>
         <ProgressBar steps={['기본정보', '계약정보', '결제정보', '청구정보']} />
         <img
-          src='/src/assets/close.svg'
+          src={close}
           alt='back'
           className='absolute right-6 top-6 cursor-pointer w-4 h-4'
           onClick={() => navigate(-1)}

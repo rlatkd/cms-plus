@@ -2,6 +2,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import vendorRoute from '@/routes/vendorRoute';
 import React, { useEffect, useState } from 'react';
 import { useSideBarActiveStore } from '@/stores/useSideBarActiveStore';
+import tmplogo from '@/assets/tmplogo.svg';
 
 const SideBar = () => {
   const [refresh, setRefresh] = useState(false);
@@ -19,8 +20,7 @@ const SideBar = () => {
       <div
         className='mb-7 ml-3 mt-3 flex items-center cursor-pointer'
         onClick={() => navigate('/vendor/dashboard')}>
-        <img src='/src/assets/tmplogo.svg' alt='logo' className='mx-2 h-6 w-6' />
-
+        <img src={tmplogo} alt='logo' className='mx-2 h-6 w-6' />
         <h1 className='font-800 text-text_black'>HYOSUNG CMS#</h1>
       </div>
       <div className='border-gradient mb-5 border-b-2' />

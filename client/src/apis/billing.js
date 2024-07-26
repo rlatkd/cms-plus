@@ -93,7 +93,7 @@ export const cancelSendInvoice = async billingId => {
 };
 
 // 청구 실시간 결제
-export const payBilling = async billingId => {
+export const payRealTimeBilling = async billingId => {
   try {
     const res = await privateAxios.get(`/v1/vendor/billing/payment/${billingId}`);
     return res;
@@ -103,7 +103,7 @@ export const payBilling = async billingId => {
   }
 };
 
-// 청구 실시간 결제
+// 청구 실시간 결제취소
 export const cancelPayBilling = async billingId => {
   try {
     const res = await privateAxios.get(`/v1/vendor/billing/payment/${billingId}/cancel`);

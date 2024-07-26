@@ -39,6 +39,13 @@ public class ErrorRes {
 		this.errors = new ArrayList<>();
 	}
 
+	private ErrorRes(final ErrorCode code, final String message) {
+		this.message = message;
+		this.status = code.getStatus();
+		this.code = code.getCode();
+		this.errors = new ArrayList<>();
+	}
+
 
 	public static ErrorRes of(final ErrorCode code, final BindingResult bindingResult) {
 		return new ErrorRes(code, FieldError.of(bindingResult));
@@ -48,12 +55,16 @@ public class ErrorRes {
 		return new ErrorRes(code);
 	}
 
+	public static ErrorRes of(final ErrorCode code, final String message) {
+		return new ErrorRes(code, message);
+	}
+
 	public static ErrorRes of(final ErrorCode code, final List<FieldError> errors) {
 		return new ErrorRes(code, errors);
 	}
 
 	public static ErrorRes of(final BusinessException e) {
-		return new ErrorRes(e.getErrorCode());
+		return new ErrorRes(e.getErrorCode(), e.getMessage());
 	}
 
 	public static ErrorRes of(MethodArgumentTypeMismatchException e) {

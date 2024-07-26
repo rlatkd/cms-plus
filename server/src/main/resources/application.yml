@@ -2,25 +2,20 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    active: dev
   application:
     name: cmsplus-main
   jwt:
     secret: ${JWT_SECRET}
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cmsplusmain?serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: 1004
-
   jpa:
     hibernate:
       ddl-auto: create
-
     properties:
       hibernate:
-        show_sql: true
+        show_sql: false
         format_sql: true
-        use_sql_comments: true
+        highlight_sql: true
         default_batch_fetch_size: 100
     open-in-view: false
     defer-datasource-initialization: true
@@ -28,16 +23,6 @@ spring:
   sql:
     init:
       mode: always
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
-
-logging:
-  level:
-    org.hibernate.orm.jdbc.bind: trace
 
 cloud:
   aws:
@@ -49,8 +34,12 @@ cloud:
       accessKey: ${S3_ACCESS_KEY}
       secretKey: ${S3_SECRET_KEY}
 
+kafkaServer:
+  ip: ${KAFKASERVER_IP}
+
+kafkaGroup:
+  paymentResultGroup: ${PAYMENT_RESULT_GROUP}
+
 kafkaTopic:
   messagingTopic: ${MESSAGING_TOPIC}
   paymentTopic: ${PAYMENT_TOPIC}
-  paymentResultTopic: ${PAYMENT_RESULT_TOPIC}
-  monitoringTopic: ${MONITORING_TOPIC}

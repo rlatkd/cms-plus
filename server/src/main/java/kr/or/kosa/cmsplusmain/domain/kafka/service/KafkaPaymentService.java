@@ -52,10 +52,13 @@ public class KafkaPaymentService {
             MessageDto messageDto = new SmsMessageDto(paymentResultDto.getResult(), paymentResultDto.getPhoneNumber());
             Billing billing = billingRepository.findById(paymentResultDto.getBillingId())
                     .orElseThrow(() -> new EntityNotFoundException(paymentResultDto.getBillingId().toString()));
+            log.error("[billing 결과]: {}", billing.getId());
+
             try {
                 if (paymentResultDto.getResult().equals("결제성공")) {
                     billing.setPaid(); // 결제결과가 성공이면 청구상태를 결제완료로 바꿈
                     log.info("결제성공");
+                    log.info("paymentREsultDto{}", paymentResultDto.toString());
                 } else {
                     log.error("결제실패");
                 }
