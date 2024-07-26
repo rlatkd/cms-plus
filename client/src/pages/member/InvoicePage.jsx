@@ -15,16 +15,22 @@ const InvoicePage = () => {
   const start = 0;
   const end = 2;
   const { invoiceId } = useParams();
-  const setInvoiceInfo = useInvoiceStore(state => state.setInvoiceInfo);
-  const invoiceInfo = useInvoiceStore(state => state.invoiceInfo);
+  const { setInvoiceInfo, invoiceInfo } = useInvoiceStore();
+
   const status = useStatusStore(state => state.status);
   const [paymentType, setPaymentType] = useState('BUYER');
   const { handleClickPrevious, handleClickNext } = useStatusStepper(paymentType, start, end);
+
   // <----- incvoiceInfo 정보 가져오기 ----->
   const fetchInvoiceInfo = async billingId => {
-    const res = await getBillingInfo(billingId);
-    setInvoiceInfo(res.data);
-    setPaymentType(res.data.paymentType.paymentType.code);
+    try {
+      const res = await getBillingInfo(billingId);
+      setInvoiceInfo(res.data);
+      setPaymentType(res.data.paymentType.paymentType.code);
+    } catch (err) {
+      console.error('청구서 정보 조회 실패:', err);
+      throw err;
+    }
   };
 
   useEffect(() => {

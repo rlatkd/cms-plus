@@ -110,11 +110,14 @@ const SimpConsentPage = () => {
         const preparedData = prepareData(userData);
         await sendSimpleConsentData(preparedData);
         setStatus(6); // 성공
-        reset();
+        // reset();
       } catch (error) {
         console.error('API request failed', error);
         setStatus(4); // 서명페이지로 다시 보내기
       }
+    } else if (status === 6) {
+      // Success 페이지에서 NextButton을 클릭했을 때
+      reset();
     } else {
       originalHandleClickNext();
     }

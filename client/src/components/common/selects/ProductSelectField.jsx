@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Checkbox from '@/components/common/inputs/CheckBox';
 
 export const ProductSelectField2 = ({
