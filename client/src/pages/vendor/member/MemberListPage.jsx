@@ -167,7 +167,6 @@ const MemberListPage = () => {
       <MemberExcelModal
         isShowModal={isShowExcelModal}
         setIsShowModal={setIsShowExcelModal}
-        // TODO 아이콘 변경 필요
         icon={user}
         modalTitle={'대량 회원 등록'}
         axiosMemberList={axiosMemberList}
