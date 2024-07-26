@@ -42,7 +42,7 @@ public class BillingController {
 	/*
 	* 청구서 발송
 	* */
-	@GetMapping("invoice/{billingId}")
+	@GetMapping("send-invoice/{billingId}")
 	public void sendInvoice(@VendorId Long vendorId, @PathVariable Long billingId) {
 		billingService.sendInvoice(vendorId, billingId);
 	}
