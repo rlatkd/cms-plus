@@ -12,7 +12,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.error.exception.EntityNotFoundException;
-import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusException;
 import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
@@ -41,7 +40,7 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
-	 * Enum 타입 json 변환 실패
+	 * 타입 변환 실패
 	 */
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	protected ResponseEntity<ErrorRes> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
