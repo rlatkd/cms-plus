@@ -6,6 +6,7 @@ import Signup from '@/pages/SignupPage'; // 회원가입
 import Vendor from '@/pages/vendor/VenIndex'; // 고객 중첩 라우팅
 import Member from '@/pages/member/MemIndex'; // 회원 중첩 라우팅
 import Test from '@/labs/Test';
+import ChartTest from '@/labs/ChartTest';
 
 const root = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const root = createBrowserRouter([
   {
     path: 'test',
     element: <Test />,
+  },
+  {
+    path: 'chart',
+    element: <ChartTest />,
   },
 ]);
 

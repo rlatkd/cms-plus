@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.util.StringUtils;
 
 public class HttpUrlValidator implements ConstraintValidator<HttpUrl, String> {
 
@@ -17,7 +18,7 @@ public class HttpUrlValidator implements ConstraintValidator<HttpUrl, String> {
 
 	@Override
 	public boolean isValid(String httpUrl, ConstraintValidatorContext context) {
-		if (httpUrl == null) {
+		if (!StringUtils.hasText(httpUrl)) {
 			return true; // null 값은 다른 어노테이션으로 처리
 		}
 		return USERNAME_PATTERN.matcher(httpUrl).matches();

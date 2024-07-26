@@ -2,7 +2,7 @@ import { updatePaymentDetail } from '@/apis/payment';
 import PaymentInfoForm from '@/components/common/memberForm/PaymentInfoForm';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
-import { formatCardYearForStorage } from '@/utils/format/formatCardDate';
+import { formatCardYearForStorage } from '@/utils/format/formatCard';
 import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 

@@ -1,8 +1,11 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
-import { formatCardMonthForDisplay, formatCardYearForDisplay } from '@/utils/format/formatCardDate';
+import { formatCardMonthForDisplay, formatCardYearForDisplay } from '@/utils/format/formatCard';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import FileUpload from '../../inputs/FileUpload';
+import { verifyCard } from '@/apis/validation';
+import { useContext } from 'react';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
 
 const CardMethodForm = ({ paymentMethod, formType }) => {
   const {
@@ -28,6 +31,35 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
   const handleUploadFile = file => {
     setPaymentTypeInfoReq_Auto({ consentImgUrl: URL.createObjectURL(file) });
     setPaymentTypeInfoReq_Auto({ consetImgName: file.name });
+  };
+
+  // <----- Card 인증 API ----->
+  const axiosVerifyCard = async () => {
+    try {
+      const { cardMonth, cardYear, ...paymentCardinfo } = paymentMethodInfoReq_Card;
+      const transformPaymentCard = {
+        paymentMethod: paymentMethod,
+        ...paymentCardinfo,
+      };
+      console.log(transformPaymentCard);
+      const res = await verifyCard(transformPaymentCard);
+      console.log(res);
+      console.log('!---- Card 인증 ----!'); // 삭제예정
+      if (res) {
+        onAlertClick('카드인증에 성공하셨습니다!');
+      } else {
+        onAlertClick('카드인증에 실패하셨습니다.');
+      }
+    } catch (err) {
+      console.error('axiosVerifyCard => ', err.response.data);
+      onAlertClick('카드인증에 실패하셨습니다.');
+    }
+  };
+
+  // <----- 계좌인증 성공여부 Alert창 ------>
+  const { alert: alertComp } = useContext(AlertContext);
+  const onAlertClick = async message => {
+    await alertComp(message);
   };
 
   // TODO
@@ -110,7 +142,9 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
             value={paymentMethodInfoReq_Card.cardOwnerBirth}
             handleChangeValue={handleChangeInput}
           />
-          <button className='h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover ml-3'>
+          <button
+            className='h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover ml-3'
+            onClick={axiosVerifyCard}>
             카드 인증
           </button>
         </div>

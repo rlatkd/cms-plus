@@ -2,20 +2,25 @@ server:
   port: 8080
 
 spring:
-  profiles:
-    active: dev
   application:
     name: cmsplus-main
   jwt:
     secret: ${JWT_SECRET}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cmsplusmain?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: 1004
+
   jpa:
     hibernate:
       ddl-auto: create
+
     properties:
       hibernate:
-        show_sql: false
+        show_sql: true
         format_sql: true
-        highlight_sql: true
+        use_sql_comments: true
         default_batch_fetch_size: 100
     open-in-view: false
     defer-datasource-initialization: true
@@ -24,10 +29,15 @@ spring:
     init:
       mode: always
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
 logging:
   level:
-    sql: debug
-#    org.hibernate.orm.jdbc.bind: trace
+    org.hibernate.orm.jdbc.bind: trace
 
 cloud:
   aws:

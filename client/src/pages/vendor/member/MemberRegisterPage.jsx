@@ -13,7 +13,7 @@ import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import { useStatusStore } from '@/stores/useStatusStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
-import { formatCardYearForStorage } from '@/utils/format/formatCardDate';
+import { formatCardYearForStorage } from '@/utils/format/formatCard';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 

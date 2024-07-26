@@ -8,7 +8,7 @@ import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import bankCode from '@/utils/bank/bankCode';
-import { formatCardYearForDisplay } from '@/utils/format/formatCardDate';
+import { formatCardYearForDisplay } from '@/utils/format/formatCard';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 

@@ -46,10 +46,14 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
         paymentMethod: paymentMethod,
         ...paymentCmsinfo,
       };
-      console.log(transformPaymentCms);
       const res = await verifyCMS(transformPaymentCms);
       console.log('!----실시간 CMS 계좌인증 API----!'); // 삭제예정
-      onAlertClick('계좌인증에 성공하셨습니다!');
+
+      if (res) {
+        onAlertClick('계좌인증에 성공하셨습니다!');
+      } else {
+        onAlertClick('계좌인증에 실패하셨습니다.');
+      }
     } catch (err) {
       console.error('axiosVerifyCMS => ', err.response.data);
       onAlertClick('계좌인증에 실패하셨습니다.');
