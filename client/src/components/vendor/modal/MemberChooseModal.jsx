@@ -49,25 +49,29 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
     navigate('/vendor/members/register');
   };
 
-  useEffect(() => {
-    const fetchMemberList = async () => {
-      try {
-        const res = await getMemberBasicInfoList({
-          [searchType]: searchTerm,
-          page: currentPage,
-          size: 8,
-        });
-        setMemberList(res.data.content);
-        setTotalPages(res.data.totalPage || 1);
-        setCurrentPage(1);
-        setPageGroup(0);
-      } catch (err) {
-        console.error('계약생성 - 회원 기본정보 목록 조회 실패', err);
-      }
-    };
+  const fetchMemberList = async (page = 1) => {
+    try {
+      const res = await getMemberBasicInfoList({
+        [searchType]: searchTerm,
+        page: page,
+        size: 8,
+      });
+      setMemberList(res.data.content);
+      setTotalPages(res.data.totalPage || 1);
+    } catch (err) {
+      console.error('계약생성 - 회원 기본정보 목록 조회 실패', err);
+    }
+  };
 
+  useEffect(() => {
+    fetchMemberList(currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
     fetchMemberList();
-  }, [currentPage, searchTerm]);
+    setCurrentPage(1);
+    setPageGroup(0);
+  }, [searchTerm]);
 
   return (
     <BaseModal

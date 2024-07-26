@@ -160,12 +160,12 @@ const ProductModal = ({
           {modalTitle === '상품 등록' ? (
             <>
               <button
-                className='bg-white text-mint border border-mint px-7 py-2 rounded-md hover:bg-mint_hover hover:text-white h-10 w-50'
+                className='bg-white text-mint border px-7 py-2 rounded-md hover:bg-mint hover:text-white h-10 w-50 border-mint transition-all duration-200'
                 onClick={() => setIsShowModal(false)}>
                 <span>취소</span>
               </button>
               <button
-                className='bg-mint text-white px-10 py-2 rounded-md hover:bg-mint_hover flex flex-row items-center w-36 justify-center'
+                className='bg-mint text-white px-10 py-2 rounded-md hover:bg-mint_hover flex flex-row items-center w-36 justify-center transition-all duration-200 border border-white'
                 onClick={handleCreateProduct}>
                 <span>등록</span>
               </button>
