@@ -3,7 +3,7 @@ import { privateAxios } from '.';
 // 청구 생성
 export const createBilling = async billingData => {
   try {
-    const res = await privateAxios.post('/v1/vendor/billing', billingData);
+    const res = await privateAxios.post('/v2/vendor/billing', billingData);
     return res;
   } catch (err) {
     console.error('청구 생성 실패 => ', err.response.data);
@@ -14,7 +14,7 @@ export const createBilling = async billingData => {
 // 청구 목록 조회
 export const getBillingList = async (searchParams = {}) => {
   try {
-    const res = await privateAxios.get('/v1/vendor/billing', {
+    const res = await privateAxios.get('/v2/vendor/billing', {
       params: {
         ...searchParams,
       },
@@ -29,7 +29,7 @@ export const getBillingList = async (searchParams = {}) => {
 // 청구 상세 조회
 export const getBillingDetail = async billingId => {
   try {
-    const res = await privateAxios.get(`/v1/vendor/billing/${billingId}`);
+    const res = await privateAxios.get(`/v2/vendor/billing/${billingId}`);
     return res;
   } catch (err) {
     console.error('청구 상세 조회 실패 => ', err.response);
@@ -37,7 +37,7 @@ export const getBillingDetail = async billingId => {
   }
 };
 
-// 청구 상세 조회
+// 청구 상세 조회 - 청구상품 목록
 export const getBillingProducts = async billingId => {
   try {
     const res = await privateAxios.get(`/v1/vendor/billing/products/${billingId}`);
@@ -51,7 +51,7 @@ export const getBillingProducts = async billingId => {
 // 청구 수정
 export const updateBilling = async (billingId, billingReq) => {
   try {
-    const res = await privateAxios.put(`/v1/vendor/billing/${billingId}`, billingReq);
+    const res = await privateAxios.put(`/v2/vendor/billing/${billingId}`, billingReq);
     return res;
   } catch (err) {
     console.error('청구 수정 실패 => ', err.response);
@@ -73,7 +73,7 @@ export const deleteBilling = async billingId => {
 // 청구서 발송
 export const sendInvoice = async billingId => {
   try {
-    const res = await privateAxios.get(`/v1/vendor/billing/invoice/${billingId}`);
+    const res = await privateAxios.get(`/v1/vendor/billing/send-invoice/${billingId}`);
     return res;
   } catch (err) {
     console.error('청구서 발송 실패 => ', err.response.data);
@@ -124,6 +124,17 @@ export const updateMemberBilling = async (memberId, billingData) => {
     return res;
   } catch (err) {
     console.error('회원 수정 - 청구 정보 => ', err.response.data);
+    throw err;
+  }
+};
+
+// 모바일 - 청구서 정보 조회
+export const getBillingInfo = async billingId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/billing/invoice/${billingId}`);
+    return res;
+  } catch (err) {
+    console.error('청구정보 조회 실패 => ', err.response);
     throw err;
   }
 };

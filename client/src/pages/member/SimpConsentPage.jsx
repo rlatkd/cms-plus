@@ -18,16 +18,15 @@ import { sendSimpleConsentData } from '@/apis/simpleConsent';
 const SimpConsentPage = () => {
   const start = 0;
   const end = 6;
-  const status = useStatusStore(state => state.status);
-  const setStatus = useStatusStore(state => state.setStatus);
   const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
     'simpconsent',
     start,
     end
   );
 
-  const userData = useUserDataStore(state => state.userData);
-  const setUserData = useUserDataStore(state => state.setUserData);
+  const { status, setStatus, reset } = useStatusStore();
+  const { userData, setUserData } = useUserDataStore();
+
   const [isCardVerified, setIsCardVerified] = useState(false);
   const paymentInfoRef = useRef();
   const contractInfoRef = useRef();
@@ -98,6 +97,9 @@ const SimpConsentPage = () => {
 
     if (status === 4) {
       const missingFields = validateSignatureInfo();
+      console.log('회원 DTO (stringified):', JSON.stringify(userData.memberDTO, null, 2));
+      console.log('결제 DTO (stringified):', JSON.stringify(userData.paymentDTO, null, 2));
+      console.log('계약 DTO (stringified):', JSON.stringify(userData.contractDTO, null, 2));
       if (missingFields.length > 0) {
         alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
         return;
@@ -108,6 +110,7 @@ const SimpConsentPage = () => {
         const preparedData = prepareData(userData);
         await sendSimpleConsentData(preparedData);
         setStatus(6); // 성공
+        reset();
       } catch (error) {
         console.error('API request failed', error);
         setStatus(4); // 서명페이지로 다시 보내기

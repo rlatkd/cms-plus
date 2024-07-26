@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.util.StringUtils;
 
 public class PhoneValidator implements ConstraintValidator<Phone, String> {
 
@@ -17,7 +18,7 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
 
 	@Override
 	public boolean isValid(String phoneNumber, ConstraintValidatorContext context) {
-		if (phoneNumber == null) {
+		if (!StringUtils.hasText(phoneNumber)) {
 			return true; // null 값은 다른 어노테이션으로 처리
 		}
 		return PHONE_PATTERN.matcher(phoneNumber).matches();

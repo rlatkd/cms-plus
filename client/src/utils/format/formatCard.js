@@ -1,3 +1,5 @@
+// <----- 카드 정보 관련 포멧팅 함수 ----->
+
 // 카드 년도 포맷팅 함수 (저장용)
 export const formatCardYearForStorage = year => {
   year = String(year);

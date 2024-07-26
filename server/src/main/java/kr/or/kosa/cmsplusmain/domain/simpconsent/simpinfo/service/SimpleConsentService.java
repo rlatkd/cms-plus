@@ -2,13 +2,17 @@
 
 package kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.service;
 
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
+import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
+import kr.or.kosa.cmsplusmain.domain.payment.exception.InvalidPaymentTypeException;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
@@ -33,8 +37,10 @@ public class SimpleConsentService {
     private final MemberCustomRepository memberCustomRepository;
     private final BillingCustomRepository billingCustomRepository;
     private final ProductCustomRepository productCustomRepository;
+    private final ContractCustomRepository contractCustomRepository;
     private final PaymentService paymentService;
     private final ContractService contractService;
+    // private final KafkaMessagingService kafkaMessagingService;
 
     @Transactional
     public MemberDetail processSimpleConsent(Long vendorId, SimpleConsentMemberDTO memberDTO,
@@ -61,5 +67,25 @@ public class SimpleConsentService {
 //        Long totalBillingPrice = billingCustomRepository.findBillingProductByMemberId(vendorId, member.getId());
 
         return MemberDetail.fromEntity(member, 0, 0L);
+    }
+
+    public void sendReqUrl(Long vendorId, Long contractId) {
+        if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
+            throw new MemberNotFoundException("본인의 계약에만 전송 가능합니다.");
+        }
+
+
+        Contract contract = contractCustomRepository.findContractDetailById(contractId);
+        Payment payment = contract.getPayment();
+
+        if (!payment.canReqSimpConsent()) {
+            throw new InvalidPaymentTypeException(
+                "[%s]는 간편동의가 불가능합니다".formatted(payment.getPaymentType().getTitle()));
+        }
+
+        String url = "https://localhost:8080/member/simpconsent/" + contractId;
+        log.info("{} 간편동의 요청 링크가 발송됨", url);
+
+        // TODO kafka send
     }
 }

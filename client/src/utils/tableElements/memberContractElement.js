@@ -1,3 +1,5 @@
+// <----- 회원상세 - 계약테이블 ----->
+
 export const cols = [
   { key: 'order', label: 'No.', width: 'w-1/12' },
   { key: 'contractName', label: '계약이름', width: 'w-1/12' },

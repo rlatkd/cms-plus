@@ -23,7 +23,7 @@ const SendInvoiceErrorModal = ({ errors, isShowModal, icon, setIsShowModal, moda
           <table className='w-full mb-3'>
             <thead>
               <tr className='bg-table_col'>
-                <th className='p-2 text-left text-text_black w-8'></th>
+                <th className='p-2 text-left text-text_black w-8' />
                 <th className='p-2 text-left text-text_black'>청구번호</th>
                 <th className='p-2 text-left text-text_black'>회원이름</th>
                 <th className='p-2 text-left text-text_black'>휴대전화</th>

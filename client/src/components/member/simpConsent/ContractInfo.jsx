@@ -63,7 +63,6 @@ const ContractInfo = forwardRef((props, ref) => {
       const missingFields = [];
 
       if (!localData.contractName) missingFields.push('계약명');
-      if (!localData.selectedProduct) missingFields.push('상품');
       if (localData.items.length === 0) missingFields.push('선택된 상품');
       if (!localData.startDate) missingFields.push('시작 날짜');
       if (!localData.endDate) missingFields.push('종료 날짜');
@@ -234,5 +233,8 @@ const ContractInfo = forwardRef((props, ref) => {
     </div>
   );
 });
+
+//forwardRef를 사용하여 정의된 컴포넌트에 displayName을 명시적으로 설정
+ContractInfo.displayName = 'ContractInfo';
 
 export default ContractInfo;

@@ -1,6 +1,4 @@
-import { convertToProductSummary } from '@/pages/member/InvoicePage';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
-import React, { useState } from 'react';
 
 const ChooseCard = () => {
   const { setSelectedCard, selectedCard, invoiceInfo } = useInvoiceStore();
@@ -34,13 +32,11 @@ const ChooseCard = () => {
       <h4 className='text-sm text-gray-500 mb-2 font-semibold'>결제금액</h4>
       <div className='mb-4 h-24 border border-mint rounded-lg p-4 flex flex-col justify-between'>
         <div>
-          <p className='text-base font-semibold'>
-            {convertToProductSummary(invoiceInfo.billingProducts)}
-          </p>
+          <p className='text-base font-semibold'>{invoiceInfo.invoiceName}</p>
           <p className='text-xs text-gray-500'>{invoiceInfo.billingDate}</p>
         </div>
         <div className='self-end'>
-          <p className='font-semibold text-lg'>{invoiceInfo.billingPrice}원</p>
+          <p className='font-semibold text-lg'>{invoiceInfo.billingPrice.toLocaleString()}원</p>
         </div>
       </div>
 

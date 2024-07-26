@@ -6,7 +6,7 @@ const Header = () => {
   const { pathname } = useLocation();
   const mainRef = useRef(null);
 
-  // <--------라우팅 시 페이지 상단고정-------->
+  // <----- 라우팅 시 페이지 상단고정 ----->
   useEffect(() => {
     if (mainRef.current) {
       mainRef.current.scrollIntoView();
