@@ -18,16 +18,15 @@ import { sendSimpleConsentData } from '@/apis/simpleConsent';
 const SimpConsentPage = () => {
   const start = 0;
   const end = 6;
-  const status = useStatusStore(state => state.status);
-  const setStatus = useStatusStore(state => state.setStatus);
   const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
     'simpconsent',
     start,
     end
   );
 
-  const userData = useUserDataStore(state => state.userData);
-  const setUserData = useUserDataStore(state => state.setUserData);
+  const { status, setStatus, reset } = useStatusStore();
+  const { userData, setUserData } = useUserDataStore();
+
   const [isCardVerified, setIsCardVerified] = useState(false);
   const paymentInfoRef = useRef();
   const contractInfoRef = useRef();
@@ -108,6 +107,7 @@ const SimpConsentPage = () => {
         const preparedData = prepareData(userData);
         await sendSimpleConsentData(preparedData);
         setStatus(6); // 성공
+        reset();
       } catch (error) {
         console.error('API request failed', error);
         setStatus(4); // 서명페이지로 다시 보내기

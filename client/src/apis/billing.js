@@ -127,3 +127,14 @@ export const updateMemberBilling = async (memberId, billingData) => {
     throw err;
   }
 };
+
+// 모바일 - 청구서 정보 조회
+export const getBillingInfo = async billingId => {
+  try {
+    const res = await privateAxios.get(`/v1/vendor/billing/invoice/${billingId}`);
+    return res;
+  } catch (err) {
+    console.error('청구정보 조회 실패 => ', err.response);
+    throw err;
+  }
+};
