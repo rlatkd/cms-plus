@@ -23,6 +23,6 @@ export const initialSearch = [
 export const selectOptions = [
   { label: '높은 가격순', orderBy: 'productPrice', order: 'DESC' },
   { label: '낮은 가격순', orderBy: 'productPrice', order: 'ASC' },
-  { label: '계약 많은순', orderBy: 'productCount', order: 'DESC' },
-  { label: '계약 적은순', orderBy: 'productCount', order: 'ASC' },
+  { label: '계약 많은순', orderBy: 'contractCount', order: 'DESC' },
+  { label: '계약 적은순', orderBy: 'contractCount', order: 'ASC' },
 ];
