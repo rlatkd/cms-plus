@@ -1,6 +1,7 @@
 import { postCreateMember } from '@/apis/member';
 import NextButton from '@/components/common/buttons/StatusNextButton';
 import PreviousButton from '@/components/common/buttons/StatusPreButton';
+import ProgressBar from '@/components/common/ProgressBar';
 import RegisterBasicInfo from '@/components/vendor/member/registers/RegisterBasicInfo';
 import RegisterBillingInfo from '@/components/vendor/member/registers/RegisterBillingInfo';
 import RegisterContractInfo from '@/components/vendor/member/registers/RegisterContractInfo';
@@ -12,17 +13,17 @@ import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import { useStatusStore } from '@/stores/useStatusStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
-import { formatCardYearForStorage } from '@/utils/format/formatCardDate';
+import { formatCardYearForStorage } from '@/utils/format/formatCard';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import close from '@/assets/close.svg';
 
 const MemberRegisterPage = () => {
   const start = 0;
   const end = 4;
-  const { status } = useStatusStore();
+  const { status, reset } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const navigate = useNavigate();
-  const { reset } = useStatusStore();
 
   // <------ 회원등록 입력 데이터 ------>
   const { basicInfo, resetBasicInfo } = useMemberBasicStore();
@@ -36,13 +37,7 @@ const MemberRegisterPage = () => {
     paymentTypeInfoReq_Auto,
     paymentMethodInfoReq_Cms,
     paymentMethodInfoReq_Card,
-    resetPaymentType,
-    resetPaymentMethod,
-    resetPaymentTypeInfoReq_Virtual,
-    resetPaymentTypeInfoReq_Buyer,
-    resetPaymentTypeInfoReq_Auto,
-    resetPaymentMethodInfoReq_Cms,
-    resetPaymentMethodInfoReq_Card,
+    ...paymentResetFunctions
   } = useMemberPaymentStore();
 
   // <------ 등록 폼 교체 ------>
@@ -58,7 +53,6 @@ const MemberRegisterPage = () => {
     component: () => 'error',
   };
 
-  // TODO
   // <------ 회원등록 API ------>
   const axiosCreateMember = async () => {
     try {
@@ -68,12 +62,11 @@ const MemberRegisterPage = () => {
         paymentCreateReq: transformPaymentInfo(), // 결제정보
         ...billingInfo, // 청구정보
       };
-      console.log(data);
       if (status === 3) {
         const res = await postCreateMember(data);
         console.log('!----회원등록 성공----!'); // 삭제예정
         await navigate('/vendor/members');
-        onAlertClick();
+        onAlertClick('회원정보가 등록되었습니다!');
       }
     } catch (err) {
       console.error('axiosCreateMember => ', err.response.data);
@@ -131,40 +124,40 @@ const MemberRegisterPage = () => {
     return paymentCreateReq;
   };
 
-  // <--------기본정보 수정 성공 Alert창-------->
+  // <----- 기본정보 수정 성공 Alert창 ------>
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async () => {
-    await alertComp('회원정보가 등록되었습니다!');
+  const onAlertClick = async message => {
+    await alertComp(message);
   };
 
-  // <------ 페이지 이탈 시 Status reset ------>
+  // <----- 페이지 이탈 시 Status reset ----->
   useEffect(() => {
     return () => {
       reset();
       resetBasicInfo();
       resetBillingInfo();
       resetContractInfo();
-      resetPaymentType();
-      resetPaymentMethod();
-      resetPaymentTypeInfoReq_Virtual();
-      resetPaymentTypeInfoReq_Buyer();
-      resetPaymentTypeInfoReq_Auto();
-      resetPaymentMethodInfoReq_Cms();
-      resetPaymentMethodInfoReq_Card();
+      paymentResetFunctions.resetPaymentType();
+      paymentResetFunctions.resetPaymentMethod();
+      paymentResetFunctions.resetPaymentTypeInfoReq_Virtual();
+      paymentResetFunctions.resetPaymentTypeInfoReq_Buyer();
+      paymentResetFunctions.resetPaymentTypeInfoReq_Auto();
+      paymentResetFunctions.resetPaymentMethodInfoReq_Cms();
+      paymentResetFunctions.resetPaymentMethodInfoReq_Card();
     };
   }, []);
 
-  // <------ 회원등록 입력 데이터 reset------>
+  // <----- 회원등록 입력 데이터 reset ----->
   // useEffect(() => {
 
   // }, []);
 
   return (
     <>
-      <div className='up-dashboard relative mb-4 w-full desktop:h-[18%]'>
-        progressivee
+      <div className='up-dashboard relative flex justify-center items-center mb-4 w-full desktop:h-[18%]'>
+        <ProgressBar steps={['기본정보', '계약정보', '결제정보', '청구정보']} />
         <img
-          src='/src/assets/close.svg'
+          src={close}
           alt='back'
           className='absolute right-6 top-6 cursor-pointer w-4 h-4'
           onClick={() => navigate(-1)}

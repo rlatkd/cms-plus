@@ -25,12 +25,12 @@ const BillingDetailBilling = ({
     const { billingStatus, createdDateTime, invoiceSendDateTime, paidDateTime } = billingData;
     switch (billingStatus.code) {
       case 'CREATED':
-        return `${billingStatus.title} (${createdDateTime})`;
+        return `${billingStatus.title} (${formatDateTime(createdDateTime)})`;
       case 'WAITING_PAYMENT':
       case 'NON_PAID':
-        return `${billingStatus.title} (청구서 발송: ${invoiceSendDateTime || '미발송'})`;
+        return `${billingStatus.title} (청구서 발송: ${formatDateTime(invoiceSendDateTime) || '미발송'})`;
       case 'PAID':
-        return `${billingStatus.title} (결제: ${paidDateTime})`;
+        return `${billingStatus.title} (결제: ${formatDateTime(paidDateTime)})`;
       default:
         return '-';
     }

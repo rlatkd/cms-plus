@@ -8,7 +8,7 @@ on:
     paths:
       - 'server/**'
 
-permissions: #github actions bot에게 권한 열기
+permissions:
   pages: write
   id-token: write
   contents: write

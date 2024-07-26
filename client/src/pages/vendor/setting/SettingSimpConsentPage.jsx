@@ -34,6 +34,7 @@ const SettingSimpConsentPage = () => {
         setCheckedItems(newCheckedItems);
 
         const allProducts = await getAllProducts();
+        console.log(allProducts);
         setProducts(allProducts);
 
         const selectedProductsData = allProducts.filter(product =>
@@ -92,7 +93,7 @@ const SettingSimpConsentPage = () => {
 
   return (
     <div className='primary-dashboard relative h-full w-full '>
-      <div className='mx-8 my-8 flex h-[90%] flex-col '>
+      <div className='mx-2 my-8 flex h-[90%] flex-col '>
         <h2 className='mb-8 text-xl font-bold'>간편서명동의 설정</h2>
 
         <div className='flex flex-grow flex-col justify-between'>
@@ -111,7 +112,7 @@ const SettingSimpConsentPage = () => {
                     required={true}
                     options={products.map(product => ({
                       value: product,
-                      label: `${product.productName}(${product.productPrice.toLocaleString()}원)`,
+                      label: `${product.name}(${product.price.toLocaleString()}원)`,
                     }))}
                     selectedOptions={selectedProducts}
                     className='h-13 w-64 rounded-md border border-gray-300 bg-white p-4 pr-10 text-base focus:border-teal-400 focus:outline-none focus:ring-teal-400'
@@ -123,7 +124,7 @@ const SettingSimpConsentPage = () => {
                       key={index}
                       className='mb-2 mr-2 flex items-center justify-between rounded-full bg-teal-400 px-7 py-2 text-base text-white'
                       style={{ minWidth: '200px' }}>
-                      <span className='flex-grow'>{product.productName}</span>
+                      <span className='flex-grow'>{product.name}</span>
                       <button
                         onClick={() => handleRemoveProduct(product)}
                         className='ml-2 flex-shrink-0 text-white hover:text-gray-200'>
@@ -158,7 +159,7 @@ const SettingSimpConsentPage = () => {
             </div>
           </div>
 
-          <div className='mt-auto flex justify-end pt-4'>
+          <div className='mt-auto flex justify-end pt-4 absolute bottom-5 right-5'>
             <button
               className='mr-2 rounded-lg bg-teal-400 px-6 py-2 font-bold text-white'
               onClick={handleSave}>

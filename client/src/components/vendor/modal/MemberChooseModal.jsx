@@ -59,6 +59,8 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
         });
         setMemberList(res.data.content);
         setTotalPages(res.data.totalPage || 1);
+        setCurrentPage(1);
+        setPageGroup(0);
       } catch (err) {
         console.error('계약생성 - 회원 기본정보 목록 조회 실패', err);
       }
@@ -106,23 +108,24 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
             </tr>
           </thead>
           <tbody>
-            {memberList.map(member => (
-              <tr
-                key={member.id}
-                onClick={() => handleSelectMember(member)}
-                className='cursor-pointer hover:bg-gray-100'>
-                <td className='border-b border-ipt_border p-2 text-text_black'>
-                  {formatId(member.id)}
-                </td>
-                <td className='border-b border-ipt_border p-2 text-text_black'>{member.name}</td>
-                <td className='border-b border-ipt_border p-2 text-text_black'>
-                  {formatPhone(member.phone)}
-                </td>
-                <td className='border-b border-ipt_border p-2 text-text_black'>
-                  {member.enrollDate}
-                </td>
-              </tr>
-            ))}
+            {memberList &&
+              memberList.map(member => (
+                <tr
+                  key={member.id}
+                  onClick={() => handleSelectMember(member)}
+                  className='cursor-pointer hover:bg-gray-100'>
+                  <td className='border-b border-ipt_border p-2 text-text_black'>
+                    {formatId(member.id)}
+                  </td>
+                  <td className='border-b border-ipt_border p-2 text-text_black'>{member.name}</td>
+                  <td className='border-b border-ipt_border p-2 text-text_black'>
+                    {formatPhone(member.phone)}
+                  </td>
+                  <td className='border-b border-ipt_border p-2 text-text_black'>
+                    {member.enrollDate}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
         <PagiNation

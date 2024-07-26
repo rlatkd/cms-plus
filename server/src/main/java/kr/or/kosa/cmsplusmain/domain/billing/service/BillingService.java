@@ -6,19 +6,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import kr.or.kosa.cmsplusmain.domain.billing.dto.*;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
+import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
@@ -44,6 +43,8 @@ public class BillingService {
 	private final BillingProductRepository billingProductRepository;
 	private final ContractCustomRepository contractCustomRepository;
 	// private final KafkaMessagingService kafkaMessagingService;
+
+	private final PaymentService paymentService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
 	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
@@ -114,11 +115,21 @@ public class BillingService {
 		billing.setInvoiceCancelled();
 	}
 
-	/*
-	* 청구 실시간 결제
-	* */
 	@Transactional
 	public void payBilling(Long vendorId, Long billingId) {
+		Billing billing = validateAndGetBilling(vendorId, billingId);
+		BillingState.Field.PAY_REALTIME.validateState(billing);
+
+		// TODO: 결제 프로세스 구현
+
+		billing.setPaid();
+	}
+
+	/*
+	 * 청구 실시간 결제
+	 * */
+	@Transactional
+	public void payRealTimeBilling(Long vendorId, Long billingId) {
 		Billing billing = validateAndGetBilling(vendorId, billingId);
 		BillingState.Field.PAY_REALTIME.validateState(billing);
 
@@ -192,6 +203,21 @@ public class BillingService {
 			.collect(Collectors.toMap(field -> field, field -> field.checkState(billing)));
 
 		return BillingDetailRes.fromEntity(billing, fieldToState);
+	}
+
+	/**
+	 * 청구서 조회 |
+	 * 2회 쿼리 발생 | 청구존재여부, 청구상세
+	 * */
+	public InvoiceRes getInvoice(Long billingId) {
+		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
+
+		Contract contract = billing.getContract();
+		Member member = contract.getMember();
+		Payment payment = contract.getPayment();
+		PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfo(payment);
+
+		return InvoiceRes.fromEntity(billing, member, paymentTypeInfoRes);
 	}
 
 	/**

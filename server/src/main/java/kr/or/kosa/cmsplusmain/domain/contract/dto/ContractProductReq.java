@@ -9,9 +9,11 @@ import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
+@ToString
 public class ContractProductReq {
 	@NotNull
 	private Long productId;				// 상품 ID

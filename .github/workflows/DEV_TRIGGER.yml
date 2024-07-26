@@ -3,7 +3,7 @@ name: Dev Trigger
 on:
   push:
     branches:
-      - dev #dev브랜치만
+      - dev
 
 jobs:
   dev-trigger:

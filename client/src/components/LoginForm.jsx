@@ -6,6 +6,8 @@ import FindVendoPasswordModal from '@/components/vendor/modal/FIndVendorPassword
 import FindVendorIdModal from '@/components/vendor/modal/FindVendorIdModal';
 import ResetPasswordModal from '@/components/vendor/modal/ResetPasswordModal';
 import SuccessFindIdModal from '@/components/vendor/modal/SuccessFindIdModal';
+import user from '@/assets/user.svg';
+import password from '@/assets/password.svg';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -81,6 +83,7 @@ const LoginForm = () => {
             value={vendorFormData.username}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxlength={20}
           />
           <InputWeb
             id='password'
@@ -91,6 +94,7 @@ const LoginForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             classInput='relative'
+            maxlength={16}
           />
         </div>
         <div className='text-text_grey text-sm  w-full flex justify-end cursor-pointer'>
@@ -121,7 +125,7 @@ const LoginForm = () => {
         setFindedId={setFindedId}
         setIsShowSuccessFindIdModal={setIsShowSuccessFindIdModal}
         axiosRequestAuthenticationNumber={axiosRequestAuthenticationNumber}
-        icon='/src/assets/user.svg'
+        icon={user}
         modalTitle={'아이디 찾기'}
       />
       <FindVendoPasswordModal
@@ -130,14 +134,14 @@ const LoginForm = () => {
         setIsShowResetPasswordModal={setIsShowResetPasswordModal}
         axiosRequestAuthenticationNumber={axiosRequestAuthenticationNumber}
         setFindedId={setFindedId}
-        icon='/src/assets/password.svg'
+        icon={password}
         modalTitle={'비밀번호 찾기'}
       />
       <ResetPasswordModal
         isShowModal={isShowResetPasswordModal}
         setIsShowModal={setIsShowResetPasswordModal}
         findedId={findedId}
-        icon='/src/assets/password.svg'
+        icon={password}
         modalTitle={'비밀번호 재설정'}
       />
       <SuccessFindIdModal
@@ -145,7 +149,7 @@ const LoginForm = () => {
         setIsShowModal={setIsShowSuccessFindIdModal}
         setVendorFormData={setVendorFormData}
         findedId={findedId}
-        icon='/src/assets/user.svg'
+        icon={user}
         modalTitle={'아이디확인'}
       />
     </div>

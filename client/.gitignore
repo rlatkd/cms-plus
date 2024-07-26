@@ -24,5 +24,7 @@ package-lock.json
 *.sln
 *.sw?
 
-.env.development
-.env.production
+
+.env
+
+.idea

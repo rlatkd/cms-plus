@@ -53,6 +53,7 @@ const BillingDetailPage = () => {
         billingDate: res.data.billing.billingDate,
         invoiceMessage: res.data.billing.invoiceMessage,
       }));
+      console.log(res);
     } catch (err) {
       console.error('청구 상세 정보 조회 실패:', err);
     } finally {

@@ -7,13 +7,7 @@ on:
     paths:
       - 'client/**'
 
-# on:
-#   workflow_run:
-#     workflows: [ "FE PIPELINE" ]
-#     types:
-#       - completed
-
-permissions: #github actions bot에게 권한 열기
+permissions:
   contents: write
   pages: write
   id-token: write
@@ -21,6 +15,7 @@ permissions: #github actions bot에게 권한 열기
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: t3-front-bucket
+  CLOUDFRONT_NAME: E12A5DU2E4BH0
 
 jobs:
   fe-cd:
@@ -36,5 +31,14 @@ jobs:
         run: |
           aws s3 sync DEPLOY_FILE/client/ s3://${{ env.S3_BUCKET_NAME }} --delete --acl public-read
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      
+      - name: CloudFront delete cache
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ env.CLOUDFRONT_NAME }}
+          PATHS: "/*"
+          AWS_REGION: ${{ env.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

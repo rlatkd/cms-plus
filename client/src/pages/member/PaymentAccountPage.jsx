@@ -26,26 +26,20 @@ const PaymentAccountPage = () => {
   });
 
   const componentMap = {
-    3: { component: () => <ChooseBank billingInfo={invoiceInfo} /> }, //은행선택
-    4: { component: AccountInfo }, // 계좌정보 입력
-    5: { component: () => <Loading content={'결제중...'} /> }, // 결제로딩 대충 로딩하다가 success로 가도록 해야됨. 결제결과는 문자로 날라감
-    6: { component: Success }, // 입금완료
+    3: () => <ChooseBank billingInfo={invoiceInfo} />, //은행선택
+    4: AccountInfo, // 계좌정보 입력
+    5: () => <Loading content={'결제중...'} />, // 결제로딩 대충 로딩하다가 success로 가도록 해야됨. 결제결과는 문자로 날라감
+    6: Success, // 입금완료
   };
 
-  const { component: Content } = componentMap[status] || {
-    component: () => 'error',
-  };
+  const Content = componentMap[status] || (() => 'error');
 
-  //console.log('[주스탄드 상태]: ', invoiceInfo);
-  //console.log('주스탄드 청구ID', invoiceInfo.billingId);
-
-  // 현재 계좌번호를 가져와서 주스탄드에 저장하는게 구현 안 되어있음
-  const number = '56293456234294'; // 이건 AccountInfo에서 입력하고 주스탄드에 저장하고 주스탄드에서 가져와야함
-  const method = 'ACCOUNT'; // 이건 안 건드려도 됨
-  const phoneNumber = '01026270378'; // 테스트용 (실제로는 주스탄드에서 가져옴)
+  const number = accountInfo.accountNumber; //계좌번호
+  const method = 'ACCOUNT';
+  const phoneNumber = invoiceInfo.member.phone;
 
   const paymentData = {
-    billingId: invoiceInfo.billingId,
+    billingId: invoiceInfo.billing.billingId,
     phoneNumber: phoneNumber,
     method: method,
     number: number,

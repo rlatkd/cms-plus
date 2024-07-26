@@ -33,6 +33,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// TODO member, vendor 비정규화
+
 @Comment("청구 (매 달 새로 쌓이는 정보)")
 @Entity
 @Table(name = "billing")

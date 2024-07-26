@@ -8,5 +8,12 @@ server:
 fcm:
   adminKeyPath: "src/main/resources/payment-a6511-firebase-adminsdk-ijdci-5129a9d92c.json"
 
+kafkaServer:
+  ip: ${KAFKASERVER_IP}
+
+kafkaGroup:
+  paymentGroup: ${PAYMENT_GROUP}
+
 kafkaTopic:
   paymentResultTopic: ${PAYMENT_RESULT_TOPIC}
+
