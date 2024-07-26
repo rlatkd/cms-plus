@@ -39,7 +39,7 @@ const PaymentAccountPage = () => {
   const phoneNumber = invoiceInfo.member.phone;
 
   const paymentData = {
-    billingId: invoiceInfo.billing.billingId,
+    billingId: invoiceInfo.billingId,
     phoneNumber: phoneNumber,
     method: method,
     number: number,

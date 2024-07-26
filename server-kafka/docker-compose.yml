@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  kafka-network:
+    driver: bridge
+
 services:
 
   zookeeper:
@@ -11,6 +15,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: '2181'
       ALLOW_ANONYMOUS_LOGIN: 'yes'
     restart: unless-stopped
+    networks:
+      - kafka-network
 
   kafka1:
     container_name: kafka1
@@ -32,6 +38,8 @@ services:
     depends_on:
       - zookeeper
     restart: unless-stopped
+    networks:
+      - kafka-network
 
   kafka2:
     container_name: kafka2
@@ -53,6 +61,8 @@ services:
     depends_on:
       - zookeeper
     restart: unless-stopped
+    networks:
+      - kafka-network
 
   kafka3:
     container_name: kafka3
@@ -74,6 +84,8 @@ services:
     depends_on:
       - zookeeper
     restart: unless-stopped
+    networks:
+      - kafka-network
 
   kafkaui:
     container_name: kafkaui
@@ -90,6 +102,8 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka1:29092,kafka2:29093,kafka3:29094'
       KAFKA_CLUSTERS_0_ZOOKEEPER: 'zookeeper:2181'
     restart: unless-stopped
+    networks:
+      - kafka-network
 
   kafdrop:
     container_name: kafdrop
@@ -103,3 +117,5 @@ services:
       - kafka2
       - kafka3
     restart: unless-stopped
+    networks:
+      - kafka-network

@@ -14,7 +14,7 @@ const main = () => {
 
       <div className='flex-grow flex items-center justify-center'>
         <div className='relative w-52 h-48 mb-40'>
-          <div className='absolute inset-0 bg-gradient-to-br from-teal-400 to-blue-200 rounded-full opacity-50 blur-2xl'></div>
+          <div className='absolute inset-0 bg-gradient-to-br from-teal-400 to-blue-200 rounded-full opacity-50 blur-2xl' />
           <img
             src={cardImage}
             alt='Card'
