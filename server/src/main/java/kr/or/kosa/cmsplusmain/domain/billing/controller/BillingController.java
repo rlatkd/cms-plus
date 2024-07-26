@@ -34,6 +34,38 @@ public class BillingController {
 		billingService.createBilling(vendorId, billingCreateReq);
 	}
 
+	/*
+	* 청구서 발송
+	* */
+	@GetMapping("send-invoice/{billingId}")
+	public void sendInvoice(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.sendInvoice(vendorId, billingId);
+	}
+
+	/*
+	 * 청구서 발송 취소
+	 * */
+	@GetMapping("invoice/cancel/{billingId}")
+	public void cancelInvoice(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.cancelInvoice(vendorId, billingId);
+	}
+
+	/*
+	* 청구 실시간 결제
+	* */
+	@GetMapping("payment/{billingId}")
+	public void payRealtimeBilling(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.payRealTimeBilling(vendorId, billingId);
+	}
+
+	/*
+	* 청구 결제 취소
+	* */
+	@GetMapping("payment/{billingId}/cancel")
+	public void cancelPay(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.cancelPayBilling(vendorId, billingId);
+	}
+
 	/**
 	 * 청구목록 조회
 	 * */
@@ -81,37 +113,5 @@ public class BillingController {
 	@DeleteMapping("/{billingId}")
 	public void deleteBilling(@VendorId Long vendorId, @PathVariable Long billingId) {
 		billingService.deleteBilling(vendorId, billingId);
-	}
-
-	/*
-	 * 청구서 발송
-	 * */
-	@GetMapping("invoice/{billingId}")
-	public void sendInvoice(@VendorId Long vendorId, @PathVariable Long billingId) {
-		billingService.sendInvoice(vendorId, billingId);
-	}
-
-	/*
-	 * 청구서 발송 취소
-	 * */
-	@GetMapping("invoice/cancel/{billingId}")
-	public void cancelInvoice(@VendorId Long vendorId, @PathVariable Long billingId) {
-		billingService.cancelInvoice(vendorId, billingId);
-	}
-
-	/*
-	 * 청구 실시간 결제
-	 * */
-	@GetMapping("payment/{billingId}")
-	public void payRealtimeBilling(@VendorId Long vendorId, @PathVariable Long billingId) {
-		billingService.payBilling(vendorId, billingId);
-	}
-
-	/*
-	 * 청구 결제 취소
-	 * */
-	@GetMapping("payment/{billingId}/cancel")
-	public void cancelPayBilling(@VendorId Long vendorId, @PathVariable Long billingId) {
-		billingService.cancelPayBilling(vendorId, billingId);
 	}
 }
