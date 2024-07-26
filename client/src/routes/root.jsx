@@ -54,6 +54,10 @@ const root = createBrowserRouter([
     path: 'chart',
     element: <ChartTest />,
   },
+  {
+    path: '*',
+    element: <NotFoundPage />,
+  },
 ]);
 
 export default root;

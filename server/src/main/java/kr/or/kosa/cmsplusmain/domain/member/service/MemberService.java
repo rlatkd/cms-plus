@@ -22,6 +22,7 @@ import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -87,7 +88,7 @@ public class MemberService {
         System.out.println("memberId : " + memberId);
         // 회원 정보 조회
         Member member = memberCustomRepository.findMemberDetailById(vendorId, memberId)
-                        .orElseThrow(() -> new EntityNotFoundException("회원 ID 없음(" + memberId + ")"));
+                        .orElseThrow(() -> new MemberNotFoundException("회원 ID 없음(" + memberId + ")"));
 
         // 청구서 수
         int billingCount = billingCustomRepository.findBillingStandardByMemberId(vendorId, memberId);

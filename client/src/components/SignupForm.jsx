@@ -38,9 +38,9 @@ const SignupForm = () => {
   const handleChangeValue = e => {
     const { id, value } = e.target;
     if (id === 'phone' || id === 'homePhone') {
-      setVendorFormData(prev => ({ ...prev, [id]: removeDashes(value == '' ? null : value) }));
+      setVendorFormData(prev => ({ ...prev, [id]: removeDashes(value == '' ? '' : value) }));
     } else {
-      setVendorFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
+      setVendorFormData(prev => ({ ...prev, [id]: value == '' ? '' : value }));
     }
   };
 

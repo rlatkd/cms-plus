@@ -9,16 +9,16 @@ import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
+import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 
-/*********** where 조건 ************/
 public class QueryExpressions {
-
 
 	/*********** 계약 조건 ************/
 	public static BooleanExpression contractVendorIdEq(Long vendorId) {
