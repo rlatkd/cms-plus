@@ -36,13 +36,9 @@ const PaymentAccountPage = () => {
     component: () => 'error',
   };
 
-  //console.log('[주스탄드 상태]: ', invoiceInfo);
-  //console.log('주스탄드 청구ID', invoiceInfo.billingId);
-
-  // 현재 계좌번호를 가져와서 주스탄드에 저장하는게 구현 안 되어있음
-  const number = '56293456234294'; // 이건 AccountInfo에서 입력하고 주스탄드에 저장하고 주스탄드에서 가져와야함
-  const method = 'ACCOUNT'; // 이건 안 건드려도 됨
-  const phoneNumber = '01026270378'; // 테스트용 (실제로는 주스탄드에서 가져옴)
+  const number = accountInfo.accountNumber; //계좌번호
+  const method = 'ACCOUNT';
+  const phoneNumber = invoiceInfo.member.phone;
 
   const paymentData = {
     billingId: invoiceInfo.billingId,
