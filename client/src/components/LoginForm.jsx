@@ -48,7 +48,7 @@ const LoginForm = () => {
   const axiosLogin = async data => {
     try {
       const res = await postLogin(data);
-      const [accessToken, ...vendorInfo] = res.data;
+      const { accessToken, ...vendorInfo } = res.data;
       localStorage.setItem('access_token', accessToken);
       setVendorInfo(vendorInfo);
       console.log('!----로그인 성공----!'); // 삭제예정

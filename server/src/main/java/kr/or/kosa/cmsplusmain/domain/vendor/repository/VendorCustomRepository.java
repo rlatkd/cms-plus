@@ -35,6 +35,36 @@ public class VendorCustomRepository extends BaseCustomRepository<Vendor> {
 	}
 
 	/*
+	 * 고객 존재 여부 판단 - by 고객 phone
+	 */
+	public boolean isExistPhone(String phone) {
+		Integer res = jpaQueryFactory
+				.selectOne()
+				.from(vendor)
+				.where(
+						vendor.phone.eq(phone),
+						vendorNotDel()
+				)
+				.fetchOne();
+		return res != null;
+	}
+
+	/*
+	 * 고객 존재 여부 판단 - by 고객 email
+	 */
+	public boolean isExistEmail(String email) {
+		Integer res = jpaQueryFactory
+				.selectOne()
+				.from(vendor)
+				.where(
+						vendor.email.eq(email),
+						vendorNotDel()
+				)
+				.fetchOne();
+		return res != null;
+	}
+
+	/*
 	 * 아이디로 고객 찾기
 	 * */
 	public Vendor findByUsername(String username) {

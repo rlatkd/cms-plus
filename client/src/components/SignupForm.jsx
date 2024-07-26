@@ -97,7 +97,6 @@ const SignupForm = () => {
   // <----- 회원가입 버튼 활성화 ----->
   const isSignupBtnActive = () => {
     const { name, username, password, email, phone, department } = vendorFormData;
-
     return name && username && password && email && phone && department;
   };
 
@@ -165,6 +164,7 @@ const SignupForm = () => {
                     ? 'bg-mint hover:bg-mint_hover transition-all duration-200 '
                     : 'bg-btn_disa'
                 }  `}
+              tabIndex='-1'
               onClick={handleCheckUsername}>
               중복확인
             </button>
