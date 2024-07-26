@@ -13,7 +13,7 @@ import File from '@/assets/File';
 import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/contractElement';
-import { formatProducts } from '@/utils/format/formatProducts';
+import { formatProducts, formatProductsForList } from '@/utils/format/formatProducts';
 
 const ContractListPage = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록
@@ -54,7 +54,7 @@ const ContractListPage = () => {
         setContractListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
-        console.error('axiosMemberList => ', err.response.data);
+        console.error('axiosMemberList => ', err);
       }
     },
     [currentPage]
@@ -63,14 +63,23 @@ const ContractListPage = () => {
   // <--------데이터 변환-------->
   const transformContractListItem = data => {
     return data.map(contract => {
-      const { contractDay, contractPrice, contractProducts, contractStatus, memberPhone } =
-        contract;
+      // const { contractDay, contractPrice, contractProducts, contractStatus, memberPhone } =
+      //   contract;
+
+      const {
+        contractDay,
+        contractPrice,
+        firstProductName,
+        totalProductCount,
+        contractStatus,
+        memberPhone,
+      } = contract;
 
       return {
         ...contract,
         contractDay: `${contractDay}일`,
         contractPrice: `${contractPrice.toLocaleString()}원`,
-        contractProducts: formatProducts(contractProducts),
+        contractProducts: formatProductsForList(firstProductName, totalProductCount),
         contractStatus: contractStatus.title,
         paymentType: contract.paymentType.title,
         memberPhone: formatPhone(memberPhone),
