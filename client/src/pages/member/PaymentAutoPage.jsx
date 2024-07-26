@@ -5,7 +5,7 @@ const PaymentAuto = () => {
   console.log(invoiceInfo);
 
   if (!invoiceInfo) {
-    return <div>로딩 중...</div>; // 또는 다른 적절한 로딩 표시
+    return <div>로딩 중...</div>;
   }
 
   // 자동결제 청구상태 확인
