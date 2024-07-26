@@ -117,11 +117,12 @@ const BillingDetailPage = () => {
       alert('청구가 수정되었습니다.');
       setIsEditing(false);
       setEditable(false);
+    } catch (err) {
+      handleEditCancel();
+      console.error('청구 수정 실패:', err);
+    } finally {
       fetchBillingDetail();
       fetchBillingProducts();
-    } catch (err) {
-      alert('청구 수정에 실패했습니다.');
-      console.error('Failed to update billing:', err);
     }
   };
 
@@ -131,8 +132,7 @@ const BillingDetailPage = () => {
       alert('청구가 삭제되었습니다.');
       navigate(-1);
     } catch (err) {
-      alert('청구 삭제에 실패했습니다.');
-      console.error('Failed to delete billing:', err);
+      console.error('청구 삭제 실패:', err);
     }
   };
 
@@ -142,7 +142,6 @@ const BillingDetailPage = () => {
       alert('청구서가 발송되었습니다.');
       fetchBillingDetail();
     } catch (err) {
-      alert('청구서 발송에 실패했습니다.');
       console.error('Failed to send invoice:', err);
     }
   };
@@ -153,7 +152,6 @@ const BillingDetailPage = () => {
       alert('청구서 발송이 취소되었습니다.');
       fetchBillingDetail();
     } catch (err) {
-      alert('청구서 발송 취소에 실패했습니다.');
       console.error('Failed to cancel invoice send:', err);
     }
   };
@@ -164,7 +162,6 @@ const BillingDetailPage = () => {
       alert('청구가 결제되었습니다.');
       fetchBillingDetail();
     } catch (err) {
-      alert('청구 결제에 실패했습니다.');
       console.error('Failed to pay billing:', err);
     }
   };
@@ -175,7 +172,6 @@ const BillingDetailPage = () => {
       alert('청구 결제가 취소되었습니다.');
       fetchBillingDetail();
     } catch (err) {
-      alert('청구 결제 취소에 실패했습니다.');
       console.error('Failed to cancel billing payment:', err);
     }
   };
