@@ -46,6 +46,6 @@ export const initialSearch = [
 ];
 
 export const selectOptions = [
-  { label: '계약금액 많은순', orderBy: 'contractPrice', order: 'DESC' },
-  { label: '계약금액 적은순', orderBy: 'contractPrice', order: 'ASC' },
+  { label: '청구금액 많은순', orderBy: 'billingPrice', order: 'DESC' },
+  { label: '청구금액 적은순', orderBy: 'billingPrice', order: 'ASC' },
 ];
