@@ -141,6 +141,7 @@ const SignupForm = () => {
             value={vendorFormData.name}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={40}
           />
           <div className='w-1/2 flex items-end'>
             <InputWeb
@@ -155,6 +156,7 @@ const SignupForm = () => {
               value={vendorFormData.username}
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
+              maxLength={20}
             />
             <button
               className={`ml-3  w-32 rounded-lg text-white text-sm font-700 h-46
@@ -182,6 +184,7 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             autoComplete='off'
+            maxLength={16}
           />
           <InputWeb
             id='passwordCheck'
@@ -196,6 +199,7 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             autoComplete='off'
+            maxLength={16}
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -211,6 +215,7 @@ const SignupForm = () => {
             value={vendorFormData.email}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={40}
           />
           <InputWeb
             id='phone'
@@ -224,6 +229,7 @@ const SignupForm = () => {
             value={formatPhone(vendorFormData.phone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={11}
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -238,6 +244,7 @@ const SignupForm = () => {
             classInput='py-3  placeholder:text-xs'
             value={vendorFormData.department}
             onChange={handleChangeValue}
+            maxLength={40}
           />
           <InputWeb
             id='homePhone'
@@ -250,6 +257,7 @@ const SignupForm = () => {
             value={formatPhone(vendorFormData.homePhone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={10}
           />
         </div>
 
