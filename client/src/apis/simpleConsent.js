@@ -11,6 +11,7 @@ export const getSimpleConsent = async () => {
   }
 };
 
+/* 간편서명동의 설정 전체 상품리스트 가져오기 */
 export const getAllProducts = async () => {
   try {
     const res = await privateAxios.get('/v1/vendor/product/all/no-cond');

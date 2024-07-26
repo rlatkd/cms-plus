@@ -27,15 +27,13 @@ const PaymentCardPage = () => {
   });
 
   const componentMap = {
-    3: { component: ChooseCard }, //카드사 선택
-    4: { component: CardInfo }, //카드정보 입력
-    5: { component: () => <Loading content={'결제중...'} /> }, //결제중
-    6: { component: Success }, //입금완료
+    3: ChooseCard, //카드사 선택
+    4: CardInfo, //카드정보 입력
+    5: () => <Loading content={'결제중...'} />, //결제중
+    6: Success, //입금완료
   };
 
-  const { component: Content } = componentMap[status] || {
-    component: () => 'error',
-  };
+  const Content = componentMap[status] || (() => 'error');
 
   const number = cardInfo.cardNumber; //카드번호
   const method = 'CARD';
