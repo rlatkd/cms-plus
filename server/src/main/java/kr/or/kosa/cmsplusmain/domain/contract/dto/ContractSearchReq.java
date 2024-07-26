@@ -21,6 +21,8 @@ public class ContractSearchReq {
 	private PaymentType paymentType;
 	private PaymentMethod paymentMethod;
 
+	private Long memberId;
+
 	/****** 정렬 가능 항목 *******/
 	// memberName
 	// contractDay

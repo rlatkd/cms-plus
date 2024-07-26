@@ -21,17 +21,16 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
 import kr.or.kosa.cmsplusmain.domain.billing.exception.BillingNotFoundException;
-import kr.or.kosa.cmsplusmain.domain.billing.repository.NewBillingProductRepository;
-import kr.or.kosa.cmsplusmain.domain.billing.repository.NewBillingRepository;
+import kr.or.kosa.cmsplusmain.domain.billing.repository.V2BillingProductRepository;
+import kr.or.kosa.cmsplusmain.domain.billing.repository.V2BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class NewBillingService {
-	private final NewBillingRepository testRepository;
-	private final NewBillingProductRepository billingProductRepository;
-	private final NewBillingRepository newBillingRepository;
+public class V2BillingService {
+	private final V2BillingRepository billingRepository;
+	private final V2BillingProductRepository billingProductRepository;
 
 	@Transactional
 	public void createBilling(Long vendorId, BillingCreateReq billingCreateReq) {
@@ -50,7 +49,7 @@ public class NewBillingService {
 			// ex. 입력 결제일=2024.07.13 => 약정일=13
 			billingCreateReq.getBillingDate().getDayOfMonth(),
 			billingProducts);
-		testRepository.save(billing);
+		billingRepository.save(billing);
 	}
 
 	/**
@@ -59,9 +58,9 @@ public class NewBillingService {
 	 * */
 	public PageRes<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		List<BillingListItemRes> content =
-			testRepository.searchBillings(vendorId, search, pageReq);
+			billingRepository.searchBillings(vendorId, search, pageReq);
 
-		int totalContentCount = (int)testRepository.countBillingListWithCondition(vendorId, search);
+		int totalContentCount = (int)billingRepository.countSearchedBillings(vendorId, search);
 
 		return new PageRes<>(totalContentCount, pageReq.getSize(), content);
 	}
@@ -72,7 +71,7 @@ public class NewBillingService {
 	 * */
 	public BillingDetailRes getBillingDetail(Long vendorId, Long billingId) {
 		validateBillingOwner(billingId, vendorId);
-		Billing billing = testRepository.findBillingWithContract(billingId);
+		Billing billing = billingRepository.findBillingWithContract(billingId);
 
 		Map<BillingState.Field, BillingState> fieldToState = Arrays.stream(BillingState.Field.values())
 			.collect(Collectors.toMap(field -> field, field -> field.checkState(billing)));
@@ -87,7 +86,7 @@ public class NewBillingService {
 	@Transactional
 	public void updateBilling(Long vendorId, Long billingId, BillingUpdateReq billingUpdateReq) {
 		validateBillingOwner(billingId, vendorId);
-		Billing billing = testRepository.findById(billingId);
+		Billing billing = billingRepository.findById(billingId);
 		BillingState.Field.UPDATE.validateState(billing);
 
 		billing.updateBillingDate(billingUpdateReq.getBillingDate());
@@ -147,7 +146,7 @@ public class NewBillingService {
 	 * 청구가 현재 로그인 고객의 청구이면서 존재하는 청구 여부 확인
 	 * */
 	private void validateBillingOwner(Long billingId, Long vendorId) {
-		if (!newBillingRepository.existByVendorId(billingId, vendorId)) {
+		if (!billingRepository.existByVendorId(billingId, vendorId)) {
 			throw new BillingNotFoundException("존재하지 않는 청구입니다");
 		}
 	}

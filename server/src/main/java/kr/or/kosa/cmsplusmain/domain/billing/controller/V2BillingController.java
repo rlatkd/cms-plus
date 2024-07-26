@@ -17,7 +17,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.service.NewBillingService;
+import kr.or.kosa.cmsplusmain.domain.billing.service.V2BillingService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,14 +25,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class V2BillingController {
 
-	private final NewBillingService newBillingService;
+	private final V2BillingService billingService;
 
 	/**
 	 * 청구생성
 	 * */
 	@PostMapping
 	public void createBilling(@VendorId Long vendorId, @RequestBody @Valid BillingCreateReq billingCreateReq) {
-		newBillingService.createBilling(vendorId, billingCreateReq);
+		billingService.createBilling(vendorId, billingCreateReq);
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class V2BillingController {
 	 * */
 	@GetMapping
 	public PageRes<BillingListItemRes> searchBillings(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		return newBillingService.searchBillings(vendorId, search, pageReq);
+		return billingService.searchBillings(vendorId, search, pageReq);
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class V2BillingController {
 	 * */
 	@GetMapping("/{billingId}")
 	public BillingDetailRes getBillingDetail(@VendorId Long vendorId, @PathVariable Long billingId) {
-		return newBillingService.getBillingDetail(vendorId, billingId);
+		return billingService.getBillingDetail(vendorId, billingId);
 	}
 
 	/**
@@ -56,6 +56,6 @@ public class V2BillingController {
 	 * */
 	@PutMapping("/{billingId}")
 	public void updateBilling(@VendorId Long vendorId, @PathVariable Long billingId, @RequestBody @Valid BillingUpdateReq billingUpdateReq) {
-		newBillingService.updateBilling(vendorId, billingId, billingUpdateReq);
+		billingService.updateBilling(vendorId, billingId, billingUpdateReq);
 	}
 }
