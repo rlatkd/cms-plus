@@ -27,26 +27,20 @@ const PaymentCardPage = () => {
   });
 
   const componentMap = {
-    3: { component: ChooseCard }, //카드사 선택
-    4: { component: CardInfo }, //카드정보 입력
-    5: { component: () => <Loading content={'결제중...'} /> }, //결제중
-    6: { component: Success }, //입금완료
+    3: ChooseCard, //카드사 선택
+    4: CardInfo, //카드정보 입력
+    5: () => <Loading content={'결제중...'} />, //결제중
+    6: Success, //입금완료
   };
 
-  const { component: Content } = componentMap[status] || {
-    component: () => 'error',
-  };
+  const Content = componentMap[status] || (() => 'error');
 
-  //console.log('[주스탄드 상태]: ', invoiceInfo);
-  //console.log('주스탄드 청구ID', invoiceInfo.billingId);
-
-  // 현재 카드번호를 가져와서 저장하는게 구현 안 되어있음
-  const number = '56293456234294';
-  const method = 'CARD'; // 이건 안 건드려도 됨
-  const phoneNumber = '01026270378'; // 테스트용 (실제로는 가져옴)
+  const number = cardInfo.cardNumber; //카드번호
+  const method = 'CARD';
+  const phoneNumber = invoiceInfo.member.phone;
 
   const paymentData = {
-    billingId: invoiceInfo.billing.billingId,
+    billingId: invoiceInfo.billingId,
     phoneNumber: phoneNumber,
     method: method,
     number: number,

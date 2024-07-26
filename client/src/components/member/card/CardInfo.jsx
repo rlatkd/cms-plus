@@ -100,8 +100,7 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
             required
             placeholder={selectedCard}
             disabled
-            class='mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-          focus:outline-none disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none'
+            className='disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none'
           />
           <Input
             label='카드번호'
@@ -125,7 +124,7 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
           />
           <Input
             label='명의자'
-            name='cardHolder'
+            name='cardOwner'
             type='text'
             required
             placeholder='최대 15자리'
