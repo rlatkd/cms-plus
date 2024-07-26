@@ -115,7 +115,6 @@ const SimpConsentPage = () => {
     } else if (status === 6) {
       // Success 페이지에서 NextButton을 클릭했을 때
       reset();
-      setStatus(0); // 처음 페이지로 돌아가기
     } else {
       originalHandleClickNext();
     }

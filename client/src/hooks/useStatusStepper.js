@@ -43,7 +43,7 @@ const useStatusStepper = (type, start, end) => {
         if (type === CASES.AUTO) {
           navigate(`/member/invoice/${invoiceInfo.billingId}/payment/auto`);
         } else {
-          //billingStatus가 '완납'일때 complete페이지로 이동
+          //billingStatus가 '완납'이고 자동결제가 아니면 complete페이지로 이동
           navigate(`/member/invoice/${invoiceInfo.billingId}/payment/complete`);
         }
         reset();
