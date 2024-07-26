@@ -43,7 +43,7 @@ const root = createBrowserRouter([
     element: <NotFoundPage />,
   },
   {
-    path: 'error/interal',
+    path: 'error/internal',
     element: <InternalServerErrorPage />,
   },
   {
