@@ -176,9 +176,13 @@ const SimpConsentPage = () => {
         onVerificationComplete={handleCardVerificationComplete}
         isCardVerified={isCardVerified}
       />
-      <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
-        <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
-        <NextButton onClick={handleClickNext} status={status} type={'simpconsent'} end={end} />
+      <div className='h-28' />
+      <div className='fixed bottom-0 left-0 w-full'>
+        <div className='absolute inset-0 bg-white opacity-100 blur' />
+        <div className='relative flex h-24 w-full justify-between p-6 font-bold z-50'>
+          <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
+          <NextButton onClick={handleClickNext} status={status} type={'simpconsent'} end={end} />
+        </div>
       </div>
     </>
   );
