@@ -87,6 +87,10 @@ dependencies {
     implementation ("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly ("io.micrometer:micrometer-registry-prometheus")
 
+    // Logback
+    implementation group: 'com.github.danielwegener', name: 'logback-kafka-appender', version: '0.2.0-RC2'
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+
     // 테스트 롬복
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'

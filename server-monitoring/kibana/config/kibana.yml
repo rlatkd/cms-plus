@@ -1,0 +1,8 @@
+#kibana 설정파일
+server.name: kibana
+server.host: "0"
+
+#elasticsearch
+elasticsearch.hosts: http://elasticsearch:9200
+elasticsearch.username: "elastic"
+elasticsearch.password: "elastic123!@#"
