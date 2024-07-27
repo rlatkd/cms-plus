@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export const useVendorInfo = create(
+export const useVendorInfoStore = create(
   persist(
     set => ({
       vendorInfo: {

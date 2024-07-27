@@ -9,7 +9,7 @@ import SuccessFindIdModal from '@/components/vendor/modal/SuccessFindIdModal';
 import user from '@/assets/user.svg';
 import password from '@/assets/password.svg';
 import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
-import { useVendorInfo } from '@/stores/useVendorInfo';
+import { useVendorInfoStore } from '@/stores/useVendorInfoStore';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const LoginForm = () => {
   const [isShowResetPasswordModal, setIsShowResetPasswordModal] = useState(false);
   const [isShowSuccessFindIdModal, setIsShowSuccessFindIdModal] = useState(false);
   const [findedId, setFindedId] = useState('');
-  const { setVendorInfo } = useVendorInfo();
+  const { setVendorInfo } = useVendorInfoStore();
   const [vendorFormData, setVendorFormData] = useState({
     username: '',
     password: '',
