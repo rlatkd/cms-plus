@@ -51,7 +51,7 @@ const UpdatePaymentInfo = ({ formType }) => {
       await navigate(`/vendor/contracts/detail/${contractId}`);
       onAlertWidthClick();
     } catch (err) {
-      console.error('axiosUpdatePaymentDetail => ', err.response.data);
+      console.error('axiosUpdatePaymentDetail => ', err.response);
     }
   };
 

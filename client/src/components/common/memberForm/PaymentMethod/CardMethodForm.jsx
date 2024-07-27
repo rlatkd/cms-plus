@@ -51,7 +51,7 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
         onAlertClick('카드인증에 실패하셨습니다.');
       }
     } catch (err) {
-      console.error('axiosVerifyCard => ', err.response.data);
+      console.error('axiosVerifyCard => ', err.response);
       onAlertClick('카드인증에 실패하셨습니다.');
     }
   };

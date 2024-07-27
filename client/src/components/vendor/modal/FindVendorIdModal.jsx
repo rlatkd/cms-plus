@@ -73,7 +73,7 @@ const FindVendorIdModal = ({
     } catch (err) {
       // TODO
       // 아이디가 없을 시 예외 처리
-      console.error('axiosFindIdentifier => ', err.response.data);
+      console.error('axiosFindIdentifier => ', err.response);
     }
   };
 

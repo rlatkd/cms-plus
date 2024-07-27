@@ -20,7 +20,7 @@ const MemberInfoUpdatePage = () => {
       await navigate(`/vendor/members/detail/${memberId.id}`);
       onAlertClick();
     } catch (err) {
-      console.error('axiosUpdateMemberBasic => ', err.response.data);
+      console.error('axiosUpdateMemberBasic => ', err.response);
     }
   };
 

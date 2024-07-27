@@ -55,7 +55,7 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
         onAlertClick('계좌인증에 실패하셨습니다.');
       }
     } catch (err) {
-      console.error('axiosVerifyCMS => ', err.response.data);
+      console.error('axiosVerifyCMS => ', err.response);
       onAlertClick('계좌인증에 실패하셨습니다.');
     }
   };

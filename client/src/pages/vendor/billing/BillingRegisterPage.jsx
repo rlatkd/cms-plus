@@ -167,7 +167,7 @@ const BillingRegisterPage = () => {
       } else {
         onAlertWidthClick(err.response.data.message);
       }
-      console.error('axiosBillingCreate => ', err.response.data);
+      console.error('axiosBillingCreate => ', err.response);
     }
   };
 

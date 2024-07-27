@@ -28,7 +28,7 @@ const LoginForm = () => {
   // 사용자 입력값
   const handleChangeValue = e => {
     const { id, value } = e.target;
-    setVendorFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
+    setVendorFormData(prev => ({ ...prev, [id]: value == '' ? '' : value }));
   };
 
   // 공백입력 막기
@@ -50,7 +50,7 @@ const LoginForm = () => {
       localStorage.setItem('access_token', res.data.accessToken);
       navigate('/vendor/dashboard');
     } catch (err) {
-      console.error('axiosJoin => ', err.response.data);
+      console.error('axiosJoin => ', err.response);
     }
   };
 
@@ -66,7 +66,7 @@ const LoginForm = () => {
       console.log('!----인증번호 요청 성공----!'); // 삭제예정
       onAlertWidthClick('인증번호가 발송되었습니다.');
     } catch (err) {
-      console.error('axiosRequestAuthenticationNumber => ', err.response.data);
+      console.error('axiosRequestAuthenticationNumber => ', err.response);
     }
   };
 

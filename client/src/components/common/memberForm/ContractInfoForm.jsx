@@ -61,7 +61,7 @@ const ContractInfoForm = ({ formType }) => {
       console.log('!----전체 상품 목록 조회----!'); // 삭제예정
       setProductList(res.data);
     } catch (err) {
-      console.error('axiosProductList => ', err.response.data);
+      console.error('axiosProductList => ', err.response);
     }
   };
 
