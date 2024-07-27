@@ -16,8 +16,7 @@ const InvoicePage = () => {
   const end = 2;
   const { invoiceId } = useParams();
   const { setInvoiceInfo, invoiceInfo } = useInvoiceStore();
-
-  const status = useStatusStore(state => state.status);
+  const { status, reset } = useStatusStore();
   const [paymentType, setPaymentType] = useState('BUYER');
   const { handleClickPrevious, handleClickNext } = useStatusStepper(paymentType, start, end);
 
@@ -33,16 +32,18 @@ const InvoicePage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchInvoiceInfo(invoiceId);
-  }, []);
-
   const componentMap = {
     0: Main, // 시작화면
     1: () => <CheckInvoice />, // 청구서 확인
   };
 
   const Content = componentMap[status] || (() => 'error');
+
+  // <----- 페이지 렌더링 시 초기화 ----->
+  useEffect(() => {
+    fetchInvoiceInfo(invoiceId);
+    reset();
+  }, []);
 
   return (
     <>

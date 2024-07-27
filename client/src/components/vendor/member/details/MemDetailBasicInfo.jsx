@@ -19,7 +19,12 @@ const MemDetailBasicInfo = () => {
     navigate(`/vendor/members/update/${memberId}`);
   };
 
-  // <------ 회원의 계약, 청구 건수 API ------>
+  // <----- 글자생 변경 ----->
+  const styledText = text => {
+    return text.replace(/건/g, '<span style="color: red;">건</span>');
+  };
+
+  // <----- 회원의 계약, 청구 건수 API ----->
   const axiosContractBillingByMember = async () => {
     try {
       const contractRes = await getContractListByMember(memberId);
@@ -27,19 +32,21 @@ const MemDetailBasicInfo = () => {
       console.log('!----회원의 계약, 청구 건수----!'); // 삭제예정
 
       const contractCount = contractRes.data.content.length;
-      const billingCount = billingRes.data.length;
+      const billingCount = billingRes.data;
       let isDelete = false;
 
       if (contractCount === 0 && billingCount === 0) {
-        isDelete = await confirmClick(`"${basicInfo.memberName}"님을 삭제 하시겠습니까?`);
+        isDelete = await onConfirm(`"${basicInfo.memberName}"님을 삭제 하시겠습니까?`);
         if (isDelete) {
-          console.log(isDelete);
           axiosdeleteMember();
         }
       } else {
-        isDelete = await confirmClick(
-          `"${contractCount}건"의 계약과 "${billingCount}건"의 청구가 함께 삭제됩니다. "${basicInfo.memberName}"님을 삭제 하시겠습니까?`
+        isDelete = await onConfirm(
+          `${styledText(`"${contractCount}건"`)} 의 계약과 ${styledText(
+            `"${billingCount}건"`
+          )} 의 청구가 함께 삭제됩니다. "${basicInfo.memberName}" 님을 삭제 하시겠습니까?`
         );
+
         if (isDelete) {
           axiosdeleteMember();
         }
@@ -49,29 +56,27 @@ const MemDetailBasicInfo = () => {
     }
   };
 
-  // <------ 회원 삭제 API ------>
+  // <----- 회원 삭제 API ----->
   const axiosdeleteMember = async () => {
     try {
       const res = await deleteMember(memberId);
-      console.log(res);
       console.log('!----회원 삭제 성공----!'); // 삭제예정
-      onAlertClick(`"${basicInfo.memberName}"님의 정보가 삭제되었습니다!`);
+      console.log(res);
+      onAlert(`"${basicInfo.memberName}"님의 정보가 삭제되었습니다!`);
       navigate('/vendor/members');
     } catch (err) {
       console.error('axiosdeleteMember => ', err.response.data);
     }
   };
 
-  // <------ Alert창 ------>
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    const result = await alertComp(message);
+  const onAlert = async msg => {
+    await alertComp(msg);
   };
 
-  // <------ Confirm창 ------>
   const { confirm: confrimComp } = useContext(ConfirmContext);
-  const confirmClick = async message => {
-    return await confrimComp(message);
+  const onConfirm = async msg => {
+    return await confrimComp(msg);
   };
 
   return (

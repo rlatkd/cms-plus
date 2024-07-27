@@ -107,12 +107,4 @@ public class ProductService {
             throw new IllegalArgumentException("Not Owner");
         }
     }
-
-    // 임시로 삭제 예정
-    public List<ProductDtoTmp> getProductListTmp(Long vendorId) {
-        return productCustomRepository.findAvailableProductsByVendorUsername(vendorId)
-                .stream()
-                .map(ProductDtoTmp::fromEntity)
-                .collect(Collectors.toList());
-    }
 }

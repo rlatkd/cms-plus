@@ -29,6 +29,9 @@ import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwResetReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.SmsPwFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
+import kr.or.kosa.cmsplusmain.domain.vendor.exception.VendorEmailDuplicationException;
+import kr.or.kosa.cmsplusmain.domain.vendor.exception.VendorPhoneDuplicationException;
+import kr.or.kosa.cmsplusmain.domain.vendor.exception.VendorUsernameDuplicationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -62,14 +65,30 @@ public class VendorService {
 	@Transactional
 	public void join(SignupReq signupReq) {
 		String username = signupReq.getUsername();
+		String phone = signupReq.getPhone();
+		String email = signupReq.getEmail();
 		String password = bCryptPasswordEncoder.encode(signupReq.getPassword());
 		UserRole role = UserRole.ROLE_VENDOR;
 
 		// 중복된 아이디가 입력된 경우 예외처리
-		boolean isExist = vendorCustomRepository.isExistUsername(username);
-		if (isExist) {
-			throw new IllegalArgumentException("Username already exists.");
+		boolean isExistUsername = vendorCustomRepository.isExistUsername(username);
+		if (isExistUsername) {
+			throw new VendorUsernameDuplicationException("아이디 중복되었습니다");
 		}
+
+		// 중복된 핸드폰번호가 입력된 경우 예외처리
+		boolean isExistPhone = vendorCustomRepository.isExistPhone(phone);
+		if (isExistPhone) {
+			throw new VendorPhoneDuplicationException("휴대폰 번호가 중복되었습니다");
+		}
+
+		// 중복된 이메일이 입력된 경우 예외처리
+		boolean isExistEmail = vendorCustomRepository.isExistEmail(email);
+		if (isExistEmail) {
+			throw new VendorEmailDuplicationException("이메일이 중복되었습니다");
+		}
+
+
 
 		Vendor vendor = signupReq.toEntity(username, password, role);
 

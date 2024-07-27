@@ -26,6 +26,8 @@ public enum ErrorCode {
 	// Vendor
 	VENDOR_NOT_FOUND(404, "V001", "판매자를 찾을 수 없습니다"),
 	VENDOR_USERNAME_DUPLICATION(400, "V002", "판매자 사용자명이 중복되었습니다"),
+	VENDOR_PHONE_DUPLICATION(400, "V003", "판매자 핸드폰 번호가 중복되었습니다"),
+	VENDOR_EMAIL_DUPLICATION(400, "V004", "판매자 이메일이 중복되었습니다"),
 
 	// Billing
 	BILLING_NOT_FOUND(404, "B001", "청구를 찾을 수 없습니다"),

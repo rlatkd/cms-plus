@@ -85,7 +85,6 @@ export const publicUploadFileAxios = axios.create({
 // );
 
 // // 응답 인터셉터 설정
-
 [publicAxios, publicUploadFileAxios, privateAxios].forEach(instance => {
   instance.interceptors.response.use(
     response => response,
@@ -98,6 +97,9 @@ export const publicUploadFileAxios = axios.create({
             alert(
               `${(data.errors.length > 0 ? data.errors.join('\n') : data.message) || '잘못된 입력입니다.'}`
             );
+            break;
+          case 401:
+            window.location.href = '/error/forbidden';
             break;
           case 403:
             window.location.href = '/error/forbidden';

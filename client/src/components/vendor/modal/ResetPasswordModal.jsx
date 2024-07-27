@@ -34,7 +34,7 @@ const ResetPasswordModal = ({ icon, isShowModal, findedId, setIsShowModal, modal
       const res = await postResetPassword(data);
       console.log('!----비밀번호 찾기 요청 성공----!'); // 삭제예정
       setIsShowModal(false);
-      onAlertClick('비밀번호 재설정이 완료되었습니다!');
+      onAlert('비밀번호 재설정이 완료되었습니다!');
     } catch (err) {
       console.error('axiosFindPassword => ', err.response.data);
     }
@@ -42,8 +42,8 @@ const ResetPasswordModal = ({ icon, isShowModal, findedId, setIsShowModal, modal
 
   // <---- 비밀번호 재설정 Alert ---->
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    const result = await alertComp(message);
+  const onAlert = async msg => {
+    const result = await alertComp(msg);
   };
 
   useEffect(() => {

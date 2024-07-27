@@ -4,7 +4,7 @@ import { AiOutlineCheck } from 'react-icons/ai';
 const Checkbox = ({ label, name, checked, onChange, disabled }) => {
   return (
     <Switch.Group>
-      <div className='flex items-center'>
+      <div className='flex items-center '>
         <Switch
           checked={checked}
           onChange={onChange}
@@ -16,7 +16,7 @@ const Checkbox = ({ label, name, checked, onChange, disabled }) => {
             className={` ${checked ? 'scale-100' : 'scale-0'} ${checked && !disabled ? 'text-white' : 'text-gray-400'} transition-transform duration-200 ease-out`}
           />
         </Switch>
-        <Switch.Label className='ml-2'>{label}</Switch.Label>
+        <Switch.Label className='ml-2 cursor-pointer'>{label}</Switch.Label>
       </div>
     </Switch.Group>
   );

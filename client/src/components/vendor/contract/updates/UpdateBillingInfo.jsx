@@ -17,7 +17,7 @@ const UpdateBillingInfo = ({ formType }) => {
       await updateMemberBilling(memberId, billingInfo);
       console.log('!----청구정보 수정 성공----!'); // 삭제예정
       await navigate(`/vendor/contracts/detail/${contractId}`);
-      onAlertClick('청구정보가 수정되었습니다!');
+      onAlert('청구정보가 수정되었습니다!');
     } catch (err) {
       console.error('axiosMemberUpdate => ', err.response.data);
     }
@@ -25,8 +25,8 @@ const UpdateBillingInfo = ({ formType }) => {
 
   // <--------청구정보 수정 성공 Alert창-------->
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    await alertComp(message);
+  const onAlert = async msg => {
+    await alertComp(msg);
   };
 
   return (

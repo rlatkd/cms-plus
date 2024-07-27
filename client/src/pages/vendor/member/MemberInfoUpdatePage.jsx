@@ -9,7 +9,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 const MemberInfoUpdatePage = () => {
   const { basicInfo } = useMemberBasicStore();
   const navigate = useNavigate();
-
   const memberId = useParams();
 
   // <--------기본 정보 수정 API-------->
@@ -18,7 +17,7 @@ const MemberInfoUpdatePage = () => {
       await updateMemberBaic(memberId.id, basicInfo);
       console.log('!----기본정보 수정 성공----!'); // 삭제예정
       await navigate(`/vendor/members/detail/${memberId.id}`);
-      onAlertClick();
+      onAlert('회원정보가 수정되었습니다!');
     } catch (err) {
       console.error('axiosUpdateMemberBasic => ', err.response.data);
     }
@@ -26,8 +25,8 @@ const MemberInfoUpdatePage = () => {
 
   // <--------기본정보 수정 성공 Alert창-------->
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async () => {
-    const result = await alertComp('회원정보가 수정되었습니다!');
+  const onAlert = async msg => {
+    const result = await alertComp(msg);
   };
 
   return (
