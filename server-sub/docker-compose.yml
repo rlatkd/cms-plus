@@ -121,7 +121,7 @@ services:
       - kafka-network
 
   prometheus:
-    container_name: prometheus
+    container_name: prometheuszq
     image: prom/prometheus:latest
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
