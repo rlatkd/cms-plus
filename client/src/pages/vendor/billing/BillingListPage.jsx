@@ -135,6 +135,7 @@ const BillingListPage = () => {
       try {
         await payRealTimeBilling(billing.billingId);
       } catch (err) {
+        console.error('실시간 결제', err);
         errors.push({
           from: billing,
           res: err.response.data,
