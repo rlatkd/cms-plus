@@ -13,7 +13,10 @@ export default {
         ipt_disa: '#F1F1F1', // 입력창 비활성화
         essential: '#FF0000', // 필수정보 별태그
         btn_disa: '#C4C4C4', // 버튼 비활성화
-        negative: '#F14141', // 취소, 실패 버튼
+        negative: '#F44334', // 취소, 실패 버튼
+        negative_hover: '#DD3324', // 취소, 실패 버튼 호버
+        warning: '#FFD33C', // 경고 노란색
+        warning_hover: '#EABF29', // 경고 노란색 호버
         table_col: '#f4f5f6', // 테이블 컬럼색
       },
 

@@ -9,6 +9,7 @@ import SuccessFindIdModal from '@/components/vendor/modal/SuccessFindIdModal';
 import user from '@/assets/user.svg';
 import password from '@/assets/password.svg';
 import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
+import { useVendorInfo } from '@/stores/useVendorInfo';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const LoginForm = () => {
   const [isShowResetPasswordModal, setIsShowResetPasswordModal] = useState(false);
   const [isShowSuccessFindIdModal, setIsShowSuccessFindIdModal] = useState(false);
   const [findedId, setFindedId] = useState('');
+  const { setVendorInfo } = useVendorInfo();
   const [vendorFormData, setVendorFormData] = useState({
     username: '',
     password: '',
@@ -46,8 +48,10 @@ const LoginForm = () => {
   const axiosLogin = async data => {
     try {
       const res = await postLogin(data);
+      const { accessToken, ...vendorInfo } = res.data;
+      localStorage.setItem('access_token', accessToken);
+      setVendorInfo(vendorInfo);
       console.log('!----로그인 성공----!'); // 삭제예정
-      localStorage.setItem('access_token', res.data.accessToken);
       navigate('/vendor/dashboard');
     } catch (err) {
       console.error('axiosJoin => ', err.response);
@@ -64,15 +68,15 @@ const LoginForm = () => {
       };
       const res = await postRequestAuthenticationNumber(data);
       console.log('!----인증번호 요청 성공----!'); // 삭제예정
-      onAlertWidthClick('인증번호가 발송되었습니다.');
+      onAlertWidth('인증번호가 발송되었습니다.');
     } catch (err) {
       console.error('axiosRequestAuthenticationNumber => ', err.response);
     }
   };
 
   const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidthClick = async message => {
-    const result = await alertWidthComp(message);
+  const onAlertWidth = async msg => {
+    const result = await alertWidthComp(msg);
   };
 
   return (

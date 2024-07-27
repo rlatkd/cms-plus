@@ -23,10 +23,6 @@ const memberRoute = () => {
       element: <Invoice />,
     },
     {
-      path: 'invoice/:invoiceId/payment/complete',
-      element: <Complete />,
-    },
-    {
       path: 'invoice/:invoiceId/payment',
       element: <PaymentChoose />,
     },
@@ -45,6 +41,10 @@ const memberRoute = () => {
     {
       path: 'invoice/:invoiceId/payment/auto',
       element: <PaymentAuto />,
+    },
+    {
+      path: 'invoice/:invoiceId/payment/complete',
+      element: <Complete />,
     },
   ];
 };

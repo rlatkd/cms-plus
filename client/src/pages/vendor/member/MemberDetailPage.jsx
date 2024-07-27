@@ -4,13 +4,31 @@ import MemDetailContractList from '@/components/vendor/member/details/MemDetailC
 import MemDetailDisplay from '@/components/vendor/member/details/MemDetailDisplay';
 import MemDetailHeader from '@/components/vendor/member/details/MemDetailHeader';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
-import { useMemberDetailStore } from '@/stores/useMemberDetailStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const MemberDetailPage = () => {
-  const { memberData, setMemberInfo } = useMemberDetailStore();
-  const { setBasicInfo } = useMemberBasicStore();
+  const [memberData, setMemberData] = useState({
+    billingCount: '',
+    contractCount: '',
+    createdDateTime: '',
+    memberAddress: {
+      address: '',
+      addressDetail: '',
+      zipcode: '',
+    },
+    memberEmail: '',
+    memberEnrollDate: '',
+    memberHomePhone: '',
+    memberId: '',
+    memberMemo: '',
+    memberName: '',
+    memberPhone: '',
+    modifiedDateTime: '',
+    totalBillingPrice: '',
+  });
+
+  const { setBasicInfo, resetBasicInfo } = useMemberBasicStore();
   const memberId = useParams();
 
   // <------ 회원 상세 조회 ------>
@@ -18,8 +36,8 @@ const MemberDetailPage = () => {
     try {
       const res = await getMemberDetail(memberId.id);
       console.log('!----회원 상세 조회 성공----!'); // 삭제예정
-      setMemberInfo(res.data);
-      setMemberBasicInfo({
+      setMemberData(res.data);
+      setBasicInfo({
         memberName: res.data.memberName,
         memberPhone: res.data.memberPhone,
         memberEnrollDate: res.data.memberEnrollDate,
@@ -37,13 +55,12 @@ const MemberDetailPage = () => {
     }
   };
 
-  // <------ 회원 정보 저장 ------>
-  const setMemberBasicInfo = data => {
-    setBasicInfo(data);
-  };
-
+  // <----- 회원 정보 zustand와 로컬에 저장 ----->
   useEffect(() => {
     axiosMemberDetail();
+    return () => {
+      resetBasicInfo();
+    };
   }, []);
 
   return (

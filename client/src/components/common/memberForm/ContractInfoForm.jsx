@@ -1,74 +1,108 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import ProductSelectFieldcopy from '@/components/common/selects/ProductSelectFieldcopy';
 import Remove from '@/assets/Remove';
-import { getProductListTmp } from '@/apis/product';
+import { getAllProductList } from '@/apis/product';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
 
 // formType : CREATE, UPDATE
 const ContractInfoForm = ({ formType }) => {
   const { contractInfo, setContractInfoItem, setContractProducts } = useMemberContractStore(); // 상품 정보 zustand
   const [productList, setProductList] = useState([]); // 상품 목록
 
-  // <--------Options생성-------->
+  // <-----Options생성----->
   const createOptions = (itemList, valueKey) => {
     return itemList.map(item => ({
       value: item[valueKey],
       label: item[valueKey],
       name: item[valueKey],
-      price: item.productPrice,
+      price: item.price,
       productId: item.productId,
     }));
   };
 
-  const options = createOptions(productList, 'productName');
+  const options = createOptions(productList, 'name');
 
-  // <--------상품 추가-------->
+  // <-----상품 추가----->
   const handleProductChange = newSelectedOptions => {
+    if (newSelectedOptions.length > 10) {
+      onAlert('10개이상 등록 하실 수 없습니다!');
+      return;
+    }
     setContractProducts(newSelectedOptions);
   };
 
-  // <--------상품 제거-------->
+  // <-----상품 제거----->
   const handleRemoveProduct = product => {
-    const tmp = contractInfo.contractProducts;
-    const newSelectedProducts = tmp.filter(p => p.productId !== product.productId);
+    const contractProducts = contractInfo.contractProducts;
+    if (contractProducts.length == 1) {
+      onAlert('반드시 하나의 상품이 필요합니다!');
+      return;
+    }
+    const newSelectedProducts = contractProducts.filter(p => p.productId !== product.productId);
     setContractProducts(newSelectedProducts);
   };
 
-  // <--------상품정보, 계약명 수정-------->
+  // <-----상품정보, 계약명 수정----->
   const handleChangeValue = (e, index = null) => {
     const { id, value } = e.target;
 
     if (id === 'contractName') {
       setContractInfoItem({ [id]: value });
     } else if (index !== null) {
+      const numericValue = value.replace(/\D/g, '');
       const updatedSelectedProducts = contractInfo.contractProducts.map((product, idx) =>
-        idx === index ? { ...product, [id]: value } : product
+        idx === index
+          ? { ...product, [id]: numericValue === '' ? 0 : Number(numericValue) }
+          : product
       );
       setContractProducts(updatedSelectedProducts);
     }
   };
 
   // TODO
-  // <------ 정규표현식 예외처리 ------>
+  // <----- 정규표현식 예외처리 ----->
 
-  // TODO
-  // 민석이 API로 교체
-  // <------ 전체 상품 목록 조회 ------>
+  // <----- 전체 상품 목록 조회 ----->
   const axiosProductList = async () => {
     try {
-      const res = await getProductListTmp();
+      const res = await getAllProductList();
       console.log('!----전체 상품 목록 조회----!'); // 삭제예정
       setProductList(res.data);
+      if (formType === 'CREATE') {
+        addDefaultProduct(res.data[0]);
+      }
     } catch (err) {
       console.error('axiosProductList => ', err.response);
     }
   };
 
+  // <----- 상품 총 합계 계산 ----->
   const calcContractPrice = mContractProducts => {
     return mContractProducts.reduce((sum, cp) => {
       return sum + cp.price * cp.quantity;
     }, 0);
+  };
+
+  // <----- 기본 상품 등록 ----->
+  const addDefaultProduct = defaultProduct => {
+    if (contractInfo.contractProducts.length === 0) {
+      const product = {
+        value: defaultProduct.name,
+        label: defaultProduct.name,
+        name: defaultProduct.name,
+        price: defaultProduct.price,
+        productId: defaultProduct.productId,
+        quantity: 1,
+      };
+      setContractProducts([product]);
+    }
+  };
+
+  const { alert: alertComp } = useContext(AlertContext);
+  const onAlert = async msg => {
+    await alertComp(msg);
   };
 
   useEffect(() => {
@@ -85,7 +119,7 @@ const ContractInfoForm = ({ formType }) => {
           options={options}
           onChange={handleProductChange}
           selectedOptions={contractInfo.contractProducts}
-          classContainer='w-1/3 mr-8'
+          classContainer='w-1/4 mr-8'
           classButton='w-full'
         />
         <InputWeb
@@ -98,16 +132,16 @@ const ContractInfoForm = ({ formType }) => {
           value={contractInfo.contractName}
           onChange={handleChangeValue}
         />
-        <div className='flex items-center ml-auto bg-background border border-ipt_border rounded-lg p-3 mr-2'>
-          <p className='font-bold text-lg mr-2 text-text_black'>합계:</p>
-          <p className='text-right font-bold text-lg text-text_black'>{`${calcContractPrice(contractInfo.contractProducts).toLocaleString()}원`}</p>
+        <div className='flex items-center text-lg font-800 text-text_black ml-auto bg-background border border-ipt_border rounded-lg px-5 py-3 mr-2'>
+          <p className='mr-2'>합계:</p>
+          <p className='text-right  '>{`${calcContractPrice(contractInfo.contractProducts).toLocaleString()}원`}</p>
         </div>
       </div>
 
       <div className='relative flex flex-col h-full text-text_black overflow-y-scroll scrollbar-custom border-b border-ipt_border ml-2'>
         <div className='sticky top-0 flex justify-between bg-white text-text_black font-800 border-b border-ipt_border pb-3'>
           <span className='w-1/5 text-center'>상품명</span>
-          <span className='w-1/12 text-center'>상품금액</span>
+          <span className='w-2/12 text-center'>상품금액</span>
           <span className='w-1/12 text-center'>수량</span>
           <span className='w-1/5 text-center'>상품합계금액</span>
           <span className='w-1/5 text-center'>삭제</span>
@@ -120,18 +154,20 @@ const ContractInfoForm = ({ formType }) => {
             <input
               id='price'
               placeholder='상품금액'
-              className='w-1/12 text-center border border-ipt_border py-2 rounded-lg '
+              className='w-2/12 text-center border border-ipt_border py-2 rounded-lg '
               type='text'
               value={product.price.toLocaleString()}
               onChange={e => handleChangeValue(e, idx)}
+              maxLength={7}
             />
             <input
               id='quantity'
               placeholder='수량'
               className='w-1/12 text-center border border-ipt_border py-2 rounded-lg'
               type='text'
-              value={product.quantity}
+              value={product.quantity.toLocaleString()}
               onChange={e => handleChangeValue(e, idx)}
+              maxLength={2}
             />
             <p className='w-1/5 text-center'>
               {`${(product.price * product.quantity).toLocaleString()} 원`}

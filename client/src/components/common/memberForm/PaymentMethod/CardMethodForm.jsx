@@ -46,20 +46,20 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
       console.log(res);
       console.log('!---- Card 인증 ----!'); // 삭제예정
       if (res) {
-        onAlertClick('카드인증에 성공하셨습니다!');
+        onAlert('카드인증에 성공하셨습니다!');
       } else {
-        onAlertClick('카드인증에 실패하셨습니다.');
+        onAlert('카드인증에 실패하셨습니다.');
       }
     } catch (err) {
       console.error('axiosVerifyCard => ', err.response);
-      onAlertClick('카드인증에 실패하셨습니다.');
+      onAlert('카드인증에 실패하셨습니다.');
     }
   };
 
   // <----- 계좌인증 성공여부 Alert창 ------>
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    await alertComp(message);
+  const onAlert = async msg => {
+    await alertComp(msg);
   };
 
   // TODO

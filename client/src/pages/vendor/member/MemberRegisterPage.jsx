@@ -67,7 +67,7 @@ const MemberRegisterPage = () => {
         const res = await postCreateMember(data);
         console.log('!----회원등록 성공----!'); // 삭제예정
         await navigate('/vendor/members');
-        onAlertClick('회원정보가 등록되었습니다!');
+        onAlert('회원정보가 등록되었습니다!');
       }
     } catch (err) {
       console.error('axiosCreateMember => ', err.response);
@@ -127,8 +127,8 @@ const MemberRegisterPage = () => {
 
   // <----- 기본정보 수정 성공 Alert창 ------>
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    await alertComp(message);
+  const onAlert = async msg => {
+    await alertComp(msg);
   };
 
   // <----- 페이지 이탈 시 Status reset ----->

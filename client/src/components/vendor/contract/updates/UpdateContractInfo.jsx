@@ -27,7 +27,7 @@ const UpdateContractInfo = ({ formType }) => {
       const res = await updateContractDetail(contractId, trasformData);
       console.log('!----계약 정보 수정 성공----!');
       await navigate(`/vendor/contracts/detail/${contractId}`);
-      onAlertClick('계약정보가 수정되었습니다!');
+      onAlert('계약정보가 수정되었습니다!');
     } catch (err) {
       console.error('axiosUpdateContractDetail => ', err);
     }
@@ -35,8 +35,8 @@ const UpdateContractInfo = ({ formType }) => {
 
   // <------ 계약정보 수정 성공 Alert창 ------>
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    await alertComp(message);
+  const onAlert = async msg => {
+    await alertComp(msg);
   };
 
   return (

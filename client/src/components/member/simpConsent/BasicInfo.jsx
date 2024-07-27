@@ -4,7 +4,7 @@ import AddressInput from '@/components/common/inputs/AddressInput';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 
 const BasicInfo = () => {
-  const { userData, setUserData } = useUserDataStore();
+  const { userData, setUserData, setUserDataa } = useUserDataStore();
   const [localData, setLocalData] = useState({
     name: userData.memberDTO.name || '',
     phone: userData.memberDTO.phone || '',
@@ -34,7 +34,7 @@ const BasicInfo = () => {
 
   const handleBlur = e => {
     const { name, value } = e.target;
-    setUserData({ memberDTO: { ...userData.memberDTO, [name]: value } });
+    setUserDataa({ memberDTO: { ...userData.memberDTO, [name]: value } });
   };
 
   // const handleAddressChange = (field, value) => {
@@ -66,6 +66,7 @@ const BasicInfo = () => {
           onChange={handleChange}
           onBlur={handleBlur}
           maxLength={40}
+          tabIndex={0}
         />
         <Input
           label='휴대전화'
@@ -77,6 +78,7 @@ const BasicInfo = () => {
           onChange={handleChange}
           onBlur={handleBlur}
           maxLength={13}
+          tabIndex={0}
         />
         <Input
           label='유선전화'
