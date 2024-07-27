@@ -42,7 +42,7 @@
          props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
          props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
          props.put(ConsumerConfig.GROUP_ID_CONFIG, paymentGroup);
-         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
          props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
          JsonDeserializer<PaymentDto> jsonDeserializer = new JsonDeserializer<>(PaymentDto.class, false);
          return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);

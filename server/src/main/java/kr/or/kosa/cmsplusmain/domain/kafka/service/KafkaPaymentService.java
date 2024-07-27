@@ -34,12 +34,13 @@ public class KafkaPaymentService {
 
     // 메인서버->결제서버; 결제정보 전달
     public void producePayment(PaymentDto paymentDto) {
-        log.error("넘어온데이터{}", paymentDto.toString());
+        log.error("넘어간다 {}", paymentDto.toString());
         paymentKafkaTemplate.send(paymentTopic, paymentDto);
     }
 
     // 메인서버->메시징서버; 결제결과문자 전달
     public void produceMessaging(MessageDto messageDto) {
+        log.error("넘어간다 {}", messageDto.toString());
         messagingKafkaTemplate.send(messagingTopic, messageDto);
     }
 
