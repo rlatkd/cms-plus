@@ -83,6 +83,10 @@ dependencies {
     // yml 값 매핑하여 java 코드에서 객체로 사용
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
 
+    // 프로메테우스
+    implementation ("org.springframework.boot:spring-boot-starter-actuator")
+    runtimeOnly ("io.micrometer:micrometer-registry-prometheus")
+
     // 테스트 롬복
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
