@@ -46,7 +46,7 @@ const UpdatePaymentInfo = ({ formType }) => {
       const res = await updatePaymentDetail(contractId, transformPaymentInfo());
       console.log('!----결제 정보 수정 성공----!'); // 삭제예정
       await navigate(`/vendor/contracts/detail/${contractId}`);
-      onAlertWidthClick();
+      onAlertWidth();
     } catch (err) {
       console.error('axiosUpdatePaymentDetail => ', err.response.data);
     }
@@ -54,7 +54,7 @@ const UpdatePaymentInfo = ({ formType }) => {
 
   // <------ 결제정보 수정 성공 Alert창 ------>
   const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidthClick = async () => {
+  const onAlertWidth = async () => {
     const result = await alertWidthComp('결제정보가 수정되었습니다!');
   };
 

@@ -50,20 +50,20 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
       console.log('!----실시간 CMS 계좌인증 API----!'); // 삭제예정
 
       if (res) {
-        onAlertClick('계좌인증에 성공하셨습니다!');
+        onAlert('계좌인증에 성공하셨습니다!');
       } else {
-        onAlertClick('계좌인증에 실패하셨습니다.');
+        onAlert('계좌인증에 실패하셨습니다.');
       }
     } catch (err) {
       console.error('axiosVerifyCMS => ', err.response.data);
-      onAlertClick('계좌인증에 실패하셨습니다.');
+      onAlert('계좌인증에 실패하셨습니다.');
     }
   };
 
   // <----- 계좌인증 성공여부 Alert창 ------>
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    await alertComp(message);
+  const onAlert = async msg => {
+    await alertComp(msg);
   };
 
   // TODO

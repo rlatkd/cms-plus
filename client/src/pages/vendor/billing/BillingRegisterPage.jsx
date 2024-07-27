@@ -62,7 +62,7 @@ const BillingRegisterPage = () => {
   }, []);
 
   const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidthClick = async msg => {
+  const onAlertWidth = async msg => {
     await alertWidthComp(msg);
   };
 
@@ -142,14 +142,14 @@ const BillingRegisterPage = () => {
   const handleBillingSubmit = async () => {
     try {
       await createBilling(billingData);
-      onAlertWidthClick('청구가 생성되었습니다.');
+      onAlertWidth('청구가 생성되었습니다.');
       navigate(-1);
     } catch (err) {
       console.log(err);
       if (err.response.status === 400) {
-        onAlertWidthClick(convertBadReqMsg(err));
+        onAlertWidth(convertBadReqMsg(err));
       } else {
-        onAlertWidthClick(err.response.data.message);
+        onAlertWidth(err.response.data.message);
       }
       console.error('axiosBillingCreate => ', err.response.data);
     }

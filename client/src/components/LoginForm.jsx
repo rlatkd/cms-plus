@@ -68,15 +68,15 @@ const LoginForm = () => {
       };
       const res = await postRequestAuthenticationNumber(data);
       console.log('!----인증번호 요청 성공----!'); // 삭제예정
-      onAlertWidthClick('인증번호가 발송되었습니다.');
+      onAlertWidth('인증번호가 발송되었습니다.');
     } catch (err) {
       console.error('axiosRequestAuthenticationNumber => ', err.response.data);
     }
   };
 
   const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidthClick = async message => {
-    const result = await alertWidthComp(message);
+  const onAlertWidth = async msg => {
+    const result = await alertWidthComp(msg);
   };
 
   return (

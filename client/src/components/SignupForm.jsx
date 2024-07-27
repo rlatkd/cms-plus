@@ -8,15 +8,27 @@ import AlertContext from '@/utils/dialog/alert/AlertContext';
 const SignupForm = () => {
   const navigate = useNavigate();
   const [checkedUsername, setCheckedUsername] = useState('');
+  // const [vendorFormData, setVendorFormData] = useState({
+  //   name: '',
+  //   username: '',
+  //   password: '',
+  //   passwordCheck: '',
+  //   email: '',
+  //   phone: '',
+  //   department: '',
+  //   homePhone: '',
+  // });
+
+  // Test데이터
   const [vendorFormData, setVendorFormData] = useState({
-    name: '',
-    username: '',
-    password: '',
-    passwordCheck: '',
-    email: '',
-    phone: '',
-    department: '',
-    homePhone: '',
+    username: 'vendor6',
+    password: 'Qwer123!',
+    passwordCheck: 'Qwer123!',
+    name: 'hyosung',
+    email: 'gusehd3279@gmail.com',
+    phone: '01026963279',
+    homePhone: '029999999',
+    department: 'Sales',
   });
 
   // TODO
@@ -105,7 +117,7 @@ const SignupForm = () => {
     try {
       const res = await postJoin(data);
       console.log('!----회원가입 성공----!'); // 삭제예정
-      onAlertClick('회원가입에 성공하셨습니다!');
+      onAlert('회원가입에 성공하셨습니다!');
       navigate('/login');
     } catch (err) {
       console.error('axiosJoin => ', err.response.data);
@@ -113,8 +125,8 @@ const SignupForm = () => {
   };
 
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    const result = await alertComp(message);
+  const onAlert = async msg => {
+    const result = await alertComp(msg);
   };
 
   return (
@@ -151,7 +163,7 @@ const SignupForm = () => {
               required
               classContainer='w-full'
               classLabel='text-sm'
-              classInput='py-3  placeholder:text-xs'
+              classInput='py-3 placeholder:text-xs'
               value={vendorFormData.username}
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
@@ -183,7 +195,7 @@ const SignupForm = () => {
             value={vendorFormData.password}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            autoComplete='off'
+            // autoComplete='off'  // !CHECK! 주석해제필요
             maxLength={16}
           />
           <InputWeb
@@ -198,7 +210,7 @@ const SignupForm = () => {
             value={vendorFormData.passwordCheck}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            autoComplete='off'
+            // autoComplete='off' // !CHECK! 주석해제필요
             maxLength={16}
           />
         </div>

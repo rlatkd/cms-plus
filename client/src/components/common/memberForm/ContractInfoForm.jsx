@@ -27,7 +27,7 @@ const ContractInfoForm = ({ formType }) => {
   // <-----상품 추가----->
   const handleProductChange = newSelectedOptions => {
     if (newSelectedOptions.length > 10) {
-      onAlertClick('10개이상 등록 하실 수 없습니다!');
+      onAlert('10개이상 등록 하실 수 없습니다!');
       return;
     }
     setContractProducts(newSelectedOptions);
@@ -37,7 +37,7 @@ const ContractInfoForm = ({ formType }) => {
   const handleRemoveProduct = product => {
     const contractProducts = contractInfo.contractProducts;
     if (contractProducts.length == 1) {
-      onAlertClick('반드시 하나의 상품이 필요합니다!');
+      onAlert('반드시 하나의 상품이 필요합니다!');
       return;
     }
     const newSelectedProducts = contractProducts.filter(p => p.productId !== product.productId);
@@ -101,8 +101,8 @@ const ContractInfoForm = ({ formType }) => {
   };
 
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlertClick = async message => {
-    await alertComp(message);
+  const onAlert = async msg => {
+    await alertComp(msg);
   };
 
   useEffect(() => {

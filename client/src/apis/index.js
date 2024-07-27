@@ -85,7 +85,6 @@ export const publicUploadFileAxios = axios.create({
 // );
 
 // // 응답 인터셉터 설정
-
 [publicAxios, publicUploadFileAxios, privateAxios].forEach(instance => {
   instance.interceptors.response.use(
     response => response,
