@@ -74,6 +74,7 @@ public class Contract extends BaseEntity {
 	@Comment("계약 약정일")
 	@Column(name = "contract_day", nullable = false)
 	@Day @NotNull
+	@Setter
 	private Integer contractDay;
 
 	@Comment("계약 결제정보")

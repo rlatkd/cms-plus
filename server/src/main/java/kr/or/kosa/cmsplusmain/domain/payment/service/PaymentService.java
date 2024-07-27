@@ -188,6 +188,8 @@ public class PaymentService {
 //		contractService.validateContractUser(contractId, vendorId);
 		Contract contract = contractRepository.findById(contractId).orElseThrow(IllegalArgumentException::new);
 
+		contract.setContractDay(paymentUpdateReq.getContractDay());
+
 		// 고객의 결제 여부 확인
 		Long paymentId = contract.getPayment().getId();
 		validatePaymentUser(paymentId);

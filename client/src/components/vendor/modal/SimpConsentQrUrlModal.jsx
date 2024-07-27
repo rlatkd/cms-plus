@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import BaseModal from '@/components/common/BaseModal';
 import QRCode from 'qrcode.react';
+import send from '@/assets/send.svg';
 
 // 전화번호 포맷팅 함수 import
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
@@ -60,6 +61,7 @@ const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
       isShowModal={isShowModal}
       setIsShowModal={setIsShowModal}
       modalTitle={modalTitle}
+      icon={send}
       height={'h-640'}
       width={'w-480'}>
       <div className='flex flex-col items-center p-2'>

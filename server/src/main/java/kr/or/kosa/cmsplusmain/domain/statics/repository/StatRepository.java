@@ -209,7 +209,7 @@ public class StatRepository {
 			.select(new QDayBillingQueryRes(
 					billing.billingDate,
 					billing.billingStatus,
-					billing.id.count().intValue(),
+					billing.id.countDistinct().intValue(),
 					billingProduct.price.longValue().multiply(billingProduct.quantity).sum()
 				)
 			)

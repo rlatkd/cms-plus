@@ -52,4 +52,6 @@ export const initialSearch = [
 export const selectOptions = [
   { label: '계약금액 많은순', orderBy: 'contractPrice', order: 'DESC' },
   { label: '계약금액 적은순', orderBy: 'contractPrice', order: 'ASC' },
+  { label: '약정일 빠른순', orderBy: 'contractDay', order: 'ASC' },
+  { label: '약정일 느린순', orderBy: 'contractDay', order: 'DESC' },
 ];
