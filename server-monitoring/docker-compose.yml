@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  kafkaui:
+    container_name: kafkaui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - '9000:8080'
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_NAME: 'local'
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: '52.78.194.214:9092,52.78.194.214:9093,52.78.194.214:9094'
+      KAFKA_CLUSTERS_0_ZOOKEEPER: '52.78.194.214:2181'
+    restart: unless-stopped
+
+  kafdrop:
+    container_name: kafdrop
+    image: obsidiandynamics/kafdrop
+    ports:
+      - '9001:9000'
+    environment:
+      KAFKA_BROKER_CONNECT: '52.78.194.214:9094'
+    restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    restart: unless-stopped 
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "4000:3000"
+    restart: unless-stopped

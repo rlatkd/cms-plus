@@ -25,7 +25,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_BROKER_ID: '1'
       KAFKA_LISTENERS: 'PLAINTEXT://:29092,PLAINTEXT_HOST://0.0.0.0:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://****:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://52.78.194.214:9092'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
@@ -48,7 +48,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_BROKER_ID: 2
       KAFKA_LISTENERS: 'PLAINTEXT://:29093,PLAINTEXT_HOST://0.0.0.0:9093'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka2:29093,PLAINTEXT_HOST://****:9093'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka2:29093,PLAINTEXT_HOST://52.78.194.214:9093'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
@@ -71,7 +71,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_BROKER_ID: 3
       KAFKA_LISTENERS: 'PLAINTEXT://:29094,PLAINTEXT_HOST://0.0.0.0:9094'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka3:29094,PLAINTEXT_HOST://****:9094'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka3:29094,PLAINTEXT_HOST://52.78.194.214:9094'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
@@ -86,54 +86,3 @@ services:
     restart: unless-stopped
     networks:
       - kafka-network
-
-  kafkaui:
-    container_name: kafkaui
-    image: provectuslabs/kafka-ui:latest
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-    ports:
-      - '9000:8080'
-    environment:
-      DYNAMIC_CONFIG_ENABLED: 'true'
-      KAFKA_CLUSTERS_0_NAME: 'local'
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka1:29092,kafka2:29093,kafka3:29094'
-      KAFKA_CLUSTERS_0_ZOOKEEPER: 'zookeeper:2181'
-    restart: unless-stopped
-    networks:
-      - kafka-network
-
-  kafdrop:
-    container_name: kafdrop
-    image: obsidiandynamics/kafdrop
-    ports:
-      - '9001:9000'
-    environment:
-      KAFKA_BROKER_CONNECT: 'kafka3:29094'
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-    restart: unless-stopped
-    networks:
-      - kafka-network
-
-  prometheus:
-    container_name: prometheuszq
-    image: prom/prometheus:latest
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - "9090:9090"
-    restart: unless-stopped 
-
-  grafana:
-    container_name: grafana
-    image: grafana/grafana:latest
-    ports:
-      - "4000:3000"
-    restart: unless-stopped
