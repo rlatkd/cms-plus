@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import ProductSelectField from '@/components/common/selects/ProductSelectField';
 import Checkbox from '@/components/common/inputs/CheckBox';
 import useSimpleConsentStore from '@/stores/simpleConsentStore';
-import { getSimpleConsent, getAllProducts, updateSimpleConsent } from '@/apis/simpleConsent';
+import { getSimpleConsent, updateSimpleConsent } from '@/apis/simpleConsent';
+import { getAllProductList } from '@/apis/product';
 
 const SettingSimpConsentPage = () => {
   const [isShowModal, setIsShowModal] = useState(false);
@@ -33,8 +34,8 @@ const SettingSimpConsentPage = () => {
         });
         setCheckedItems(newCheckedItems);
 
-        const allProducts = await getAllProducts();
-        console.log(allProducts);
+        const res = await getAllProductList();
+        const allProducts = res.data;
         setProducts(allProducts);
 
         const selectedProductsData = allProducts.filter(product =>

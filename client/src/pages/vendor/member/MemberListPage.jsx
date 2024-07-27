@@ -166,6 +166,7 @@ const MemberListPage = () => {
         setPageGroup={setPageGroup}
         buttonCount={buttonCount}
       />
+
       <MemberExcelModal
         isShowModal={isShowExcelModal}
         setIsShowModal={setIsShowExcelModal}

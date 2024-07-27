@@ -90,14 +90,8 @@ export const publicUploadFileAxios = axios.create({
     response => response,
     err => {
       if (err.response) {
-        const data = err.response.data;
-        console.error(data);
+        console.log('응답 인터셉터 err => ', err);
         switch (err.response.status) {
-          case 400:
-            alert(
-              `${(data.errors.length > 0 ? data.errors.join('\n') : data.message) || '잘못된 입력입니다.'}`
-            );
-            break;
           case 401:
             window.location.href = '/error/forbidden';
             break;

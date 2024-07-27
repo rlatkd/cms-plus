@@ -9,7 +9,7 @@ const paymentMethods = [
 const BuyerTypeForm = ({ paymentType, formType }) => {
   const { paymentTypeInfoReq_Buyer, setAvailableMethods } = useMemberPaymentStore();
 
-  // <------ 체크박스 선택값 변경 ------>
+  // <----- 체크박스 선택값 변경 ----->
   const handleChangeCheckbox = value => {
     const updatedMethods = paymentTypeInfoReq_Buyer.availableMethods.includes(value)
       ? paymentTypeInfoReq_Buyer.availableMethods.filter(m => m !== value)
@@ -45,6 +45,7 @@ const BuyerTypeForm = ({ paymentType, formType }) => {
             <Checkbox
               name={method.value}
               label={method.label}
+              classBox='h-4 w-4 rounded-sm '
               checked={makeAvailableMethods(paymentTypeInfoReq_Buyer.availableMethods).includes(
                 method.value
               )}

@@ -1,4 +1,3 @@
-import React from 'react';
 import PaymentInfoForm from '@/components/common/memberForm/PaymentInfoForm';
 
 const RegisterContractInfo = ({ formType }) => {

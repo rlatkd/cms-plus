@@ -20,7 +20,7 @@ const contractDays = [
 ];
 
 const PaymentInfoForm = ({ formType }) => {
-  const { paymentType, setPaymentType, paymentMethod, setPaymentMethod } = useMemberPaymentStore();
+  const { paymentType, setPaymentType } = useMemberPaymentStore();
   const { contractInfo, setContractInfoItem } = useMemberContractStore();
 
   const handleChangePaymentType = value => {

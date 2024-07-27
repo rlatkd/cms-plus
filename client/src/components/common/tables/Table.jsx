@@ -16,11 +16,9 @@ const Table = ({
   const [selection, setSelection] = useState([]);
   const itemKey = cols[0].key;
 
-  // 체크박스 하나 선택
+  // <----- 체크박스 하나 선택 ----->
   const handleClickCheckBox = value => {
     let newSelection = [...selection];
-
-    console.log('selection', selection);
     if (newSelection.includes(value)) {
       newSelection = newSelection.filter(item => item !== value);
     } else {
@@ -30,9 +28,9 @@ const Table = ({
     handleChangeSelection(newSelection);
   };
 
-  // 모든 체크박스 선택
+  // <----- 모든 체크박스 선택 ----->
   const handleClickCheckBoxAll = e => {
-    if (e.target.checked) {
+    if (e) {
       const allCheckedSelection = rows.map(item => item);
       setSelection(allCheckedSelection);
       handleChangeSelection(allCheckedSelection);

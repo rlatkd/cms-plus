@@ -19,14 +19,14 @@ const ProductSelectFieldcopy = ({
 
   // <----- 검색 필터링 ----->
   const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    option.value.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // <-----
   const toggleOption = product => {
     const newSelectedOptions = selectedOptions.find(p => p.productId === product.productId)
       ? selectedOptions.filter(p => p.productId !== product.productId)
       : [{ ...product, quantity: 1 }, ...selectedOptions];
+
     onChange(newSelectedOptions);
   };
 

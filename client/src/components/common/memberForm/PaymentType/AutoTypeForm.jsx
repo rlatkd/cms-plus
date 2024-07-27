@@ -1,30 +1,34 @@
 import RadioGroup from '@/components/common/inputs/RadioGroup';
-import { useEffect, useState } from 'react';
 import CardMethodForm from '../PaymentMethod/CardMethodForm';
 import CmsMethodForm from '../PaymentMethod/CmsMethodForm';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
+import SimpConsentForm from '../PaymentMethod/SimpConsentForm';
+import { useEffect } from 'react';
 
 const PaymentMethod = [
   { label: '실시간 CMS', value: 'CMS' },
   { label: '카드', value: 'CARD' },
+  { label: '회원설정', value: '' },
 ];
 
 // formType : CREATE, UPDATE
 const AutoTypeForm = ({ paymentType, formType }) => {
   const { paymentMethod, setPaymentMethod } = useMemberPaymentStore();
 
-  // <------ Radio paymentMethod 변경 ------>
+  // <----- Radio paymentMethod 변경 ----->
   const handleChangeValue = value => {
     setPaymentMethod(value);
   };
 
-  // <------ 결제수단에 따른 폼 생성 ------>
+  // <----- 결제수단에 따른 폼 생성 ----->
   const renderPaymentMethodForm = () => {
     switch (paymentMethod) {
       case 'CMS':
         return <CmsMethodForm paymentMethod={paymentMethod} formType={formType} />;
       case 'CARD':
         return <CardMethodForm paymentMethod={paymentMethod} formType={formType} />;
+      case '':
+        return <SimpConsentForm paymentMethod={paymentMethod} formType={formType} />;
       default:
         return null;
     }
@@ -41,7 +45,7 @@ const AutoTypeForm = ({ paymentType, formType }) => {
         onChange={handleChangeValue}
         classLabel='ml-1 mb-3'
       />
-      <div>{renderPaymentMethodForm()}</div>
+      <div className='relative'>{renderPaymentMethodForm()}</div>
     </div>
   );
 };
