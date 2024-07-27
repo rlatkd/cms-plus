@@ -31,7 +31,7 @@ const Test = () => {
     console.log(result);
   };
 
-  console.log('test v1');
+  console.log('test v2');
 
   return (
     <div>
