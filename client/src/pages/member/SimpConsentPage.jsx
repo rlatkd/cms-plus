@@ -18,15 +18,15 @@ import { sendSimpleConsentData } from '@/apis/simpleConsent';
 const SimpConsentPage = () => {
   const start = 0;
   const end = 6;
+  const { status, setStatus, reset } = useStatusStore();
+  const { userData, setUserData } = useUserDataStore();
+  const [isCardVerified, setIsCardVerified] = useState(false);
+
   const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
     'simpconsent',
     start,
     end
   );
-
-  const { status, setStatus, reset } = useStatusStore();
-  const { userData, setUserData } = useUserDataStore();
-  const [isCardVerified, setIsCardVerified] = useState(false);
 
   const handleCardVerificationComplete = verified => {
     setIsCardVerified(verified);
@@ -167,6 +167,11 @@ const SimpConsentPage = () => {
   };
 
   const Content = componentMap[status] || (() => 'error');
+
+  // <----- 페이지 렌더링 시 초기화 ----->
+  useEffect(() => {
+    reset();
+  }, []);
 
   return (
     <>

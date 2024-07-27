@@ -41,7 +41,7 @@ const PaymentVirtualPage = () => {
       const res = await requestVirtualAccountPayment(paymentData);
       console.log(res.data);
     } catch (err) {
-      console.error('axiosVirtualAccountPayment => ', err.response.data);
+      console.error('axiosVirtualAccountPayment => ', err.response);
     }
   };
 
@@ -56,6 +56,8 @@ const PaymentVirtualPage = () => {
           status={status}
           end={end}
           onPayment={axiosVirtualAccountPayment}
+          // 가상계좌에서 마지막 결제 완료 루트 하나 줄어들면 위에꺼 지우고 아래꺼 적용
+          // onVirtualPayment={axiosVirtualAccountPayment}
         />
       </div>
     </>

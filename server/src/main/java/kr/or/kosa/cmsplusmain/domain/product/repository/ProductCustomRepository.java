@@ -1,12 +1,16 @@
 package kr.or.kosa.cmsplusmain.domain.product.repository;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
+import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductQueryDto;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductSearchReq;
@@ -26,6 +30,7 @@ import java.util.List;
 
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.product.entity.QProduct.product;
 
 
@@ -121,6 +126,7 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                 .having( // 집계함수(ex. count)에 대한 조건문은 where절이 아닌 having절에서 사용함
                         contractNumberLoe(search.getContractNumber())           // 상품들의 각 해당하는 계약수 이하
                 )
+            .orderBy(buildProductOrderSpecifier(pageable))
                 .offset(pageable.getPage())
                 .limit(pageable.getSize())
                 .fetch();
@@ -210,6 +216,26 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                 .selectFrom(product)
                 .where(productNotDel())
                 .fetch();
+    }
+
+    private OrderSpecifier<?> buildProductOrderSpecifier(PageReq pageReq) {
+        if (pageReq == null || !StringUtils.hasText(pageReq.getOrderBy())) {
+            return product.createdDateTime.desc();
+        }
+
+        String orderBy = pageReq.getOrderBy();
+
+        if (orderBy.equals("productPrice")) {
+            NumberExpression<Integer> exp = product.price;
+            return pageReq.isAsc() ? exp.asc() : exp.desc();
+        }
+
+        if (orderBy.equals("contractCount")) {
+            NumberExpression<Long> exp = contract.countDistinct();
+            return pageReq.isAsc() ? exp.asc() : exp.desc();
+        }
+
+        throw new BusinessException("잘못된 정렬조건입니다", ErrorCode.INVALID_INPUT_VALUE);
     }
 
     private BooleanExpression contractNumberLoe(Integer contractNumber) {

@@ -35,11 +35,11 @@
              paymentResultDto.setBillingId(paymentDto.getBillingId());
              paymentResultDto.setPhoneNumber(paymentDto.getPhoneNumber());
              try {
-                 if (Long.parseLong(paymentDto.getNumber()) % 2 == 0) { // Long; 계좌/카드 번호 길어지면 integer로 변환 에러남
-                     paymentResultDto.setResult("결제성공");
+                 if (Long.parseLong(String.valueOf(paymentDto.getNumber().charAt(paymentDto.getNumber().length() - 1))) % 2 == 0) { // Long; 계좌/카드 번호 길어지면 integer로 변환 에러남
+                     paymentResultDto.setResult("결제가 완료되었습니다.");
                      log.error("결제성공");
                  } else {
-                     paymentResultDto.setResult("결제실패");
+                     paymentResultDto.setResult("결제에 실패했습니다.");
                      log.error("결제실패");
                  }
                  producePaymentResult(paymentResultDto); // 결제서버->메인서버; 결제결과 전달

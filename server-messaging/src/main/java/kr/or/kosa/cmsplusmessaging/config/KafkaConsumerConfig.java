@@ -41,7 +41,7 @@
          props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
          props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
          props.put(ConsumerConfig.GROUP_ID_CONFIG, messagingGroup);
-         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
          props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
          JsonDeserializer<MessageDto> jsonDeserializer = new JsonDeserializer<>(MessageDto.class, false);
          return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);

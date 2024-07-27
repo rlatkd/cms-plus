@@ -29,6 +29,7 @@ const BasicInfo = ({ userData, setUserData }) => {
           value={userData.memberDTO.name || ''}
           onChange={handleChange}
           maxLength={40}
+          tabIndex={0}
         />
         <Input
           label='휴대전화'
@@ -39,6 +40,7 @@ const BasicInfo = ({ userData, setUserData }) => {
           value={userData.memberDTO.phone || ''}
           onChange={handleChange}
           maxLength={13}
+          tabIndex={0}
         />
         <Input
           label='유선전화'

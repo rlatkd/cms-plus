@@ -43,3 +43,9 @@ kafkaGroup:
 kafkaTopic:
   messagingTopic: ${MESSAGING_TOPIC}
   paymentTopic: ${PAYMENT_TOPIC}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus

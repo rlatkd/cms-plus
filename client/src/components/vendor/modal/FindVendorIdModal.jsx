@@ -66,7 +66,6 @@ const FindVendorIdModal = ({
     try {
       console.log(vendorIdFormData);
       const res = await postFindIdentifier(vendorIdFormData);
-      console.log(res);
       console.log('!----아이디 찾기 요청 성공----!'); // 삭제예정
       await setFindedId(res.data.username);
       setIsShowSuccessFindIdModal(true);
@@ -74,7 +73,7 @@ const FindVendorIdModal = ({
     } catch (err) {
       // TODO
       // 아이디가 없을 시 예외 처리
-      console.error('axiosFindIdentifier => ', err.response.data);
+      console.error('axiosFindIdentifier => ', err.response);
     }
   };
 
@@ -112,6 +111,7 @@ const FindVendorIdModal = ({
           classInput='mb-4 rounded-xl'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          maxLength={40}
         />
         <div className='mb-4 flex items-end'>
           {selectedSendMethod === 'SMS' ? (
@@ -125,6 +125,7 @@ const FindVendorIdModal = ({
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
               classInput='rounded-xl'
+              maxLength={11}
             />
           ) : (
             <InputWeb
@@ -137,6 +138,7 @@ const FindVendorIdModal = ({
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
               classInput='rounded-xl'
+              maxLength={40}
             />
           )}
           <button
@@ -158,9 +160,10 @@ const FindVendorIdModal = ({
           type='text'
           placeholder='인증번호 6자리를 입력해 주세요.'
           value={vendorIdFormData.authenticationNumber}
-          classInput='mb-8 rounded-xl'
+          classInput='mb-5 rounded-xl'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          maxLength={6}
         />
         <button
           className='font-700 bg-mint px-4 py-3  text-white rounded-xl 

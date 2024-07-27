@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.config;
 
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.common.config.TopicConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -7,8 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
-public class KafkaTopicConfig {
+public class KafkaAdminConfig {
 
     /*
     * Kafka Broker 설정이 auto.create.topics.enable면
@@ -16,11 +20,22 @@ public class KafkaTopicConfig {
     * KafkaTemplate을 통헤 produce할 때 없는 topic이더라도 생성하면서 produce함
     * */
 
+    @Value("${kafkaServer.ip}")
+    private String kafkaServerIp;
+
     @Value("${kafkaTopic.messagingTopic}")
     private String messagingTopic;
 
     @Value("${kafkaTopic.paymentTopic}")
     private String paymentTopic;
+
+    // 카프카 어드민 설정
+    @Bean
+    public KafkaAdmin kafkaAdmin() {
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerIp);
+        return new KafkaAdmin(configs);
+    }
 
     @Bean
     public KafkaAdmin.NewTopics newTopics() {
@@ -28,12 +43,12 @@ public class KafkaTopicConfig {
                 TopicBuilder.name(messagingTopic)
                         .partitions(3)
                         .replicas(3)
-                        .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
+                        .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(60000))
                         .build(),
                 TopicBuilder.name(paymentTopic)
                         .partitions(3)
                         .replicas(3)
-                        .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
+                        .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(60000))
                         .build()
         );
     }

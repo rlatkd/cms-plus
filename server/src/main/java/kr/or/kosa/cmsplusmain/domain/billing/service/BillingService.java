@@ -8,8 +8,22 @@ import java.util.stream.Collectors;
 
 import kr.or.kosa.cmsplusmain.domain.billing.dto.*;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CMSMethodRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import org.springframework.stereotype.Service;
@@ -42,8 +56,8 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final BillingProductRepository billingProductRepository;
 	private final ContractCustomRepository contractCustomRepository;
-	// private final KafkaMessagingService kafkaMessagingService;
-
+	private final KafkaMessagingService kafkaMessagingService;
+	private final KafkaPaymentService kafkaPaymentService;
 	private final PaymentService paymentService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
@@ -93,15 +107,15 @@ public class BillingService {
 	}
 
 	private void sendInvoiceMessage(String message, Member member) {
-		// 청구서 링크 발송
-		// MessageSendMethod sendMethod = member.getInvoiceSendMethod();
-		//
-		// switch (sendMethod) {
-		// 	case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
-		// 					kafkaMessagingService.produceMessaging(smsMessageDto); }
-		// 	case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
-		// 					kafkaMessagingService.produceMessaging(emailMessageDto); }
-		// }
+		 //청구서 링크 발송
+		 MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+
+		 switch (sendMethod) {
+		 	case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+		 					kafkaMessagingService.produceMessaging(smsMessageDto); }
+		 	case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+		 					kafkaMessagingService.produceMessaging(emailMessageDto); }
+		 }
 	}
 
 	/*
@@ -115,16 +129,6 @@ public class BillingService {
 		billing.setInvoiceCancelled();
 	}
 
-	@Transactional
-	public void payBilling(Long vendorId, Long billingId) {
-		Billing billing = validateAndGetBilling(vendorId, billingId);
-		BillingState.Field.PAY_REALTIME.validateState(billing);
-
-		// TODO: 결제 프로세스 구현
-
-		billing.setPaid();
-	}
-
 	/*
 	 * 청구 실시간 결제
 	 * */
@@ -133,7 +137,24 @@ public class BillingService {
 		Billing billing = validateAndGetBilling(vendorId, billingId);
 		BillingState.Field.PAY_REALTIME.validateState(billing);
 
-		// TODO: 결제 프로세스 구현
+		Contract contract = billing.getContract();
+		Member member = contract.getMember();
+		Payment payment = contract.getPayment();
+		PaymentMethod method = payment.getPaymentMethod();
+
+		switch (method) {
+			case CARD -> {
+				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfo(payment);
+				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(), cardMethodRes.getCardNumber());
+				kafkaPaymentService.producePayment(cardPaymentDto);
+			}
+			case CMS -> {
+				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfo(payment);
+				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(), cmsMethodRes.getAccountNumber());
+				kafkaPaymentService.producePayment(accountPaymentDto);
+			}
+
+		}
 
 		billing.setPaid();
 	}

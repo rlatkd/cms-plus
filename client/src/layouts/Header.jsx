@@ -1,4 +1,5 @@
 import BreadCrumb from '@/components/common/BreadCrumb';
+import Timer from '@/components/common/Timer';
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -16,8 +17,9 @@ const Header = () => {
   return (
     <div
       ref={mainRef}
-      className='flex pt-9 pl-9 pb-3 h-[20%] desktop:h-[11vh] extra_desktop:h-[10vh] '>
+      className='flex justify-between pt-9 px-9 pb-3 h-[20%] desktop:h-[11vh] extra_desktop:h-[10vh] border border-red-400'>
       <BreadCrumb />
+      <Timer />
     </div>
   );
 };

@@ -31,9 +31,9 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
     setErrors([]);
   }, [isShowModal]);
 
-  const onAlertClick = async msg => {
+  const onAlert = async msg => {
     const result = await alertCompWidth(msg);
-    console.log('onAlertWidthClick : ', result);
+    console.log('onAlertWidth : ', result);
   };
 
   const handleFileChange = e => {
@@ -70,7 +70,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
       if (errors.data.length > 0) {
         setData(errors.data.map(e => e.notSaved));
         setErrors(errors.data.map(e => e.message));
-        onAlertClick(
+        onAlert(
           `총: ${data.length} 성공: ${data.length - errors.data.length} 실패: ${errors.data.length}`
         );
         return;
@@ -82,7 +82,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
       setIsShowModal(false);
     } catch (error) {
       console.error('Error submitting data:', error);
-      onAlertClick('회원 정보 등록 중 오류가 발생했습니다.');
+      onAlert('회원 정보 등록 중 오류가 발생했습니다.');
     }
   };
 
@@ -116,10 +116,12 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
           </div>
           <div>
             <div className='container flex justify-between'>
-              <a className='ml-4 flex items-center underline mr-5'
-                href={'../../../../default_excel.xlsx'} 
-                download="회원등록양식.xlsx"
-              >양식 다운로드</a>
+              <a
+                className='ml-4 flex items-center underline mr-5'
+                href={'../../../../default_excel.xlsx'}
+                download='회원등록양식.xlsx'>
+                양식 다운로드
+              </a>
               {file &&
                 (data.length <= 0 ? (
                   <button
@@ -191,19 +193,19 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
                   ))
                 ) : (
                   <tr>
-                      <td colSpan={headers.length} className='px-6 py-4 text-center text-gray-500'>
-                        데이터가 없습니다. 엑셀 파일을 업로드해주세요.
-                      </td>
+                    <td colSpan={headers.length} className='px-6 py-4 text-center text-gray-500'>
+                      데이터가 없습니다. 엑셀 파일을 업로드해주세요.
+                    </td>
                   </tr>
                 )}
               </tbody>
             </table>
             {isLoading && (
-                      <div className='text-center mb-4'>
-                        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto'></div>
-                        <p className='mt-2 text-gray-600'>업로드 중...</p>
-                      </div>
-                    )}
+              <div className='text-center mb-4'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto'></div>
+                <p className='mt-2 text-gray-600'>업로드 중...</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

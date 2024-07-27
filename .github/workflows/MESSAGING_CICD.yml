@@ -9,10 +9,10 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: t3-back-messagingecr5
-  ECS_CLUSTER: t3-back-ecscluster5
-  ECS_CONTAINER: t3-back-messagingcontainer5
-  ECS_SERVICE: t3-back-ecscluster5/t3-back-messagingservice5
+  ECR_REPOSITORY: t3-back-messagingecr
+  ECS_CLUSTER: t3-back-ecscluster
+  ECS_CONTAINER: t3-back-messagingcontainer
+  ECS_SERVICE: t3-back-ecscluster/t3-back-messagingservice
   ECS_TASK_DEFINITION: task-definition-messaging.json
 
 permissions:
@@ -65,7 +65,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server-messaging
+        docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server-messaging
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 

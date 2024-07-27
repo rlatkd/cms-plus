@@ -14,8 +14,26 @@ const BuyerTypeForm = ({ paymentType, formType }) => {
     const updatedMethods = paymentTypeInfoReq_Buyer.availableMethods.includes(value)
       ? paymentTypeInfoReq_Buyer.availableMethods.filter(m => m !== value)
       : [...paymentTypeInfoReq_Buyer.availableMethods, value];
+
+    // 납부자결제 수단은 최소 한 개 이상
+    if (!updatedMethods || updatedMethods.length < 1) {
+      alert('최소 한 개 이상의 수단이 등록되어야 합니다.');
+      return;
+    }
+
     setAvailableMethods(updatedMethods);
   };
+
+  const makeAvailableMethods = methods => {
+    if (!methods) {
+      methods = [];
+    }
+    if (methods.length < 1) {
+      methods.push('CARD');
+    }
+    return methods;
+  };
+
   return (
     <>
       <p className='mb-4 ml-1 text-15 text-text_black font-700'>
@@ -27,7 +45,9 @@ const BuyerTypeForm = ({ paymentType, formType }) => {
             <Checkbox
               name={method.value}
               label={method.label}
-              checked={paymentTypeInfoReq_Buyer.availableMethods.includes(method.value)}
+              checked={makeAvailableMethods(paymentTypeInfoReq_Buyer.availableMethods).includes(
+                method.value
+              )}
               onChange={() => handleChangeCheckbox(method.value)}
             />
           </div>

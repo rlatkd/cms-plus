@@ -1,13 +1,13 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-messagingtask5:1",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-messagingtask:14",
     "containerDefinitions": [
         {
-            "name": "t3-back-messagingcontainer5",
-            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-messagingecr5:latest",
+            "name": "t3-back-messagingcontainer",
+            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-messagingecr:latest",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "t3-back-messagingcontainer5-8090-tcp",
+                    "name": "t3-back-messagingcontainer-8090-tcp",
                     "containerPort": 8090,
                     "hostPort": 8090,
                     "protocol": "tcp",
@@ -23,7 +23,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/t3-back-messagingtask5",
+                    "awslogs-group": "/ecs/t3-back-messagingtask",
                     "awslogs-create-group": "true",
                     "awslogs-region": "ap-northeast-2",
                     "awslogs-stream-prefix": "ecs"
@@ -33,11 +33,11 @@
             "systemControls": []
         }
     ],
-    "family": "t3-back-messagingtask5",
+    "family": "t3-back-messagingtask",
     "taskRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 1,
+    "revision": 14,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -83,7 +83,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-07-25T00:14:55.883Z",
+    "registeredAt": "2024-07-27T05:26:25.639Z",
     "registeredBy": "arn:aws:iam::891376922202:user/fms-kosa-tema3",
     "tags": []
 }

@@ -9,15 +9,13 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
-import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.V2BillingRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.V2ContractListItemRes;
-import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.exception.ContractNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.V2ContractProductRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.V2ContractRepository;
-import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
-import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,13 +27,7 @@ public class V2ContractService {
 
 	private final V2ContractRepository contractRepository;
 	private final V2BillingRepository billingRepository;
-
-	private final ContractCustomRepository contractCustomRepository;
-	private final BillingCustomRepository billingCustomRepository;
-	private final ProductCustomRepository productCustomRepository;
-
-	private final PaymentService paymentService;
-	private final ContractProductRepository contractProductRepository;
+	private final V2ContractProductRepository contractProductRepository;
 
 	/*
 	 * 계약 목록 조회
@@ -54,7 +46,12 @@ public class V2ContractService {
 		return new PageRes<>((int) totalContentCount, pageReq.getSize(), content);
 	}
 
+	/**
+	 * 계약의 모든 청구
+	 * */
 	public PageRes<BillingListItemRes> getBillingsByContract(Long vendorId, Long contractId, PageReq pageReq) {
+		validateContractByVendor(vendorId, contractId);
+
 		BillingSearchReq searchReq = new BillingSearchReq();
 		searchReq.setContractId(contractId);
 
@@ -62,5 +59,22 @@ public class V2ContractService {
 		long totalContentCount = billingRepository.countSearchedBillings(vendorId, searchReq);
 
 		return new PageRes<>((int) totalContentCount, pageReq.getSize(), content);
+	}
+
+	/**
+	 * 계약의 모든 계약상품
+	 * */
+	public List<ContractProductRes> getContractProducts(Long vendorId, Long contractId) {
+		validateContractByVendor(vendorId, contractId);
+
+		return contractProductRepository.findAllByContractId(contractId).stream()
+			.map(ContractProductRes::fromEntity)
+			.toList();
+	}
+
+	private void validateContractByVendor(Long vendorId, Long contractId) {
+		if (!contractRepository.existsContractByVendorId(vendorId, contractId)) {
+			throw new ContractNotFoundException("계약이 없습니다");
+		}
 	}
 }

@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { privateAxios } from '@/apis';
 
 const useSimpleConsentStore = create(set => ({

@@ -11,13 +11,17 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
+import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.repository.V2BaseRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.QV2ContractListItemRes;
@@ -41,9 +45,10 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 				getFirstProductName(search.getProductName()),
 				contractProduct.countDistinct()
 			))
-			.groupBy(member.name, member.phone, contract.contractDay, payment.paymentType, contract.contractStatus);
+			.groupBy(member.name, member.phone, contract.contractDay, payment.paymentType, contract.contractStatus)
+			.orderBy(buildOrderSpecifier(pageReq));
 
-		return applyPagingAndSort(query, pageReq).fetch();
+		return applyPaging(query, pageReq).fetch();
 	}
 
 	/**
@@ -56,6 +61,9 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 		return searchQuery(vendorId, search).fetchCount();
 	}
 
+	/**
+	 * 검색 조건 생성
+	 * */
 	private JPAQuery<?> searchQuery(Long vendorId, ContractSearchReq search) {
 		return from(contract)
 			.join(contract.member, member)
@@ -73,6 +81,16 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 			)
 			.groupBy(contract.id)
 			.having(contractPriceLoe(search.getContractPrice()));
+	}
+
+	/**
+	 * 해당 고객에게 계약이 존재하는지 여부
+	 * */
+	public boolean existsContractByVendorId(Long vendorId, Long contractId) {
+		Integer res = selectOneFrom(contract)
+			.where(contractVendorIdEq(vendorId))
+			.fetchOne();
+		return res != null;
 	}
 
 	/*********** 조건 ************/
@@ -107,5 +125,25 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 				.from(contractProduct)
 				.where(contractProduct.name.contains(productName))
 		);
+	}
+
+	private OrderSpecifier<?> buildOrderSpecifier(PageReq pageReq) {
+		if (pageReq == null || !StringUtils.hasText(pageReq.getOrderBy())) {
+			return contract.createdDateTime.desc();
+		}
+
+		String orderBy = pageReq.getOrderBy();
+
+		if (orderBy.equals("contractPrice")) {
+			NumberExpression<Long> expression = contractProduct.price.longValue().multiply(contractProduct.quantity).sum();
+			return pageReq.isAsc() ? expression.asc() : expression.desc();
+		}
+
+		if (orderBy.equals("contractDay")) {
+			NumberExpression<Integer> expression = contract.contractDay;
+			return pageReq.isAsc() ? expression.asc() : expression.desc();
+		}
+
+		throw new BusinessException("잘못된 정렬조건입니다", ErrorCode.INVALID_INPUT_VALUE);
 	}
 }

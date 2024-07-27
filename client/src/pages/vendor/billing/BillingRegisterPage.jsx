@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getContractList } from '@/apis/contract';
+import { getContractList, getContractProducts } from '@/apis/contract';
 import { getAllProductList } from '@/apis/product';
 import useDebounce from '@/hooks/useDebounce';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -35,6 +35,11 @@ const BillingRegisterPage = () => {
     products: [],
   });
 
+  const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
+  const onAlertWidth = async msg => {
+    await alertWidthComp(msg);
+  };
+
   const fetchContractList = useCallback(
     async (page = currentPage) => {
       try {
@@ -52,6 +57,16 @@ const BillingRegisterPage = () => {
     [searchType, searchTerm, currentPage]
   );
 
+  const fetchContractProducts = useCallback(async contractId => {
+    try {
+      const res = await getContractProducts(contractId);
+      return res.data;
+    } catch (err) {
+      console.error('청구 생성 - 계약상품 목록 조회 실패', err);
+      return [];
+    }
+  }, []);
+
   const fetchAllProducts = useCallback(async () => {
     try {
       const res = await getAllProductList();
@@ -60,11 +75,6 @@ const BillingRegisterPage = () => {
       console.error('청구 생성 - 상품 목록 조회 실패', err);
     }
   }, []);
-
-  const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidthClick = async msg => {
-    await alertWidthComp(msg);
-  };
 
   useEffect(() => {
     fetchAllProducts();
@@ -101,14 +111,16 @@ const BillingRegisterPage = () => {
     return billingDate.toISOString().split('T')[0];
   };
 
-  const handleSelectContract = contract => {
-    setSelectedContract(contract);
+  const handleSelectContract = async contract => {
+    const contractProducts = await fetchContractProducts(contract.contractId);
+    console.log('contractProducts', contractProducts);
     setBillingData(prev => ({
       ...prev,
       contractId: contract.contractId,
       billingDate: calculateBillingDate(contract.contractDay),
-      products: contract.contractProducts,
+      products: contractProducts,
     }));
+    setSelectedContract(contract);
   };
 
   const handleBillingDataChange = (key, value) => {
@@ -123,7 +135,7 @@ const BillingRegisterPage = () => {
     }));
   };
 
-  const handleProductInfoChange = (idx, column, to) => {
+  const handleProductChange = (idx, column, to) => {
     const newBillingProducts = [...billingData.products];
     newBillingProducts[idx] = { ...newBillingProducts[idx], [column]: to };
     setBillingData(prev => ({
@@ -133,6 +145,10 @@ const BillingRegisterPage = () => {
   };
 
   const handleProductRemove = productId => {
+    if (billingData.products.length < 2) {
+      alert('청구는 최소 한 개의 상품을 지녀야합니다.');
+      return;
+    }
     setBillingData(prev => ({
       ...prev,
       products: prev.products.filter(p => p.productId !== productId),
@@ -142,16 +158,16 @@ const BillingRegisterPage = () => {
   const handleBillingSubmit = async () => {
     try {
       await createBilling(billingData);
-      onAlertWidthClick('청구가 생성되었습니다.');
+      onAlertWidth('청구가 생성되었습니다.');
       navigate(-1);
     } catch (err) {
       console.log(err);
       if (err.response.status === 400) {
-        onAlertWidthClick(convertBadReqMsg(err));
+        onAlertWidth(convertBadReqMsg(err));
       } else {
-        onAlertWidthClick(err.response.data.message);
+        onAlertWidth(err.response.data.message);
       }
-      console.error('axiosBillingCreate => ', err.response.data);
+      console.error('axiosBillingCreate => ', err.response);
     }
   };
 
@@ -186,7 +202,7 @@ const BillingRegisterPage = () => {
                 handleBillingDataChange={handleBillingDataChange}
                 products={products}
                 handleProductAdd={handleProductAdd}
-                handleProductChange={handleProductInfoChange}
+                handleProductChange={handleProductChange}
                 handleProductRemove={handleProductRemove}
               />
             </div>

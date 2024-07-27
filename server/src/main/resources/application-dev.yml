@@ -11,6 +11,6 @@ spring:
       port: 6379
 
 logging:
-  level:
-    sql: debug
+ level:
+   sql: debug
 #    org.hibernate.orm.jdbc.bind: trace
