@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +16,12 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
-import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
@@ -76,15 +74,10 @@ public class SampleDataLoader {
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
-		List<Product> products = createProductsForVendor(vendor, productCnt);
-		List<Member> members = createMembersForVendor(vendor, memberCnt);
-		List<Contract> contracts = createContractsForMembers(members, products, contractCnt);
-		List<Billing> billings = createBillingsForContracts(contracts, products, billingCnt);
-
-		productRepository.saveAll(products);
-		memberRepository.saveAll(members);
-		contractRepository.saveAll(contracts);
-		billingRepository.saveAll(billings);
+		List<Product> products = productRepository.saveAll(createProductsForVendor(vendor, productCnt));
+		List<Member> members = memberRepository.saveAll(createMembersForVendor(vendor, memberCnt));
+		List<Contract> contracts = contractRepository.saveAll(createContractsForMembers(members, products, contractCnt));
+		List<Billing> billings = billingRepository.saveAll(createBillingsForContracts(contracts, products, billingCnt));
 	}
 
 	public List<Product> createProductsForVendor(Vendor vendor, int productCnt) {

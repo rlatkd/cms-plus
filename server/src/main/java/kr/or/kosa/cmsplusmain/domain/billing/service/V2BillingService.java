@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -105,7 +106,7 @@ public class V2BillingService {
 	 * */
 	private void updateBillingProducts(Billing billing, List<BillingProduct> mNewBillingProducts) {
 
-		List<BillingProduct> oldBillingProducts = billing.getBillingProducts();
+		Set<BillingProduct> oldBillingProducts = billing.getBillingProducts();
 		List<BillingProduct> newBillingProducts = new ArrayList<>(mNewBillingProducts);
 
 		// 삭제될 청구상품 ID

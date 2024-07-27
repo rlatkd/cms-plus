@@ -2,8 +2,9 @@ package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
@@ -100,7 +101,7 @@ public class Billing extends BaseEntity {
 	// 동일 상품 추가 안됨
 	@OneToMany(mappedBy = "billing", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
-	private List<BillingProduct> billingProducts = new ArrayList<>();
+	private Set<BillingProduct> billingProducts = new HashSet<>();
 
 	public Billing(Contract contract, BillingType billingType, LocalDate billingDate, int contractDay, List<BillingProduct> billingProducts) {
 		// 청구는 최소 한 개의 상품을 가져야한다.

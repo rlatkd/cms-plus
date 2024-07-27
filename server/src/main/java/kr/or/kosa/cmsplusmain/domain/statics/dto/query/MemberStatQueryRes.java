@@ -6,12 +6,12 @@ import lombok.Getter;
 
 @Getter
 public class MemberStatQueryRes {
-	private final Long totalMemberCount;
-	private final Long newMemberCount;
-	private final Long activeMemberCount;
+	private final long totalMemberCount;
+	private final long newMemberCount;
+	private final long activeMemberCount;
 
 	@QueryProjection
-	public MemberStatQueryRes(Long totalMemberCount, Long newMemberCount, Long activeMemberCount) {
+	public MemberStatQueryRes(long totalMemberCount, long newMemberCount, long activeMemberCount) {
 		this.totalMemberCount = totalMemberCount;
 		this.newMemberCount = newMemberCount;
 		this.activeMemberCount = activeMemberCount;
