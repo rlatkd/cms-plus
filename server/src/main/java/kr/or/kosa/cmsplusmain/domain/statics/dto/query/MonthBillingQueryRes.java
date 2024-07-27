@@ -11,12 +11,12 @@ import lombok.Getter;
 public class MonthBillingQueryRes {
 	private final LocalDate billingDate;
 	private final BillingStatus billingStatus;
-	private final Integer billingCount;
-	private final Long billingPrice;
+	private final int billingCount;
+	private final long billingPrice;
 
 	@QueryProjection
-	public MonthBillingQueryRes(LocalDate billingDate, BillingStatus billingStatus, Integer billingCount,
-		Long billingPrice) {
+	public MonthBillingQueryRes(LocalDate billingDate, BillingStatus billingStatus, int billingCount,
+		long billingPrice) {
 		this.billingDate = billingDate;
 		this.billingStatus = billingStatus;
 		this.billingCount = billingCount;
