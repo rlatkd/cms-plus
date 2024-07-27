@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,8 +12,11 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.annotation.PostConstruct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
@@ -22,6 +26,7 @@ import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Bank;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
@@ -56,7 +61,11 @@ public class SampleDataLoader {
 	private final Random random = new Random();
 	private final RandomGenerator randomGenerator = new RandomGenerator(random);
 
-	@Transactional
+	private final List<Bank> allBanks = Arrays.stream(Bank.values()).toList();
+	private final List<BillingStatus> allBillingStatus = Arrays.stream(BillingStatus.values()).toList();
+	private final List<BillingType> allBillingType = Arrays.stream(BillingType.values()).toList();
+
+	@PostConstruct
 	public void init() {
 		Vendor vendor = vendorRepository.save(
 			createVendorWithDefaultProduct(
@@ -66,11 +75,7 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-
 		generateSampleData(vendor, 10, 10, 10, 10);
-
-
-
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
@@ -97,14 +102,14 @@ public class SampleDataLoader {
 
 		for (int i = 0; i < count; i++) {
 			Contract contract = randomGenerator.getRandomInList(contracts);
-			LocalDate billingDate = randomGenerator.generateRandomDate(billingDateFrom, billingDateTo);
+			LocalDate billingDate = generateRandomDate(billingDateFrom, billingDateTo);
 			int contractDay = random.nextInt(28) + 1;
 
 			List<BillingProduct> billingProducts = createBillingProducts(products);
 
-			Billing billing = new Billing(contract, randomGenerator.getRandomBillingType(), billingDate, contractDay, billingProducts);
-			billing.setBillingStatus(randomGenerator.getRandomBillingStatus(billingDate));
-			billing.setInvoiceMessage(randomGenerator.generateRandomInvoiceMessage());
+			Billing billing = new Billing(contract, getRandomBillingType(), billingDate, contractDay, billingProducts);
+			billing.setBillingStatus(getRandomBillingStatus(billingDate));
+			billing.setInvoiceMessage(generateRandomInvoiceMessage());
 
 			// 청구 상태 여부에 따른 결제 시각 및 청구서 발송 시각 설정
 			switch (billing.getBillingStatus()) {
@@ -275,7 +280,7 @@ public class SampleDataLoader {
 				.availableMethods(Set.of(PaymentMethod.CARD, PaymentMethod.ACCOUNT))
 				.build();
 			case VIRTUAL -> VirtualAccountPaymentType.builder()
-				.bank(randomGenerator.getRandomBank())
+				.bank(getRandomBank())
 				.accountNumber(randomGenerator.generateRandomAccountNumber())
 				.accountOwner("가상계좌주인" + random.nextInt(100))
 				.build();
@@ -295,14 +300,14 @@ public class SampleDataLoader {
 				.cardOwnerBirth(LocalDate.now().minusYears(20 + random.nextInt(40)))
 				.build();
 			case CMS -> CmsPaymentMethod.builder()
-				.bank(randomGenerator.getRandomBank())
+				.bank(getRandomBank())
 				.accountNumber(randomGenerator.generateRandomAccountNumber())
 				.accountOwner("CMS주인" + random.nextInt(100))
 				.accountOwnerBirth(LocalDate.now().minusYears(20 + random.nextInt(40)))
 				.build();
 			case ACCOUNT ->
 				CmsPaymentMethod.builder()
-					.bank(randomGenerator.getRandomBank())
+					.bank(getRandomBank())
 					.accountNumber(randomGenerator.generateRandomAccountNumber())
 					.accountOwner("계좌주인" + random.nextInt(100))
 					.accountOwnerBirth(LocalDate.now().minusYears(20 + random.nextInt(40)))
@@ -332,4 +337,44 @@ public class SampleDataLoader {
 			.memo("이것은 테스트 상품입니다. " + ((idx != -1) ? idx : ""))
 			.build();
 	}
+
+	public BillingType getRandomBillingType() {
+		return allBillingType.get(random.nextInt(allBillingType.size()));
+	}
+
+	public Bank getRandomBank() {
+		return allBanks.get(random.nextInt(allBanks.size()));
+	}
+
+	public LocalDate generateRandomDate(LocalDate from, LocalDate to) {
+		Period period = Period.between(from, to);
+		return from
+			.plusMonths(random.nextInt((period.getMonths() < 0) ? period.getMonths() * -1 : period.getMonths()))
+			.plusDays(random.nextInt((period.getDays() < 0) ? period.getDays() * -1 : period.getDays()));
+	}
+
+	public BillingStatus getRandomBillingStatus(LocalDate billingDate) {
+		// 결제일이 지난 경우
+		// 가능한 상태는 [완납, 미납]
+		if (LocalDate.now().isAfter(billingDate)) {
+			return randomGenerator.getRandomInList(List.of(BillingStatus.PAID, BillingStatus.NON_PAID));
+		}
+		return randomGenerator.getRandomInList(allBillingStatus);
+	}
+
+	public String generateRandomInvoiceMessage() {
+		String[] messages = {
+			null,
+			"감사합니다.",
+			"이번 달 청구서입니다.",
+			"문의사항은 고객센터로 연락주세요.",
+			"결제 기한을 지켜주세요."
+		};
+		return messages[random.nextInt(messages.length)];
+	}
+
+	public BillingStatus getRandomBillingStatus() {
+		return allBillingStatus.get(random.nextInt(allBillingStatus.size()));
+	}
+
 }
