@@ -3,6 +3,8 @@ package kr.or.kosa.cmsplusmain.domain.payment.service;
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.RandomNumberGenerator;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.exception.ContractNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
@@ -13,6 +15,7 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.*;
 import kr.or.kosa.cmsplusmain.domain.payment.repository.*;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
+import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,7 +51,7 @@ public class PaymentService {
 	private final CmsPaymentMethodRepository cmsPaymentMethodRepository;
 	private final PaymentRepository paymentRepository;
 	private final ContractRepository contractRepository;
-//	private final ContractService contractService;
+	private final ContractCustomRepository contractCustomRepository;
 	private final PaymentCustomRepository paymentCustomRepository;
 
 	public PaymentTypeInfoRes getPaymentTypeInfo(Payment payment) {
@@ -120,7 +123,7 @@ public class PaymentService {
 			case CARD -> {
 				CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) paymentMethodInfo;
 				yield CardMethodRes.builder()
-					.cardNumber(cardPaymentMethod.getCardNumber())
+					.cardNumber(FormatUtil.formatCardNumber(cardPaymentMethod.getCardNumber()))
 					.cardOwner(cardPaymentMethod.getCardOwner())
 					.cardOwnerBirth(cardPaymentMethod.getCardOwnerBirth())
 					.cardMonth(cardPaymentMethod.getCardMonth())
@@ -132,7 +135,7 @@ public class PaymentService {
 				yield CMSMethodRes.builder()
 					.bank(cmsPaymentMethod.getBank())
 					.accountOwner(cmsPaymentMethod.getAccountOwner())
-					.accountNumber(cmsPaymentMethod.getAccountNumber())
+					.accountNumber(FormatUtil.formatAccountNumber(cmsPaymentMethod.getAccountNumber()))
 					.accountOwnerBirth(cmsPaymentMethod.getAccountOwnerBirth())
 					.build();
 
@@ -185,7 +188,9 @@ public class PaymentService {
 		//TODO
 		//contractService를 호출 하는 순간 "순환 의존성" 문제가 생긴다 왜 샌기는걸지 알아보자.
 		// 고객의 계약 여부 확인
-//		contractService.validateContractUser(contractId, vendorId);
+		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
+			throw new ContractNotFoundException("계약이 존재하지 않습니다");
+		}
 		Contract contract = contractRepository.findById(contractId).orElseThrow(IllegalArgumentException::new);
 
 		contract.setContractDay(paymentUpdateReq.getContractDay());

@@ -4,34 +4,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import kr.or.kosa.cmsplusmain.domain.billing.dto.*;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
-import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;
-import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CMSMethodRes;
-import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;
-import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
-import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
-import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.InvoiceRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
@@ -41,7 +30,20 @@ import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingProductRepository
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CMSMethodRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -166,8 +168,6 @@ public class BillingService {
 	public void cancelPayBilling(Long vendorId, Long billingId) {
 		Billing billing = validateAndGetBilling(vendorId, billingId);
 		BillingState.Field.CANCEL_PAYMENT.validateState(billing);
-
-		// TODO: 결제 취소 프로세스 구현
 
 		billing.setPayCanceled();
 	}
@@ -295,7 +295,7 @@ public class BillingService {
 	 * */
 	private void updateBillingProducts(Billing billing, List<BillingProduct> mNewBillingProducts) {
 
-		List<BillingProduct> oldBillingProducts = billing.getBillingProducts();
+		Set<BillingProduct> oldBillingProducts = billing.getBillingProducts();
 		List<BillingProduct> newBillingProducts = new ArrayList<>(mNewBillingProducts);
 
 		// 삭제될 청구상품 ID

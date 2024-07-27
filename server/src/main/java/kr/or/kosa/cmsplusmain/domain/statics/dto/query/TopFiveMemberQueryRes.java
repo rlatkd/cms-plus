@@ -8,11 +8,11 @@ import lombok.Getter;
 public class TopFiveMemberQueryRes {
 	private final Long memberId;
 	private final String memberName;
-	private final Long totalContractPrice;
+	private final long totalContractPrice;
 	private final int contractCount;
 
 	@QueryProjection
-	public TopFiveMemberQueryRes(Long memberId, String memberName, Long totalContractPrice, int contractCount) {
+	public TopFiveMemberQueryRes(Long memberId, String memberName, long totalContractPrice, int contractCount) {
 		this.memberId = memberId;
 		this.memberName = memberName;
 		this.totalContractPrice = totalContractPrice;
