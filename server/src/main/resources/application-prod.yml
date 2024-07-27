@@ -9,3 +9,9 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: 6379
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
