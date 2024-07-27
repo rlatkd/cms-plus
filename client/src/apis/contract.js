@@ -31,6 +31,17 @@ export const getContractDetail = async contractId => {
   }
 };
 
+// 계약상품 조회
+export const getContractProducts = async contractId => {
+  try {
+    const res = await privateAxios.get(`/v2/vendor/contract/${contractId}/product`);
+    return res;
+  } catch (err) {
+    console.error('계약 상품 조회 실패', err.response);
+    throw err;
+  }
+};
+
 // 계약 상세 조회 - 청구리스트
 export const getContractDetailBillingList = async contractId => {
   try {

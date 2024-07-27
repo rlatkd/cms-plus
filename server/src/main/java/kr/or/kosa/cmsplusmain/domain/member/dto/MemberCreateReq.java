@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.member.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
@@ -52,8 +53,10 @@ public class MemberCreateReq {
     @NotNull
     private boolean autoBilling; // 자동 청구 발송
 
+    @Valid
     private PaymentCreateReq paymentCreateReq;   // 결제정보
 
+    @Valid
     private ContractCreateReq contractCreateReq; // 계약정보
 
     public Member toEntity(Long vendorId) {

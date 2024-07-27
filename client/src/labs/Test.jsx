@@ -21,8 +21,9 @@ const Test = () => {
     console.log(result);
   };
 
-  // 결제
-  console.log('testv111');
+
+  console.log('testv0');
+
 
   return (
     <div>

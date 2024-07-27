@@ -2,7 +2,7 @@ import React from 'react';
 import PagiNation from '@/components/common/PagiNation';
 import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
-import { formatProducts } from '@/utils/format/formatProducts';
+import { formatProducts, formatProductsForList } from '@/utils/format/formatProducts';
 
 const typeOtions = [
   { value: 'memberName', label: '회원명' },
@@ -74,7 +74,7 @@ const ContractList = ({
               </td>
               <td className='border-b border-ipt_border p-2 text-text_black'>{`${contract.contractDay}일`}</td>
               <td className='border-b border-ipt_border p-2 text-text_black'>
-                {formatProducts(contract.contractProducts)}
+                {formatProductsForList(contract.firstProductName, contract.totalProductCount)}
               </td>
               <td className='border-b border-ipt_border p-2 text-text_black'>{`${contract.contractPrice.toLocaleString()}원`}</td>
             </tr>

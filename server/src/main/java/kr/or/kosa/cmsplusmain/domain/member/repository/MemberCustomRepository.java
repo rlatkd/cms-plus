@@ -1,12 +1,17 @@
 package kr.or.kosa.cmsplusmain.domain.member.repository;
 
 
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
+import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -53,8 +58,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
                 contractNumberLoe(memberSearch.getContractCount()),
                 contractPriceLoeInGroup(memberSearch.getContractPrice())
             )
-            .orderBy(buildOrderSpecifier(pageable)
-                .orElse(member.enrollDate.desc()))
+            .orderBy(buildMemberOrderSpecifier(pageable))
             .offset(pageable.getPage())
             .limit(pageable.getSize())
             .fetch();
@@ -203,6 +207,26 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             )
             .fetchOne();
         return res != null;
+    }
+
+    private OrderSpecifier<?> buildMemberOrderSpecifier(PageReq pageReq) {
+        if (pageReq == null || !StringUtils.hasText(pageReq.getOrderBy())) {
+            return member.createdDateTime.desc();
+        }
+
+        String orderBy = pageReq.getOrderBy();
+
+        if (orderBy.equals("contractPrice")) {
+            NumberExpression<Long> exp = contractProduct.price.longValue().multiply(contractProduct.quantity).sum();
+            return pageReq.isAsc() ? exp.asc() : exp.desc();
+        }
+
+        if (orderBy.equals("contractCount")) {
+            NumberExpression<Long> exp = contract.countDistinct();
+            return pageReq.isAsc() ? exp.asc() : exp.desc();
+        }
+
+        throw new BusinessException("잘못된 정렬조건입니다", ErrorCode.INVALID_INPUT_VALUE);
     }
     private BooleanExpression memberEmailEq(String email) {
         return StringUtils.hasText(email) ?  member.email.eq(email) : null;

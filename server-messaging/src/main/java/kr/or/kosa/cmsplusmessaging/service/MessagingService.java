@@ -46,6 +46,7 @@
          }
          try {
              MultipleDetailMessageSentResponse response = messageService.send(messageList, true);
+             log.error("[SMS 발송 성공]");
          } catch (NurigoMessageNotReceivedException e) {
              log.error(e.getFailedMessageList().toString(), e);
          } catch (Exception e) {
@@ -68,6 +69,7 @@
                  helper.setSubject("보낼 이메일 제목 테스트 123");
                  helper.setText(emailMessageDto.getText());
                  messages[i] = message;
+                 log.error("[이메일 발송 성공]");
              } catch (MessagingException | MailException e) {
                  log.error("[이메일 발송 실패]: " + emailMessageDto.getEmailAddress(), e);
              }

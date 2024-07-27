@@ -69,3 +69,14 @@ export const sendSimpleConsentData = async userData => {
     throw err;
   }
 };
+
+// 간편서명동의 URL 전송
+export const sendSimpleConsentUrl = async urlData => {
+  try {
+    const res = await privateAxios.post('/v1/kafka/messaging/simpconsent', urlData);
+    return res;
+  } catch (err) {
+    console.error('url 전송 실패=> ', err.response.data);
+    throw err;
+  }
+};

@@ -34,6 +34,7 @@ public class KafkaPaymentService {
 
     // 메인서버->결제서버; 결제정보 전달
     public void producePayment(PaymentDto paymentDto) {
+        log.error("넘어온데이터{}", paymentDto.toString());
         paymentKafkaTemplate.send(paymentTopic, paymentDto);
     }
 
