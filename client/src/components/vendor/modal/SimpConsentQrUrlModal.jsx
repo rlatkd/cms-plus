@@ -1,13 +1,14 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import BaseModal from '@/components/common/BaseModal';
 import QRCode from 'qrcode.react';
 
 // 전화번호 포맷팅 함수 import
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
+import { sendSimpleConsentUrl } from '@/apis/simpleConsent';
 
 const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
-  const [url, setUrl] = useState('https://google.com');
-  const [phoneNumber, setPhoneNumber] = useState(formatPhone('01033388044'));
+  const [url, setUrl] = useState('www.cms.site');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const qrRef = useRef(null);
 
   const handleCopyUrl = () => {
@@ -16,8 +17,22 @@ const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
     });
   };
 
-  const handleSendLink = () => {
-    alert('링크가 전송되었습니다.');
+  console.log(phoneNumber.replaceAll('-', ''));
+
+  const handleSendSimpleConsentUrl = async () => {
+    const urlData = {
+      text: `간편동의 URL입니다. \n${url}`,
+      method: 'SMS',
+      phoneNumber: phoneNumber.replaceAll('-', ''),
+    };
+    try {
+      const res = await sendSimpleConsentUrl(urlData);
+      console.log(res.data);
+      alert('링크가 전송되었습니다.');
+    } catch (err) {
+      console.error('axiosSimpleConsentUrl => ', err.response.data);
+      alert('링크 전송에 실패했습니다.');
+    }
   };
 
   const handleDownloadQR = () => {
@@ -90,7 +105,7 @@ const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
             />
             <div className='flex-shrink-0 sm:w-36'>
               <button
-                onClick={handleSendLink}
+                onClick={handleSendSimpleConsentUrl}
                 className='w-full whitespace-nowrap rounded-lg bg-mint px-4 py-2 text-white'>
                 링크 전송
               </button>

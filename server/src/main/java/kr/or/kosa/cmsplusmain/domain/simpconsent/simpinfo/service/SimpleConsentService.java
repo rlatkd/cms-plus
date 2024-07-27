@@ -3,6 +3,8 @@
 package kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.service;
 
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
@@ -40,7 +42,15 @@ public class SimpleConsentService {
     private final ContractCustomRepository contractCustomRepository;
     private final PaymentService paymentService;
     private final ContractService contractService;
-    // private final KafkaMessagingService kafkaMessagingService;
+    private final KafkaMessagingService kafkaMessagingService;
+
+    private static final String SIMPCONSENT_MESSAGE_FORMAT =
+            """
+            %s님의 간편동의 URL이 도착했습니다.
+            
+            - URL: %s
+           
+            """.trim();
 
     @Transactional
     public MemberDetail processSimpleConsent(Long vendorId, SimpleConsentMemberDTO memberDTO,
@@ -76,6 +86,7 @@ public class SimpleConsentService {
 
 
         Contract contract = contractCustomRepository.findContractDetailById(contractId);
+        Member member = contract.getMember();
         Payment payment = contract.getPayment();
 
         if (!payment.canReqSimpConsent()) {
@@ -86,6 +97,12 @@ public class SimpleConsentService {
         String url = "https://localhost:8080/member/simpconsent/" + contractId;
         log.info("{} 간편동의 요청 링크가 발송됨", url);
 
-        // TODO kafka send
+        String text = SIMPCONSENT_MESSAGE_FORMAT.formatted(member.getName(), url).trim();
+        String phone = member.getPhone();
+
+        MessageDto messageDto = new SmsMessageDto(text, phone);
+
+        kafkaMessagingService.produceMessaging(messageDto);
+
     }
 }
