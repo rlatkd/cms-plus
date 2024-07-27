@@ -1,41 +1,12 @@
-import React, {
-  useState,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-  useCallback,
-  useMemo,
-} from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Input from '@/components/common/inputs/Input';
 import SelectField from '@/components/common/selects/SelectField';
 import ProductItem from '@/components/common/ProductItem';
-import { useUserDataStore } from '@/stores/useUserDataStore';
 import { getAvailableOptions } from '@/apis/simpleConsent';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 
-const ContractInfo = forwardRef((props, ref) => {
-  const { userData, setUserData } = useUserDataStore();
+const ContractInfo = ({ userData, setUserData }) => {
   const [availableProducts, setAvailableProducts] = useState([]);
-  const [localData, setLocalData] = useState({
-    contractName: '',
-    selectedProduct: '',
-    items: [],
-    startDate: '',
-    endDate: '',
-    contractDay: 1,
-  });
-
-  // 초기 userData 로드
-  useEffect(() => {
-    setLocalData({
-      contractName: userData.contractDTO.contractName || '',
-      selectedProduct: userData.contractDTO.selectedProduct || '',
-      items: userData.contractDTO.items || [],
-      startDate: userData.contractDTO.startDate || '',
-      endDate: userData.contractDTO.endDate || '',
-      contractDay: userData.contractDTO.contractDay || 1,
-    });
-  }, [userData]);
 
   useEffect(() => {
     const fetchAvailableOptions = async () => {
@@ -50,35 +21,15 @@ const ContractInfo = forwardRef((props, ref) => {
     fetchAvailableOptions();
   }, []);
 
-  const updateUserData = useCallback(() => {
-    setUserData({
-      contractDTO: {
-        ...localData,
-      },
-    });
-  }, [localData, setUserData]);
-
-  useImperativeHandle(ref, () => ({
-    validateContractInfo: () => {
-      const missingFields = [];
-
-      if (!localData.contractName) missingFields.push('계약명');
-      if (localData.items.length === 0) missingFields.push('선택된 상품');
-      if (!localData.startDate) missingFields.push('시작 날짜');
-      if (!localData.endDate) missingFields.push('종료 날짜');
-      if (!localData.contractDay) missingFields.push('약정일');
-
-      // 유효성 검사 후 userData 업데이트
-      updateUserData();
-
-      return missingFields;
+  const handleInputChange = useCallback(
+    e => {
+      const { name, value } = e.target;
+      setUserData({
+        contractDTO: { [name]: value },
+      });
     },
-  }));
-
-  const handleInputChange = useCallback(e => {
-    const { name, value } = e.target;
-    setLocalData(prev => ({ ...prev, [name]: value }));
-  }, []);
+    [setUserData]
+  );
 
   const handleProductChange = useCallback(
     e => {
@@ -92,47 +43,78 @@ const ContractInfo = forwardRef((props, ref) => {
           quantity: 1,
         };
 
-        if (!localData.items.some(item => item.productId === newProduct.productId)) {
-          setLocalData(prev => ({
-            ...prev,
-            selectedProduct: productId,
-            items: [...prev.items, newProduct],
-          }));
+        if (!userData.contractDTO.items.some(item => item.productId === newProduct.productId)) {
+          const updatedItems = [...userData.contractDTO.items, newProduct];
+          setUserData({
+            ...userData,
+            contractDTO: {
+              ...userData.contractDTO,
+              selectedProduct: productId,
+              items: updatedItems,
+            },
+          });
         }
       } else {
-        setLocalData(prev => ({ ...prev, selectedProduct: '' }));
+        setUserData({
+          ...userData,
+          contractDTO: { ...userData.contractDTO, selectedProduct: '' },
+        });
       }
     },
-    [availableProducts, localData.items]
+    [availableProducts, userData, setUserData]
   );
 
-  const updateQuantity = useCallback((index, change) => {
-    setLocalData(prev => {
-      const newItems = [...prev.items];
-      newItems[index].quantity = Math.max(1, newItems[index].quantity + change);
-      return { ...prev, items: newItems };
-    });
-  }, []);
+  const updateQuantity = useCallback(
+    (index, change) => {
+      const updatedItems = userData.contractDTO.items.map((item, i) =>
+        i === index ? { ...item, quantity: Math.max(1, item.quantity + change) } : item
+      );
+      setUserData({
+        ...userData,
+        contractDTO: {
+          ...userData.contractDTO,
+          items: updatedItems,
+        },
+      });
+    },
+    [userData, setUserData]
+  );
 
-  const removeItem = useCallback(index => {
-    setLocalData(prev => ({
-      ...prev,
-      items: prev.items.filter((_, i) => i !== index),
-    }));
-  }, []);
+  const removeItem = useCallback(
+    index => {
+      const updatedItems = userData.contractDTO.items.filter((_, i) => i !== index);
+      setUserData({
+        ...userData,
+        contractDTO: {
+          ...userData.contractDTO,
+          items: updatedItems,
+        },
+      });
+    },
+    [userData, setUserData]
+  );
 
   const handleDateChange = useCallback(
     (e, field) => {
       const newDate = e.target.value;
-      setLocalData(prev => ({ ...prev, [field]: newDate }));
+      setUserData({
+        contractDTO: { [field]: newDate },
+      });
 
-      if (field === 'startDate' && new Date(newDate) > new Date(localData.endDate)) {
-        setLocalData(prev => ({ ...prev, endDate: newDate }));
-      } else if (field === 'endDate' && new Date(newDate) < new Date(localData.startDate)) {
-        setLocalData(prev => ({ ...prev, startDate: newDate }));
+      if (field === 'startDate' && new Date(newDate) > new Date(userData.contractDTO.endDate)) {
+        setUserData({
+          contractDTO: { endDate: newDate },
+        });
+      } else if (
+        field === 'endDate' &&
+        new Date(newDate) < new Date(userData.contractDTO.startDate)
+      ) {
+        setUserData({
+          contractDTO: { startDate: newDate },
+        });
       }
     },
-    [localData.endDate, localData.startDate]
+    [userData.contractDTO.startDate, userData.contractDTO.endDate, setUserData]
   );
 
   const productOptions = useMemo(
@@ -147,8 +129,8 @@ const ContractInfo = forwardRef((props, ref) => {
   );
 
   const totalPrice = useMemo(
-    () => localData.items.reduce((sum, item) => sum + item.quantity * item.price, 0),
-    [localData.items]
+    () => userData.contractDTO.items.reduce((sum, item) => sum + item.quantity * item.price, 0),
+    [userData.contractDTO.items]
   );
 
   return (
@@ -168,7 +150,7 @@ const ContractInfo = forwardRef((props, ref) => {
         required
         placeholder='최대 20자리'
         className='pb-6'
-        value={localData.contractName}
+        value={userData.contractDTO.contractName}
         onChange={handleInputChange}
         maxLength={20}
       />
@@ -177,11 +159,11 @@ const ContractInfo = forwardRef((props, ref) => {
         label='상품'
         required
         options={productOptions}
-        value={localData.selectedProduct}
+        value={userData.contractDTO.selectedProduct}
         onChange={handleProductChange}
       />
 
-      {localData.items.map((item, index) => (
+      {userData.contractDTO.items.map((item, index) => (
         <ProductItem
           key={index}
           item={item}
@@ -204,7 +186,7 @@ const ContractInfo = forwardRef((props, ref) => {
         <div className='flex w-full items-center'>
           <InputCalendar
             id='startDate'
-            value={localData.startDate}
+            value={userData.contractDTO.startDate}
             handleChangeValue={e => handleDateChange(e, 'startDate')}
             placeholder='시작 날짜'
             width='100%'
@@ -212,7 +194,7 @@ const ContractInfo = forwardRef((props, ref) => {
           <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
           <InputCalendar
             id='endDate'
-            value={localData.endDate}
+            value={userData.contractDTO.endDate}
             handleChangeValue={e => handleDateChange(e, 'endDate')}
             placeholder='종료 날짜'
             width='100%'
@@ -224,15 +206,17 @@ const ContractInfo = forwardRef((props, ref) => {
         label='약정일'
         required
         options={[...Array(31)].map((_, i) => ({ value: i + 1, label: `${i + 1}일` }))}
-        value={localData.contractDay}
+        value={userData.contractDTO.contractDay}
         onChange={e => {
           const value = parseInt(e.target.value);
-          setLocalData(prev => ({ ...prev, contractDay: value }));
+          setUserData({
+            contractDTO: { contractDay: value },
+          });
         }}
       />
     </div>
   );
-});
+};
 
 //forwardRef를 사용하여 정의된 컴포넌트에 displayName을 명시적으로 설정
 ContractInfo.displayName = 'ContractInfo';

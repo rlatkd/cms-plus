@@ -19,23 +19,25 @@ const bankOptions = [
   { value: 'KNB', label: '경남은행' },
 ];
 
-const PaymentCMS = ({ localData, onInputChange, onVerificationComplete, isVerified }) => {
+const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVerified }) => {
   const handleCMSVerification = useCallback(async () => {
     try {
       const cmsData = {
         paymentMethod: 'CMS',
-        accountNumber: localData.accountNumber,
-        accountOwner: localData.accountHolder,
-        accountOwnerBirth: localData.accountOwnerBirth,
+        accountNumber: paymentData.accountNumber,
+        accountOwner: paymentData.accountHolder,
+        accountOwnerBirth: paymentData.accountOwnerBirth,
       };
 
       const result = await verifyCMS(cmsData);
 
       if (result === true) {
         onVerificationComplete(true);
+        onInputChange('isVerified', true);
         alert('계좌 인증이 성공적으로 완료되었습니다.');
       } else {
         onVerificationComplete(false);
+        onInputChange('isVerified', false);
         alert('계좌 인증에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (error) {
@@ -43,7 +45,7 @@ const PaymentCMS = ({ localData, onInputChange, onVerificationComplete, isVerifi
       onVerificationComplete(false);
       alert('계좌 인증에 실패했습니다. 다시 시도해주세요.');
     }
-  }, [localData, onVerificationComplete]);
+  }, [paymentData, onVerificationComplete]);
 
   const handleInputChange = useCallback(
     e => {
@@ -81,7 +83,7 @@ const PaymentCMS = ({ localData, onInputChange, onVerificationComplete, isVerifi
           name='bank'
           required
           options={bankOptions}
-          value={localData.bank}
+          value={paymentData.bank}
           onChange={handleInputChange}
         />
         <Input
@@ -90,7 +92,7 @@ const PaymentCMS = ({ localData, onInputChange, onVerificationComplete, isVerifi
           type='text'
           required
           placeholder='최대 20자리'
-          value={localData.accountHolder}
+          value={paymentData.accountHolder}
           onChange={handleInputChange}
           maxLength={20}
         />
@@ -100,7 +102,7 @@ const PaymentCMS = ({ localData, onInputChange, onVerificationComplete, isVerifi
           type='text'
           required
           placeholder='YYYY-MM-DD (예: 1990-01-01)'
-          value={localData.accountOwnerBirth}
+          value={paymentData.accountOwnerBirth}
           onChange={handleInputChange}
           maxLength={10}
         />
@@ -110,7 +112,7 @@ const PaymentCMS = ({ localData, onInputChange, onVerificationComplete, isVerifi
           type='text'
           required
           placeholder='최대 20자리'
-          value={localData.accountNumber}
+          value={paymentData.accountNumber}
           onChange={handleInputChange}
           maxLength={20}
         />

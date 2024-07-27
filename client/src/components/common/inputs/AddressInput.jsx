@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAddressStore } from '@/stores/useAddressStore';
-import { useUserDataStore } from '@/stores/useUserDataStore';
 
-const AddressInput = () => {
+const AddressInput = ({ userData, setUserData }) => {
   const { zipcode, address, addressDetail, setZipcode, setAddress, setAddressDetail } =
     useAddressStore();
-  const { setUserData } = useUserDataStore();
   const [localAddressDetail, setLocalAddressDetail] = useState(addressDetail);
 
   useEffect(() => {
