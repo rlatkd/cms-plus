@@ -69,7 +69,7 @@ public class SampleDataLoader {
 		);
 
 
-		generateSampleData(vendor, 10, 10, 10, 10);
+		generateSampleData(vendor, 100, 100, 100, 100);
 
 
 

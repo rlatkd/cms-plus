@@ -33,7 +33,7 @@
                  TopicBuilder.name(paymentResultTopic)
                          .partitions(3)
                          .replicas(3)
-                         .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(1000*60*60))
+                         .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(60000))
                          .build()
          );
      }
