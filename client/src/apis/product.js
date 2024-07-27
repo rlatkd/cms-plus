@@ -18,7 +18,7 @@ export const getProductList = async (searchParams = {}) => {
 
 // 전체 상품 목록 조회 (조건 없이, 이름, 가격, id만)
 export const getAllProductList = async () => {
-  const res = await privateAxios.get('/v1/vendor/product/all/no-cond');
+  const res = await privateAxios.get('/v1/vendor/product/all');
   return res;
 };
 
