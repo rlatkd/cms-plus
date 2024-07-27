@@ -38,10 +38,6 @@ services:
     ports:
       - "4000:3000"
 
-  
-
-
-
 volumes:
   mysql_data:
     driver: local
