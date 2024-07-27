@@ -16,6 +16,7 @@ import { formatProductsForList } from '@/utils/format/formatProducts';
 import PayRealtimeErrorModal from '@/components/vendor/modal/PayRealtimeErrorModal';
 import SendInvoiceErrorModal from '@/components/vendor/modal/SendInvoiceErrorModal';
 import ReqSimpConsentErrorModal from '@/components/vendor/modal/ReqSimpConsentErrorModal';
+import useAlert from '@/hooks/useAlert';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
@@ -38,6 +39,8 @@ const BillingListPage = () => {
   const [isShowInvoiceErrorModal, setIsShowInvoiceErrorModal] = useState(false);
 
   const [selectedBillings, setSelectedBillings] = useState([]); // 선택된 청구 목록
+
+  const onAlert = useAlert();
 
   const navigate = useNavigate();
 
@@ -123,7 +126,7 @@ const BillingListPage = () => {
   // 실시간 결제
   const handleRealtimePay = async () => {
     if (!selectedBillings || selectedBillings.length === 0) {
-      alert('선택된 청구가 없습니다!');
+      onAlert('선택된 청구가 없습니다!');
       return;
     }
 
@@ -146,14 +149,15 @@ const BillingListPage = () => {
       setPayErrors(errors);
       setIsShowPayErrorModal(true);
     } else {
-      alert(`${selectedBillings.length}개의 청구 결제를 성공했습니다.`);
+      onAlert(`${selectedBillings.length}개의 청구 결제를 성공했습니다.`);
+      axiosBillingList();
     }
   };
 
   // 청구서 발송
   const handleInvoiceSend = async () => {
     if (!selectedBillings || selectedBillings.length === 0) {
-      alert('선택된 청구가 없습니다!');
+      onAlert(`선택된 청구가 없습니다.`);
       return;
     }
 
@@ -176,7 +180,8 @@ const BillingListPage = () => {
       setInvoiceErrors(errors);
       setIsShowInvoiceErrorModal(true);
     } else {
-      alert(`${selectedBillings.length}개의 청구서 발송을 성공했습니다.`);
+      onAlert(`${selectedBillings.length}개의 청구서 발송을 성공했습니다.`);
+      axiosBillingList();
     }
   };
 
