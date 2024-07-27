@@ -135,7 +135,7 @@ const ProductListPage = () => {
       setProductDetailData(res.data);
       setIsShowModal(true);
     } catch (err) {
-      console.error('axiosProductDetail => ', err.response.data);
+      console.error('axiosProductDetail => ', err.response);
     }
   };
 

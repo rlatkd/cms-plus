@@ -31,7 +31,7 @@ const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
       console.log(res.data);
       alert('링크가 전송되었습니다.');
     } catch (err) {
-      console.error('axiosSimpleConsentUrl => ', err.response.data);
+      console.error('axiosSimpleConsentUrl => ', err.response);
       alert('링크 전송에 실패했습니다.');
     }
   };

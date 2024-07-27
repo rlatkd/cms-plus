@@ -19,7 +19,7 @@ const MemberInfoUpdatePage = () => {
       await navigate(`/vendor/members/detail/${memberId.id}`);
       onAlert('회원정보가 수정되었습니다!');
     } catch (err) {
-      console.error('axiosUpdateMemberBasic => ', err.response.data);
+      console.error('axiosUpdateMemberBasic => ', err.response);
     }
   };
 

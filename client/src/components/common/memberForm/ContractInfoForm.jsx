@@ -74,7 +74,7 @@ const ContractInfoForm = ({ formType }) => {
         addDefaultProduct(res.data[0]);
       }
     } catch (err) {
-      console.error('axiosProductList => ', err.response.data);
+      console.error('axiosProductList => ', err.response);
     }
   };
 

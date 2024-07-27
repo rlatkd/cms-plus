@@ -9,7 +9,7 @@ import SuccessFindIdModal from '@/components/vendor/modal/SuccessFindIdModal';
 import user from '@/assets/user.svg';
 import password from '@/assets/password.svg';
 import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
-import { useVendorInfo } from '@/stores/useVendorInfo';
+import { useVendorInfoStore } from '@/stores/useVendorInfoStore';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const LoginForm = () => {
   const [isShowResetPasswordModal, setIsShowResetPasswordModal] = useState(false);
   const [isShowSuccessFindIdModal, setIsShowSuccessFindIdModal] = useState(false);
   const [findedId, setFindedId] = useState('');
-  const { setVendorInfo } = useVendorInfo();
+  const { setVendorInfo } = useVendorInfoStore();
   const [vendorFormData, setVendorFormData] = useState({
     username: '',
     password: '',
@@ -30,7 +30,7 @@ const LoginForm = () => {
   // 사용자 입력값
   const handleChangeValue = e => {
     const { id, value } = e.target;
-    setVendorFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
+    setVendorFormData(prev => ({ ...prev, [id]: value == '' ? '' : value }));
   };
 
   // 공백입력 막기
@@ -54,7 +54,7 @@ const LoginForm = () => {
       console.log('!----로그인 성공----!'); // 삭제예정
       navigate('/vendor/dashboard');
     } catch (err) {
-      console.error('axiosJoin => ', err.response.data);
+      console.error('axiosJoin => ', err.response);
     }
   };
 
@@ -70,7 +70,7 @@ const LoginForm = () => {
       console.log('!----인증번호 요청 성공----!'); // 삭제예정
       onAlertWidth('인증번호가 발송되었습니다.');
     } catch (err) {
-      console.error('axiosRequestAuthenticationNumber => ', err.response.data);
+      console.error('axiosRequestAuthenticationNumber => ', err.response);
     }
   };
 

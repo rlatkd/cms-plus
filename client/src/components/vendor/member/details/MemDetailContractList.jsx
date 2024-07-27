@@ -31,7 +31,7 @@ const MemDetailContractList = () => {
       setTotalCount(res.data.totalCount);
       setTotalPages(res.data.totalPage || 1);
     } catch (err) {
-      console.error('axiosMemberDetailContractList => ', err.response.data);
+      console.error('axiosMemberDetailContractList => ', err.response);
     }
   };
 

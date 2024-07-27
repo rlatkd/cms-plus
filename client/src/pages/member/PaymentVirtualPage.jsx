@@ -41,7 +41,7 @@ const PaymentVirtualPage = () => {
       const res = await requestVirtualAccountPayment(paymentData);
       console.log(res.data);
     } catch (err) {
-      console.error('axiosVirtualAccountPayment => ', err.response.data);
+      console.error('axiosVirtualAccountPayment => ', err.response);
     }
   };
 

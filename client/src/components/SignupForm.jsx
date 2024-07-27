@@ -69,7 +69,7 @@ const SignupForm = () => {
       isChecked = res.data;
       console.log('!----아이디 중복확인 성공----!'); // 삭제예정
     } catch (err) {
-      console.error('axiosJoin => ', err.response.data);
+      console.error('axiosJoin => ', err.response);
     }
 
     // <----- false면 중복된 아이디 없다. ----->
@@ -120,7 +120,7 @@ const SignupForm = () => {
       onAlert('회원가입에 성공하셨습니다!');
       navigate('/login');
     } catch (err) {
-      console.error('axiosJoin => ', err.response.data);
+      console.error('axiosJoin => ', err.response);
     }
   };
 

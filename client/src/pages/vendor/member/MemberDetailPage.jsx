@@ -51,7 +51,7 @@ const MemberDetailPage = () => {
         },
       });
     } catch (err) {
-      console.error('axiosMemberDetail => ', err.response.data);
+      console.error('axiosMemberDetail => ', err.response);
     }
   };
 

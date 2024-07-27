@@ -52,7 +52,7 @@ const MemDetailBasicInfo = () => {
         }
       }
     } catch (err) {
-      console.error('axiosContractBillingByMember => ', err.response.data);
+      console.error('axiosContractBillingByMember => ', err.response);
     }
   };
 
@@ -65,7 +65,7 @@ const MemDetailBasicInfo = () => {
       onAlert(`"${basicInfo.memberName}"님의 정보가 삭제되었습니다!`);
       navigate('/vendor/members');
     } catch (err) {
-      console.error('axiosdeleteMember => ', err.response.data);
+      console.error('axiosdeleteMember => ', err.response);
     }
   };
 

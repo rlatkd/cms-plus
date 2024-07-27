@@ -36,7 +36,7 @@ const BillingRegisterPage = () => {
   });
 
   const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidthClick = async msg => {
+  const onAlertWidth = async msg => {
     await alertWidthComp(msg);
   };
 
@@ -75,13 +75,6 @@ const BillingRegisterPage = () => {
       console.error('청구 생성 - 상품 목록 조회 실패', err);
     }
   }, []);
-
-
-  const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidth = async msg => {
-    await alertWidthComp(msg);
-  };
-
 
   useEffect(() => {
     fetchAllProducts();
@@ -174,7 +167,7 @@ const BillingRegisterPage = () => {
       } else {
         onAlertWidth(err.response.data.message);
       }
-      console.error('axiosBillingCreate => ', err.response.data);
+      console.error('axiosBillingCreate => ', err.response);
     }
   };
 

@@ -70,7 +70,7 @@ const MemberRegisterPage = () => {
         onAlert('회원정보가 등록되었습니다!');
       }
     } catch (err) {
-      console.error('axiosCreateMember => ', err.response.data);
+      console.error('axiosCreateMember => ', err.response);
     }
   };
 

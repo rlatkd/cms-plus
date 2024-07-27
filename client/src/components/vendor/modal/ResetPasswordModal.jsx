@@ -36,7 +36,7 @@ const ResetPasswordModal = ({ icon, isShowModal, findedId, setIsShowModal, modal
       setIsShowModal(false);
       onAlert('비밀번호 재설정이 완료되었습니다!');
     } catch (err) {
-      console.error('axiosFindPassword => ', err.response.data);
+      console.error('axiosFindPassword => ', err.response);
     }
   };
 

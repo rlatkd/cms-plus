@@ -19,7 +19,7 @@ const UpdateBillingInfo = ({ formType }) => {
       await navigate(`/vendor/contracts/detail/${contractId}`);
       onAlert('청구정보가 수정되었습니다!');
     } catch (err) {
-      console.error('axiosMemberUpdate => ', err.response.data);
+      console.error('axiosMemberUpdate => ', err.response);
     }
   };
 
