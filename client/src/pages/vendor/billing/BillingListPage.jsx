@@ -129,12 +129,15 @@ const BillingListPage = () => {
       onAlert('선택된 청구가 없습니다!');
       return;
     }
+    console.error('실시간 결제 시작');
 
     const errors = [];
     for (const billing of selectedBillings) {
       try {
         await payRealTimeBilling(billing.billingId);
+        console.error('실시간 결제 성공');
       } catch (err) {
+        console.error('실시간 결제', err);
         errors.push({
           from: billing,
           res: err.response.data,

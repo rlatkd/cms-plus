@@ -85,14 +85,18 @@ public class GlobalExceptionHandler {
 	 * */
 	@ExceptionHandler(BusinessException.class)
 	protected ResponseEntity<ErrorRes> handleBusinessException(final BusinessException e) {
-		log.error("handleBusinessException", e);
+		log.error("my-business-exception", e);
+		e.printStackTrace();
+		System.out.println("my-business-exception");
 		final ErrorRes response = ErrorRes.of(e);
 		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 	}
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorRes> handleException(Exception e) {
-		log.error("handleUnknownException", e);
+		log.error("my-unknown", e);
+		e.printStackTrace();
+		System.out.println("my-unknown" + e.getMessage());
 		final ErrorRes response = ErrorRes.of(ErrorCode.INTERNAL_SERVER_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
