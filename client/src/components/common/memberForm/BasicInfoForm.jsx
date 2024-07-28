@@ -3,6 +3,7 @@ import TextArea from '../inputs/TextArea';
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
+import { validateField } from '@/utils/validators';
 
 // formType : CREATE, UPDATE, DETAIL
 const BasicInfoForm = ({ formType }) => {
@@ -30,9 +31,6 @@ const BasicInfoForm = ({ formType }) => {
     });
   };
 
-  // TODO
-  // <------ 정규표현식 예외처리 ------>
-
   // <------ 공백입력 불가 ------>
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
@@ -50,28 +48,37 @@ const BasicInfoForm = ({ formType }) => {
           placeholder='회원명(한글, 영문 대소문자 1~40)'
           type='text'
           required
+          classInput='py-[14px]'
           value={basicInfo.memberName}
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          maxLength={40}
+          isValid={validateField('name', basicInfo.memberName)}
+          errorMsg='올바른 형식 아닙니다.'
         />
         <InputWeb
           id='memberPhone'
           label='휴대전화'
-          placeholder='ex) 010-9999-9999'
+          placeholder='숫자만 입력해주세요.'
+          classInput='py-[14px]'
           type='text'
           value={formatPhone(basicInfo.memberPhone)}
           required
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          maxLength={11}
+          isValid={validateField('phone', basicInfo.memberPhone)}
+          errorMsg='올바른 형식 아닙니다.'
         />
         <InputCalendar
           id='memberEnrollDate'
           label='가입일'
           placeholder='ex) 2024-11-02'
+          classInput='py-[14px]'
           required
-          height='55px'
+          height='47px'
           width='100%'
           classContainer='w-full'
           disabled={isDisabled}
@@ -81,23 +88,31 @@ const BasicInfoForm = ({ formType }) => {
         <InputWeb
           id='memberHomePhone'
           label='유선전화'
-          placeholder='ex) 02-432-7777'
+          placeholder='숫자만 입력해주세요.'
+          classInput='py-[14px]'
           type='text'
           value={formatPhone(basicInfo.memberHomePhone)}
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          maxLength={10}
+          isValid={validateField('homePhone', basicInfo.memberHomePhone)}
+          errorMsg='올바른 형식 아닙니다.'
         />
         <InputWeb
           id='memberEmail'
           label='이메일'
           placeholder='ex) example@gmail.com'
+          classInput='py-[14px]'
           type='text'
           value={basicInfo.memberEmail}
           required
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          maxLength={40}
+          isValid={validateField('email', basicInfo.memberEmail)}
+          errorMsg='올바른 형식 아닙니다.'
         />
       </div>
       {/* TODO */}
@@ -108,6 +123,7 @@ const BasicInfoForm = ({ formType }) => {
             id='zipcode'
             label='주소'
             placeholder='우편번호'
+            classInput='py-[14px]'
             type='address'
             value={basicInfo.memberAddress.zipcode}
             classContainer='mr-5'
@@ -118,6 +134,7 @@ const BasicInfoForm = ({ formType }) => {
           <InputWeb
             id='address'
             placeholder='주소'
+            classInput='py-[14px]'
             type='text'
             value={basicInfo.memberAddress.address}
             disabled={isDisabled}
@@ -130,6 +147,7 @@ const BasicInfoForm = ({ formType }) => {
           id='addressDetail'
           label='상세 주소'
           placeholder='상세 주소'
+          classInput='py-[14px]'
           type='text'
           value={basicInfo.memberAddress.addressDetail}
           disabled={isDisabled}

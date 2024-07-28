@@ -47,6 +47,19 @@ const LoginForm = () => {
   // 로그인 API
   const axiosLogin = async data => {
     try {
+      // 아이디 입력 여부
+      if (!data.username) {
+        console.log('???');
+        onAlert({ msg: '아이디를 입력해주세요!', type: 'error', title: '로그인 오류' });
+        return;
+      }
+
+      // 비밀번호 입력 여부
+      if (!data.password) {
+        onAlert({ msg: '비밀번호를 입력해주세요!', type: 'error', title: '로그인 오류' });
+        return;
+      }
+
       // 아이디 존재 여부
       const resCheckUsername = await getCheckUsername(data.username);
       const isChecked = resCheckUsername.data;
@@ -82,13 +95,6 @@ const LoginForm = () => {
     } catch (err) {
       console.error('axiosRequestAuthenticationNumber => ', err.response);
     }
-  };
-
-  // <----- 로그인 유효성 ----->
-  const idValidLoginForm = () => {
-    const isValidUsername = validateField('etc', vendorFormData.username);
-    const isValidPassword = validateField('etc', vendorFormData.password);
-    return isValidUsername && isValidPassword;
   };
 
   useEffect(() => {
@@ -130,9 +136,8 @@ const LoginForm = () => {
           <span onClick={() => setIsShowPasswordModal(true)}>비밀번호 찾기</span>
         </div>
         <button
-          disabled={!idValidLoginForm()}
-          className={`font-700  px-4 py-3 text-white rounded-lg transition-all duration-200
-                    ${idValidLoginForm() ? 'bg-mint hover:bg-mint_hover transition-all duration-200' : 'bg-btn_disa '}`}>
+          className={`font-700 px-4 py-3 text-white rounded-lg transition-all duration-200
+                    bg-mint hover:bg-mint_hover`}>
           로그인
         </button>
         <div className='border border-ipt_disa w-full' />

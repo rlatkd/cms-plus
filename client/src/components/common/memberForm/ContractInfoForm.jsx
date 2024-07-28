@@ -6,6 +6,7 @@ import Remove from '@/assets/Remove';
 import { getAllProductList } from '@/apis/product';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 import useAlert from '@/hooks/useAlert';
+import { validateField } from '@/utils/validators';
 
 // formType : CREATE, UPDATE
 const ContractInfoForm = ({ formType }) => {
@@ -112,7 +113,7 @@ const ContractInfoForm = ({ formType }) => {
 
   return (
     <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>
-      <div className='flex justify-between items-end mb-5'>
+      <div className='flex justify-between items-end mb-6'>
         <ProductSelectFieldcopy
           label='상품추가'
           placeholder='상품을 선택해주세요.'
@@ -121,17 +122,21 @@ const ContractInfoForm = ({ formType }) => {
           onChange={handleProductChange}
           selectedOptions={contractInfo.contractProducts}
           classContainer='w-1/4 mr-8'
-          classButton='w-full'
+          classButton='w-full py-[14px]'
         />
         <InputWeb
           id='contractName'
           label='계약정보명'
           placeholder='계약정보명( 최대 20자 )'
+          classInput='py-[14px]'
           type='text'
           required
           classContainer='w-1/3'
           value={contractInfo.contractName}
           onChange={handleChangeValue}
+          maxLength={40}
+          isValid={validateField('contractName', contractInfo.contractName)}
+          errorMsg='올바른 형식 아닙니다.'
         />
         <div className='flex items-center text-lg font-800 text-text_black ml-auto bg-background border border-ipt_border rounded-lg px-5 py-3 mr-2'>
           <p className='mr-2'>합계:</p>
@@ -152,20 +157,22 @@ const ContractInfoForm = ({ formType }) => {
             key={idx}
             className='flex justify-between items-center py-3 border-b border-ipt_border text-sm  '>
             <p className='w-1/5 text-center'>{product.name}</p>
-            <input
+            <InputWeb
               id='price'
               placeholder='상품금액'
-              className='w-2/12 text-center border border-ipt_border py-2 rounded-lg '
               type='text'
+              classContainer='w-2/12 '
+              classInput='text-center py-2'
               value={product.price.toLocaleString()}
               onChange={e => handleChangeValue(e, idx)}
               maxLength={7}
             />
-            <input
+            <InputWeb
               id='quantity'
               placeholder='수량'
-              className='w-1/12 text-center border border-ipt_border py-2 rounded-lg'
               type='text'
+              classContainer='w-1/12'
+              classInput='text-center py-2'
               value={product.quantity.toLocaleString()}
               onChange={e => handleChangeValue(e, idx)}
               maxLength={2}

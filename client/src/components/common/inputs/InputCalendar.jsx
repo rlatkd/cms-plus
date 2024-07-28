@@ -119,7 +119,7 @@ const InputCalendar = ({
       )}
       <div className='relative '>
         <ConfigProvider locale={koKR} theme={datePickerCustomTheme}>
-          <div>
+          <div className='cursor-pointer'>
             <style>{customCSS}</style>
             <Space direction='vertical' style={{ width: '100%' }}>
               <DatePicker

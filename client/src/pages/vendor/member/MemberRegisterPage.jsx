@@ -164,11 +164,6 @@ const MemberRegisterPage = () => {
     };
   }, []);
 
-  // <----- 회원등록 입력 데이터 reset ----->
-  // useEffect(() => {
-
-  // }, []);
-
   return (
     <>
       <div className='up-dashboard relative flex justify-center items-center mb-4 w-full desktop:h-[18%]'>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Checkbox from '@/components/common/inputs/CheckBox';
 import Arrow from '@/assets/Arrow';
+import useDebounce from '@/hooks/useDebounce';
 
 const ProductSelectFieldcopy = ({
   label,
@@ -17,9 +18,12 @@ const ProductSelectFieldcopy = ({
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
 
+  // <----- 디바운스 커스텀훅 ----->
+  const debouncedSearchTerm = useDebounce(searchTerm.toLowerCase(), 300);
+
   // <----- 검색 필터링 ----->
   const filteredOptions = options.filter(option =>
-    option.value.toLowerCase().includes(searchTerm.toLowerCase())
+    option.value.toLowerCase().includes(debouncedSearchTerm)
   );
 
   const toggleOption = product => {

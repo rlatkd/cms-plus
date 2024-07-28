@@ -28,6 +28,9 @@ export const validateField = (id, value) => {
     case 'contractNumber': // 8. 계약수
       return regex.contractNumber.test(value);
 
+    case 'contractName': // 9. 계약정보명
+      return regex.contractName.test(value);
+
     default: // 기타. 빈값을 확인
       return value.trim() !== '';
   }
