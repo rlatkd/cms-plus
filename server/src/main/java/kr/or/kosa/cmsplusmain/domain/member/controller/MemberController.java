@@ -39,7 +39,7 @@ public class MemberController {
     private final PaymentService paymentService;
     private final ExcelHandler<MemberExcelDto> excelHandler = new ExcelHandler<>();
 
-    /*
+    /**
      * 회원 목록 조회
      * */
     @GetMapping("/members")
@@ -48,7 +48,7 @@ public class MemberController {
         return memberService.searchMembers(vendorId, memberSearch, pageable);
     }
 
-    /*
+    /**
      * 회원 기본정보 목록 조회
      * */
     @GetMapping("/basicinfo/members")
@@ -56,7 +56,7 @@ public class MemberController {
         return memberService.findAllMemberBasicInfo(vendorId, memberSearch, pageable);
     }
 
-    /*
+    /**
      * 회원 상세 - 기본 정보 조회
      * */
     @GetMapping("/members/{memberId}")
@@ -65,7 +65,7 @@ public class MemberController {
        return memberService.findMemberDetailById(vendorId, memberId);
     }
 
-    /*
+    /**
      * 회원 상세 - 계약 리스트 조회
      * */
     @GetMapping("/members/contracts/{memberId}")
@@ -74,16 +74,16 @@ public class MemberController {
         return memberService.findContractListItemByMemberId(vendorId, memberId, pageable);
     }
 
-    /*
+    /**
      * 회원 등록
      * */
     @PostMapping("/members")
-    public void createMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @RequestBody @Valid MemberCreateReq memberCreateReq) {
+    public Long createMember(@AuthenticationPrincipal VendorUserDetailsDto userDetails, @RequestBody @Valid MemberCreateReq memberCreateReq) {
         Long vendorId = userDetails.getId();
-        memberService.createMember(vendorId, memberCreateReq);
+        return memberService.createMember(vendorId, memberCreateReq);
     }
 
-    /*
+    /**
      * 회원 수정 - 기본 정보
      * */
     @PutMapping("/members/{memberId}")
@@ -92,7 +92,7 @@ public class MemberController {
         memberService.updateMember(vendorId, memberId, memberUpdateReq);
     }
 
-    /*
+    /**
      * 회원 수정 - 청구 정보
      * */
     @PutMapping("/members/billing/{memberId}")
@@ -101,7 +101,7 @@ public class MemberController {
         memberService.updateMemberBilling(vendorId, memberId, memberBillingUpdateReq);
     }
 
-    /*
+    /**
      * 회원 수정 - 결제 정보
      * */
     @PutMapping("/members/payment/{contractId}")
@@ -110,7 +110,7 @@ public class MemberController {
         paymentService.updatePayment(vendorId, contractId, paymentUpdateReq);
     }
 
-    /*
+    /**
      * 회원 삭제
      * */
     @DeleteMapping("/members/{memberId}")
@@ -119,7 +119,7 @@ public class MemberController {
         memberService.deleteMember(vendorId, memberId);
     }
 
-    /*
+    /**
      * 회원 삭제 - 회원의 진행중인 청구 개수
      * */
     @GetMapping("/members/{memberId}/billing")
@@ -128,7 +128,7 @@ public class MemberController {
         return memberService.countAllInProgressBillingByMember(vendorId, memberId);
     }
 
-    /*
+    /**
      * 회원 엑셀 -> json 변환
      * */
     @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -136,7 +136,7 @@ public class MemberController {
         return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
     }
 
-    /*
+    /**
     * 회원 대량 등록
     *
     * 실패 목록 리턴

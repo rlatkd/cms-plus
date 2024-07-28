@@ -3,7 +3,6 @@ import CardMethodForm from '../PaymentMethod/CardMethodForm';
 import CmsMethodForm from '../PaymentMethod/CmsMethodForm';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import SimpConsentForm from '../PaymentMethod/SimpConsentForm';
-import { useEffect } from 'react';
 
 const PaymentMethod = [
   { label: '실시간 CMS', value: 'CMS' },

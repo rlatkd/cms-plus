@@ -26,7 +26,7 @@ const Confirm = ({ message, onClickOK, onClickCancel }) => {
         <div className='flex justify-end space-x-2'>
           <button
             className='bg-white w-1/3 text-mint transition-all duration-200 
-                        font-700 px-2 py-2 text-sm rounded-lg border border-mint'
+                        font-700 px-2 py-2 text-sm rounded-lg border border-mint hover:bg-mint hover:text-white'
             onClick={onClickCancel}>
             취소
           </button>
