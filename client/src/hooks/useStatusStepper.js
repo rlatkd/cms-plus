@@ -39,7 +39,7 @@ const useStatusStepper = (type, start, end) => {
   const handleClickNext = () => {
     if (status === 1 && invoiceInfo) {
       if (invoiceInfo.billingStatus === '완납') {
-        //자동결제일 경우
+        //billingStatus가 '완납'이고 자동결제일 경우
         if (type === CASES.AUTO) {
           navigate(`/member/invoice/${invoiceInfo.billingId}/payment/auto`);
         } else {
@@ -52,6 +52,12 @@ const useStatusStepper = (type, start, end) => {
       // '완납'이 아닐 경우, status 1에 대한 기존 로직 계속 진행
       if (type === CASES.BUYER) {
         navigate(`/member/invoice/${invoiceInfo.billingId}/payment`);
+      }
+      //'완납'이 아니면서, 자동결제일 경우
+      if (type === CASES.AUTO) {
+        navigate(`/member/invoice/${invoiceInfo.billingId}/payment/auto`);
+        reset();
+        return;
       }
     }
     if (status < end) {

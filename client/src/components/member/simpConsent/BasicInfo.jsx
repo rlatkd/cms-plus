@@ -1,49 +1,13 @@
-import { useState, useEffect } from 'react';
 import Input from '@/components/common/inputs/Input';
 import AddressInput from '@/components/common/inputs/AddressInput';
-import { useUserDataStore } from '@/stores/useUserDataStore';
 
-const BasicInfo = () => {
-  const { userData, setUserData, setUserDataa } = useUserDataStore();
-  const [localData, setLocalData] = useState({
-    name: userData.memberDTO.name || '',
-    phone: userData.memberDTO.phone || '',
-    homePhone: userData.memberDTO.homePhone || '',
-    email: userData.memberDTO.email || '',
-    zipcode: userData.memberDTO.zipcode || '',
-    address: userData.memberDTO.address || '',
-    addressDetail: userData.memberDTO.addressDetail || '',
-  });
-
-  useEffect(() => {
-    setLocalData({
-      name: userData.memberDTO.name || '',
-      phone: userData.memberDTO.phone || '',
-      homePhone: userData.memberDTO.homePhone || '',
-      email: userData.memberDTO.email || '',
-      zipcode: userData.memberDTO.zipcode || '',
-      address: userData.memberDTO.address || '',
-      addressDetail: userData.memberDTO.addressDetail || '',
-    });
-  }, [userData.memberDTO]);
-
+const BasicInfo = ({ userData, setUserData }) => {
   const handleChange = e => {
     const { name, value } = e.target;
-    setLocalData(prev => ({ ...prev, [name]: value }));
+    setUserData({
+      memberDTO: { [name]: value },
+    });
   };
-
-  const handleBlur = e => {
-    const { name, value } = e.target;
-    setUserDataa({ memberDTO: { ...userData.memberDTO, [name]: value } });
-  };
-
-  // const handleAddressChange = (field, value) => {
-  //   setLocalData(prev => ({ ...prev, [field]: value }));
-  //   setUserData(prev => ({
-  //     ...prev,
-  //     memberDTO: { ...prev.memberDTO, [field]: value },
-  //   }));
-  // };
 
   return (
     <div className='flex flex-col bg-white p-1'>
@@ -62,9 +26,8 @@ const BasicInfo = () => {
           type='text'
           required
           placeholder='최대 40자'
-          value={localData.name}
+          value={userData.memberDTO.name || ''}
           onChange={handleChange}
-          onBlur={handleBlur}
           maxLength={40}
           tabIndex={0}
         />
@@ -74,9 +37,8 @@ const BasicInfo = () => {
           type='tel'
           required
           placeholder="'-' 없이, 최대 12자리"
-          value={localData.phone}
+          value={userData.memberDTO.phone || ''}
           onChange={handleChange}
-          onBlur={handleBlur}
           maxLength={13}
           tabIndex={0}
         />
@@ -85,9 +47,8 @@ const BasicInfo = () => {
           name='homePhone'
           type='tel'
           placeholder="'-' 없이, 최대 12자리"
-          value={localData.homePhone}
+          value={userData.memberDTO.homePhone || ''}
           onChange={handleChange}
-          onBlur={handleBlur}
           maxLength={12}
         />
         <Input
@@ -96,17 +57,11 @@ const BasicInfo = () => {
           type='email'
           required
           placeholder='cms@gmail.com'
-          value={localData.email}
+          value={userData.memberDTO.email || ''}
           onChange={handleChange}
-          onBlur={handleBlur}
           maxLength={50}
         />
-        <AddressInput
-        // zipcode={localData.zipcode}
-        // address={localData.address}
-        // addressDetail={localData.addressDetail}
-        // onAddressChange={handleAddressChange}
-        />
+        <AddressInput userData={userData} setUserData={setUserData} />
       </form>
     </div>
   );

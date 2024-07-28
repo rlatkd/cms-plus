@@ -1,15 +1,13 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import InfoRow from '@/components/common/InfoRow';
 import SignatureCanvas from 'react-signature-canvas';
-import { useUserDataStore } from '@/stores/useUserDataStore';
 import { uploadSignature } from '@/apis/signature';
 
-const Signature = () => {
+const Signature = ({ userData, setUserData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
   const signatureRef = useRef();
-  const { userData, setUserData } = useUserDataStore();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -22,7 +20,6 @@ const Signature = () => {
     try {
       const formData = new FormData();
       formData.append('file', blob, 'signature.png');
-
       const fileUrl = await uploadSignature(formData);
       return fileUrl;
     } catch (error) {
@@ -42,6 +39,7 @@ const Signature = () => {
       canvas.toBlob(async blob => {
         const url = URL.createObjectURL(blob);
         setUserData({
+          ...userData,
           contractDTO: {
             ...userData.contractDTO,
             signatureUrl: url,
@@ -115,7 +113,9 @@ const Signature = () => {
         ? `카드 ${userData.paymentDTO.cardNumber.slice(-4).padStart(16, '*')}`
         : '카드 정보 없음'
       : userData.paymentDTO.bank && userData.paymentDTO.accountNumber
-        ? `${bankNameMap[userData.paymentDTO.bank] || userData.paymentDTO.bank} ${userData.paymentDTO.accountNumber.slice(-4).padStart(userData.paymentDTO.accountNumber.length, '*')}`
+        ? `${bankNameMap[userData.paymentDTO.bank] || userData.paymentDTO.bank} ${userData.paymentDTO.accountNumber
+            .slice(-4)
+            .padStart(userData.paymentDTO.accountNumber.length, '*')}`
         : '계좌 정보 없음';
 
   return (
@@ -178,13 +178,17 @@ const Signature = () => {
               <button
                 onClick={saveSignature}
                 disabled={isUploading}
-                className={`rounded-lg ${isUploading ? 'bg-gray-400' : 'bg-mint'} px-4 py-2 text-sm text-white`}>
+                className={`rounded-lg ${
+                  isUploading ? 'bg-gray-400' : 'bg-mint'
+                } px-4 py-2 text-sm text-white`}>
                 {isUploading ? '처리 중...' : '저장 및 다운로드'}
               </button>
             </div>
             {uploadStatus && (
               <p
-                className={`mt-2 text-sm ${uploadStatus.includes('실패') ? 'text-red-500' : 'text-green-500'}`}>
+                className={`mt-2 text-sm ${
+                  uploadStatus.includes('실패') ? 'text-red-500' : 'text-green-500'
+                }`}>
                 {uploadStatus}
               </p>
             )}

@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAddressStore } from '@/stores/useAddressStore';
-import { useUserDataStore } from '@/stores/useUserDataStore';
 
-const AddressInput = () => {
+const AddressInput = ({ userData, setUserData }) => {
   const { zipcode, address, addressDetail, setZipcode, setAddress, setAddressDetail } =
     useAddressStore();
-  const { setUserData } = useUserDataStore();
   const [localAddressDetail, setLocalAddressDetail] = useState(addressDetail);
 
   useEffect(() => {
@@ -40,11 +38,14 @@ const AddressInput = () => {
 
   const handleAddressDetailChange = e => {
     const newAddressDetail = e.target.value;
-    setAddressDetail(newAddressDetail);
-    // 주소 상세 정보를 useUserDataStore에도 저장
+    setLocalAddressDetail(newAddressDetail);
+  };
+
+  const handleAddressDetailBlur = () => {
+    setAddressDetail(localAddressDetail);
     setUserData({
       memberDTO: {
-        addressDetail: newAddressDetail,
+        addressDetail: localAddressDetail,
       },
     });
   };
@@ -83,6 +84,7 @@ const AddressInput = () => {
         name='address_detail'
         value={localAddressDetail}
         onChange={handleAddressDetailChange}
+        onBlur={handleAddressDetailBlur}
         className='w-full text-sm rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
         placeholder='상세 주소'
         autoComplete='address-line2'
