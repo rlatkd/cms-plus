@@ -5,11 +5,13 @@ import ProductSelectFieldcopy from '@/components/common/selects/ProductSelectFie
 import Remove from '@/assets/Remove';
 import { getAllProductList } from '@/apis/product';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
+import useAlert from '@/hooks/useAlert';
 
 // formType : CREATE, UPDATE
 const ContractInfoForm = ({ formType }) => {
   const { contractInfo, setContractInfoItem, setContractProducts } = useMemberContractStore(); // 상품 정보 zustand
   const [productList, setProductList] = useState([]); // 상품 목록
+  const onAlert = useAlert();
 
   // <-----Options생성----->
   const createOptions = (itemList, valueKey) => {
@@ -27,11 +29,11 @@ const ContractInfoForm = ({ formType }) => {
   // <-----상품 추가, 제거----->
   const handleProductChange = newSelectedOptions => {
     if (newSelectedOptions.length > 10) {
-      onAlert('10개이상 등록 하실 수 없습니다!');
+      onAlert({ msg: '10개 이상 등록할 수 없습니다!', type: 'error', title: '등록 제한' });
       return;
     }
     if (newSelectedOptions.length < 1) {
-      onAlert('반드시 하나의 상품이 필요합니다!');
+      onAlert({ msg: '반드시 하나의 상품이 필요합니다!', type: 'error', title: '상품 필수' });
       return;
     }
     setContractProducts(newSelectedOptions);
@@ -41,7 +43,7 @@ const ContractInfoForm = ({ formType }) => {
   const handleRemoveProduct = product => {
     const contractProducts = contractInfo.contractProducts;
     if (contractProducts.length == 1) {
-      onAlert('반드시 하나의 상품이 필요합니다!');
+      onAlert({ msg: '반드시 하나의 상품이 필요합니다!', type: 'error', title: '상품 필수' });
       return;
     }
     const newSelectedProducts = contractProducts.filter(p => p.productId !== product.productId);
@@ -102,11 +104,6 @@ const ContractInfoForm = ({ formType }) => {
       };
       setContractProducts([product]);
     }
-  };
-
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async msg => {
-    await alertComp(msg);
   };
 
   useEffect(() => {

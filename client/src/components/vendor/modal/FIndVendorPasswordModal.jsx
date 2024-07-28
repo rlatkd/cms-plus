@@ -3,6 +3,7 @@ import BaseModal from '@/components/common/BaseModal';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
+import { validateField } from '@/utils/validators';
 import { useEffect, useState } from 'react';
 
 const MessageSendMethod = [
@@ -16,6 +17,8 @@ const FindVendoPasswordModal = ({
   setIsShowResetPasswordModal,
   axiosRequestAuthenticationNumber,
   setFindedId,
+  time,
+  setTime,
   icon,
   modalTitle,
 }) => {
@@ -26,6 +29,7 @@ const FindVendoPasswordModal = ({
     phone: '',
     authenticationNumber: '',
   });
+  const [isAuthentication, setIsAuthentication] = useState(true);
 
   // <---- 사용자 입력값 ---->
   const handleChangeValue = e => {
@@ -39,7 +43,6 @@ const FindVendoPasswordModal = ({
       setVendorPasswordFormData(prev => ({ ...prev, [id]: value == '' ? '' : value }));
     }
     if (id === 'username') {
-      console.log('비밀번호찾기', value);
       setFindedId(value);
     }
   };
@@ -79,15 +82,32 @@ const FindVendoPasswordModal = ({
     try {
       const res = await postFindPassword(vendorPasswordFormData);
       console.log('!----비밀번호 찾기 요청 성공----!'); // 삭제예정
-      if (res.data) {
-        setIsShowModal(false);
-        setIsShowResetPasswordModal(true);
-      }
+      // if (res.data) {
+      setIsShowModal(false);
+      setIsShowResetPasswordModal(true);
+      // }
     } catch (err) {
       // TODO
       // 아이디가 없을 시 예외 처리
+      setIsAuthentication(false);
       console.error('axiosFindPassword => ', err.response);
     }
+  };
+
+  // <----- SMS 폼의 유효성 검사 ----->
+  const isValidateSmsForm = () => {
+    const isValiduserName = validateField('username', vendorPasswordFormData.username);
+    const isValidPhone = validateField('phone', vendorPasswordFormData.phone);
+    const authenticationNumber = vendorPasswordFormData.authenticationNumber;
+    return isValiduserName && isValidPhone && authenticationNumber;
+  };
+
+  // <----- 이메일 폼의 유효성 검사 ----->
+  const isValidateEmailForm = () => {
+    const isValiduserName = validateField('username', vendorPasswordFormData.username);
+    const isValidEmail = validateField('email', vendorPasswordFormData.email);
+    const authenticationNumber = vendorPasswordFormData.authenticationNumber;
+    return isValiduserName && isValidEmail && authenticationNumber;
   };
 
   useEffect(() => {
@@ -96,6 +116,7 @@ const FindVendoPasswordModal = ({
 
   useEffect(() => {
     settingvendorPasswordFormData();
+    setTime(0);
   }, [isShowModal, selectedSendMethod]);
 
   return (
@@ -104,7 +125,7 @@ const FindVendoPasswordModal = ({
       setIsShowModal={setIsShowModal}
       modalTitle={modalTitle}
       icon={icon}
-      height={'h-510'}
+      height={'h-540'}
       width={'w-640'}>
       <div className='w-full h-full flex flex-col justify-between'>
         <RadioGroup
@@ -121,11 +142,15 @@ const FindVendoPasswordModal = ({
           type='text'
           placeholder='이름을 입력해 주세요.'
           value={vendorPasswordFormData.username}
-          classInput='mb-4 rounded-xl'
+          classContainer='mb-6'
+          classInput='py-4 rounded-xl'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          maxLength={20}
+          isValid={validateField('username', vendorPasswordFormData.username)}
+          errorMsg='올바른 형식 아닙니다.'
         />
-        <div className='mb-4 flex items-end'>
+        <div className='mb-6 flex items-end'>
           {selectedSendMethod === 'SMS' ? (
             <InputWeb
               id='phone'
@@ -137,6 +162,11 @@ const FindVendoPasswordModal = ({
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
               classInput='rounded-xl'
+              isValid={validateField('phone', vendorPasswordFormData.phone)}
+              errorMsg='올바른 형식 아닙니다.'
+              time={time}
+              setTime={setTime}
+              maxLength={11}
             />
           ) : (
             <InputWeb
@@ -149,6 +179,11 @@ const FindVendoPasswordModal = ({
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
               classInput='rounded-xl'
+              isValid={validateField('email', vendorPasswordFormData.email)}
+              errorMsg='올바른 형식 아닙니다.'
+              time={time}
+              setTime={setTime}
+              maxLength={40}
             />
           )}
           <button
@@ -162,7 +197,7 @@ const FindVendoPasswordModal = ({
               }`}
             disabled={!vendorPasswordFormData.phone && !vendorPasswordFormData.email}
             onClick={() => axiosRequestAuthenticationNumber(vendorPasswordFormData)}>
-            인증번호 받기
+            {time && time !== 0 ? '인증번호 재전송' : '인증번호 받기'}
           </button>
         </div>
         <InputWeb
@@ -174,12 +209,22 @@ const FindVendoPasswordModal = ({
           classInput='mb-8 rounded-xl'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          isValid={isAuthentication}
+          errorMsg='인증번호가 틀립니다.'
+          maxLength={6}
         />
         <button
-          className='font-700 bg-mint px-4 py-3  text-white rounded-xl  
-                    hover:bg-mint_hover  transition-all duration-200'
+          disabled={
+            vendorPasswordFormData.method === 'SMS' ? !isValidateSmsForm() : isValidateEmailForm()
+          }
+          className={`font-700 px-4 py-3 text-white rounded-xl transition-all duration-200 ${
+            (vendorPasswordFormData.method === 'SMS' && isValidateSmsForm()) ||
+            (vendorPasswordFormData.method === 'EMAIL' && isValidateEmailForm())
+              ? 'hover:bg-mint_hover bg-mint '
+              : 'bg-btn_disa'
+          }`}
           onClick={axiosFindPassword}>
-          비밀번호 찾기
+          인증번호 받기
         </button>
       </div>
     </BaseModal>
