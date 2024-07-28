@@ -1,6 +1,10 @@
 import { useContext } from 'react';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 
+const fieldToName = {
+  billingType: '청구타입',
+};
+
 const useAlert = () => {
   const { alert: alertComp } = useContext(AlertContext);
 
@@ -11,7 +15,9 @@ const useAlert = () => {
 
       msg = data.message;
       if (fieldErrors && fieldErrors.length > 0) {
-        msg = fieldErrors.join('\n');
+        msg = fieldErrors.map(
+          fieldError => `${fieldToName[fieldError.field] || ''} ${fieldError.reason}`
+        );
       }
     }
 
