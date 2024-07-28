@@ -21,8 +21,8 @@
         </encoder>
         <!--하나의 로그파일이 아닌 정해진 용량, 기간별로 나눠서 로그 찍기-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>./log/%d{yyyy-MM-dd} test - %i.log</fileNamePattern>
-            <maxFileSize>1KB</maxFileSize>
+            <fileNamePattern>./log/%d{yyyy-MM-dd_HH-mm-ss} - %i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
@@ -42,7 +42,7 @@
         <producerConfig>bootstrap.servers=52.78.194.214:9094</producerConfig>
         <producerConfig>compression.type=snappy</producerConfig>
         <producerConfig>max.block.ms=1000</producerConfig>
-        <producerConfig>client.id=monitoring-group</producerConfig>
+<!--        <producerConfig>client.id=monitoring-group</producerConfig>-->
     </appender>
 
     <!--KAFKA를 통하지않고 바로 LOGSTASH로 가려면-->
@@ -51,9 +51,12 @@
     <!--      <encoder class="net.logstash.logback.encoder.LogstashEncoder" />-->
     <!--</appender>-->
 
+    <!--JWT 필터 로그 제외-->
+<!--    <logger name="kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTFilter" level="OFF" />-->
+
     <!--기본 로그 레벨은 INFO-->
     <!--내 프로젝트 패키지 로그 레벨은 DEBUG-->
-    <logger name="kr.or.kosa.cmsplusmain" level="DEBUG" />
+    <logger name="kr.or.kosa.cmsplusmain" level="INFO" />
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
