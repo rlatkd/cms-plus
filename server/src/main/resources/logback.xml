@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!--LOG 색상 룰 커스텀-->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+
+    <!--CONSOLE에 찍히는 로그와 FILE에 찍히는 로그 다르게(색상 유무)-->
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n" />
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n" />
+
+    <!--CONSOLE에 찍히는 로그 설정-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!--FILE에 찍히는 로그 설정-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <!--하나의 로그파일이 아닌 정해진 용량, 기간별로 나눠서 로그 찍기-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>./log/%d{yyyy-MM-dd_HH-mm-ss} - %i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!--KAFKA에 찍히는 로그 설정-->
+    <appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </layout>
+        </encoder>
+        <!--KAFKA 설정-->
+        <topic>monitoring-topic</topic>
+        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />
+        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
+        <!--개발환경에선 localhost:9092 / 컨테이너 배포환경에선 컨테이너 포트에 맞게-->
+        <producerConfig>bootstrap.servers=52.78.194.214:9094</producerConfig>
+        <producerConfig>compression.type=snappy</producerConfig>
+        <producerConfig>max.block.ms=1000</producerConfig>
+<!--        <producerConfig>client.id=monitoring-group</producerConfig>-->
+    </appender>
+
+    <!--KAFKA를 통하지않고 바로 LOGSTASH로 가려면-->
+    <!--<appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+    <!--   <destination>localhost:5000</destination>-->
+    <!--      <encoder class="net.logstash.logback.encoder.LogstashEncoder" />-->
+    <!--</appender>-->
+
+    <!--JWT 필터 로그 제외-->
+<!--    <logger name="kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTFilter" level="OFF" />-->
+
+    <!--기본 로그 레벨은 INFO-->
+    <!--내 프로젝트 패키지 로그 레벨은 DEBUG-->
+    <logger name="kr.or.kosa.cmsplusmain" level="INFO" />
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="KAFKA" />
+        <!--<appender-ref ref="STASH" />-->
+    </root>
+</configuration>

@@ -1,10 +1,12 @@
+import React, { useState, useEffect } from 'react';
 import SimpConsentQrUrlModal from '@/components/vendor/modal/SimpConsentQrUrlModal';
-import { useState, useEffect } from 'react';
 import ProductSelectField from '@/components/common/selects/ProductSelectField';
 import Checkbox from '@/components/common/inputs/CheckBox';
 import useSimpleConsentStore from '@/stores/simpleConsentStore';
 import { getSimpleConsent, updateSimpleConsent } from '@/apis/simpleConsent';
 import { getAllProductList } from '@/apis/product';
+
+const MAX_VISIBLE_PRODUCTS = 5;
 
 const SettingSimpConsentPage = () => {
   const [isShowModal, setIsShowModal] = useState(false);
@@ -12,6 +14,7 @@ const SettingSimpConsentPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [simpleConsentId, setSimpleConsentId] = useState(null);
   const [vendorUsername, setVendorUsername] = useState('');
+  const [showAllProducts, setShowAllProducts] = useState(false);
 
   const { selectedProducts, setSelectedProducts, checkedItems, setCheckedItems } =
     useSimpleConsentStore();
@@ -25,13 +28,9 @@ const SettingSimpConsentPage = () => {
         setVendorUsername(simpleConsentData.vendorUsername);
 
         const newCheckedItems = {
-          '실시간 CMS': false,
-          카드: false,
+          '실시간 CMS': simpleConsentData.paymentMethods.some(method => method.code === 'CMS'),
+          카드: simpleConsentData.paymentMethods.some(method => method.code === 'CARD'),
         };
-        simpleConsentData.paymentMethods.forEach(method => {
-          if (method.code === 'CMS') newCheckedItems['실시간 CMS'] = true;
-          if (method.code === 'CARD') newCheckedItems['카드'] = true;
-        });
         setCheckedItems(newCheckedItems);
 
         const res = await getAllProductList();
@@ -61,6 +60,14 @@ const SettingSimpConsentPage = () => {
   };
 
   const handleCheckboxChange = name => {
+    // 현재 체크된 항목의 개수를 계산
+    const checkedCount = Object.values(checkedItems).filter(Boolean).length;
+
+    // 체크를 해제하려는 경우이고 현재 체크된 항목이 1개뿐이라면 변경하지 않음
+    if (checkedItems[name] && checkedCount === 1) {
+      return;
+    }
+
     setCheckedItems({
       ...checkedItems,
       [name]: !checkedItems[name],
@@ -69,22 +76,13 @@ const SettingSimpConsentPage = () => {
 
   const handleSave = async () => {
     try {
-      const paymentMethods = [];
-      if (checkedItems['카드']) {
-        paymentMethods.push('CARD');
-      }
-      if (checkedItems['실시간 CMS']) {
-        paymentMethods.push('CMS');
-      }
+      const paymentMethods = Object.entries(checkedItems)
+        .filter(([, isChecked]) => isChecked)
+        .map(([name]) => (name === '실시간 CMS' ? 'CMS' : 'CARD'));
 
       const productIds = selectedProducts.map(product => product.productId);
 
-      const updateData = {
-        paymentMethods: paymentMethods,
-        productIds: productIds,
-      };
-
-      await updateSimpleConsent(updateData);
+      await updateSimpleConsent({ paymentMethods, productIds });
       alert('설정이 저장되었습니다.');
     } catch (error) {
       console.error('설정 저장 실패:', error);
@@ -92,9 +90,18 @@ const SettingSimpConsentPage = () => {
     }
   };
 
+  const toggleShowAllProducts = () => {
+    setShowAllProducts(prev => !prev);
+  };
+
+  const visibleProducts = showAllProducts
+    ? selectedProducts
+    : selectedProducts.slice(0, MAX_VISIBLE_PRODUCTS);
+  const additionalCount = selectedProducts.length - MAX_VISIBLE_PRODUCTS;
+
   return (
-    <div className='primary-dashboard relative h-full w-full '>
-      <div className='mx-2 my-8 flex h-[90%] flex-col '>
+    <div className='primary-dashboard relative h-full w-full'>
+      <div className='mx-2 my-8 flex h-[90%] flex-col'>
         <h2 className='mb-8 text-xl font-bold'>간편서명동의 설정</h2>
 
         <div className='flex flex-grow flex-col justify-between'>
@@ -103,7 +110,7 @@ const SettingSimpConsentPage = () => {
               <h3 className='mb-3 ml-1 text-lg font-medium'>
                 상품<span className='ml-1 text-red-500'>*</span>
               </h3>
-              <div className='flex items-center'>
+              <div className='flex items-start'>
                 {isLoading ? (
                   <div>상품 목록을 불러오는 중...</div>
                 ) : (
@@ -119,8 +126,10 @@ const SettingSimpConsentPage = () => {
                     className='h-13 w-64 rounded-md border border-gray-300 bg-white p-4 pr-10 text-base focus:border-teal-400 focus:outline-none focus:ring-teal-400'
                   />
                 )}
-                <div className='ml-4 flex flex-wrap'>
-                  {selectedProducts.map((product, index) => (
+                <div
+                  className='ml-4 flex flex-wrap'
+                  style={{ maxHeight: '150px', overflowY: 'auto', flex: 1 }}>
+                  {visibleProducts.map((product, index) => (
                     <span
                       key={index}
                       className='mb-2 mr-2 flex items-center justify-between rounded-full bg-teal-400 px-7 py-2 text-base text-white'
@@ -133,6 +142,20 @@ const SettingSimpConsentPage = () => {
                       </button>
                     </span>
                   ))}
+                  {!showAllProducts && additionalCount > 0 && (
+                    <span
+                      className='mb-2 mr-2 flex items-center justify-center rounded-full bg-gray-300 px-7 py-2 text-base text-gray-700 cursor-pointer'
+                      onClick={toggleShowAllProducts}>
+                      더보기 +{additionalCount}
+                    </span>
+                  )}
+                  {showAllProducts && selectedProducts.length > MAX_VISIBLE_PRODUCTS && (
+                    <span
+                      className='mb-2 mr-2 flex items-center justify-center rounded-full bg-gray-300 px-7 py-2 text-base text-gray-700 cursor-pointer'
+                      onClick={toggleShowAllProducts}>
+                      접기
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -142,21 +165,23 @@ const SettingSimpConsentPage = () => {
               <h3 className='mb-4 ml-1 text-lg font-medium'>
                 결제수단<span className='ml-1 text-red-500'>*</span>
               </h3>
-              <div className='ml-1 flex items-center'>
-                <Checkbox
-                  name='실시간 CMS'
-                  label='실시간 CMS'
-                  checked={checkedItems['실시간 CMS']}
-                  onChange={() => handleCheckboxChange('실시간 CMS')}
-                />
-                <div className='w-8' />
-                <Checkbox
-                  name='카드'
-                  label='카드'
-                  checked={checkedItems['카드']}
-                  onChange={() => handleCheckboxChange('카드')}
-                />
-              </div>
+              {!isLoading && (
+                <div className='ml-1 flex items-center'>
+                  <Checkbox
+                    name='실시간 CMS'
+                    label='실시간 CMS'
+                    checked={checkedItems['실시간 CMS']}
+                    onChange={() => handleCheckboxChange('실시간 CMS')}
+                  />
+                  <div className='w-8' />
+                  <Checkbox
+                    name='카드'
+                    label='카드'
+                    checked={checkedItems['카드']}
+                    onChange={() => handleCheckboxChange('카드')}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

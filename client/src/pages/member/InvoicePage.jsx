@@ -49,9 +49,12 @@ const InvoicePage = () => {
     <>
       {/* 청구서 결제방식 판별해서 paymenttype useState에 할당*/}
       {invoiceInfo ? <Content /> : <></>}
-      <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
-        <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
-        <NextButton onClick={handleClickNext} type={'invoice'} status={status} end={end} />
+      <div className='fixed bottom-0 left-0 w-full'>
+        <div className='absolute inset-0 bg-white opacity-100 blur' />
+        <div className='relative flex h-24 w-full justify-between p-6 font-bold z-50'>
+          <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
+          <NextButton onClick={handleClickNext} type={'invoice'} status={status} end={end} />
+        </div>
       </div>
     </>
   );

@@ -75,7 +75,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 	/**
 	 * 검색 조건 쿼리 생성
 	 * 조인이 다 수 걸리므로,
-	 * 리턴값이 BillingListItemRes 인 경우만 사용한다.
+	 * 리턴값이 BillingListItemRes 인 경우만 사용한다. (리턴 정보가 조인이 필수적인 경우)
 	 * */
 	private JPAQuery<?> searchQuery(Long vendorId, BillingSearchReq search) {
 		return from(billing)

@@ -32,13 +32,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VendorController {
 	private final VendorService vendorService;
-	private final JWTUtil jwtUtil;
-	private final SampleDataLoader dataLoader;
-
-	@PostConstruct
-	public void init() {
-		dataLoader.init();
-	}
 
 	/*
 	 * 회원 가입

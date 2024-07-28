@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ProductItem = ({ item, onUpdateQuantity, onRemove }) => {
   return (
     <div className='flex flex-col'>

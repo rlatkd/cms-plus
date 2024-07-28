@@ -2,31 +2,37 @@ import React, { useCallback } from 'react';
 import Input from '@/components/common/inputs/Input';
 import { verifyCard } from '@/apis/validation';
 
-const PaymentCard = ({ localData, onInputChange, onVerificationComplete, isVerified }) => {
+const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVerified }) => {
   const handleCardVerification = useCallback(async () => {
     try {
       const cardData = {
         paymentMethod: 'CARD',
-        cardNumber: localData.cardNumber,
-        cardOwner: localData.cardHolder,
-        cardOwnerBirth: localData.cardOwnerBirth,
+        cardNumber: paymentData.cardNumber,
+        cardOwner: paymentData.cardHolder,
+        cardOwnerBirth: paymentData.cardOwnerBirth,
       };
 
       const result = await verifyCard(cardData);
 
       if (result === true) {
         onVerificationComplete(true);
+        // 부모 컴포넌트의 상태 업데이트
+        onInputChange('isVerified', true);
         alert('카드 인증이 성공적으로 완료되었습니다.');
       } else {
         onVerificationComplete(false);
+        // 부모 컴포넌트의 상태 업데이트
+        onInputChange('isVerified', false);
         alert('카드 인증에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (error) {
       console.error('Card verification error:', error);
       onVerificationComplete(false);
+      // 부모 컴포넌트의 상태 업데이트
+      onInputChange('isVerified', false);
       alert('카드 인증에 실패했습니다. 다시 시도해주세요.');
     }
-  }, [localData, onVerificationComplete]);
+  }, [paymentData, onVerificationComplete]);
 
   const handleInputChange = useCallback(
     e => {
@@ -91,7 +97,7 @@ const PaymentCard = ({ localData, onInputChange, onVerificationComplete, isVerif
           type='text'
           required
           placeholder='카드번호 16자리'
-          value={localData.cardNumber}
+          value={paymentData.cardNumber}
           onChange={handleInputChange}
           maxLength={19}
         />
@@ -101,7 +107,7 @@ const PaymentCard = ({ localData, onInputChange, onVerificationComplete, isVerif
           type='text'
           required
           placeholder='MM/YY'
-          value={localData.expiryDate}
+          value={paymentData.expiryDate}
           onChange={handleInputChange}
           maxLength={5}
         />
@@ -111,7 +117,7 @@ const PaymentCard = ({ localData, onInputChange, onVerificationComplete, isVerif
           type='text'
           required
           placeholder='최대 15자리'
-          value={localData.cardHolder}
+          value={paymentData.cardHolder}
           onChange={handleInputChange}
           maxLength={15}
         />
@@ -121,7 +127,7 @@ const PaymentCard = ({ localData, onInputChange, onVerificationComplete, isVerif
           type='text'
           required
           placeholder='YYYY-MM-DD (예: 1990-01-01)'
-          value={localData.cardOwnerBirth}
+          value={paymentData.cardOwnerBirth}
           onChange={handleInputChange}
           maxLength={10}
         />

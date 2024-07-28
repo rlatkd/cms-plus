@@ -1,0 +1,106 @@
+version: '3.8'
+
+networks:
+  elk:
+    driver: bridge
+
+services:
+
+  kafkaui:
+    container_name: kafkaui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - '9000:8080'
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_NAME: 'local'
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: '52.78.194.214:9092,52.78.194.214:9093,52.78.194.214:9094'
+      KAFKA_CLUSTERS_0_ZOOKEEPER: '52.78.194.214:2181'
+    restart: unless-stopped
+
+  kafdrop:
+    container_name: kafdrop
+    image: obsidiandynamics/kafdrop
+    ports:
+      - '9001:9000'
+    environment:
+      KAFKA_BROKER_CONNECT: '52.78.194.214:9094'
+    restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    restart: unless-stopped 
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "4000:3000"
+    restart: unless-stopped
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:7.17.16
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - /home/ubuntu/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: false
+      xpack.security.transport.ssl.enabled: true
+      http.cors.allow-origin: "*"
+      http.cors.enabled: true
+      http.cors.allow-credentials: true
+      http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
+      http.cors.allow-headers: X-Requested-With, X-Auth-Token, Content-Type, Content-Length, Authorization, Access-Control-Allow-Headers, Accept, x-elastic-client-meta
+      ELASTIC_USERNAME: "elastic"
+      ELASTIC_PASSWORD: "elastic123!@#"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    networks:
+      - elk
+    command: ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data && /usr/local/bin/docker-entrypoint.sh"]
+    restart: unless-stopped
+
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:7.17.16
+    ports:
+      - 5000:5000
+      - 9600:9600
+    volumes:
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+    restart: unless-stopped
+
+  kibana:
+    container_name: kibana
+    image: kibana:7.17.16
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - elk
+    restart: unless-stopped
+
+volumes:
+  es_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ubuntu/elasticsearch

@@ -1,5 +1,13 @@
 package kr.or.kosa.cmsplusmain.domain.member.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -30,13 +38,6 @@ import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -205,7 +206,7 @@ public class MemberService {
     /**
     * 회원 엑셀로 대량 등록
     * */
-    @Transactional()
+    @Transactional
     public List<ExcelErrorRes<MemberExcelDto>> uploadMembersByExcel(Long vendorId, List<MemberExcelDto> memberList) {
         Vendor vendor = Vendor.of(vendorId);
 
@@ -246,7 +247,7 @@ public class MemberService {
             validation += "\n";
         }
 
-        String duplicated = canSave ? "" : "휴대번호 혹은 이메일이 중복되었습니다.";
+        String duplicated = canSave ? "" : "휴대전화 혹은 이메일이 중복되었습니다.";
 
         return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }

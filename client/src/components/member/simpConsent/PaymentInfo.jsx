@@ -1,16 +1,10 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PaymentCard from './PaymentCard';
 import PaymentCMS from './PaymentCMS';
-import { useUserDataStore } from '@/stores/useUserDataStore';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import { getAvailableOptions } from '@/apis/simpleConsent';
 
-const PaymentInfo = forwardRef((props, ref) => {
-  const { userData, setUserData } = useUserDataStore();
-  const [localData, setLocalData] = useState({
-    paymentMethod: userData.paymentDTO.paymentMethod || '',
-    ...userData.paymentDTO,
-  });
+const PaymentInfo = ({ userData, setUserData }) => {
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
   const [isVerified, setIsVerified] = useState(false);
 
@@ -27,50 +21,42 @@ const PaymentInfo = forwardRef((props, ref) => {
     fetchAvailableOptions();
   }, []);
 
-  useImperativeHandle(ref, () => ({
-    handleNextClick: () => {
+  const handlePaymentMethodChange = useCallback(
+    method => {
       setUserData({
+        ...userData,
+        paymentDTO: { ...userData.paymentDTO, paymentMethod: method },
+      });
+      setIsVerified(false); // 결제 수단이 변경되면 인증 상태 초기화
+    },
+    [userData, setUserData]
+  );
+
+  const handleVerificationComplete = useCallback(
+    verified => {
+      console.log('카드/계좌 인증 완료:', verified);
+      setIsVerified(verified);
+      // 부모 컴포넌트의 userData도 업데이트
+      setUserData(prevData => ({
+        ...prevData,
         paymentDTO: {
-          ...localData,
+          ...prevData.paymentDTO,
+          isVerified: verified,
         },
+      }));
+    },
+    [setUserData]
+  );
+
+  const handleInputChange = useCallback(
+    (name, value) => {
+      setUserData({
+        ...userData,
+        paymentDTO: { ...userData.paymentDTO, [name]: value },
       });
     },
-    validatePaymentInfo: () => {
-      const missingFields = [];
-
-      if (!localData.paymentMethod) missingFields.push('결제수단');
-
-      if (localData.paymentMethod === 'CARD') {
-        if (!isVerified) missingFields.push('카드 인증');
-        if (!localData.cardNumber) missingFields.push('카드번호');
-        if (!localData.expiryDate) missingFields.push('유효기간');
-        if (!localData.cardHolder) missingFields.push('명의자');
-        if (!localData.cardOwnerBirth) missingFields.push('생년월일');
-      } else if (localData.paymentMethod === 'CMS') {
-        if (!isVerified) missingFields.push('계좌 인증');
-        if (!localData.bank) missingFields.push('은행');
-        if (!localData.accountHolder) missingFields.push('예금주');
-        if (!localData.accountOwnerBirth) missingFields.push('생년월일');
-        if (!localData.accountNumber) missingFields.push('계좌번호');
-      }
-
-      return missingFields;
-    },
-  }));
-
-  const handlePaymentMethodChange = useCallback(method => {
-    setLocalData(prev => ({ ...prev, paymentMethod: method }));
-    setIsVerified(false); // 결제 수단이 변경되면 인증 상태 초기화
-  }, []);
-
-  const handleVerificationComplete = useCallback(verified => {
-    console.log('카드/계좌 인증 완료:', verified);
-    setIsVerified(verified);
-  }, []);
-
-  const handleInputChange = useCallback((name, value) => {
-    setLocalData(prev => ({ ...prev, [name]: value }));
-  }, []);
+    [userData, setUserData]
+  );
 
   const paymentOptions = availablePaymentMethods.map(method => ({
     label: method.title,
@@ -90,21 +76,21 @@ const PaymentInfo = forwardRef((props, ref) => {
         label='결제수단'
         name='paymentMethod'
         options={paymentOptions}
-        selectedOption={localData.paymentMethod}
+        selectedOption={userData.paymentDTO.paymentMethod}
         onChange={handlePaymentMethodChange}
         required={true}
       />
-      {localData.paymentMethod === 'CARD' && (
+      {userData.paymentDTO.paymentMethod === 'CARD' && (
         <PaymentCard
-          localData={localData}
+          paymentData={userData.paymentDTO}
           onInputChange={handleInputChange}
           onVerificationComplete={handleVerificationComplete}
           isVerified={isVerified}
         />
       )}
-      {localData.paymentMethod === 'CMS' && (
+      {userData.paymentDTO.paymentMethod === 'CMS' && (
         <PaymentCMS
-          localData={localData}
+          paymentData={userData.paymentDTO}
           onInputChange={handleInputChange}
           onVerificationComplete={handleVerificationComplete}
           isVerified={isVerified}
@@ -112,6 +98,6 @@ const PaymentInfo = forwardRef((props, ref) => {
       )}
     </>
   );
-});
+};
 
 export default PaymentInfo;

@@ -7,7 +7,17 @@ const Test = () => {
   // type : 4가지(default, width, success, error), "" = defalut
   // title : alert제목 , "" = 효성 CMS#
   const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async (msg, type, title) => {
+  const onAlert = async (msg, type, title, err = null) => {
+    if (err != null) {
+      const data = err.response.data;
+      const fieldErrors = data.errors;
+
+      msg = data.messeage;
+      if (fieldErrors && fieldErrors.length > 0) {
+        msg = fieldErrors.join('\n');
+      }
+    }
+
     const result = await alertComp(msg, type, title);
   };
 
