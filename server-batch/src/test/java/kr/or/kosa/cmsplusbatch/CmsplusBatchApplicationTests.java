@@ -1,10 +1,10 @@
-package kr.or.kosa.cmsplusmessaging;
+package kr.or.kosa.cmsplusbatch;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CmsplusMessagingApplicationTests {
+class CmsplusBatchApplicationTests {
 
 	@Test
 	void contextLoads() {
