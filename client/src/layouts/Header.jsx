@@ -12,9 +12,15 @@ import useConfirm from '@/hooks/useConfirm';
 const Header = () => {
   const { pathname } = useLocation();
   const { vendorInfo } = useVendorInfoStore();
-  const [time, setTime] = useState(3600);
   const confirm = useConfirm();
   const mainRef = useRef(null);
+
+  const [time, setTime] = useState(() => JSON.parse(localStorage.getItem('time')) || 3600);
+
+  // <----- 시간 로컬 스토리지에 저장 ----->
+  useEffect(() => {
+    localStorage.setItem('time', JSON.stringify(time));
+  }, [time]);
 
   // <----- 로그인 연장(refresh 토큰 재발급) API ----->
   const axiosExtendLogin = async () => {

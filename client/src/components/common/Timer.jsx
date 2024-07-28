@@ -10,6 +10,7 @@ const Timer = ({ time, setTime, timeOut, style }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(prevTime => {
+        console.log('??');
         if (prevTime <= 0) {
           clearInterval(timer);
           if (timeOut) {
