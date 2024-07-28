@@ -26,6 +26,7 @@ public class BillingCreateReq {
 	@NotNull(message = "청구상품이 필요합니다")
 	@Size(
 		min = Billing.MIN_BILLING_PRODUCT_NUMBER,
-		message = Billing.MIN_BILLING_PRODUCT_NUMBER + "개 이상의 상품이 필요합니다")
+		max = Billing.MAX_BILLING_PRODUCT_NUMBER,
+		message = "상품 수량은 " + Billing.MIN_BILLING_PRODUCT_NUMBER + "~" + Billing.MAX_BILLING_PRODUCT_NUMBER)
 	private List<@Valid BillingProductReq> products;	// 청구 상품 목록
 }

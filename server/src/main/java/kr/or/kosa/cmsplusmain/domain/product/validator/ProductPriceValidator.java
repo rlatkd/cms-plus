@@ -13,6 +13,9 @@ public class ProductPriceValidator implements ConstraintValidator<ProductPrice, 
 
     @Override
     public boolean isValid(Integer productPrice, ConstraintValidatorContext context) {
+        if (productPrice == null) {
+            return true;
+        }
         return productPrice <= MAX_PRODUCT_PRICE;
     }
 }
