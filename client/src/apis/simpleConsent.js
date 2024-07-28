@@ -6,12 +6,6 @@ export const getSimpleConsent = async () => {
   return res.data;
 };
 
-/* 간편서명동의 설정 전체 상품리스트 가져오기 */
-export const getAllProducts = async () => {
-  const res = await privateAxios.get('/v1/vendor/product/all/no-cond');
-  return res.data;
-};
-
 /* 간편서명동의 설정 업데이트 */
 export const updateSimpleConsent = async data => {
   const res = await privateAxios.put('/v1/vendor/simple-consent', data);

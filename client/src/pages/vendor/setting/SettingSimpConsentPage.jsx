@@ -3,7 +3,8 @@ import SimpConsentQrUrlModal from '@/components/vendor/modal/SimpConsentQrUrlMod
 import ProductSelectField from '@/components/common/selects/ProductSelectField';
 import Checkbox from '@/components/common/inputs/CheckBox';
 import useSimpleConsentStore from '@/stores/simpleConsentStore';
-import { getSimpleConsent, getAllProducts, updateSimpleConsent } from '@/apis/simpleConsent';
+import { getSimpleConsent, updateSimpleConsent } from '@/apis/simpleConsent';
+import { getAllProductList } from '@/apis/product';
 
 const MAX_VISIBLE_PRODUCTS = 5;
 
@@ -32,7 +33,8 @@ const SettingSimpConsentPage = () => {
         };
         setCheckedItems(newCheckedItems);
 
-        const allProducts = await getAllProducts();
+        const res = await getAllProductList();
+        const allProducts = res.data;
         setProducts(allProducts);
 
         const selectedProductsData = allProducts.filter(product =>

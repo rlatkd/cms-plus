@@ -17,6 +17,7 @@ import { formatCardYearForStorage } from '@/utils/format/formatCard';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import close from '@/assets/close.svg';
+import { sendReqSimpConsent } from '@/apis/simpleConsent';
 
 const MemberRegisterPage = () => {
   const start = 0;
@@ -37,10 +38,11 @@ const MemberRegisterPage = () => {
     paymentTypeInfoReq_Auto,
     paymentMethodInfoReq_Cms,
     paymentMethodInfoReq_Card,
+    isSimpConsentCheck,
     ...paymentResetFunctions
   } = useMemberPaymentStore();
 
-  // <------ 등록 폼 교체 ------>
+  // <----- 등록 폼 교체 ----->
   const componentMap = {
     0: { title: '기본정보', component: RegisterBasicInfo }, // 기본정보
     1: { title: '계약정보', component: RegisterContractInfo }, // 계약정보
@@ -53,19 +55,23 @@ const MemberRegisterPage = () => {
     component: () => 'error',
   };
 
-  // <------ 회원등록 API ------>
+  // <----- 회원등록 API ----->
   const axiosCreateMember = async () => {
     try {
-      const data = {
-        ...basicInfo, // 기본정보
-        contractCreateReq: transformContractInfo(), // 계약정보
-        paymentCreateReq: transformPaymentInfo(), // 결제정보
-        ...billingInfo, // 청구정보
-      };
-      console.log(data);
       if (status === 3) {
+        const data = {
+          ...basicInfo, // 기본정보
+          contractCreateReq: transformContractInfo(), // 계약정보
+          paymentCreateReq: transformPaymentInfo(), // 결제정보
+          ...billingInfo, // 청구정보
+        };
         const res = await postCreateMember(data);
         console.log('!----회원등록 성공----!'); // 삭제예정
+
+        if (isSimpConsentCheck && !paymentMethod && paymentType === 'AUTO') {
+          await axiosSendReqSimpConsent(res.data);
+        }
+
         await navigate('/vendor/members');
         onAlert('회원정보가 등록되었습니다!');
       }
@@ -74,7 +80,17 @@ const MemberRegisterPage = () => {
     }
   };
 
-  // <------ 상품 목록을 contractProducts형식으로 변환------>
+  // <----- 간편서명동의 링크 발송하기 ----->
+  const axiosSendReqSimpConsent = async contractId => {
+    try {
+      const res = await sendReqSimpConsent(contractId);
+      console.log('!----간편서명동의 링크 발송하기 성공----!'); // 삭제예정
+    } catch (err) {
+      console.error('axiosSendReqSimpConsent => ', err.response);
+    }
+  };
+
+  // <----- 상품 목록을 contractProducts형식으로 변환 ----->
   const mapContractProducts = products => {
     return products.map(option => ({
       productId: option.productId,
@@ -83,7 +99,7 @@ const MemberRegisterPage = () => {
     }));
   };
 
-  // <------ 계약정보 데이터 변화 ------>
+  // <----- 계약정보 데이터 변화 ----->
   const transformContractInfo = () => {
     const { contractName, contractStartDate, contractEndDate, contractDay, contractProducts } =
       contractInfo;
@@ -96,7 +112,7 @@ const MemberRegisterPage = () => {
     };
   };
 
-  // <------ 결제정보 데이터 변화 ------>
+  // <----- 결제정보 데이터 변화 ----->
   const transformPaymentInfo = () => {
     const paymentCreateReq = {
       paymentTypeInfoReq: {
@@ -111,7 +127,7 @@ const MemberRegisterPage = () => {
       },
     };
 
-    if (paymentType === 'AUTO') {
+    if (paymentType === 'AUTO' && paymentMethod !== '') {
       paymentCreateReq.paymentMethodInfoReq = {
         paymentMethod,
         ...(paymentMethod === 'CMS' && paymentMethodInfoReq_Cms),

@@ -14,7 +14,7 @@ const ContractInfoForm = ({ formType }) => {
   // <-----Options생성----->
   const createOptions = (itemList, valueKey) => {
     return itemList.map(item => ({
-      value: item[valueKey],
+      value: item[valueKey] + ' (' + String(item.price.toLocaleString()) + '원)',
       label: item[valueKey],
       name: item[valueKey],
       price: item.price,
@@ -24,10 +24,14 @@ const ContractInfoForm = ({ formType }) => {
 
   const options = createOptions(productList, 'name');
 
-  // <-----상품 추가----->
+  // <-----상품 추가, 제거----->
   const handleProductChange = newSelectedOptions => {
     if (newSelectedOptions.length > 10) {
       onAlert('10개이상 등록 하실 수 없습니다!');
+      return;
+    }
+    if (newSelectedOptions.length < 1) {
+      onAlert('반드시 하나의 상품이 필요합니다!');
       return;
     }
     setContractProducts(newSelectedOptions);

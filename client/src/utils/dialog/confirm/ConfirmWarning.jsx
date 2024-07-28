@@ -28,7 +28,7 @@ const ConfirmWarning = ({ message, onClickOK, onClickCancel, title }) => {
         <div className='absolute bottom-4 right-4 text-sm'>
           <button
             className='bg-white text-mint transition-all duration-200 
-                        font-700 px-6 h-8 rounded-lg  border border-mint'
+                        font-700 px-6 h-8 rounded-lg  border border-mint hover:bg-mint hover:text-white'
             onClick={onClickCancel}>
             취소
           </button>

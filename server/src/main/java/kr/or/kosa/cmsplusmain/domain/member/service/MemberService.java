@@ -55,7 +55,7 @@ public class MemberService {
     private final ContractRepository contractRepository;
     private final ContractProductRepository contractProductRepository;
 
-    /*
+    /**
      * 회원 목록 조회
      * */
     public PageRes<MemberListItemRes> searchMembers(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
@@ -82,7 +82,7 @@ public class MemberService {
         return new PageRes<>(totalCount, pageable.getSize(), members);
     }
 
-    /*
+    /**
     *  회원 상세 - 기본정보
     * */
     public MemberDetail findMemberDetailById(Long vendorId, Long memberId) {
@@ -100,7 +100,7 @@ public class MemberService {
         return MemberDetail.fromEntity(member, billingCount, totalBillingPrice);
     }
 
-    /*
+    /**
     * 회원 상세 - 계약리스트
     * */
     public PageRes<MemberContractListItemRes> findContractListItemByMemberId(Long vendorId, Long memberId, PageReq pageable) {
@@ -116,11 +116,11 @@ public class MemberService {
         return new PageRes<>(countAllContractListItemByMemberId,pageable.getSize(), memberContractListItemRes);
     }
 
-    /*
+    /**
      * 회원 등록
      * */
     @Transactional
-    public void createMember(Long vendorId, MemberCreateReq memberCreateReq) {
+    public Long createMember(Long vendorId, MemberCreateReq memberCreateReq) {
 
         // 회원 정보를 DB에 저장한다.
         Member member = null;
@@ -137,10 +137,12 @@ public class MemberService {
         Payment payment = paymentService.createPayment(memberCreateReq.getPaymentCreateReq());
 
         // 계약 정보를 DB에 저장한다.
-        contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
+        Long contractId = contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
+
+        return contractId;
     }
 
-    /*
+    /**
      * 회원 수정 - 기본 정보
      *
      * 총 발생 쿼리수: 3회
@@ -163,7 +165,7 @@ public class MemberService {
         member.setMemo(memberUpdateReq.getMemberMemo());
     }
 
-    /*
+    /**
      * 회원 수정 - 청구 정보
      * */
     @Transactional
@@ -179,7 +181,7 @@ public class MemberService {
         member.setAutoBilling(memberBillingUpdateReq.isAutoBilling());
     }
 
-    /*
+    /**
      * 회원 삭제
      * */
     @Transactional
@@ -193,7 +195,7 @@ public class MemberService {
         member.delete();
     }
 
-    /*
+    /**
      * 회원 삭제 - 회원의 진행중인 청구 개수 조회
      * */
     public int countAllInProgressBillingByMember(Long vendorId, Long memberId) {
@@ -201,7 +203,7 @@ public class MemberService {
         return billingCustomRepository.countInProgressBillingsByMember(memberId);
     }
 
-    /*
+    /**
     * 회원 엑셀로 대량 등록
     * */
     @Transactional
@@ -250,7 +252,7 @@ public class MemberService {
         return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }
 
-    /*
+    /**
      * 회원 ID 존재여부
      * 회원이 현재 로그인 고객의 회원인지 여부
      * */

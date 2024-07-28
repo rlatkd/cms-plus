@@ -41,9 +41,7 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
         paymentMethod: paymentMethod,
         ...paymentCardinfo,
       };
-      console.log(transformPaymentCard);
       const res = await verifyCard(transformPaymentCard);
-      console.log(res);
       console.log('!---- Card 인증 ----!'); // 삭제예정
       if (res) {
         onAlert('카드인증에 성공하셨습니다!');

@@ -50,6 +50,7 @@ const LoginForm = () => {
       const res = await postLogin(data);
       const { accessToken, ...vendorInfo } = res.data;
       localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('time', JSON.stringify(3600));
       setVendorInfo(vendorInfo);
       console.log('!----로그인 성공----!'); // 삭제예정
       navigate('/vendor/dashboard');

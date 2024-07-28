@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export const useMemberPaymentStore = create(set => ({
-  // <------ 결제 방식 정보 ------>
+  // <----- 결제 방식 정보 ----->
   paymentType: 'AUTO',
 
   // 결제 방식 설정
@@ -16,7 +16,16 @@ export const useMemberPaymentStore = create(set => ({
       paymentType: 'AUTO',
     }),
 
-  // <------ 결제 방식 - 가상계좌 ------>
+  // <----- 간편성명동의 체크여부 ----->
+  isSimpConsentCheck: 'true',
+
+  // boolean 값 변경
+  setIsSimpConsentCheck: data =>
+    set({
+      isSimpConsentCheck: !data,
+    }),
+
+  // <----- 결제 방식 - 가상계좌 ----->
   paymentTypeInfoReq_Virtual: {
     bank: '',
     accountOwner: '',
@@ -40,7 +49,7 @@ export const useMemberPaymentStore = create(set => ({
       },
     }),
 
-  // <------ 결제 방식 - 납부자결제 ------>
+  // <----- 결제 방식 - 납부자결제 ----->
   paymentTypeInfoReq_Buyer: {
     availableMethods: [],
   },
@@ -62,7 +71,7 @@ export const useMemberPaymentStore = create(set => ({
       },
     }),
 
-  // <------ 결제 방식 - 자동결제 ------>
+  // <----- 결제 방식 - 자동결제 ----->
   paymentTypeInfoReq_Auto: {
     consentImgUrl: '',
     simpleConsentReqDateTime: '',
@@ -88,7 +97,7 @@ export const useMemberPaymentStore = create(set => ({
       },
     }),
 
-  // <------ 결제 수단 정보 ------>
+  // <----- 결제 수단 정보 ----->
   paymentMethod: 'CMS',
 
   // 결제 수단 설정
@@ -103,7 +112,7 @@ export const useMemberPaymentStore = create(set => ({
       paymentMethod: 'CMS',
     }),
 
-  // <------ 결제 수단 - CMS ------>
+  // <----- 결제 수단 - CMS ----->
   paymentMethodInfoReq_Cms: {
     bank: '',
     accountNumber: '',
@@ -131,7 +140,7 @@ export const useMemberPaymentStore = create(set => ({
       },
     }),
 
-  // <------ 결제 방식 - 카드 ------>
+  // <----- 결제 방식 - 카드 ----->
   paymentMethodInfoReq_Card: {
     cardNumber: '',
     cardMonth: '',

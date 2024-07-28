@@ -195,12 +195,10 @@ public class ContractService {
 	}
 
 
-	public void createContract(Long vendorId, Member member, Payment payment, ContractCreateReq contractCreateReq) {
-
+	public Long createContract(Long vendorId, Member member, Payment payment, ContractCreateReq contractCreateReq) {
 		// 계약 정보를 DB에 저장한다.
 		Contract contract = contractCreateReq.toEntity(vendorId , member, payment);
-		contractRepository.save(contract);
-
+		contract = contractRepository.save(contract);
 
 		// 상품 ID -> 이름
 		List<Long> productIds = contractCreateReq.getContractProducts().stream()
@@ -212,5 +210,7 @@ public class ContractService {
 
 		// 계약 상품 정보를 DB에 저장한다.
 		contractProductRepository.saveAll(contractProducts);
+
+		return contract.getId();
 	}
 }

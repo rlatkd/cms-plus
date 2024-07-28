@@ -19,5 +19,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public abstract class PaymentMethodInfoReq {
-	private final PaymentMethod paymentMethod;
+	private final PaymentMethod paymentMethod ;
 }

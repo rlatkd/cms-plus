@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
-const Timer = ({ initialTime = 1800, style = 'text-text-black font-800 text-xl' }) => {
-  const [time, setTime] = useState(initialTime);
-
+const Timer = ({ time, setTime, timeOut, style }) => {
   const formatTime = seconds => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -12,8 +10,12 @@ const Timer = ({ initialTime = 1800, style = 'text-text-black font-800 text-xl' 
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(prevTime => {
+        console.log('??');
         if (prevTime <= 0) {
           clearInterval(timer);
+          if (timeOut) {
+            timeOut(); // 시간이 0일 때 timeOut 함수 호출
+          }
           return 0;
         }
         return prevTime - 1;
@@ -23,7 +25,7 @@ const Timer = ({ initialTime = 1800, style = 'text-text-black font-800 text-xl' 
     return () => clearInterval(timer);
   }, []);
 
-  return <div className={`inline-block px-3 py-1 ${style}`}>{formatTime(time)}</div>;
+  return <div className={`${style}`}>{formatTime(time)}</div>;
 };
 
 export default Timer;

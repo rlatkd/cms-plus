@@ -160,7 +160,6 @@ public class PaymentService {
 		PaymentMethodInfo paymentMethodInfo = null;
 		PaymentMethodInfoReq paymentMethodInfoReq = paymentCreateReq.getPaymentMethodInfoReq();
 		if(paymentMethodInfoReq != null) {
-
 			// 결제 수단 정보 ( 카드, 실시간CMS )
 			paymentMethodInfo = createPaymentMethodInfo(paymentMethodInfoReq);
 		}

@@ -75,8 +75,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String role = auth.getAuthority();
 
 		// JWT 토큰 생성
-		String accessToken = jwtUtil.createJwt("access", username, vendorId, role, 30 * 60 * 1000L);
-		String refreshToken = jwtUtil.createJwt("refresh", username, vendorId, role, 14 * 24 * 60 * 60 * 1000L);
+		String accessToken = jwtUtil.createJwt("access", username, vendorId, role, 60 * 60 * 1000L);
+		String refreshToken = jwtUtil.createJwt("refresh", username, vendorId, role, 7 * 24 * 60 * 60 * 1000L);
 
 		// Redis에 저장
 		redisTemplate.opsForValue().set(username, refreshToken, 14, TimeUnit.DAYS);
@@ -114,7 +114,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private Cookie createCookie(String key, String value) {
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(14 * 24 * 60 * 60);
+		cookie.setMaxAge(7 * 24 * 60 * 60);
 		cookie.setHttpOnly(true);
 		//cookie.setSecure(true);    // https 요청에 대한 접근제한
 		//cookie.setPath("/");
