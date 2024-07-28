@@ -45,9 +45,9 @@ const Header = () => {
   return (
     <div
       ref={mainRef}
-      className='flex justify-between pt-9 px-10 pb-3 h-[20%] desktop:h-[11vh] extra_desktop:h-[10vh] '>
+      className='flex justify-between pt-9 px-12 pb-3 h-[20%] desktop:h-[11vh] extra_desktop:h-[10vh] '>
       <BreadCrumb />
-      <div className='flex items-center py-4 '>
+      <div className='flex items-center py-4'>
         <div className='flex items-center '>
           <img src={clock} alt='clock' className='w-4 h-4' />
           <Timer
