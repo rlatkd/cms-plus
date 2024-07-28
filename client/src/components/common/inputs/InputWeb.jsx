@@ -11,15 +11,17 @@ const InputWeb = ({
   disabled,
   readOnly,
   type = 'text',
+  value,
   placeholder,
   classContainer = '',
   classLabel = '',
   classInput = '',
+  isValid = true, // 유효성여부 boolean
+  errorMsg, // 유효성탈락 메세지
   handleChangeAddress,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const inputRef = useRef(null);
 
@@ -57,16 +59,24 @@ const InputWeb = ({
       <div className='relative'>
         <input
           ref={inputRef}
-          className={`${classInput} placeholder:text-text_grey text-black border
-                    ${disabled && 'bg-ipt_disa '} border-ipt_border focus:border-mint focus:outline-none 
-                    focus:ring-mint focus:ring-1 placeholder:text-sm text-sm p-4 rounded-lg w-full`}
+          className={`${classInput} placeholder:text-text_grey text-black border rounded-lg w-full  focus:outline-none
+                    ${disabled && 'bg-ipt_disa '} border-ipt_border focus:ring-1 placeholder:text-sm text-sm p-4 
+                    ${value && !isValid ? ` ring-negative border-negative` : 'focus:ring-mint focus:border-mint'} `}
           id={id}
+          value={value}
           disabled={disabled}
           readOnly={readOnly}
           type={type !== 'password' ? type : showPassword ? 'text' : 'password'}
           placeholder={placeholder}
           {...props}
         />
+
+        {/* 유효성검사 */}
+        {value && !isValid && (
+          <p className='absolute text-negative text-[13px] ml-2 -bottom-6'>{errorMsg}</p>
+        )}
+
+        {/* 비밀번호 입력창 */}
         {type === 'password' && (
           <img
             src={showPassword ? openeye : closeeye}
@@ -76,6 +86,8 @@ const InputWeb = ({
             tabIndex='-1'
           />
         )}
+
+        {/* 주소입력창 */}
         {type === 'address' && (
           <div onClick={handleSearchAddress}>
             <Search
@@ -83,13 +95,13 @@ const InputWeb = ({
               fill={'#C7CCD0'}
               tabIndex='-1'
             />
+            <PostCodeModal
+              isOpen={isAddressModalOpen}
+              onClose={() => setIsAddressModalOpen(false)}
+              handleSelectAddress={handleSelectAddress}
+            />
           </div>
         )}
-        <PostCodeModal
-          isOpen={isAddressModalOpen}
-          onClose={() => setIsAddressModalOpen(false)}
-          handleSelectAddress={handleSelectAddress}
-        />
       </div>
     </div>
   );

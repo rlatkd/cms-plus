@@ -34,7 +34,7 @@ const PostCodeModal = ({ isOpen, onClose, handleSelectAddress }) => {
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center'>
-      <div className='relative bg-white p-5 rounded-lg shadow-lg z-50'>
+      <div className='relative bg-white p-6 rounded-lg shadow-lg z-50'>
         <div id='postcode-container' style={{ width: '450px', height: '475px' }} />
       </div>
       <div className='absolute inset-0 bg-black bg-opacity-25' onClick={onClose} />

@@ -4,47 +4,21 @@ import { getCheckUsername, postJoin } from '@/apis/auth';
 import { useContext, useState } from 'react';
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
+import { validateField } from '@/utils/validators';
 
 const SignupForm = () => {
   const navigate = useNavigate();
   const [checkedUsername, setCheckedUsername] = useState('');
-  // const [vendorFormData, setVendorFormData] = useState({
-  //   name: '',
-  //   username: '',
-  //   password: '',
-  //   passwordCheck: '',
-  //   email: '',
-  //   phone: '',
-  //   department: '',
-  //   homePhone: '',
-  // });
-
-  // Test데이터
   const [vendorFormData, setVendorFormData] = useState({
-    username: 'vendor6',
-    password: 'Qwer123!',
-    passwordCheck: 'Qwer123!',
-    name: 'hyosung',
-    email: 'gusehd3279@gmail.com',
-    phone: '01026963279',
-    homePhone: '029999999',
-    department: 'Sales',
+    name: '',
+    username: '',
+    password: '',
+    passwordCheck: '',
+    email: '',
+    phone: '',
+    department: '',
+    homePhone: '',
   });
-
-  // TODO
-  // 회원명 정규식
-  // 아이디 정규식
-  // 비밀번호 정규식
-  // 비밀번호 확인 검정 알림
-  // 이메일 정규식
-  // 휴대전화번호 정규식
-  // 유선 전화번호 정규식
-  // 부서명 정규식
-
-  // <----- 공백입력 막기 ----->
-  const handleKeyDown = e => {
-    e.key === ' ' && e.preventDefault();
-  };
 
   // <----- 사용자 입력값 ----->
   const handleChangeValue = e => {
@@ -56,13 +30,13 @@ const SignupForm = () => {
     }
   };
 
+  // <----- 공백입력 막기 ----->
+  const handleKeyDown = e => {
+    e.key === ' ' && e.preventDefault();
+  };
+
   // <----- 아이디 중복확인 ----->
   const handleCheckUsername = async () => {
-    if (vendorFormData.username.length <= 4) {
-      alert('잘못된 형식입니다.');
-      return;
-    }
-
     let isChecked = true;
     try {
       const res = await getCheckUsername(vendorFormData.username);
@@ -72,8 +46,7 @@ const SignupForm = () => {
       console.error('axiosJoin => ', err.response);
     }
 
-    // <----- false면 중복된 아이디 없다. ----->
-    console.log(isChecked);
+    // false면 중복된 아이디 없다.
     if (isChecked === false) {
       setCheckedUsername(vendorFormData.username);
       alert('Tmp : 사용가능한 아이디 입니다.');
@@ -91,25 +64,8 @@ const SignupForm = () => {
       return;
     }
 
-    // 비밀번호 확인
-    if (vendorFormData.password !== vendorFormData.passwordCheck) {
-      alert('Tmp : 비밀번호가 다릅니다.');
-      return;
-    }
     const { passwordCheck, ...dataWithoutPasswordCheck } = vendorFormData;
-
-    if (!isSignupBtnActive()) {
-      alert('Tmp : 입력값을 채워주세요');
-      return;
-    }
-
     axiosJoin(dataWithoutPasswordCheck);
-  };
-
-  // <----- 회원가입 버튼 활성화 ----->
-  const isSignupBtnActive = () => {
-    const { name, username, password, email, phone, department } = vendorFormData;
-    return name && username && password && email && phone && department;
   };
 
   // <----- 회원가입 API ----->
@@ -120,8 +76,34 @@ const SignupForm = () => {
       onAlert('회원가입에 성공하셨습니다!');
       navigate('/login');
     } catch (err) {
+      // 에러 alert 추가하기
       console.error('axiosJoin => ', err.response);
     }
+  };
+
+  // <----- 회원가입 버튼 활성화 ----->
+  const isSignupBtnActive = () => {
+    // 각 필드의 유효성 검사진행
+    const isValidName = validateField('name', vendorFormData.name);
+    const isValidUsername = validateField('username', vendorFormData.username);
+    const isValidPassword = validateField('password', vendorFormData.password);
+    const isValidPasswordCheck = vendorFormData.password === vendorFormData.passwordCheck;
+    const isValidEmail = validateField('email', vendorFormData.email);
+    const isValidPhone = validateField('phone', vendorFormData.phone);
+    const isValidDepartment = validateField('department', vendorFormData.department);
+    const isValidHomePhone = validateField('homePhone', vendorFormData.homePhone);
+
+    // 모든 필드가 유효한지 확인
+    return (
+      isValidName &&
+      isValidUsername &&
+      isValidPassword &&
+      isValidPasswordCheck &&
+      isValidEmail &&
+      isValidPhone &&
+      isValidDepartment &&
+      isValidHomePhone
+    );
   };
 
   const { alert: alertComp } = useContext(AlertContext);
@@ -153,6 +135,8 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             maxLength={40}
+            isValid={validateField('name', vendorFormData.name)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <div className='w-1/2 flex items-end'>
             <InputWeb
@@ -168,11 +152,13 @@ const SignupForm = () => {
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
               maxLength={20}
+              isValid={validateField('username', vendorFormData.username)}
+              errorMsg='올바른 형식 아닙니다.'
             />
             <button
               className={`ml-3  w-32 rounded-lg text-white text-sm font-700 h-46
                 ${
-                  vendorFormData.username !== null && vendorFormData.username.length > 4
+                  validateField('username', vendorFormData.username)
                     ? 'bg-mint hover:bg-mint_hover transition-all duration-200 '
                     : 'bg-btn_disa'
                 }  `}
@@ -195,8 +181,10 @@ const SignupForm = () => {
             value={vendorFormData.password}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            // autoComplete='off'  // !CHECK! 주석해제필요
+            autoComplete='off' // !CHECK! 주석해제필요
             maxLength={16}
+            isValid={validateField('password', vendorFormData.password)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <InputWeb
             id='passwordCheck'
@@ -210,8 +198,10 @@ const SignupForm = () => {
             value={vendorFormData.passwordCheck}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            // autoComplete='off' // !CHECK! 주석해제필요
+            autoComplete='off' // !CHECK! 주석해제필요
             maxLength={16}
+            isValid={vendorFormData.password === vendorFormData.passwordCheck}
+            errorMsg='비밀번호가 일치하지 않습니다.'
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -228,6 +218,8 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             maxLength={40}
+            isValid={validateField('email', vendorFormData.email)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <InputWeb
             id='phone'
@@ -242,6 +234,8 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             maxLength={11}
+            isValid={validateField('phone', vendorFormData.phone)}
+            errorMsg='올바른 형식 아닙니다.'
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -257,6 +251,8 @@ const SignupForm = () => {
             value={vendorFormData.department}
             onChange={handleChangeValue}
             maxLength={40}
+            isValid={validateField('department', vendorFormData.department)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <InputWeb
             id='homePhone'
@@ -270,6 +266,8 @@ const SignupForm = () => {
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             maxLength={10}
+            isValid={validateField('homePhone', vendorFormData.homePhone)}
+            errorMsg='올바른 형식 아닙니다.'
           />
         </div>
 
@@ -284,7 +282,8 @@ const SignupForm = () => {
           </span>
         </div>
         <button
-          className={`px-6 py-3 rounded-lg text-white text-sm font-700 absolute right-6 bottom-8 cursor-pointer
+          disabled={!isSignupBtnActive()}
+          className={`px-6 py-3 rounded-lg text-white text-sm font-700 absolute right-6 bottom-8 
             ${isSignupBtnActive() ? 'bg-mint hover:bg-mint_hover transition-all duration-200' : 'bg-btn_disa '}`}
           onClick={handleSubmit}>
           아이디 만들기
