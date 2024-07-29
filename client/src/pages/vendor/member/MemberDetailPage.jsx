@@ -28,7 +28,6 @@ const MemberDetailPage = () => {
     totalBillingPrice: '',
   });
 
-  const { setBasicInfo, resetBasicInfo } = useMemberBasicStore();
   const memberId = useParams();
 
   // <------ 회원 상세 조회 ------>
@@ -37,19 +36,6 @@ const MemberDetailPage = () => {
       const res = await getMemberDetail(memberId.id);
       console.log('!----회원 상세 조회 성공----!'); // 삭제예정
       setMemberData(res.data);
-      setBasicInfo({
-        memberName: res.data.memberName,
-        memberPhone: res.data.memberPhone,
-        memberEnrollDate: res.data.memberEnrollDate,
-        memberHomePhone: res.data.memberHomePhone,
-        memberEmail: res.data.memberEmail,
-        memberMemo: res.data.memberMemo,
-        memberAddress: {
-          address: res.data.memberAddress.address,
-          addressDetail: res.data.memberAddress.addressDetail,
-          zipcode: res.data.memberAddress.zipcode,
-        },
-      });
     } catch (err) {
       console.error('axiosMemberDetail => ', err.response);
     }
@@ -58,9 +44,6 @@ const MemberDetailPage = () => {
   // <----- 회원 정보 zustand와 로컬에 저장 ----->
   useEffect(() => {
     axiosMemberDetail();
-    return () => {
-      resetBasicInfo();
-    };
   }, []);
 
   return (

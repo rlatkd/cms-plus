@@ -1,10 +1,10 @@
 import { convertMember, uploadMembers } from '@/apis/member';
 import BaseModal from '@/components/common/BaseModal';
 import { useState, useContext, useEffect } from 'react';
-import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip';
 import { FaExclamationCircle, FaUpload, FaSave, FaDownload } from 'react-icons/fa';
+import useAlert from '@/hooks/useAlert';
 
 const headers = [
   { name: '회원명', key: 'memberName', required: true },
@@ -22,19 +22,13 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
   const [data, setData] = useState([]);
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const { alertWidth: alertCompWidth } = useContext(AlertWdithContext);
+  const onAlert = useAlert();
 
   useEffect(() => {
     setData([]);
     setFile(null);
     setErrors([]);
   }, [isShowModal]);
-
-  const onAlert = async msg => {
-    const result = await alertCompWidth(msg);
-    console.log('onAlertWidth : ', result);
-  };
 
   const handleFileChange = e => {
     setFile(e.target.files[0]);
@@ -202,7 +196,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
             </table>
             {isLoading && (
               <div className='text-center mb-4'>
-                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto'></div>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto' />
                 <p className='mt-2 text-gray-600'>업로드 중...</p>
               </div>
             )}

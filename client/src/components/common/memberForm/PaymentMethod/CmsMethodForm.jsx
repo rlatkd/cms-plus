@@ -7,6 +7,8 @@ import FileUpload from '../../inputs/FileUpload';
 import { verifyCMS } from '@/apis/validation';
 import { useContext } from 'react';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
+import { validateField } from '@/utils/validators';
+import useAlert from '@/hooks/useAlert';
 
 const CmsMethodForm = ({ paymentMethod, formType }) => {
   const {
@@ -15,6 +17,8 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
     paymentTypeInfoReq_Auto,
     setPaymentTypeInfoReq_Auto,
   } = useMemberPaymentStore();
+
+  const onAlert = useAlert();
 
   // <----- 셀렉터 필드 은행명 변경 ----->
   const handleChangeSelect = e => {
@@ -50,24 +54,15 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
       console.log('!----실시간 CMS 계좌인증 API----!'); // 삭제예정
 
       if (res) {
-        onAlert('계좌인증에 성공하셨습니다!');
+        onAlert({ msg: '계좌인증에 성공하셨습니다!', type: 'success', title: '계좌 인증 성공' });
       } else {
-        onAlert('계좌인증에 실패하셨습니다.');
+        onAlert({ msg: '계좌인증에 실패하셨습니다.', type: 'error', title: '계좌 인증 실패' });
       }
     } catch (err) {
       console.error('axiosVerifyCMS => ', err.response);
-      onAlert('계좌인증에 실패하셨습니다.');
+      onAlert({ msg: '계좌인증에 실패하셨습니다.', type: 'error', title: '계좌 인증 오류' });
     }
   };
-
-  // <----- 계좌인증 성공여부 Alert창 ------>
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async msg => {
-    await alertComp(msg);
-  };
-
-  // TODO
-  // <------ 정규표현식 예외처리 ------>
 
   return (
     <>
@@ -93,6 +88,9 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
             classInput='py-3 pr-20'
             value={paymentMethodInfoReq_Cms.accountOwner}
             onChange={handleChangeInput}
+            maxLength={40}
+            isValid={validateField('name', paymentMethodInfoReq_Cms.accountOwner)}
+            errorMsg='올바른 형식 아닙니다.'
           />
         </div>
         {/* TODO */}
@@ -115,7 +113,7 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
         <InputCalendar
           id='accountOwnerBirth'
           label='생년월일'
-          placeholder='생년월일8자리'
+          placeholder='생년월일 8자리'
           required
           height='45px'
           width='100%'
@@ -134,6 +132,9 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
             classInput='py-3 pr-20'
             value={paymentMethodInfoReq_Cms.accountNumber}
             onChange={handleChangeInput}
+            maxLength={14}
+            isValid={validateField('accountNumber', paymentMethodInfoReq_Cms.accountNumber)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <button
             className='h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover ml-3'
