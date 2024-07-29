@@ -1,6 +1,12 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 
 const ConDetailPaymentType = ({ contractData }) => {
+  // Safely access nested properties with default values
+  const paymentTypeTitle = contractData?.paymentTypeInfo?.paymentType?.title ?? '';
+  const contractDay = contractData?.contractDay ?? '';
+  const contractStartDate = contractData?.contractStartDate ?? '';
+  const contractEndDate = contractData?.contractEndDate ?? '';
+
   return (
     <div className='flex-col p-5'>
       <div className='flex flex-col justify-between flex-1'>
@@ -8,7 +14,7 @@ const ConDetailPaymentType = ({ contractData }) => {
           <InputWeb
             id='paymentType'
             label='결제방식'
-            value={contractData.paymentTypeInfo.paymentType.title || ''}
+            value={paymentTypeTitle}
             type='text'
             classContainer='w-full mr-6'
             disabled={true}
@@ -16,17 +22,17 @@ const ConDetailPaymentType = ({ contractData }) => {
           <InputWeb
             id='contractDay'
             label='약정일'
-            value={contractData.contractDay || ''}
+            value={contractDay}
             type='text'
             classContainer='w-full'
             disabled={true}
           />
         </div>
-        <div className='flex items-end mb-5 '>
+        <div className='flex items-end mb-5'>
           <InputWeb
             id='contractStartDate'
             label='계약기간'
-            value={contractData.contractStartDate || ''}
+            value={contractStartDate}
             type='text'
             classContainer='w-full mr-3'
             disabled={true}
@@ -34,7 +40,7 @@ const ConDetailPaymentType = ({ contractData }) => {
           <InputWeb
             id='contractEndDate'
             label=''
-            value={contractData.contractEndDate || ''}
+            value={contractEndDate}
             type='text'
             classContainer='w-full'
             disabled={true}

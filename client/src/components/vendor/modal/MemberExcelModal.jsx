@@ -1,10 +1,10 @@
 import { convertMember, uploadMembers } from '@/apis/member';
 import BaseModal from '@/components/common/BaseModal';
 import { useState, useContext, useEffect } from 'react';
-import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip';
 import { FaExclamationCircle, FaUpload, FaSave, FaDownload } from 'react-icons/fa';
+import useAlert from '@/hooks/useAlert';
 
 const headers = [
   { name: '회원명', key: 'memberName', required: true },
@@ -17,13 +17,12 @@ const headers = [
   { name: '이메일', key: 'memberEmail', required: true },
 ];
 
-const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axiosMemberList }) => {
+const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => {
   const [file, setFile] = useState(null);
   const [data, setData] = useState([]);
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const { alertWidth: alertCompWidth } = useContext(AlertWdithContext);
+  const onAlert = useAlert();
 
   useEffect(() => {
     setData([]);
@@ -31,12 +30,11 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
     setErrors([]);
   }, [isShowModal]);
 
-  const onAlert = async msg => {
-    const result = await alertCompWidth(msg);
-    console.log('onAlertWidth : ', result);
-  };
-
   const handleFileChange = e => {
+    if (e.target.files[0].size > 3000000) {
+      alert('최대 3mb 까지 업로드 가능합니다!');
+      return;
+    }
     setFile(e.target.files[0]);
   };
 
@@ -66,6 +64,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
 
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       const errors = await uploadMembers(data);
       if (errors.data.length > 0) {
         setData(errors.data.map(e => e.notSaved));
@@ -83,6 +82,8 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
     } catch (error) {
       console.error('Error submitting data:', error);
       onAlert('회원 정보 등록 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -93,8 +94,9 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
       modalTitle={modalTitle}
       icon={icon}
       height={'h-[90vh]'}
-      width={'w-[95vw]'}>
-      <div className='bg-white p-8 rounded-lg w-full h-full flex flex-col'>
+      width={'w-[95vw]'}
+      close={true}>
+      <div className='bg-white rounded-lg w-full h-5/6 flex flex-col'>
         <div className='mb-6 flex items-center justify-between'>
           <div className='flex items-center flex-1'>
             <label
@@ -111,7 +113,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
               />
             </label>
             <span className='ml-3 text-sm text-gray-600'>
-              {file ? file.name : '선택된 파일 없음'}
+              {file ? file.name : '선택된 파일 없음 (최대 3mb)'}
             </span>
           </div>
           <div>
@@ -145,7 +147,13 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
 
         <div className='flex-1 overflow-hidden'>
           <div className='overflow-x-auto overflow-y-auto h-full shadow-md rounded-lg'>
-            <table className='w-full table-auto'>
+            {isLoading && (
+              <div className='text-center mb-4 z-50'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto' />
+                <p className='mt-2 text-gray-600'>업로드 중...</p>
+              </div>
+            )}
+            <table className='w-full h-5/6 table-auto'>
               <thead className='sticky top-0 bg-gray-100'>
                 <tr>
                   {headers.map((header, index) => (
@@ -182,7 +190,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
                             )}
                             <input
                               type='text'
-                              value={row[header.key]}
+                              value={row != null ? row[header?.key] : ''}
                               onChange={e => handleCellChange(rowIndex, header.key, e.target.value)}
                               className='w-full text-sm text-gray-900 bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300'
                             />
@@ -200,12 +208,6 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle, axios
                 )}
               </tbody>
             </table>
-            {isLoading && (
-              <div className='text-center mb-4'>
-                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto'></div>
-                <p className='mt-2 text-gray-600'>업로드 중...</p>
-              </div>
-            )}
           </div>
         </div>
       </div>

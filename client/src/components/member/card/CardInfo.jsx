@@ -3,6 +3,7 @@ import Input from '@/components/common/inputs/Input';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { verifyCard } from '@/apis/validation';
 import { formatBirthDate } from '@/utils/format/formatBirth';
+import { formatCardNumber, formatExpiryDate } from '@/utils/format/formatCard';
 
 const CardInfo = ({ cardInfo, setCardInfo }) => {
   const selectedCard = useInvoiceStore(state => state.selectedCard);
@@ -10,29 +11,6 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState(null);
-
-  const formatExpiryDate = value => {
-    const cleaned = value.replace(/\D/g, '');
-    let formatted = cleaned;
-
-    if (cleaned.length >= 2) {
-      formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
-    }
-
-    return formatted.slice(0, 5);
-  };
-
-  const formatCardNumber = value => {
-    const cleaned = value.replace(/\D/g, '');
-    const chunks = [];
-
-    for (let i = 0; i < cleaned.length; i += 4) {
-      chunks.push(cleaned.slice(i, i + 4));
-    }
-
-    console.log(chunks.join('-').slice(0, 19));
-    return chunks.join('-').slice(0, 19);
-  };
 
   const handleInputChange = e => {
     const { name, value } = e.target;

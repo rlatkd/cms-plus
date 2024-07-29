@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BlobUrl {
-    String message() default "Invalid blob url";
+    String message() default "잘못된 URL 형식입니다";
 
     Class<?>[] groups() default {};
 

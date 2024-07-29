@@ -3,6 +3,7 @@ import BaseModal from '@/components/common/BaseModal';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
+import { validateField } from '@/utils/validators';
 import { useEffect, useState } from 'react';
 
 const MessageSendMethod = [
@@ -16,6 +17,8 @@ const FindVendorIdModal = ({
   setFindedId,
   setIsShowSuccessFindIdModal,
   axiosRequestAuthenticationNumber,
+  time,
+  setTime,
   icon,
   modalTitle,
 }) => {
@@ -26,6 +29,7 @@ const FindVendorIdModal = ({
     phone: '',
     authenticationNumber: '',
   });
+  const [isAuthentication, setIsAuthentication] = useState(true);
 
   // <---- 사용자 입력값 ---->
   const handleChangeValue = e => {
@@ -64,17 +68,31 @@ const FindVendorIdModal = ({
   // <---- 아이디 찾기 API ---->
   const axiosFindIdentifier = async () => {
     try {
-      console.log(vendorIdFormData);
       const res = await postFindIdentifier(vendorIdFormData);
       console.log('!----아이디 찾기 요청 성공----!'); // 삭제예정
       await setFindedId(res.data.username);
       setIsShowSuccessFindIdModal(true);
       setIsShowModal(false);
     } catch (err) {
-      // TODO
-      // 아이디가 없을 시 예외 처리
+      setIsAuthentication(false);
       console.error('axiosFindIdentifier => ', err.response);
     }
+  };
+
+  // <----- SMS 폼의 유효성 검사 ----->
+  const isValidateSmsForm = () => {
+    const isValidName = validateField('name', vendorIdFormData.name);
+    const isValidPhone = validateField('phone', vendorIdFormData.phone);
+    const authenticationNumber = vendorIdFormData.authenticationNumber;
+    return isValidName && isValidPhone && authenticationNumber;
+  };
+
+  // <----- 이메일 폼의 유효성 검사 ----->
+  const isValidateEmailForm = () => {
+    const isValidName = validateField('name', vendorIdFormData.name);
+    const isValidEmail = validateField('email', vendorIdFormData.email);
+    const authenticationNumber = vendorIdFormData.authenticationNumber;
+    return isValidName && isValidEmail && authenticationNumber;
   };
 
   useEffect(() => {
@@ -83,6 +101,7 @@ const FindVendorIdModal = ({
 
   useEffect(() => {
     settingvendorIdFormData();
+    setTime(0);
   }, [isShowModal, selectedSendMethod]);
 
   return (
@@ -91,7 +110,7 @@ const FindVendorIdModal = ({
       setIsShowModal={setIsShowModal}
       modalTitle={modalTitle}
       icon={icon}
-      height={'h-510'}
+      height={'h-540'}
       width={'w-640'}>
       <div className='w-full h-full flex flex-col justify-between'>
         <RadioGroup
@@ -108,12 +127,15 @@ const FindVendorIdModal = ({
           type='text'
           placeholder='이름을 입력해 주세요.'
           value={vendorIdFormData.name}
-          classInput='mb-4 rounded-xl'
+          classContainer='mb-6'
+          classInput='py-4 rounded-xl'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           maxLength={40}
+          isValid={validateField('name', vendorIdFormData.name)}
+          errorMsg='올바른 형식 아닙니다.'
         />
-        <div className='mb-4 flex items-end'>
+        <div className='mb-6 flex items-end'>
           {selectedSendMethod === 'SMS' ? (
             <InputWeb
               id='phone'
@@ -125,6 +147,10 @@ const FindVendorIdModal = ({
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
               classInput='rounded-xl'
+              isValid={validateField('phone', vendorIdFormData.phone)}
+              errorMsg='올바른 형식 아닙니다.'
+              time={time}
+              setTime={setTime}
               maxLength={11}
             />
           ) : (
@@ -138,6 +164,10 @@ const FindVendorIdModal = ({
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
               classInput='rounded-xl'
+              isValid={validateField('email', vendorIdFormData.email)}
+              errorMsg='올바른 형식 아닙니다.'
+              time={time}
+              setTime={setTime}
               maxLength={40}
             />
           )}
@@ -151,7 +181,7 @@ const FindVendorIdModal = ({
               }`}
             disabled={!vendorIdFormData.phone && !vendorIdFormData.email}
             onClick={() => axiosRequestAuthenticationNumber(vendorIdFormData)}>
-            인증번호 받기
+            {time && time !== 0 ? '인증번호 재전송' : '인증번호 받기'}
           </button>
         </div>
         <InputWeb
@@ -160,16 +190,26 @@ const FindVendorIdModal = ({
           type='text'
           placeholder='인증번호 6자리를 입력해 주세요.'
           value={vendorIdFormData.authenticationNumber}
-          classInput='mb-5 rounded-xl'
+          classContainer='mb-6'
+          classInput='py-4 rounded-xl'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
+          isValid={isAuthentication}
+          errorMsg='인증번호가 틀립니다.'
           maxLength={6}
         />
         <button
-          className='font-700 bg-mint px-4 py-3  text-white rounded-xl 
-              transition-all duration-200 hover:bg-mint_hover'
+          disabled={
+            vendorIdFormData.method === 'SMS' ? !isValidateSmsForm() : isValidateEmailForm()
+          }
+          className={`font-700 px-4 py-3 text-white rounded-xl transition-all duration-200 ${
+            (vendorIdFormData.method === 'SMS' && isValidateSmsForm()) ||
+            (vendorIdFormData.method === 'EMAIL' && isValidateEmailForm())
+              ? 'hover:bg-mint_hover bg-mint '
+              : 'bg-btn_disa'
+          }`}
           onClick={axiosFindIdentifier}>
-          아이디 찾기
+          인증번호 받기
         </button>
       </div>
     </BaseModal>

@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
 import { getCheckUsername, postJoin } from '@/apis/auth';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
-import AlertContext from '@/utils/dialog/alert/AlertContext';
 import { validateField } from '@/utils/validators';
+import useAlert from '@/hooks/useAlert';
 
 const SignupForm = () => {
-  const navigate = useNavigate();
   const [checkedUsername, setCheckedUsername] = useState('');
   const [vendorFormData, setVendorFormData] = useState({
     name: '',
@@ -19,6 +18,8 @@ const SignupForm = () => {
     department: '',
     homePhone: '',
   });
+  const navigate = useNavigate();
+  const onAlert = useAlert();
 
   // <----- 사용자 입력값 ----->
   const handleChangeValue = e => {
@@ -49,10 +50,11 @@ const SignupForm = () => {
     // false면 중복된 아이디 없다.
     if (isChecked === false) {
       setCheckedUsername(vendorFormData.username);
-      alert('Tmp : 사용가능한 아이디 입니다.');
+      onAlert({ msg: '사용 가능한 아이디입니다.', type: 'success' });
     } else {
+      console.log('?????');
       setCheckedUsername('');
-      alert('Tmp : 사용 불가능한 아이디 입니다.');
+      onAlert({ msg: '이미 사용 중인 아이디입니다.', type: 'error' });
     }
   };
 
@@ -60,7 +62,7 @@ const SignupForm = () => {
   const handleSubmit = async () => {
     // 아이디 중복확인 여부 확인
     if (vendorFormData.username !== checkedUsername) {
-      alert('Tmp : 아이디 중복확인을 진행해주세요');
+      onAlert({ msg: '아이디 중복확인을 진행해주세요.', type: 'error' });
       return;
     }
 
@@ -73,10 +75,11 @@ const SignupForm = () => {
     try {
       const res = await postJoin(data);
       console.log('!----회원가입 성공----!'); // 삭제예정
-      onAlert('회원가입에 성공하셨습니다!');
+      onAlert({ msg: '회원가입에 성공하셨습니다!', type: 'success', title: '회원가입 성공' });
       navigate('/login');
     } catch (err) {
       // 에러 alert 추가하기
+      onAlert({ type: 'error', err: err });
       console.error('axiosJoin => ', err.response);
     }
   };
@@ -104,11 +107,6 @@ const SignupForm = () => {
       isValidDepartment &&
       isValidHomePhone
     );
-  };
-
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async msg => {
-    const result = await alertComp(msg);
   };
 
   return (

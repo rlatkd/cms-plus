@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Day {
-	String message() default "Invalid day";
+	String message() default "잘못된 날짜 형식입니다";
 
 	Class<?>[] groups() default {};
 

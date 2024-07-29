@@ -1,17 +1,16 @@
 import { updatePaymentDetail } from '@/apis/payment';
 import PaymentInfoForm from '@/components/common/memberForm/PaymentInfoForm';
+import useAlert from '@/hooks/useAlert';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
-import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
 import { formatCardYearForStorage } from '@/utils/format/formatCard';
-import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdatePaymentInfo = ({ formType }) => {
   const { ...payment } = useMemberPaymentStore(); // 결제정보 - 수정목적
   const { contractInfo } = useMemberContractStore();
-
   const { contractId, memberId } = useParams();
+  const onAlert = useAlert();
   const navigate = useNavigate();
 
   // <------ 결제 정보 수정 요청Data 형태변환 ------>
@@ -49,16 +48,10 @@ const UpdatePaymentInfo = ({ formType }) => {
       const res = await updatePaymentDetail(contractId, transformPaymentInfo());
       console.log('!----결제 정보 수정 성공----!', transformPaymentInfo()); // 삭제예정
       await navigate(`/vendor/contracts/detail/${contractId}`);
-      onAlertWidth();
+      onAlert('결제정보가 수정되었습니다!', 'success', '결제정보수정');
     } catch (err) {
       console.error('axiosUpdatePaymentDetail => ', err.response);
     }
-  };
-
-  // <------ 결제정보 수정 성공 Alert창 ------>
-  const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidth = async () => {
-    const result = await alertWidthComp('결제정보가 수정되었습니다!');
   };
 
   return (
