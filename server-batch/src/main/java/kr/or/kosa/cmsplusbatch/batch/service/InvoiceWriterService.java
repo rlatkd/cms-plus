@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class InvoiceWriter implements ItemWriter<Billing> {
+public class InvoiceWriterService implements ItemWriter<Billing> {
 
     private final BillingRepository billingRepository;
 

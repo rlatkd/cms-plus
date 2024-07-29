@@ -1,9 +1,9 @@
 package kr.or.kosa.cmsplusbatch.config;
 
+import kr.or.kosa.cmsplusbatch.batch.service.InvoiceProcessorService;
+import kr.or.kosa.cmsplusbatch.batch.service.InvoiceWriterService;
 import kr.or.kosa.cmsplusbatch.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusbatch.domain.billing.repository.BillingRepository;
-import kr.or.kosa.cmsplusbatch.global.InvoiceProcessor;
-import kr.or.kosa.cmsplusbatch.global.InvoiceWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -42,7 +42,7 @@ public class BatchConfig {
     @Bean
     public Step sendInvoiceStep() {
         return new StepBuilder("sendInvoiceStep", jobRepository)
-                .<Billing, Billing>chunk(100, transactionManager)
+                .<Billing, Billing>chunk(5, transactionManager)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
@@ -61,18 +61,19 @@ public class BatchConfig {
         reader.setRepository(billingRepository);
         reader.setMethodName("findAllByBillingDateAndMemberInvoiceSendMethod");
         reader.setArguments(Arrays.asList(LocalDate.now()));
-        reader.setPageSize(100);
+        reader.setPageSize(5);
         reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
         return reader;
     }
 
     @Bean
-    public InvoiceProcessor processor() {
-        return new InvoiceProcessor();
+    public InvoiceProcessorService processor() {
+        return new InvoiceProcessorService();
     }
 
     @Bean
-    public InvoiceWriter writer() {
-        return new InvoiceWriter(billingRepository);
+    public InvoiceWriterService writer() {
+        return new InvoiceWriterService(billingRepository);
     }
+
 }

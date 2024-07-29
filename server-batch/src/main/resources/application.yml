@@ -28,6 +28,12 @@ spring:
     init:
       mode: always
 
+kafkaServer:
+  ip: ${KAFKASERVER_IP}
+
+kafkaTopic:
+  messagingTopic: ${MESSAGING_TOPIC}
+
 #logging:
 #  level:
 #    sql: debug

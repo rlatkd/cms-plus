@@ -18,7 +18,7 @@ import kr.or.kosa.cmsplusbatch.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusbatch.domain.contract.entity.ContractProduct;
 import kr.or.kosa.cmsplusbatch.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusbatch.domain.contract.repository.ContractRepository;
-import kr.or.kosa.cmsplusbatch.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusbatch.batch.MessageSendMethod;
 import kr.or.kosa.cmsplusbatch.domain.member.entity.Address;
 import kr.or.kosa.cmsplusbatch.domain.member.entity.Member;
 import kr.or.kosa.cmsplusbatch.domain.member.repository.MemberRepository;
@@ -71,7 +71,7 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-		generateSampleData(vendor, 100, 100, 100, 100);
+		generateSampleData(vendor, 5, 5, 5, 5);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
