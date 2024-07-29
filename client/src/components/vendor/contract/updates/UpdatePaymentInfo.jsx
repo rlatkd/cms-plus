@@ -48,7 +48,7 @@ const UpdatePaymentInfo = ({ formType }) => {
       const res = await updatePaymentDetail(contractId, transformPaymentInfo());
       console.log('!----결제 정보 수정 성공----!', transformPaymentInfo()); // 삭제예정
       await navigate(`/vendor/contracts/detail/${contractId}`);
-      onAlert('결제정보가 수정되었습니다!', 'success', '결제정보수정');
+      onAlert({ msg: '결제정보가 수정되었습니다!', type: 'success', title: '결제정보수정' });
     } catch (err) {
       console.error('axiosUpdatePaymentDetail => ', err.response);
     }

@@ -126,7 +126,7 @@ const BillingRegisterPage = () => {
   const handleProductAdd = newProduct => {
     if (!newProduct) return;
     if (billingData.products.length === 10) {
-      alert('청구는 최대 10 개의 상품을 지녀야합니다.');
+      onAlert({ msg: ' 청구는 최대 10 개의 상품을 지녀야합니다.', type: 'success' });
     }
     setBillingData(prev => ({
       ...prev,
@@ -145,7 +145,8 @@ const BillingRegisterPage = () => {
 
   const handleProductRemove = productId => {
     if (billingData.products.length < 2) {
-      alert('청구는 최소 한 개의 상품을 지녀야합니다.');
+      onAlert({ msg: ' 청구는 최소 한 개의 상품을 지녀야합니다.', type: 'success' });
+
       return;
     }
     setBillingData(prev => ({
@@ -157,11 +158,13 @@ const BillingRegisterPage = () => {
   const handleBillingSubmit = async () => {
     try {
       await createBilling(billingData);
-      onAlert('청구가 생성되었습니다.', 'success', '청구 생성 완료');
+      onAlert({ msg: ' 청구가 생성되었습니다.', type: 'success', title: '청구 생성 완료' });
+
       navigate(-1);
     } catch (err) {
       console.log(err);
-      onAlert('', 'error', '청구 생성 실패', err);
+      onAlert({ msg: ' 청구 생성에 실패했습니다..', type: 'error', err: err });
+
       console.error('axiosBillingCreate => ', err.response);
     }
   };

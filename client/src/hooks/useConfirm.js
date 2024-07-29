@@ -9,7 +9,7 @@ import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
 const useConfirm = () => {
   const { confirm: confrimComp } = useContext(ConfirmContext);
 
-  const onConfirm = async (msg, type, title) => {
+  const onConfirm = async ({ msg, type = 'default', title = '효성 CMS#', err = null }) => {
     const result = await confrimComp(msg, type, title);
     return result;
   };

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import BaseModal from '@/components/common/BaseModal';
 import { createProduct, deleteProduct, updateProduct } from '@/apis/product';
 import InputWeb from '@/components/common/inputs/InputWeb';
+import useAlert from '@/hooks/useAlert';
+import useConfirm from '@/hooks/useConfirm';
 
 const ProductModal = ({
   icon,
@@ -15,6 +17,8 @@ const ProductModal = ({
   const [productPrice, setProductPrice] = useState('');
   const [productMemo, setProductMemo] = useState('');
   const [contractNumber, setContractNumber] = useState('');
+  const onAlert = useAlert();
+  const onConfirm = useConfirm();
 
   // 모달이 열릴 때마다 초기 상태 설정
   useEffect(() => {
@@ -39,11 +43,19 @@ const ProductModal = ({
 
     try {
       await createProduct(productData);
-      alert('상품을 등록했습니다.');
+      onAlert({
+        msg: `"${productName}"상품을 성공적으로 등록했습니다!`,
+        type: 'success',
+        title: '등록 성공',
+      });
       setIsShowModal(false); // 상품 등록 후 모달 닫기
       refreshProductList(); // 등록 후 상품 목록 리렌더링
     } catch (err) {
-      alert('상품 등록에 실패했습니다.');
+      onAlert({
+        msg: '상품 등록에 실패했습니다.',
+        type: 'error',
+        title: '등록 실패',
+      });
       console.error('axiosProductCreate => ', err.response);
     }
   };
@@ -57,25 +69,46 @@ const ProductModal = ({
 
     try {
       await updateProduct(productDetailData.productId, productData);
-      alert('상품을 수정했습니다.');
+      onAlert({
+        msg: '상품을 수정했습니다.',
+        type: 'success',
+        title: '수정 성공',
+      });
       setIsShowModal(false);
       refreshProductList();
     } catch (err) {
-      alert('상품 수정에 실패했습니다.');
+      onAlert({
+        msg: '상품 수정에 실패했습니다.',
+        type: 'error',
+        title: '수정 실패',
+      });
       console.error('axiosProductUpdate => ', err.response);
     }
   };
 
   const handleDeleteProduct = async () => {
-    const isConfirmed = window.confirm('정말 삭제하시겠습니까?'); // 고도화 필요
+    const isConfirmed = await onConfirm({
+      msg: `"${productDetailData.productName}" 상품을 삭제 하시겠습니까?`,
+      type: 'warning',
+      title: '삭제 확인',
+    });
+
     if (isConfirmed) {
       try {
         await deleteProduct(productDetailData.productId);
-        alert('상품을 삭제했습니다.');
+        onAlert({
+          msg: `"${productDetailData.productName}" 상품을 삭제했습니다.`,
+          type: 'success',
+          title: '삭제 성공',
+        });
         setIsShowModal(false);
         refreshProductList();
       } catch (err) {
-        alert('상품 삭제에 실패했습니다.');
+        onAlert({
+          msg: '상품 삭제에 실패했습니다.',
+          type: 'error',
+          title: '삭제 실패',
+        });
         console.error('axiosProductDelete => ', err.response);
       }
     }

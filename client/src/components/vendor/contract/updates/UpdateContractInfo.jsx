@@ -1,5 +1,6 @@
 import { updateContractDetail } from '@/apis/contract';
 import ContractInfoForm from '@/components/common/memberForm/ContractInfoForm';
+import useAlert from '@/hooks/useAlert';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 import { useContext } from 'react';
@@ -9,6 +10,7 @@ const UpdateContractInfo = ({ formType }) => {
   const { contractInfo } = useMemberContractStore();
   const { contractId, memberId } = useParams();
   const navigate = useNavigate();
+  const onAlert = useAlert();
 
   // <------ 계약 정보 수정 요청Data 형태변환 ------>
   const transformContractInfo = contractInfo => ({
@@ -27,16 +29,10 @@ const UpdateContractInfo = ({ formType }) => {
       const res = await updateContractDetail(contractId, trasformData);
       console.log('!----계약 정보 수정 성공----!');
       await navigate(`/vendor/contracts/detail/${contractId}`);
-      onAlert('계약정보가 수정되었습니다!');
+      onAlert({ msg: '계약정보가 수정되었습니다!', type: 'success' });
     } catch (err) {
       console.error('axiosUpdateContractDetail => ', err);
     }
-  };
-
-  // <------ 계약정보 수정 성공 Alert창 ------>
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async msg => {
-    await alertComp(msg);
   };
 
   return (
