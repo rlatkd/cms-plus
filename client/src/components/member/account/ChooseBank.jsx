@@ -1,9 +1,9 @@
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
 
 const ChooseBank = () => {
-  const { setSelectedCard, selectedCard, invoiceInfo } = useInvoiceStore();
+  const { setSelectedBank, selectedBank, invoiceInfo } = useInvoiceStore();
 
-  const cardOptions = [
+  const bankOptions = [
     '기업은행',
     '국민은행',
     '우리은행',
@@ -18,8 +18,8 @@ const ChooseBank = () => {
     '경남은행',
   ];
 
-  const handleCardSelect = card => {
-    setSelectedCard(card);
+  const handleBankSelect = bank => {
+    setSelectedBank(bank);
   };
 
   return (
@@ -43,12 +43,12 @@ const ChooseBank = () => {
 
       <h4 className='text-sm text-gray-500 mb-2 font-semibold'>결제은행</h4>
       <div className='grid grid-cols-3 gap-2 mb-4'>
-        {cardOptions.map((card, index) => (
+        {bankOptions.map((bank, index) => (
           <button
             key={index}
-            className={`p-4 border rounded-lg font-semibold text-xs ${selectedCard === card ? 'bg-mint text-white' : 'bg-white text-text_grey'}`}
-            onClick={() => handleCardSelect(card)}>
-            {card}
+            className={`p-4 border rounded-lg font-semibold text-xs ${selectedBank === bank ? 'bg-mint text-white' : 'bg-white text-text_grey'}`}
+            onClick={() => handleBankSelect(bank)}>
+            {bank}
           </button>
         ))}
       </div>
