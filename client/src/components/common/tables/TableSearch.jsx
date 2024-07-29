@@ -57,22 +57,29 @@ const TableSearch = ({ search, handleChangeSearch, handleClickSearch }) => {
           ) : (
             <div className='relative w-9/12 flex items-center  '>
               <input
-                className='px-3 py-1 w-full border border-text_black rounded-md 
-                        focus:border-text_black focus:outline-none focus:ring-1 focus:ring-text_black sm:text-sm'
+                className={`px-3 py-1 w-full border border-text_black rounded-md 
+                  focus:border-text_black focus:outline-none focus:ring-1 focus:ring-text_black sm:text-sm
+                  ${searchItem.lower ? 'pr-10 text-right' : ''}`}
                 type={searchItem.type}
                 value={searchItem.value}
                 onChange={e => handleChangeSearch(searchItem.key, e.target.value)}
               />
-
+              {searchItem.lower && (
+                <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none'>
+                  이하
+                </span>
+              )}
               <button
                 className='absolute right-2 top-1/2 transform -translate-y-1/2'
                 onClick={handleClickSearch}
                 tabIndex='-1'>
-                <img
-                  src={searchItem.type === 'text' ? searchIcon : triangle}
-                  alt='search'
-                  className='w-5 h-5'
-                />
+                {searchItem.type === 'text' && (
+                  <img
+                    src={searchItem.type === 'text' ? searchIcon : triangle}
+                    alt='search'
+                    className='w-5 h-5'
+                  />
+                )}
               </button>
             </div>
           )}
