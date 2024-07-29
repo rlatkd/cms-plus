@@ -118,7 +118,7 @@ public class Contract extends BaseEntity {
 	@Builder.Default
 	private List<Billing> billings = new ArrayList<>();
 
-	/*
+	/**
 	 * 계약 상품 추가
 	 * */
 	public void addContractProduct(ContractProduct contractProduct) {
@@ -126,7 +126,7 @@ public class Contract extends BaseEntity {
 		contractProduct.setContract(this);
 	}
 
-	/*
+	/**
 	 * 계약 상품 삭제
 	 * */
 	public void removeContractProduct(ContractProduct contractProduct) {
@@ -138,7 +138,7 @@ public class Contract extends BaseEntity {
 		contractProducts.remove(contractProduct);
 	}
 
-	/*
+	/**
 	 * 계약금액
 	 * */
 	public Long getContractPrice() {
@@ -147,7 +147,7 @@ public class Contract extends BaseEntity {
 			.sum();
 	}
 
-	/*
+	/**
 	* 계약 삭제
 	* 계약상품도 같이 삭제된다
 	* 청구도 같이 삭제된다
@@ -161,7 +161,7 @@ public class Contract extends BaseEntity {
 		payment.delete();
 	}
 
-	/*
+	/**
 	* 계약 활성화 여부
 	* */
 	public boolean isEnabled() {
@@ -169,7 +169,7 @@ public class Contract extends BaseEntity {
 		return curDate.isBefore(contractEndDate);
 	}
 
-	/*
+	/**
 	 * id만 들고있는 빈 객체
 	 * */
 	public static Contract of(Long contractId) {

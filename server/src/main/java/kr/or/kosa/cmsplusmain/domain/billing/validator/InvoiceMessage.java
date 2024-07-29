@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InvoiceMessage {
-	String message() default "Invalid invoice message";
+	String message() default "유효하지 않은 청구서 메시지";
 
 	Class<?>[] groups() default {};
 
