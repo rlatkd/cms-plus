@@ -6,7 +6,7 @@ import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
 
 // formType : CREATE, UPDATE, DETAIL
-const BasicInfoForm = ({ formType }) => {
+const BasicInfoForm = ({ formType, memberData }) => {
   const { basicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
 
   // <------ 인풋 필드 입력값 변경 ------>
@@ -39,6 +39,9 @@ const BasicInfoForm = ({ formType }) => {
   // <------ formType : DETAIL일 경우 입력창 비활성화 ------>
   const isDisabled = formType === 'DETAIL';
 
+  // <------ 데이터 소스 선택 ------>
+  const dataSource = formType === 'DETAIL' ? memberData : basicInfo;
+
   return (
     <div className='flex flex-col pt-5 px-2 desktop:flex-row desktop:h-[calc(100%-100px)] extra_desktop:h-[520px]'>
       <div className='flex flex-col justify-between flex-1 '>
@@ -49,12 +52,12 @@ const BasicInfoForm = ({ formType }) => {
           type='text'
           required
           classInput='py-[14px]'
-          value={basicInfo.memberName}
+          value={dataSource.memberName}
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           maxLength={40}
-          isValid={validateField('name', basicInfo.memberName)}
+          isValid={validateField('name', dataSource.memberName)}
           errorMsg='올바른 형식 아닙니다.'
         />
         <InputWeb
@@ -63,13 +66,13 @@ const BasicInfoForm = ({ formType }) => {
           placeholder='숫자만 입력해주세요.'
           classInput='py-[14px]'
           type='text'
-          value={formatPhone(basicInfo.memberPhone)}
+          value={formatPhone(dataSource.memberPhone)}
           required
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           maxLength={11}
-          isValid={validateField('phone', basicInfo.memberPhone)}
+          isValid={validateField('phone', dataSource.memberPhone)}
           errorMsg='올바른 형식 아닙니다.'
         />
         <InputCalendar
@@ -82,7 +85,7 @@ const BasicInfoForm = ({ formType }) => {
           width='100%'
           classContainer='w-full'
           disabled={isDisabled}
-          value={basicInfo.memberEnrollDate}
+          value={dataSource.memberEnrollDate}
           handleChangeValue={handleChangeValue}
         />
         <InputWeb
@@ -91,12 +94,12 @@ const BasicInfoForm = ({ formType }) => {
           placeholder='숫자만 입력해주세요.'
           classInput='py-[14px]'
           type='text'
-          value={formatPhone(basicInfo.memberHomePhone)}
+          value={formatPhone(dataSource.memberHomePhone)}
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           maxLength={10}
-          isValid={validateField('homePhone', basicInfo.memberHomePhone)}
+          isValid={validateField('homePhone', dataSource.memberHomePhone)}
           errorMsg='올바른 형식 아닙니다.'
         />
         <InputWeb
@@ -105,13 +108,13 @@ const BasicInfoForm = ({ formType }) => {
           placeholder='ex) example@gmail.com'
           classInput='py-[14px]'
           type='text'
-          value={basicInfo.memberEmail}
+          value={dataSource.memberEmail}
           required
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           maxLength={40}
-          isValid={validateField('email', basicInfo.memberEmail)}
+          isValid={validateField('email', dataSource.memberEmail)}
           errorMsg='올바른 형식 아닙니다.'
         />
       </div>
@@ -125,7 +128,7 @@ const BasicInfoForm = ({ formType }) => {
             placeholder='우편번호'
             classInput='py-[14px]'
             type='address'
-            value={basicInfo.memberAddress.zipcode}
+            value={dataSource.memberAddress.zipcode}
             classContainer='mr-5'
             disabled={isDisabled}
             readOnly
@@ -136,7 +139,7 @@ const BasicInfoForm = ({ formType }) => {
             placeholder='주소'
             classInput='py-[14px]'
             type='text'
-            value={basicInfo.memberAddress.address}
+            value={dataSource.memberAddress.address}
             disabled={isDisabled}
             classContainer='w-full'
             readOnly
@@ -149,7 +152,7 @@ const BasicInfoForm = ({ formType }) => {
           placeholder='상세 주소'
           classInput='py-[14px]'
           type='text'
-          value={basicInfo.memberAddress.addressDetail}
+          value={dataSource.memberAddress.addressDetail}
           disabled={isDisabled}
           classContainer='mb-3'
           onChange={e => handleChangeAddress(e.target.id, e.target.value)}
@@ -159,7 +162,7 @@ const BasicInfoForm = ({ formType }) => {
           label='메모'
           disabled={isDisabled}
           classTextarea='h-52'
-          value={basicInfo.memberMemo}
+          value={dataSource.memberMemo}
           onChange={handleChangeValue}
         />
       </div>

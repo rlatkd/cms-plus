@@ -56,6 +56,7 @@ const InputCalendar = ({
     .ant-picker-input > input {
       padding-left: 5px !important; 
       font-size: ${type === 'search' ? '13px' : '14px'} !important; 
+      color: ${disabled ? '#000000' : 'inherit'} !important; // Text color change
     }
 
     .ant-picker-input > input::placeholder {
