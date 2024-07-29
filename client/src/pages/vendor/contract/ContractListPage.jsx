@@ -124,19 +124,18 @@ const ContractListPage = () => {
     }
 
     const errors = [];
-    for (const contract of selectedContracts) {
-      try {
-        await sendReqSimpConsent(contract.contractId);
-      } catch (err) {
-        errors.push({
-          from: contract,
-          res: err.response.data,
-          total: selectedContracts.length,
-        });
-      }
-    }
+    await Promise.allSettled(
+      selectedContracts.map(async contract =>
+        sendReqSimpConsent(contract.contractId).catch(err =>
+          errors.push({
+            from: contract,
+            res: err.response.data,
+            total: selectedContracts.length,
+          })
+        )
+      )
+    );
 
-    console.log(errors);
     // 실패항목이 있는 경우
     if (errors.length !== 0) {
       setSimpErrors(errors);
