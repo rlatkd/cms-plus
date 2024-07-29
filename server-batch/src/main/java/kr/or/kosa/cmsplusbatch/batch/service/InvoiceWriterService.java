@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusbatch.global;
+package kr.or.kosa.cmsplusbatch.batch.service;
 
 import kr.or.kosa.cmsplusbatch.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusbatch.domain.billing.entity.BillingStatus;
@@ -6,9 +6,9 @@ import kr.or.kosa.cmsplusbatch.domain.billing.repository.BillingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class InvoiceWriter implements ItemWriter<Billing> {
 
