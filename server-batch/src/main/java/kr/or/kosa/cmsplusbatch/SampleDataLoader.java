@@ -98,7 +98,7 @@ public class SampleDataLoader {
 
 		for (int i = 0; i < count; i++) {
 			Contract contract = randomGenerator.getRandomInList(contracts);
-			LocalDate billingDate = generateRandomDate(billingDateFrom, billingDateTo);
+			LocalDate billingDate = LocalDate.now();
 			int contractDay = random.nextInt(28) + 1;
 
 			List<BillingProduct> billingProducts = createBillingProducts(products);

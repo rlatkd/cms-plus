@@ -28,11 +28,6 @@ spring:
     init:
       mode: always
 
-
-exchange:
-  authKey: EXCHANGE_AUTHKEY
-  data: EXCHANGE_DATA
-
-logging:
-  level:
-    sql: debug
+#logging:
+#  level:
+#    sql: debug
