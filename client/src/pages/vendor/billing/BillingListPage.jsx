@@ -14,7 +14,6 @@ import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billin
 import { formatPhone } from '@/utils/format/formatPhone';
 import { formatProductsForList } from '@/utils/format/formatProducts';
 import PayRealtimeErrorModal from '@/components/vendor/modal/PayRealtimeErrorModal';
-import SendInvoiceErrorModal from '@/components/vendor/modal/SendInvoiceErrorModal';
 import ReqSimpConsentErrorModal from '@/components/vendor/modal/ReqSimpConsentErrorModal';
 import useAlert from '@/hooks/useAlert';
 
@@ -129,29 +128,28 @@ const BillingListPage = () => {
       onAlert({ msg: '선택된 청구가 없습니다.', type: 'default' });
       return;
     }
-    console.error('실시간 결제 시작');
 
+    // TODO loading
     const errors = [];
-    for (const billing of selectedBillings) {
-      try {
-        await payRealTimeBilling(billing.billingId);
-        console.error('실시간 결제 성공');
-      } catch (err) {
-        console.error('실시간 결제', err);
-        errors.push({
-          from: billing,
-          res: err.response.data,
-          total: selectedBillings.length,
-        });
-      }
-    }
+    await Promise.allSettled(
+      selectedBillings.map(async billing =>
+        payRealTimeBilling(billing.billingId).catch(err =>
+          errors.push({
+            from: billing,
+            res: err.response.data,
+            total: selectedBillings.length,
+          })
+        )
+      )
+    );
 
-    console.log(errors);
     // 실패항목이 있는 경우
     if (errors.length !== 0) {
       setPayErrors(errors);
       setIsShowPayErrorModal(true);
-    } else {
+    } 
+    // 실패항목이 없는 경우
+    else {
       onAlert({ msg: `${selectedBillings.length}개의 청구 결제를 성공했습니다.`, type: 'success' });
       axiosBillingList();
     }
@@ -164,20 +162,20 @@ const BillingListPage = () => {
       return;
     }
 
+    // TODO loading
     const errors = [];
-    for (const billing of selectedBillings) {
-      try {
-        await sendInvoice(billing.billingId);
-      } catch (err) {
-        errors.push({
-          from: billing,
-          res: err.response.data,
-          total: selectedBillings.length,
-        });
-      }
-    }
+    await Promise.allSettled(
+      selectedBillings.map(async billing =>
+        sendInvoice(billing.billingId).catch(err =>
+          errors.push({
+            from: billing,
+            res: err.response.data,
+            total: selectedBillings.length,
+          })
+        )
+      )
+    );
 
-    console.log(errors);
     // 실패항목이 있는 경우
     if (errors.length !== 0) {
       setInvoiceErrors(errors);
@@ -283,7 +281,7 @@ const BillingListPage = () => {
         />
       )}
       {isShowInvoiceErrorModal && (
-        <ReqSimpConsentErrorModal
+        <PayRealtimeErrorModal
           errors={invoiceErrors}
           isShowModal={isShowInvoiceErrorModal}
           icon={card}
