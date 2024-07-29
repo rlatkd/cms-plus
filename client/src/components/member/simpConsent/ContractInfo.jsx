@@ -4,6 +4,7 @@ import SelectField from '@/components/common/selects/SelectField';
 import ProductItem from '@/components/common/ProductItem';
 import { getAvailableOptions } from '@/apis/simpleConsent';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
+import { validateField } from '@/utils/validators';
 
 const ContractInfo = ({ userData, setUserData }) => {
   const [availableProducts, setAvailableProducts] = useState([]);
@@ -153,6 +154,8 @@ const ContractInfo = ({ userData, setUserData }) => {
         value={userData.contractDTO.contractName}
         onChange={handleInputChange}
         maxLength={20}
+        isValid={!userData.contractDTO.contractName || validateField('contractName', userData.contractDTO.contractName)}
+        errorMsg='올바른 계약명을 입력해주세요.'
       />
 
       <SelectField

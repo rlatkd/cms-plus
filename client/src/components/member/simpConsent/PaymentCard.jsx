@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import Input from '@/components/common/inputs/Input';
 import { verifyCard } from '@/apis/validation';
+import { validateField } from '@/utils/validators';
 
 const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVerified }) => {
   const handleCardVerification = useCallback(async () => {
@@ -41,9 +42,18 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
 
       if (name === 'cardOwnerBirth') {
         formattedValue = formatBirthDate(value);
-      } else if (name === 'expiryDate') {
+      }  
+      
+      else if (name === 'expiryDate') {
+        // 이전 값과 새로운 값의 길이를 비교
+        const prevLength = paymentData.expiryDate.length;
         formattedValue = formatExpiryDate(value);
-      } else if (name === 'cardNumber') {
+        // 만약 길이가 줄어들었고, 마지막 문자가 '/'이면 '/'도 제거
+        if (formattedValue.length < prevLength && formattedValue.endsWith('/')) {
+          formattedValue = formattedValue.slice(0, -1);
+        }
+      } 
+      else if (name === 'cardNumber') {
         formattedValue = formatCardNumber(value);
       }
 
@@ -68,13 +78,11 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
 
   const formatExpiryDate = value => {
     const cleaned = value.replace(/\D/g, '');
-    let formatted = cleaned;
 
-    if (cleaned.length >= 2) {
-      formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
-    }
+    if (cleaned.length === 0) return '';
+    if (cleaned.length <= 2) return cleaned;
 
-    return formatted.slice(0, 5);
+    return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}`;
   };
 
   const formatCardNumber = value => {
@@ -100,6 +108,8 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
           value={paymentData.cardNumber}
           onChange={handleInputChange}
           maxLength={19}
+          isValid={paymentData.cardNumber === '' || validateField('cardNumber', paymentData.cardNumber)}
+          errorMsg='올바른 카드번호를 입력해주세요.'
         />
         <Input
           label='유효기간'
@@ -110,6 +120,8 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
           value={paymentData.expiryDate}
           onChange={handleInputChange}
           maxLength={5}
+          isValid={paymentData.expiryDate === '' || validateField('expiryDate', paymentData.expiryDate)}
+          errorMsg='올바른 유효기간을 입력해주세요.'
         />
         <Input
           label='명의자'
@@ -120,6 +132,8 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
           value={paymentData.cardHolder}
           onChange={handleInputChange}
           maxLength={15}
+          isValid={paymentData.cardHolder === '' || validateField('name', paymentData.cardHolder)}
+          errorMsg='올바른 명의자를 입력해주세요.'
         />
         <Input
           label='생년월일'
@@ -130,6 +144,8 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
           value={paymentData.cardOwnerBirth}
           onChange={handleInputChange}
           maxLength={10}
+          isValid={paymentData.cardOwnerBirth === '' || validateField('birth', paymentData.cardOwnerBirth)}
+          errorMsg='올바른 생년월일을 입력해주세요.'
         />
       </form>
       <button

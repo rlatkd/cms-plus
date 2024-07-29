@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import Input from '@/components/common/inputs/Input';
 import SelectField from '@/components/common/selects/SelectField';
 import { verifyCMS } from '@/apis/validation';
+import { validateField } from '@/utils/validators';
 
 const bankOptions = [
   { value: '', label: '은행을 선택해주세요' },
@@ -95,6 +96,8 @@ const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVeri
           value={paymentData.accountHolder}
           onChange={handleInputChange}
           maxLength={20}
+          isValid={paymentData.accountHolder === '' || validateField('name', paymentData.accountHolder)}
+          errorMsg='올바른 예금주명을 입력해주세요.'
         />
         <Input
           label='생년월일'
@@ -105,16 +108,20 @@ const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVeri
           value={paymentData.accountOwnerBirth}
           onChange={handleInputChange}
           maxLength={10}
+          isValid={paymentData.accountOwnerBirth === '' || validateField('birth', paymentData.accountOwnerBirth)}
+          errorMsg='올바른 생년월일을 입력해주세요.'
         />
         <Input
           label='계좌번호'
           name='accountNumber'
           type='text'
           required
-          placeholder='최대 20자리'
+          placeholder='최대 14자리'
           value={paymentData.accountNumber}
           onChange={handleInputChange}
-          maxLength={20}
+          maxLength={14}
+          isValid={paymentData.accountNumber === '' || validateField('accountNumber', paymentData.accountNumber)}
+          errorMsg='올바른 계좌번호를 입력해주세요.'
         />
       </form>
       <button

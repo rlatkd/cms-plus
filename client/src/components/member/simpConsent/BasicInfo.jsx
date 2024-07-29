@@ -1,5 +1,6 @@
 import Input from '@/components/common/inputs/Input';
 import AddressInput from '@/components/common/inputs/AddressInput';
+import { validateField } from '@/utils/validators';
 
 const BasicInfo = ({ userData, setUserData }) => {
   const handleChange = e => {
@@ -30,26 +31,32 @@ const BasicInfo = ({ userData, setUserData }) => {
           onChange={handleChange}
           maxLength={40}
           tabIndex={0}
+          isValid={!userData.memberDTO.name || validateField('name', userData.memberDTO.name)}
+          errorMsg='올바른 회원명을 입력해주세요.'
         />
         <Input
           label='휴대전화'
           name='phone'
           type='tel'
           required
-          placeholder="'-' 없이, 최대 12자리"
+          placeholder="'-' 없이, 최대 11자리"
           value={userData.memberDTO.phone || ''}
           onChange={handleChange}
-          maxLength={13}
+          maxLength={11}
           tabIndex={0}
+          isValid={!userData.memberDTO.phone || validateField('phone', userData.memberDTO.phone)}
+          errorMsg='올바른 휴대전화 번호를 입력해주세요.'
         />
         <Input
           label='유선전화'
           name='homePhone'
           type='tel'
-          placeholder="'-' 없이, 최대 12자리"
+          placeholder="'-' 없이, 최대 10자리"
           value={userData.memberDTO.homePhone || ''}
           onChange={handleChange}
-          maxLength={12}
+          maxLength={10}
+          isValid={ userData.memberDTO.homePhone === '' || validateField('homePhone', userData.memberDTO.homePhone)}
+          errorMsg='올바른 유선전화 번호를 입력해주세요.'
         />
         <Input
           label='이메일'
@@ -60,6 +67,8 @@ const BasicInfo = ({ userData, setUserData }) => {
           value={userData.memberDTO.email || ''}
           onChange={handleChange}
           maxLength={50}
+          isValid={!userData.memberDTO.email || validateField('email', userData.memberDTO.email)}
+          errorMsg='올바른 이메일 번호를 입력해주세요.'
         />
         <AddressInput userData={userData} setUserData={setUserData} />
       </form>

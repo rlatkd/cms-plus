@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Main from '@/components/member/simpConsent/Main';
 import BasicInfo from '@/components/member/simpConsent/BasicInfo';
 import ContractInfo from '@/components/member/simpConsent/ContractInfo';
@@ -14,6 +14,7 @@ import { useStatusStore } from '@/stores/useStatusStore';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 import useStatusStepper from '@/hooks/useStatusStepper';
 import { sendSimpleConsentData } from '@/apis/simpleConsent';
+import { validateField } from '@/utils/validators';
 
 const SimpConsentPage = () => {
   const start = 0;
@@ -43,27 +44,38 @@ const SimpConsentPage = () => {
   };
 
   const validateBasicInfo = () => {
-    const { name, phone, email } = userData.memberDTO;
+    const { name, phone, email, homePhone } = userData.memberDTO;
     const missingFields = [];
+    const invalidFields = [];
 
     if (!name) missingFields.push('회원명');
-    if (!phone) missingFields.push('휴대전화');
-    if (!email) missingFields.push('이메일');
+    else if (!validateField('name', name)) invalidFields.push('회원명');
 
-    return missingFields;
+    if (!phone) missingFields.push('휴대전화');
+    else if (!validateField('phone', phone)) invalidFields.push('휴대전화');
+
+    if (!validateField('homePhone', homePhone)) invalidFields.push('유선전화');
+
+    if (!email) missingFields.push('이메일');
+    else if (!validateField('email', email)) invalidFields.push('이메일');
+
+    return { missingFields, invalidFields };
   };
 
   const validateContractInfo = () => {
     const { contractName, items, startDate, endDate, contractDay } = userData.contractDTO;
     const missingFields = [];
+    const invalidFields = [];
 
     if (!contractName) missingFields.push('계약명');
+    else if (!validateField('contractName', contractName)) invalidFields.push('계약명');
+
     if (items.length === 0) missingFields.push('선택된 상품');
     if (!startDate) missingFields.push('시작 날짜');
     if (!endDate) missingFields.push('종료 날짜');
     if (!contractDay) missingFields.push('약정일');
 
-    return missingFields;
+    return { missingFields, invalidFields };
   };
 
   const validatePaymentInfo = () => {
@@ -80,24 +92,40 @@ const SimpConsentPage = () => {
       isVerified,
     } = userData.paymentDTO;
     const missingFields = [];
+    const invalidFields = [];
 
     if (!paymentMethod) missingFields.push('결제수단');
 
     if (paymentMethod === 'CARD') {
       if (!isVerified) missingFields.push('카드 인증');
+
       if (!cardNumber) missingFields.push('카드번호');
+      else if (!validateField('cardNumber', cardNumber)) invalidFields.push('카드번호');
+
       if (!expiryDate) missingFields.push('유효기간');
+      else if (!validateField('expiryDate', expiryDate)) invalidFields.push('유효기간');
+
       if (!cardHolder) missingFields.push('명의자');
+      else if (!validateField('name', cardHolder)) invalidFields.push('명의자');
+
       if (!cardOwnerBirth) missingFields.push('생년월일');
+      else if (!validateField('birth', cardOwnerBirth)) invalidFields.push('생년월일');
+
     } else if (paymentMethod === 'CMS') {
       if (!isVerified) missingFields.push('계좌 인증');
       if (!bank) missingFields.push('은행');
+
       if (!accountHolder) missingFields.push('예금주');
+      else if (!validateField('name', accountHolder)) invalidFields.push('예금주');
+
       if (!accountOwnerBirth) missingFields.push('생년월일');
+      else if (!validateField('birth', accountOwnerBirth)) invalidFields.push('생년월일');
+
       if (!accountNumber) missingFields.push('계좌번호');
+      else if (!validateField('accountNumber', accountNumber)) invalidFields.push('계좌번호');
     }
 
-    return missingFields;
+    return { missingFields, invalidFields };
   };
 
   const validateSignatureInfo = () => {
@@ -111,16 +139,26 @@ const SimpConsentPage = () => {
 
   const handleClickNext = async () => {
     let missingFields = [];
+    let invalidFields = [];
+    let basicInfoValidation;
+    let contractInfoValidation;
+    let paymentInfoValidation;
 
     switch (status) {
       case 1:
-        missingFields = validateBasicInfo();
+        basicInfoValidation = validateBasicInfo();
+        missingFields = basicInfoValidation.missingFields;
+        invalidFields = basicInfoValidation.invalidFields;
         break;
       case 2:
-        missingFields = validateContractInfo();
+        contractInfoValidation = validateContractInfo();
+        missingFields = contractInfoValidation.missingFields;
+        invalidFields = contractInfoValidation.invalidFields;
         break;
       case 3:
-        missingFields = validatePaymentInfo();
+        paymentInfoValidation = validatePaymentInfo();
+        missingFields = paymentInfoValidation.missingFields;
+        invalidFields = paymentInfoValidation.invalidFields;
         break;
       case 4:
         missingFields = validateSignatureInfo();
@@ -131,6 +169,11 @@ const SimpConsentPage = () => {
 
     if (missingFields.length > 0) {
       alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
+      return;
+    }
+
+    if (invalidFields.length > 0){
+      alert(`다음 필드의 형식이 올바르지 않습니다: ${invalidFields.join(', ')}`);
       return;
     }
 
