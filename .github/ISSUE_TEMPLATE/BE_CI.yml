@@ -1,0 +1,70 @@
+name: BE CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types: [ opened ]
+    paths:
+      - 'server/**'
+
+permissions:
+  pages: write
+  id-token: write
+  contents: write
+  issues: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  be-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant Permission
+        run: chmod +x server/gradlew
+
+      - name: Inject secure
+        run: echo "${{ secrets.BE_SECURE_DEV }}" > server/src/main/resources/secure.properties
+
+      - name: Gradle Build
+        run: |
+          cd server
+          ./gradlew clean build
+      
+      - name: Install Git LFS
+        run: |
+          apt-get update && apt-get install -y git-lfs
+          git lfs install
+          
+      - name: Copy
+        run: |
+          mkdir -p DEPLOY_FILE/server
+          cp -r server/build/libs/*.jar DEPLOY_FILE/server/
+
+      - name: Git Config
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+  
+      - name: Build
+        run: |
+          timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+          cp -r DEPLOY_FILE/server/* .
+          git fetch origin
+          git checkout prod || git checkout -b prod
+          cd DEPLOY_FILE/server
+          git lfs track "*.jar"
+          git add .gitattributes
+          git add *.jar
+          git commit -m "release: $timestamp BE 배포 완료"
+          git push origin prod --force

@@ -1,20 +1,23 @@
 import { useStatusStore } from '@/stores/useStatusStore';
 import { useNavigate } from 'react-router-dom';
+import { useInvoiceStore } from '@/stores/useInvoiceStore';
 
 const CASES = {
   BUYER: 'BUYER', // 납부자 청구서조회 페이지
-  CARD: 'card', // 납부자 카드 결제 페이지
-  ACCOUNT: 'account', // 납부자 계좌 결제 페이지
+  CARD: 'CARD', // 납부자 카드 결제 페이지
+  ACCOUNT: 'ACCOUNT', // 납부자 계좌 결제 페이지
   VIRTUAL: 'VIRTUAL', // 납부자 가상계좌 페이지
-  MEMBERREGISTER: 'memberRegister', // 회원 등록 페이지
+  MEMBERREGISTER: 'MEMBERREGISTER', // 회원 등록 페이지
+  AUTO: 'AUTO', //자동결제
 };
 
 const useStatusStepper = (type, start, end) => {
-  const status = useStatusStore(state => state.status);
-  const increment = useStatusStore(state => state.increment);
-  const decrement = useStatusStore(state => state.decrement);
-  const reset = useStatusStore(state => state.reset);
+  const invoiceInfo = useInvoiceStore(state => state.invoiceInfo);
+
+  const { status, increment, decrement, reset } = useStatusStore();
+
   const navigate = useNavigate();
+  type = type.toUpperCase();
 
   const handleClickPrevious = () => {
     if (status > start) {
@@ -34,6 +37,29 @@ const useStatusStepper = (type, start, end) => {
   };
 
   const handleClickNext = () => {
+    if (status === 1 && invoiceInfo) {
+      if (invoiceInfo.billingStatus === '완납') {
+        //billingStatus가 '완납'이고 자동결제일 경우
+        if (type === CASES.AUTO) {
+          navigate(`/member/invoice/${invoiceInfo.billingId}/payment/auto`);
+        } else {
+          //billingStatus가 '완납'이고 자동결제가 아니면 complete페이지로 이동
+          navigate(`/member/invoice/${invoiceInfo.billingId}/payment/complete`);
+        }
+        reset();
+        return;
+      }
+      // '완납'이 아닐 경우, status 1에 대한 기존 로직 계속 진행
+      if (type === CASES.BUYER) {
+        navigate(`/member/invoice/${invoiceInfo.billingId}/payment`);
+      }
+      //'완납'이 아니면서, 자동결제일 경우
+      if (type === CASES.AUTO) {
+        navigate(`/member/invoice/${invoiceInfo.billingId}/payment/auto`);
+        reset();
+        return;
+      }
+    }
     if (status < end) {
       increment();
     }
@@ -44,18 +70,19 @@ const useStatusStepper = (type, start, end) => {
       //   navigate('/member/invoice/3');
       // }
     }
+
     switch (type) {
       case CASES.BUYER:
-        if (status === 1) navigate('/member/invoice/payment');
+        if (status === 1) navigate(`/member/invoice/${invoiceInfo.billingId}/payment`);
         break;
       case CASES.VIRTUAL:
-        if (status === 1) navigate('/member/invoice/payment/virtual');
+        if (status === 1) navigate(`/member/invoice/${invoiceInfo.billingId}/payment/virtual`);
         break;
       case CASES.CARD:
-        if (status === 2) navigate('/member/invoice/payment/card');
+        if (status === 2) navigate(`/member/invoice/${invoiceInfo.billingId}/payment/card`);
         break;
       case CASES.ACCOUNT:
-        if (status === 2) navigate('/member/invoice/payment/account');
+        if (status === 2) navigate(`/member/invoice/${invoiceInfo.billingId}/payment/account`);
         break;
       case CASES.MEMBERREGISTER:
         if (status === 3) {

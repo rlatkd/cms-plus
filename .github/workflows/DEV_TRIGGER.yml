@@ -3,7 +3,7 @@ name: Dev Trigger
 on:
   push:
     branches:
-      - dev #dev브랜치만
+      - dev
 
 jobs:
   dev-trigger:
@@ -27,4 +27,4 @@ jobs:
       uses: atlassian/gajira-transition@master
       with:
         issue: ${{ steps.issue-key.outputs.issue }}
-        transition: "검토 완료" #Jira 보드의 워크플로 관리에 있는 이름을 적어야함
+        transition: "검토 중" #Jira 보드의 워크플로 관리에 있는 이름을 적어야함

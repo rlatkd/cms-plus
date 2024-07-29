@@ -1,57 +1,49 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
 import { getCheckUsername, postJoin } from '@/apis/auth';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
+import { validateField } from '@/utils/validators';
 
 const SignupForm = () => {
   const navigate = useNavigate();
   const [checkedUsername, setCheckedUsername] = useState('');
   const [vendorFormData, setVendorFormData] = useState({
-    name: null,
+    name: '',
     username: '',
-    password: null,
-    passwordCheck: null,
-    email: null,
-    phone: null,
-    department: null,
-    homePhone: null,
+    password: '',
+    passwordCheck: '',
+    email: '',
+    phone: '',
+    department: '',
+    homePhone: '',
   });
 
-  // TODO
-  // 회원명 정규식
-  // 아이디 정규식
-  // 비밀번호 정규식
-  // 비밀번호 확인 검정 알림
-  // 이메일 정규식
-  // 휴대전화번호 정규식
-  // 유선 전화번호 정규식
-  // 부서명 정규식
+  // <----- 사용자 입력값 ----->
+  const handleChangeValue = e => {
+    const { id, value } = e.target;
+    if (id === 'phone' || id === 'homePhone') {
+      setVendorFormData(prev => ({ ...prev, [id]: removeDashes(value == '' ? '' : value) }));
+    } else {
+      setVendorFormData(prev => ({ ...prev, [id]: value == '' ? '' : value }));
+    }
+  };
 
-  // 공백입력 막기
+  // <----- 공백입력 막기 ----->
   const handleKeyDown = e => {
     e.key === ' ' && e.preventDefault();
   };
 
-  // 사용자 입력값
-  const handleChangeValue = e => {
-    const { id, value } = e.target;
-
-    setVendorFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
-  };
-
-  // 아이디 중복확인
+  // <----- 아이디 중복확인 ----->
   const handleCheckUsername = async () => {
-    if (vendorFormData.username.length <= 4) {
-      alert('잘못된 형식입니다.');
-      return;
-    }
-
     let isChecked = true;
     try {
-      isChecked = (await getCheckUsername(vendorFormData.username)).data;
+      const res = await getCheckUsername(vendorFormData.username);
+      isChecked = res.data;
       console.log('!----아이디 중복확인 성공----!'); // 삭제예정
     } catch (err) {
-      console.error('axiosJoin => ', err.response.data);
+      console.error('axiosJoin => ', err.response);
     }
 
     // false면 중복된 아이디 없다.
@@ -64,7 +56,7 @@ const SignupForm = () => {
     }
   };
 
-  // 회원가입
+  // <----- 회원가입 ----->
   const handleSubmit = async () => {
     // 아이디 중복확인 여부 확인
     if (vendorFormData.username !== checkedUsername) {
@@ -72,37 +64,51 @@ const SignupForm = () => {
       return;
     }
 
-    // 비밀번호 확인
-    if (vendorFormData.password !== vendorFormData.passwordCheck) {
-      alert('Tmp : 비밀번호가 다릅니다.');
-      return;
-    }
     const { passwordCheck, ...dataWithoutPasswordCheck } = vendorFormData;
-
-    if (!isSignupBtnActive()) {
-      alert('Tmp : 입력값을 채워주세요');
-      return;
-    }
-
     axiosJoin(dataWithoutPasswordCheck);
   };
 
-  // 회원가입 버튼 활성화
-  const isSignupBtnActive = () => {
-    const { name, username, password, email, phone, department } = vendorFormData;
-
-    return name && username && password && email && phone && department;
-  };
-
-  // 회원가입 API
+  // <----- 회원가입 API ----->
   const axiosJoin = async data => {
     try {
       const res = await postJoin(data);
       console.log('!----회원가입 성공----!'); // 삭제예정
+      onAlert('회원가입에 성공하셨습니다!');
       navigate('/login');
     } catch (err) {
-      console.error('axiosJoin => ', err.response.data);
+      // 에러 alert 추가하기
+      console.error('axiosJoin => ', err.response);
     }
+  };
+
+  // <----- 회원가입 버튼 활성화 ----->
+  const isSignupBtnActive = () => {
+    // 각 필드의 유효성 검사진행
+    const isValidName = validateField('name', vendorFormData.name);
+    const isValidUsername = validateField('username', vendorFormData.username);
+    const isValidPassword = validateField('password', vendorFormData.password);
+    const isValidPasswordCheck = vendorFormData.password === vendorFormData.passwordCheck;
+    const isValidEmail = validateField('email', vendorFormData.email);
+    const isValidPhone = validateField('phone', vendorFormData.phone);
+    const isValidDepartment = validateField('department', vendorFormData.department);
+    const isValidHomePhone = validateField('homePhone', vendorFormData.homePhone);
+
+    // 모든 필드가 유효한지 확인
+    return (
+      isValidName &&
+      isValidUsername &&
+      isValidPassword &&
+      isValidPasswordCheck &&
+      isValidEmail &&
+      isValidPhone &&
+      isValidDepartment &&
+      isValidHomePhone
+    );
+  };
+
+  const { alert: alertComp } = useContext(AlertContext);
+  const onAlert = async msg => {
+    const result = await alertComp(msg);
   };
 
   return (
@@ -113,7 +119,7 @@ const SignupForm = () => {
         <p className='my-1'>아이디 만들기는 효성 FMS의 미리 계약된 고객만</p>
         <p>진행하실 수 있습니다.</p>
       </div>
-      <div className='h-580 w-680 shadow-modal bg-white rounded-xl p-6 flex flex-col items-center justify-around relative'>
+      <div className='h-580 w-720 shadow-modal bg-white rounded-xl p-6 flex flex-col items-center justify-around relative'>
         <p className='text-text_black text-xl  font-800'>아이디 만들기</p>
         <div className='w-full justify-between flex'>
           <InputWeb
@@ -124,9 +130,13 @@ const SignupForm = () => {
             required
             classContainer='w-1/2 mr-5'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3 placeholder:text-xs'
+            value={vendorFormData.name}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={40}
+            isValid={validateField('name', vendorFormData.name)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <div className='w-1/2 flex items-end'>
             <InputWeb
@@ -137,17 +147,22 @@ const SignupForm = () => {
               required
               classContainer='w-full'
               classLabel='text-sm'
-              classInput='py-3'
+              classInput='py-3 placeholder:text-xs'
+              value={vendorFormData.username}
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
+              maxLength={20}
+              isValid={validateField('username', vendorFormData.username)}
+              errorMsg='올바른 형식 아닙니다.'
             />
             <button
               className={`ml-3  w-32 rounded-lg text-white text-sm font-700 h-46
                 ${
-                  vendorFormData.username !== null && vendorFormData.username.length > 4
+                  validateField('username', vendorFormData.username)
                     ? 'bg-mint hover:bg-mint_hover transition-all duration-200 '
                     : 'bg-btn_disa'
                 }  `}
+              tabIndex='-1'
               onClick={handleCheckUsername}>
               중복확인
             </button>
@@ -162,10 +177,14 @@ const SignupForm = () => {
             required
             classContainer='w-1/2 mr-5'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={vendorFormData.password}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            autoComplete='off'
+            autoComplete='off' // !CHECK! 주석해제필요
+            maxLength={16}
+            isValid={validateField('password', vendorFormData.password)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <InputWeb
             id='passwordCheck'
@@ -175,10 +194,14 @@ const SignupForm = () => {
             required
             classContainer='w-1/2'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={vendorFormData.passwordCheck}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            autoComplete='off'
+            autoComplete='off' // !CHECK! 주석해제필요
+            maxLength={16}
+            isValid={vendorFormData.password === vendorFormData.passwordCheck}
+            errorMsg='비밀번호가 일치하지 않습니다.'
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -190,21 +213,29 @@ const SignupForm = () => {
             required
             classContainer='w-1/2 mr-5'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={vendorFormData.email}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={40}
+            isValid={validateField('email', vendorFormData.email)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <InputWeb
             id='phone'
             label='휴대전화번호'
             type='text'
-            placeholder='ex) 010-9999-9999'
+            placeholder='숫자만 입력해주세요.'
             required
             classContainer='w-1/2'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={formatPhone(vendorFormData.phone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={11}
+            isValid={validateField('phone', vendorFormData.phone)}
+            errorMsg='올바른 형식 아닙니다.'
           />
         </div>
         <div className='w-full justify-between flex'>
@@ -216,19 +247,27 @@ const SignupForm = () => {
             required
             classContainer='w-1/2 mr-5'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={vendorFormData.department}
             onChange={handleChangeValue}
+            maxLength={40}
+            isValid={validateField('department', vendorFormData.department)}
+            errorMsg='올바른 형식 아닙니다.'
           />
           <InputWeb
             id='homePhone'
             label='유선전화번호'
             type='text'
-            placeholder='ex) 02-432-7777'
+            placeholder='숫자만 입력해주세요.'
             classContainer='w-1/2'
             classLabel='text-sm'
-            classInput='py-3'
+            classInput='py-3  placeholder:text-xs'
+            value={formatPhone(vendorFormData.homePhone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={10}
+            isValid={validateField('homePhone', vendorFormData.homePhone)}
+            errorMsg='올바른 형식 아닙니다.'
           />
         </div>
 
@@ -243,7 +282,8 @@ const SignupForm = () => {
           </span>
         </div>
         <button
-          className={`px-6 py-3 rounded-lg text-white text-sm font-700 absolute right-6 bottom-8 cursor-pointer
+          disabled={!isSignupBtnActive()}
+          className={`px-6 py-3 rounded-lg text-white text-sm font-700 absolute right-6 bottom-8 
             ${isSignupBtnActive() ? 'bg-mint hover:bg-mint_hover transition-all duration-200' : 'bg-btn_disa '}`}
           onClick={handleSubmit}>
           아이디 만들기

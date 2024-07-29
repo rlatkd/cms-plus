@@ -12,7 +12,7 @@ env:
   ECR_REPOSITORY: t3-back-paymentecr
   ECS_CLUSTER: t3-back-ecscluster
   ECS_CONTAINER: t3-back-paymentcontainer
-  ECS_SERVICE: t3-back-paymentservice
+  ECS_SERVICE: t3-back-ecscluster/t3-back-paymentservice
   ECS_TASK_DEFINITION: task-definition-payment.json
 
 permissions:
@@ -65,7 +65,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server-payment
+        docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server-payment
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 

@@ -1,0 +1,11 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: cmsplus-batch
+
+
+exchange:
+  authKey: EXCHANGE_AUTHKEY
+  data: EXCHANGE_DATA

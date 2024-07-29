@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.InvoiceRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
@@ -28,7 +30,20 @@ import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingProductRepository
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CMSMethodRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +58,9 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final BillingProductRepository billingProductRepository;
 	private final ContractCustomRepository contractCustomRepository;
-	// private final KafkaMessagingService kafkaMessagingService;
+	private final KafkaMessagingService kafkaMessagingService;
+	private final KafkaPaymentService kafkaPaymentService;
+	private final PaymentService paymentService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
 	private static final String INVOICE_URL_FORMAT = "https://localhost:8080/invoice/%d";
@@ -92,15 +109,15 @@ public class BillingService {
 	}
 
 	private void sendInvoiceMessage(String message, Member member) {
-		// 청구서 링크 발송
-		// MessageSendMethod sendMethod = member.getInvoiceSendMethod();
-		//
-		// switch (sendMethod) {
-		// 	case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
-		// 					kafkaMessagingService.produceMessaging(smsMessageDto); }
-		// 	case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
-		// 					kafkaMessagingService.produceMessaging(emailMessageDto); }
-		// }
+		 //청구서 링크 발송
+		 MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+
+		 switch (sendMethod) {
+		 	case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+		 					kafkaMessagingService.produceMessaging(smsMessageDto); }
+		 	case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+		 					kafkaMessagingService.produceMessaging(emailMessageDto); }
+		 }
 	}
 
 	/*
@@ -115,14 +132,31 @@ public class BillingService {
 	}
 
 	/*
-	* 청구 실시간 결제
-	* */
+	 * 청구 실시간 결제
+	 * */
 	@Transactional
-	public void payBilling(Long vendorId, Long billingId) {
+	public void payRealTimeBilling(Long vendorId, Long billingId) {
 		Billing billing = validateAndGetBilling(vendorId, billingId);
 		BillingState.Field.PAY_REALTIME.validateState(billing);
 
-		// TODO: 결제 프로세스 구현
+		Contract contract = billing.getContract();
+		Member member = contract.getMember();
+		Payment payment = contract.getPayment();
+		PaymentMethod method = payment.getPaymentMethod();
+
+		switch (method) {
+			case CARD -> {
+				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfo(payment);
+				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(), cardMethodRes.getCardNumber());
+				kafkaPaymentService.producePayment(cardPaymentDto);
+			}
+			case CMS -> {
+				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfo(payment);
+				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(), cmsMethodRes.getAccountNumber());
+				kafkaPaymentService.producePayment(accountPaymentDto);
+			}
+
+		}
 
 		billing.setPaid();
 	}
@@ -134,8 +168,6 @@ public class BillingService {
 	public void cancelPayBilling(Long vendorId, Long billingId) {
 		Billing billing = validateAndGetBilling(vendorId, billingId);
 		BillingState.Field.CANCEL_PAYMENT.validateState(billing);
-
-		// TODO: 결제 취소 프로세스 구현
 
 		billing.setPayCanceled();
 	}
@@ -171,7 +203,7 @@ public class BillingService {
 	 * 청구목록 조회 |
 	 * 3+x회 쿼리 발생 | 청구목록조회, 청구상품조회 * x(배치사이즈: 100), 전체 개수(페이징)
 	 * */
-	public PageRes<BillingListItemRes> getBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
+	public PageRes<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		List<BillingListItemRes> content =
 			billingCustomRepository.findBillingListWithCondition(vendorId, search, pageReq);
 
@@ -192,6 +224,21 @@ public class BillingService {
 			.collect(Collectors.toMap(field -> field, field -> field.checkState(billing)));
 
 		return BillingDetailRes.fromEntity(billing, fieldToState);
+	}
+
+	/**
+	 * 청구서 조회 |
+	 * 2회 쿼리 발생 | 청구존재여부, 청구상세
+	 * */
+	public InvoiceRes getInvoice(Long billingId) {
+		Billing billing = billingCustomRepository.findBillingWithContract(billingId);
+
+		Contract contract = billing.getContract();
+		Member member = contract.getMember();
+		Payment payment = contract.getPayment();
+		PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfo(payment);
+
+		return InvoiceRes.fromEntity(billing, member, paymentTypeInfoRes);
 	}
 
 	/**
@@ -248,7 +295,7 @@ public class BillingService {
 	 * */
 	private void updateBillingProducts(Billing billing, List<BillingProduct> mNewBillingProducts) {
 
-		List<BillingProduct> oldBillingProducts = billing.getBillingProducts();
+		Set<BillingProduct> oldBillingProducts = billing.getBillingProducts();
 		List<BillingProduct> newBillingProducts = new ArrayList<>(mNewBillingProducts);
 
 		// 삭제될 청구상품 ID

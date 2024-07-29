@@ -1,12 +1,10 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-messagingtask:5",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-messagingtask:14",
     "containerDefinitions": [
         {
             "name": "t3-back-messagingcontainer",
-            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-messagingecr",
-            "cpu": 2048,
-            "memory": 8192,
-            "memoryReservation": 4096,
+            "image": "891376922202.dkr.ecr.ap-northeast-2.amazonaws.com/t3-back-messagingecr:latest",
+            "cpu": 0,
             "portMappings": [
                 {
                     "name": "t3-back-messagingcontainer-8090-tcp",
@@ -39,7 +37,7 @@
     "taskRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 5,
+    "revision": 14,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -54,9 +52,6 @@
         },
         {
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
         },
         {
             "name": "com.amazonaws.ecs.capability.task-iam-role"
@@ -82,13 +77,13 @@
     "requiresCompatibilities": [
         "FARGATE"
     ],
-    "cpu": "2048",
-    "memory": "8192",
+    "cpu": "1024",
+    "memory": "3072",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-07-24T01:14:05.001Z",
+    "registeredAt": "2024-07-27T05:26:25.639Z",
     "registeredBy": "arn:aws:iam::891376922202:user/fms-kosa-tema3",
     "tags": []
 }

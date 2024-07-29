@@ -35,7 +35,7 @@ public class ProductController {
     /*
     * 고객의 전체 상품 목록 (조건 없이, 이름과 수량 그리고 ID 만)
     * */
-    @GetMapping("/all/no-cond")
+    @GetMapping("/all")
     public List<ProductDto> getAllProducts() {
         Long vendorId = 1L;
         return productService.getAllProducts(vendorId);
@@ -57,12 +57,5 @@ public class ProductController {
     public void deleteProduct(@PathVariable("productId") Long productId) {
         Long vendorId = 1L;
         productService.deleteProduct(vendorId, productId);
-    }
-
-    // 임시로 삭제 예정
-    @GetMapping("/tmp")
-    public List<ProductDtoTmp> getProductListTmp(){
-        Long vendorId = 1L;
-        return productService.getProductListTmp(vendorId);
     }
 }

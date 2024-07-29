@@ -67,7 +67,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		VendorUserDetailsDto vendorUserDetails = (VendorUserDetailsDto)authentication.getPrincipal();
 		String username = vendorUserDetails.getUsername();
 		String name = vendorUserDetails.getName();
-		Long id = vendorUserDetails.getId();
+		Long vendorId = vendorUserDetails.getId();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -75,8 +75,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String role = auth.getAuthority();
 
 		// JWT 토큰 생성
-		String accessToken = jwtUtil.createJwt("access", username, id, role, 30 * 60 * 1000L);
-		String refreshToken = jwtUtil.createJwt("refresh", username, id, role, 14 * 24 * 60 * 60 * 1000L);
+		String accessToken = jwtUtil.createJwt("access", username, vendorId, role, 60 * 60 * 1000L);
+		String refreshToken = jwtUtil.createJwt("refresh", username, vendorId, role, 7 * 24 * 60 * 60 * 1000L);
 
 		// Redis에 저장
 		redisTemplate.opsForValue().set(username, refreshToken, 14, TimeUnit.DAYS);
@@ -95,10 +95,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		// JSON 응답 본문 작성
 		AccessTokenRes accessTokenRes = AccessTokenRes.builder()
-			.accessToken(accessToken)
-			.username(username)
-			.name(name)
 			.role(role.replace("ROLE_", ""))
+			.name(name)
+			.username(username)
+			.vendorId(vendorId)
+			.accessToken(accessToken)
 			.build();
 
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -113,7 +114,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private Cookie createCookie(String key, String value) {
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(14 * 24 * 60 * 60);
+		cookie.setMaxAge(7 * 24 * 60 * 60);
 		cookie.setHttpOnly(true);
 		//cookie.setSecure(true);    // https 요청에 대한 접근제한
 		//cookie.setPath("/");

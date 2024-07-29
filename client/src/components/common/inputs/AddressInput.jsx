@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAddressStore } from '@/stores/useAddressStore';
-import { useUserDataStore } from '@/stores/useUserDataStore';
 
-const AddressInput = () => {
+const AddressInput = ({ userData, setUserData }) => {
   const { zipcode, address, addressDetail, setZipcode, setAddress, setAddressDetail } =
     useAddressStore();
-  const { setUserData } = useUserDataStore();
+  const [localAddressDetail, setLocalAddressDetail] = useState(addressDetail);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -39,11 +38,14 @@ const AddressInput = () => {
 
   const handleAddressDetailChange = e => {
     const newAddressDetail = e.target.value;
-    setAddressDetail(newAddressDetail);
-    // 주소 상세 정보를 useUserDataStore에도 저장
+    setLocalAddressDetail(newAddressDetail);
+  };
+
+  const handleAddressDetailBlur = () => {
+    setAddressDetail(localAddressDetail);
     setUserData({
       memberDTO: {
-        addressDetail: newAddressDetail,
+        addressDetail: localAddressDetail,
       },
     });
   };
@@ -51,19 +53,19 @@ const AddressInput = () => {
   return (
     <div className='block'>
       <span className='mb-1 block text-sm font-medium text-slate-700'>주소</span>
-      <div className='mb-2 flex space-x-2'>
+      <div className='mb-2 flex'>
         <input
           type='text'
           name='zipcode'
           value={zipcode}
-          className='flex-grow text-sm rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
+          className='flex-grow min-w-0 text-sm rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm h-10'
           placeholder='우편번호'
           readOnly
           autoComplete='postal-code'
         />
         <button
           onClick={handleAddressSearch}
-          className='rounded-md bg-gray-200 px-4 py-2'
+          className='rounded-md ml-1 bg-gray-200 px-4 h-10 flex items-center justify-center'
           type='button'>
           🔍
         </button>
@@ -80,8 +82,9 @@ const AddressInput = () => {
       <input
         type='text'
         name='address_detail'
-        value={addressDetail}
+        value={localAddressDetail}
         onChange={handleAddressDetailChange}
+        onBlur={handleAddressDetailBlur}
         className='w-full text-sm rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
         placeholder='상세 주소'
         autoComplete='address-line2'

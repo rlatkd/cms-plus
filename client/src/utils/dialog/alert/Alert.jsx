@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const Alert = ({ message, onClose }) => {
+const Alert = ({ message, onClose, title }) => {
   useEffect(() => {
     const handleEscape = e => {
       if (e.key === 'Escape') {
@@ -18,7 +18,7 @@ const Alert = ({ message, onClose }) => {
       <div className='fixed inset-0 bg-black bg-opacity-10' onClick={e => e.stopPropagation()} />
       <div className='relative shadow-dialog bg-white rounded-lg p-5 h-80 w-96 flex flex-col justify-between '>
         <h2 className='text-xl text-text_black font-900 mb-4 border-b border-ipt_border pb-3'>
-          효성 CMS#
+          {title}
         </h2>
         <div className='text-text_black font-700 mb-3 w-full h-full flex items-center justify-center px-4'>
           <p className='w-full break-words text-center text-lg'>{message}</p>

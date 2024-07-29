@@ -2,8 +2,9 @@ package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
@@ -32,6 +33,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+// TODO member, vendor 비정규화
 
 @Comment("청구 (매 달 새로 쌓이는 정보)")
 @Entity
@@ -98,7 +101,7 @@ public class Billing extends BaseEntity {
 	// 동일 상품 추가 안됨
 	@OneToMany(mappedBy = "billing", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
-	private List<BillingProduct> billingProducts = new ArrayList<>();
+	private Set<BillingProduct> billingProducts = new HashSet<>();
 
 	public Billing(Contract contract, BillingType billingType, LocalDate billingDate, int contractDay, List<BillingProduct> billingProducts) {
 		// 청구는 최소 한 개의 상품을 가져야한다.
@@ -188,11 +191,11 @@ public class Billing extends BaseEntity {
 	}
 
 	/**
-	 * 청구 실시간 결제 완료 상태변경
+	 * 청구 결제 완료 상태변경
 	 * @throws InvalidBillingStatusException 이미 결제된 청구인 경우
 	 */
 	public void setPaid() {
-		BillingState.Field.PAY_REALTIME.validateState(this);
+		BillingState.Field.PAY.validateState(this);
 		billingStatus = BillingStatus.PAID;
 		paidDateTime = LocalDateTime.now();
 	}

@@ -12,12 +12,12 @@ public class RecentFiveContractQueryRes {
 	private final Long contractId;
 	private final LocalDateTime createDateTime;
 	private final String memberName;
-	private final Long totalContractPrice;
+	private final long totalContractPrice;
 	private final LocalDate contractStartDate;
 	private final LocalDate contractEndDate;
 
 	@QueryProjection
-	public RecentFiveContractQueryRes(Long contractId, LocalDateTime createDateTime, String memberName, Long totalContractPrice,
+	public RecentFiveContractQueryRes(Long contractId, LocalDateTime createDateTime, String memberName, long totalContractPrice,
 		LocalDate contractStartDate, LocalDate contractEndDate) {
 		this.contractId = contractId;
 		this.createDateTime = createDateTime;

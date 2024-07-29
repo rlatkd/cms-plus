@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class VerificationExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 카드 정보입니다.");
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleAllExceptions(Exception ex) {
-        log.error("Unexpected error", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
-    }
+    // @ExceptionHandler(MethodArgumentNotValidException.class)
+    // public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 카드 정보입니다.");
+    // }
+    //
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<String> handleAllExceptions(Exception ex) {
+    //     log.error("Unexpected error", ex);
+    //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+    // }
 }
 

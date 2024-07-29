@@ -1,5 +1,13 @@
 package kr.or.kosa.cmsplusmain.domain.member.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -16,11 +24,13 @@ import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -28,13 +38,6 @@ import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -52,7 +55,7 @@ public class MemberService {
     private final ContractRepository contractRepository;
     private final ContractProductRepository contractProductRepository;
 
-    /*
+    /**
      * 회원 목록 조회
      * */
     public PageRes<MemberListItemRes> searchMembers(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
@@ -60,7 +63,7 @@ public class MemberService {
         int countMemberListItem = memberCustomRepository.countAllMemberByVendor(vendorId, memberSearch);
 
         List<MemberListItemRes> memberListItemRes = memberCustomRepository
-                .findAllMemberByVendor(vendorId, memberSearch, pageable)
+                .searchAllMemberByVendor(vendorId, memberSearch, pageable)
                 .stream()
                 .map(MemberListItemRes::fromEntity)
                 .toList();
@@ -68,14 +71,25 @@ public class MemberService {
         return new PageRes<>(countMemberListItem, pageable.getSize(), memberListItemRes);
     }
 
-    /*
+    /**
+     * 해당 고객 회원의 기본정보 목록 조회
+     * */
+    public PageRes<MemberDto> findAllMemberBasicInfo(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
+        int totalCount = memberCustomRepository.countAllMembers(vendorId, memberSearch);
+        List<MemberDto> members = memberCustomRepository.findAllMembers(vendorId, memberSearch, pageable).stream()
+            .map(MemberDto::fromEntity)
+            .toList();
+        return new PageRes<>(totalCount, pageable.getSize(), members);
+    }
+
+    /**
     *  회원 상세 - 기본정보
     * */
     public MemberDetail findMemberDetailById(Long vendorId, Long memberId) {
         System.out.println("memberId : " + memberId);
         // 회원 정보 조회
         Member member = memberCustomRepository.findMemberDetailById(vendorId, memberId)
-                        .orElseThrow(() -> new EntityNotFoundException("회원 ID 없음(" + memberId + ")"));
+                        .orElseThrow(() -> new MemberNotFoundException("회원 ID 없음(" + memberId + ")"));
 
         // 청구서 수
         int billingCount = billingCustomRepository.findBillingStandardByMemberId(vendorId, memberId);
@@ -86,7 +100,7 @@ public class MemberService {
         return MemberDetail.fromEntity(member, billingCount, totalBillingPrice);
     }
 
-    /*
+    /**
     * 회원 상세 - 계약리스트
     * */
     public PageRes<MemberContractListItemRes> findContractListItemByMemberId(Long vendorId, Long memberId, PageReq pageable) {
@@ -102,11 +116,11 @@ public class MemberService {
         return new PageRes<>(countAllContractListItemByMemberId,pageable.getSize(), memberContractListItemRes);
     }
 
-    /*
+    /**
      * 회원 등록
      * */
     @Transactional
-    public void createMember(Long vendorId, MemberCreateReq memberCreateReq) {
+    public Long createMember(Long vendorId, MemberCreateReq memberCreateReq) {
 
         // 회원 정보를 DB에 저장한다.
         Member member = null;
@@ -123,10 +137,12 @@ public class MemberService {
         Payment payment = paymentService.createPayment(memberCreateReq.getPaymentCreateReq());
 
         // 계약 정보를 DB에 저장한다.
-        contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
+        Long contractId = contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
+
+        return contractId;
     }
 
-    /*
+    /**
      * 회원 수정 - 기본 정보
      *
      * 총 발생 쿼리수: 3회
@@ -149,7 +165,7 @@ public class MemberService {
         member.setMemo(memberUpdateReq.getMemberMemo());
     }
 
-    /*
+    /**
      * 회원 수정 - 청구 정보
      * */
     @Transactional
@@ -165,7 +181,7 @@ public class MemberService {
         member.setAutoBilling(memberBillingUpdateReq.isAutoBilling());
     }
 
-    /*
+    /**
      * 회원 삭제
      * */
     @Transactional
@@ -179,7 +195,7 @@ public class MemberService {
         member.delete();
     }
 
-    /*
+    /**
      * 회원 삭제 - 회원의 진행중인 청구 개수 조회
      * */
     public int countAllInProgressBillingByMember(Long vendorId, Long memberId) {
@@ -187,10 +203,10 @@ public class MemberService {
         return billingCustomRepository.countInProgressBillingsByMember(memberId);
     }
 
-    /*
+    /**
     * 회원 엑셀로 대량 등록
     * */
-    @Transactional()
+    @Transactional
     public List<ExcelErrorRes<MemberExcelDto>> uploadMembersByExcel(Long vendorId, List<MemberExcelDto> memberList) {
         Vendor vendor = Vendor.of(vendorId);
 
@@ -231,12 +247,12 @@ public class MemberService {
             validation += "\n";
         }
 
-        String duplicated = canSave ? "" : "휴대번호 혹은 이메일이 중복되었습니다.";
+        String duplicated = canSave ? "" : "휴대전화 혹은 이메일이 중복되었습니다.";
 
         return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }
 
-    /*
+    /**
      * 회원 ID 존재여부
      * 회원이 현재 로그인 고객의 회원인지 여부
      * */

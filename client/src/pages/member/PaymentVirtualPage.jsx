@@ -25,10 +25,9 @@ const PaymentVirtualPage = () => {
 
   const Content = componentMap[status] || (() => 'error');
 
-  // 현재 가상계좌번호를 가져와서 주스탄드에 저장하는게 구현 안 되어있음
-  const number = '56293456234294';
+  const number = invoiceInfo.paymentType.accountNumber; //가상계좌번호
   const method = 'VIRTUAL';
-  const phoneNumber = '01026270378'; // 테스트용 (실제로는 주스탄드에서 가져옴)
+  const phoneNumber = invoiceInfo.member.phone;
 
   const paymentData = {
     billingId: invoiceInfo.billingId,
@@ -42,13 +41,13 @@ const PaymentVirtualPage = () => {
       const res = await requestVirtualAccountPayment(paymentData);
       console.log(res.data);
     } catch (err) {
-      console.error('axiosVirtualAccountPayment => ', err.response.data);
+      console.error('axiosVirtualAccountPayment => ', err.response);
     }
   };
 
   return (
     <>
-      <Content />
+      <Content invoiceInfo={invoiceInfo} />
       <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
         <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
         <NextButton
@@ -57,6 +56,8 @@ const PaymentVirtualPage = () => {
           status={status}
           end={end}
           onPayment={axiosVirtualAccountPayment}
+          // 가상계좌에서 마지막 결제 완료 루트 하나 줄어들면 위에꺼 지우고 아래꺼 적용
+          // onVirtualPayment={axiosVirtualAccountPayment}
         />
       </div>
     </>

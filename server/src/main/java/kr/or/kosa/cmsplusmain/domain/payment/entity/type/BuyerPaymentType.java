@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.DiscriminatorValue;
+import kr.or.kosa.cmsplusmain.domain.payment.exception.InvalidBuyerMethodException;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
@@ -36,12 +37,11 @@ public class BuyerPaymentType extends PaymentTypeInfo {
 	@Column(name = "buyer_payment_method")
 	private Set<PaymentMethod> availableMethods = new HashSet<>();
 
-
-	//TODO
-	// 코드 점검 필요
-
 	@Builder
 	public BuyerPaymentType(Set<PaymentMethod> availableMethods) {
+		if (availableMethods == null || availableMethods.isEmpty()) {
+			throw new InvalidBuyerMethodException("납부자 결제수단은 최소 한 개 이상이 필요합니다.");
+		}
 		setAvailableMethods(availableMethods);
 	}
 
@@ -51,7 +51,7 @@ public class BuyerPaymentType extends PaymentTypeInfo {
 	public void setAvailableMethods(Set<PaymentMethod> availableMethods) {
 		List<PaymentMethod> paymentMethods = PaymentType.getBuyerPaymentMethods();
 		if (availableMethods.stream().anyMatch(method -> !paymentMethods.contains(method))) {
-			throw new IllegalArgumentException("납부자결제 가능 결제수단이 아닙니다.");
+			throw new InvalidBuyerMethodException("납부자결제 가능 결제수단이 아닙니다.");
 		}
 		this.availableMethods = availableMethods;
 	}

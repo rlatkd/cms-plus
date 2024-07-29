@@ -1,3 +1,5 @@
+import daisyui from 'daisyui';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{html,js,jsx,ts,tsx}'],
@@ -5,6 +7,7 @@ export default {
     extend: {
       colors: {
         mint: '#4FD1C5', // 메인컬러
+        mintt: '#4FD1C5', // 메인컬러
         mint_hover: '#51B1A8', // 메인컬러 호버
         background: '#F8F9FA', // 배경컬러
         text_black: '#344767', // 텍스트 메인컬러
@@ -13,7 +16,10 @@ export default {
         ipt_disa: '#F1F1F1', // 입력창 비활성화
         essential: '#FF0000', // 필수정보 별태그
         btn_disa: '#C4C4C4', // 버튼 비활성화
-        negative: '#F14141', // 취소, 실패 버튼
+        negative: '#F44334', // 취소, 실패 버튼
+        negative_hover: '#DD3324', // 취소, 실패 버튼 호버
+        warning: '#FFD33C', // 경고 노란색
+        warning_hover: '#EABF29', // 경고 노란색 호버
         table_col: '#f4f5f6', // 테이블 컬럼색
       },
 
@@ -35,11 +41,14 @@ export default {
         46: '46px',
         54: '54px',
         360: '380px',
+        420: '420px',
         480: '480px',
         510: '510px',
         580: '580px',
         640: '640px', // 모바일 max-width
         680: '680px',
+        720: '720px',
+        730: '730px',
         1200: '1200px',
         1500: '1500px', // 브라우저 max-height
         2400: '2400px', // 브라우저 max-width
@@ -80,5 +89,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [daisyui],
 };

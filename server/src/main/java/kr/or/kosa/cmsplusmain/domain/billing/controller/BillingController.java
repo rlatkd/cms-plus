@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.billing.controller;
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.billing.dto.*;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,12 +16,6 @@ import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.service.BillingService;
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +37,7 @@ public class BillingController {
 	/*
 	* 청구서 발송
 	* */
-	@GetMapping("invoice/{billingId}")
+	@GetMapping("send-invoice/{billingId}")
 	public void sendInvoice(@VendorId Long vendorId, @PathVariable Long billingId) {
 		billingService.sendInvoice(vendorId, billingId);
 	}
@@ -60,7 +55,7 @@ public class BillingController {
 	* */
 	@GetMapping("payment/{billingId}")
 	public void payRealtimeBilling(@VendorId Long vendorId, @PathVariable Long billingId) {
-		billingService.payBilling(vendorId, billingId);
+		billingService.payRealTimeBilling(vendorId, billingId);
 	}
 
 	/*
@@ -75,8 +70,8 @@ public class BillingController {
 	 * 청구목록 조회
 	 * */
 	@GetMapping
-	public PageRes<BillingListItemRes> getBillingListWithCondition(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		return billingService.getBillingListWithCondition(vendorId, search, pageReq);
+	public PageRes<BillingListItemRes> searchBillings(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
+		return billingService.searchBillings(vendorId, search, pageReq);
 	}
 
 	/**
@@ -85,6 +80,15 @@ public class BillingController {
 	@GetMapping("/{billingId}")
 	public BillingDetailRes getBillingDetail(@VendorId Long vendorId, @PathVariable Long billingId) {
 		return billingService.getBillingDetail(vendorId, billingId);
+	}
+
+
+	/**
+	 * 청구서 조회
+	 * */
+	@GetMapping("invoice/{billingId}")
+	public InvoiceRes getInvoice(@PathVariable Long billingId) {
+		return billingService.getInvoice(billingId);
 	}
 
 	/**

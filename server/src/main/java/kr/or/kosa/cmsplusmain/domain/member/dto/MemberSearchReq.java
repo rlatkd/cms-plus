@@ -7,8 +7,8 @@ import lombok.Setter;
 
 @Getter @Setter
 public class MemberSearchReq {
-
 	/***** 포함 *****/
+	private Long memberId;
 	private String memberName;          // 회원 이름
 	private String memberPhone;         // 회원 휴대전화
 	private String memberEmail;         // 회원 이메일

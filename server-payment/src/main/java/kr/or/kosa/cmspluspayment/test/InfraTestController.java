@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class InfraTestController {
 
-    @GetMapping("/infra-test")
+    @GetMapping("/infra-test-payment")
     public String infraTest() {
-        return "infra-test 333";
+        return "infra-test v0729";
     }
 
 }

@@ -1,29 +1,36 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
-import { postLogin } from '@/apis/auth';
-import { useState } from 'react';
+import { postLogin, postRequestAuthenticationNumber } from '@/apis/auth';
+import { useContext, useState } from 'react';
 import FindVendoPasswordModal from '@/components/vendor/modal/FIndVendorPasswordModal';
 import FindVendorIdModal from '@/components/vendor/modal/FindVendorIdModal';
 import ResetPasswordModal from '@/components/vendor/modal/ResetPasswordModal';
+import SuccessFindIdModal from '@/components/vendor/modal/SuccessFindIdModal';
+import user from '@/assets/user.svg';
+import password from '@/assets/password.svg';
+import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
+import { useVendorInfoStore } from '@/stores/useVendorInfoStore';
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [isShowIdModal, setIsShowIdModal] = useState(false);
   const [isShowPasswordModal, setIsShowPasswordModal] = useState(false);
   const [isShowResetPasswordModal, setIsShowResetPasswordModal] = useState(false);
+  const [isShowSuccessFindIdModal, setIsShowSuccessFindIdModal] = useState(false);
+  const [findedId, setFindedId] = useState('');
+  const { setVendorInfo } = useVendorInfoStore();
   const [vendorFormData, setVendorFormData] = useState({
-    username: null,
-    password: null,
+    username: '',
+    password: '',
   });
 
   // Todo
   // 로그인 실패시 로그인 실패 경고 빨간글씨
-  // 로그인 성공 시 Alert창
 
   // 사용자 입력값
   const handleChangeValue = e => {
     const { id, value } = e.target;
-    setVendorFormData(prev => ({ ...prev, [id]: value == '' ? null : value }));
+    setVendorFormData(prev => ({ ...prev, [id]: value == '' ? '' : value }));
   };
 
   // 공백입력 막기
@@ -41,12 +48,36 @@ const LoginForm = () => {
   const axiosLogin = async data => {
     try {
       const res = await postLogin(data);
+      const { accessToken, ...vendorInfo } = res.data;
+      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('time', JSON.stringify(3600));
+      setVendorInfo(vendorInfo);
       console.log('!----로그인 성공----!'); // 삭제예정
-      localStorage.setItem('access_token', res.data.accessToken);
       navigate('/vendor/dashboard');
     } catch (err) {
-      console.error('axiosJoin => ', err.response.data);
+      console.error('axiosJoin => ', err.response);
     }
+  };
+
+  // <---- 인증번호 요청 API ---->
+  const axiosRequestAuthenticationNumber = async formData => {
+    try {
+      const data = {
+        userInfo: formData.name ? formData.name : formData.username,
+        methodInfo: formData.method === 'SMS' ? formData.phone : formData.email,
+        method: formData.method,
+      };
+      const res = await postRequestAuthenticationNumber(data);
+      console.log('!----인증번호 요청 성공----!'); // 삭제예정
+      onAlertWidth('인증번호가 발송되었습니다.');
+    } catch (err) {
+      console.error('axiosRequestAuthenticationNumber => ', err.response);
+    }
+  };
+
+  const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
+  const onAlertWidth = async msg => {
+    const result = await alertWidthComp(msg);
   };
 
   return (
@@ -61,17 +92,21 @@ const LoginForm = () => {
             type='text'
             placeholder='아이디를 입력해 주세요.'
             classInput='mb-4'
+            value={vendorFormData.username}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
+            maxLength={20}
           />
           <InputWeb
             id='password'
             label='비밀번호'
             type='password'
             placeholder='비밀번호를 입력해 주세요.'
+            value={vendorFormData.password}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
             classInput='relative'
+            maxLength={16}
           />
         </div>
         <div className='text-text_grey text-sm  w-full flex justify-end cursor-pointer'>
@@ -99,21 +134,35 @@ const LoginForm = () => {
       <FindVendorIdModal
         isShowModal={isShowIdModal}
         setIsShowModal={setIsShowIdModal}
-        icon='/src/assets/user.svg'
+        setFindedId={setFindedId}
+        setIsShowSuccessFindIdModal={setIsShowSuccessFindIdModal}
+        axiosRequestAuthenticationNumber={axiosRequestAuthenticationNumber}
+        icon={user}
         modalTitle={'아이디 찾기'}
       />
       <FindVendoPasswordModal
         isShowModal={isShowPasswordModal}
         setIsShowModal={setIsShowPasswordModal}
         setIsShowResetPasswordModal={setIsShowResetPasswordModal}
-        icon='/src/assets/password.svg'
+        axiosRequestAuthenticationNumber={axiosRequestAuthenticationNumber}
+        setFindedId={setFindedId}
+        icon={password}
         modalTitle={'비밀번호 찾기'}
       />
       <ResetPasswordModal
         isShowModal={isShowResetPasswordModal}
         setIsShowModal={setIsShowResetPasswordModal}
-        icon='/src/assets/password.svg'
+        findedId={findedId}
+        icon={password}
         modalTitle={'비밀번호 재설정'}
+      />
+      <SuccessFindIdModal
+        isShowModal={isShowSuccessFindIdModal}
+        setIsShowModal={setIsShowSuccessFindIdModal}
+        setVendorFormData={setVendorFormData}
+        findedId={findedId}
+        icon={user}
+        modalTitle={'아이디확인'}
       />
     </div>
   );

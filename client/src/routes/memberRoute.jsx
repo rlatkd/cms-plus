@@ -5,6 +5,8 @@ import PaymentChoose from '@/pages/member/PaymentChoosePage'; // 청구서 결�
 import PaymentCard from '@/pages/member/PaymentCardPage'; // 납부자결제 (카드)
 import PaymentAccount from '@/pages/member/PaymentAccountPage'; // 납부자결제 (계좌)
 import PaymentVirtual from '@/pages/member/PaymentVirtualPage'; // 가상계좌결제
+import PaymentAuto from '@/pages/member/PaymentAutoPage'; //자동결제
+import Complete from '@/components/common/member/Complete';
 
 const memberRoute = () => {
   return [
@@ -21,23 +23,30 @@ const memberRoute = () => {
       element: <Invoice />,
     },
     {
-      path: 'invoice/payment',
+      path: 'invoice/:invoiceId/payment',
       element: <PaymentChoose />,
     },
     {
-      path: 'invoice/payment/card',
+      path: 'invoice/:invoiceId/payment/card',
       element: <PaymentCard />,
     },
     {
-      path: 'invoice/payment/account',
+      path: 'invoice/:invoiceId/payment/account',
       element: <PaymentAccount />,
     },
     {
-      path: 'invoice/payment/virtual',
+      path: 'invoice/:invoiceId/payment/virtual',
       element: <PaymentVirtual />,
+    },
+    {
+      path: 'invoice/:invoiceId/payment/auto',
+      element: <PaymentAuto />,
+    },
+    {
+      path: 'invoice/:invoiceId/payment/complete',
+      element: <Complete />,
     },
   ];
 };
 
 export default memberRoute;
-

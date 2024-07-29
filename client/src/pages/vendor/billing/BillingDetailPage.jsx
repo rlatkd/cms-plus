@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAllProductList } from '@/apis/product';
 import {
@@ -7,7 +7,7 @@ import {
   sendInvoice,
   updateBilling,
   cancelSendInvoice,
-  payBilling,
+  payRealTimeBilling,
   cancelPayBilling,
   getBillingProducts,
 } from '@/apis/billing';
@@ -18,6 +18,9 @@ import BillingDetailProduct from '@/components/vendor/billing/detail/BillingDeta
 import BillingDetailEditButtons from '@/components/vendor/billing/detail/BillingDetailEditButtons';
 import BillingDetailButtons from '@/components/vendor/billing/detail/BillingDetailButtons';
 import { cols } from '@/utils/tableElements/billingProductElement';
+import AlertContext from '@/utils/dialog/alert/AlertContext';
+import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
+import useAlert from '@/hooks/useAlert';
 
 const BillingDetailPage = () => {
   const [billingData, setBillingData] = useState({
@@ -43,6 +46,13 @@ const BillingDetailPage = () => {
   const { id: billingId } = useParams();
   const navigate = useNavigate();
 
+  const onAlert = useAlert();
+
+  const { confirm: confrimComp } = useContext(ConfirmContext);
+  const onConfirm = async (msg, type, title) => {
+    return await confrimComp(msg, type, title);
+  };
+
   const fetchBillingDetail = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -53,6 +63,7 @@ const BillingDetailPage = () => {
         billingDate: res.data.billing.billingDate,
         invoiceMessage: res.data.billing.invoiceMessage,
       }));
+      console.log(res);
     } catch (err) {
       console.error('청구 상세 정보 조회 실패:', err);
     } finally {
@@ -113,68 +124,86 @@ const BillingDetailPage = () => {
   const handleEditSave = async () => {
     try {
       await updateBilling(billingId, billingReq);
-      alert('청구가 수정되었습니다.');
+      onAlert('청구가 수정되었습니다. 수정된 내용을 확인해주세요!', 'success', '청구 수정성공');
       setIsEditing(false);
       setEditable(false);
+    } catch (err) {
+      handleEditCancel();
+      onAlert('청구가 수정되었습니다!', 'error', '청구 수정 실패', err);
+      console.error('청구 수정 실패:', err);
+    } finally {
       fetchBillingDetail();
       fetchBillingProducts();
-    } catch (err) {
-      alert('청구 수정에 실패했습니다.');
-      console.error('Failed to update billing:', err);
     }
   };
 
   const handleRemove = async () => {
+    const confirm = await onConfirm('청구를 삭제하시겠습니까?', 'warning', '청구 삭제');
+    if (!confirm) {
+      return;
+    }
     try {
       await deleteBilling(billingId);
-      alert('청구가 삭제되었습니다.');
+      console.log('delete');
+      onAlert('청구가 삭제되었습니다!', 'default', '청구 삭제성공');
       navigate(-1);
     } catch (err) {
-      alert('청구 삭제에 실패했습니다.');
-      console.error('Failed to delete billing:', err);
+      console.error('청구 삭제 실패:', err);
     }
   };
 
   const handleSend = async () => {
     try {
       await sendInvoice(billingId);
-      alert('청구서가 발송되었습니다.');
+      onAlert('청구서가 발송되었습니다.', 'default', '청구서 발송');
       fetchBillingDetail();
     } catch (err) {
-      alert('청구서 발송에 실패했습니다.');
       console.error('Failed to send invoice:', err);
     }
   };
 
   const handleCancelSend = async () => {
+    const confirm = await onConfirm(
+      '청구서 발송을 취소하시겠습니까?',
+      'warning',
+      '청구서 발송취소'
+    );
+    if (!confirm) {
+      return;
+    }
     try {
       await cancelSendInvoice(billingId);
-      alert('청구서 발송이 취소되었습니다.');
+      onAlert('청구서 발송이 취소되었습니다.', 'default', '청구서 발송취소');
       fetchBillingDetail();
     } catch (err) {
-      alert('청구서 발송 취소에 실패했습니다.');
       console.error('Failed to cancel invoice send:', err);
     }
   };
 
   const handlePay = async () => {
+    const confirm = await onConfirm('실시간 결제를 하시겠습니까?', 'warning', '실시간 결제');
+    if (!confirm) {
+      return;
+    }
     try {
-      await payBilling(billingId);
-      alert('청구가 결제되었습니다.');
+      await payRealTimeBilling(billingId);
+      onAlert('청구가 결제되었습니다!', 'default', '실시간 결제');
       fetchBillingDetail();
     } catch (err) {
-      alert('청구 결제에 실패했습니다.');
       console.error('Failed to pay billing:', err);
     }
   };
 
   const handleCancelPay = async () => {
+    const confirm = await onConfirm('결제를 취소하시겠습니까?', 'warning', '결제취소');
+    if (!confirm) {
+      return;
+    }
     try {
       await cancelPayBilling(billingId);
-      alert('청구 결제가 취소되었습니다.');
+      onAlert('결제가 취소되었습니다!', 'default', '결제취소');
       fetchBillingDetail();
     } catch (err) {
-      alert('청구 결제 취소에 실패했습니다.');
       console.error('Failed to cancel billing payment:', err);
     }
   };

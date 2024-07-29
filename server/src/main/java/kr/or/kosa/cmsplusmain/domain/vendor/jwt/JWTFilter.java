@@ -30,7 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 
 		String authorization = request.getHeader("Authorization");
-		log.info("JWTFilter authorization : " + authorization);
+//		log.info("JWTFilter authorization : " + authorization);
 
 		// Authorization 헤더 검증
 		if (authorization == null || !authorization.startsWith("Bearer ")) {

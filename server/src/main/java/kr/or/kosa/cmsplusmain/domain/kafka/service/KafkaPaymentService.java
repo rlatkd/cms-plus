@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
-// @Service
+@Service
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaPaymentService {
@@ -34,11 +34,13 @@ public class KafkaPaymentService {
 
     // 메인서버->결제서버; 결제정보 전달
     public void producePayment(PaymentDto paymentDto) {
+        log.error("넘어간다 {}", paymentDto.toString());
         paymentKafkaTemplate.send(paymentTopic, paymentDto);
     }
 
     // 메인서버->메시징서버; 결제결과문자 전달
     public void produceMessaging(MessageDto messageDto) {
+        log.error("넘어간다 {}", messageDto.toString());
         messagingKafkaTemplate.send(messagingTopic, messageDto);
     }
 
@@ -48,17 +50,23 @@ public class KafkaPaymentService {
     public void consumePaymentResult(List<ConsumerRecord<String, PaymentResultDto>> records) {
         for (ConsumerRecord<String, PaymentResultDto> record : records) {
             PaymentResultDto paymentResultDto = record.value();
+            log.error("[컨슘한 DTO 결과]: {}", paymentResultDto.toString());
             MessageDto messageDto = new SmsMessageDto(paymentResultDto.getResult(), paymentResultDto.getPhoneNumber());
             Billing billing = billingRepository.findById(paymentResultDto.getBillingId())
                     .orElseThrow(() -> new EntityNotFoundException(paymentResultDto.getBillingId().toString()));
+            log.error("[billing 결과]: {}", billing.getId());
+
             try {
-                if (paymentResultDto.getResult().equals("결제성공")) {
+                log.error("[result 결과]: {}", paymentResultDto.getResult());
+                if (paymentResultDto.getResult().equals("결제가 완료되었습니다.")) {
                     billing.setPaid(); // 결제결과가 성공이면 청구상태를 결제완료로 바꿈
                     log.info("결제성공");
+                    log.info("paymentREsultDto{}", paymentResultDto.toString());
                 } else {
                     log.error("결제실패");
                 }
                 produceMessaging(messageDto); // 메인서버->메시징서버; 결제결과문자 전달
+                log.error("[프로듀스 DTO]:  {}", messageDto.toString());
             } catch (EntityNotFoundException e) {
                 log.error(e.getMessage());
             }

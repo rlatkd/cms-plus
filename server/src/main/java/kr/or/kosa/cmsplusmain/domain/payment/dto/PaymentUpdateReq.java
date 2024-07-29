@@ -12,4 +12,6 @@ public class PaymentUpdateReq {
     @NotNull
     private PaymentTypeInfoReq paymentTypeInfoReq;
     private PaymentMethodInfoReq paymentMethodInfoReq;
+    @NotNull
+    private Integer contractDay;
 }

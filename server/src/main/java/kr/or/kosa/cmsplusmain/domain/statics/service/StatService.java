@@ -125,6 +125,9 @@ public class StatService {
 	public MonthBillingInfoRes getMonthBillingInfo(Long vendorId, int year, int month) {
 		List<DayBillingQueryRes> dayBillingQueryRes = statRepository.findBillingsByMonth(vendorId, year, month);
 
+		int totalBillingAmount = dayBillingQueryRes.stream()
+			.mapToInt(DayBillingQueryRes::getBillingCount)
+			.sum();
 		Map<BillingStatus, List<DayBillingQueryRes>> statusToQRes = groupByStatus(dayBillingQueryRes);
 		Map<BillingStatus, Long> statusToPrices = calculateStatusPrices(statusToQRes);
 		Map<BillingStatus, Integer> statusToCounts = calculateStatusCounts(statusToQRes);
@@ -136,6 +139,7 @@ public class StatService {
 			.statusCounts(statusToCounts)
 			.dayBillingRes(dayBillingRes)
 			.totalBillingPrice(totalBillingPrice)
+			.totalBillingAmount(totalBillingAmount)
 			.build();
 	}
 

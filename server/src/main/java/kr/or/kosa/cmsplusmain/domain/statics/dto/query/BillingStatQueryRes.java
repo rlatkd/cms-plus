@@ -6,12 +6,12 @@ import lombok.Getter;
 
 @Getter
 public class BillingStatQueryRes {
-	private final Long totalBillingPrice;
-	private final Long totalPaidPrice;
-	private final Long totalNotPaidPrice;
+	private final long totalBillingPrice;
+	private final long totalPaidPrice;
+	private final long totalNotPaidPrice;
 
 	@QueryProjection
-	public BillingStatQueryRes(Long totalBillingPrice, Long totalPaidPrice, Long totalNotPaidPrice) {
+	public BillingStatQueryRes(long totalBillingPrice, long totalPaidPrice, long totalNotPaidPrice) {
 		this.totalBillingPrice = totalBillingPrice;
 		this.totalPaidPrice = totalPaidPrice;
 		this.totalNotPaidPrice = totalNotPaidPrice;

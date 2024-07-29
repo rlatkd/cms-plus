@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.util.StringUtils;
 
 public class HomePhoneValidator implements ConstraintValidator<HomePhone, String> {
 
@@ -17,7 +18,7 @@ public class HomePhoneValidator implements ConstraintValidator<HomePhone, String
 
 	@Override
 	public boolean isValid(String homePhone, ConstraintValidatorContext context) {
-		if (homePhone == null) {
+		if (!StringUtils.hasText(homePhone)) {
 			return true; // null 값은 다른 어노테이션으로 처리
 		}
 		return USERNAME_PATTERN.matcher(homePhone).matches();

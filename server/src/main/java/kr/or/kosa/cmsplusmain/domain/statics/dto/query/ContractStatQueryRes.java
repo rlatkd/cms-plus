@@ -6,12 +6,12 @@ import lombok.Getter;
 
 @Getter
 public class ContractStatQueryRes {
-	private final Long totalContractCount;
-	private final Long newContractCount;
-	private final Long expectedToExpiredCount;
+	private final long totalContractCount;
+	private final long newContractCount;
+	private final long expectedToExpiredCount;
 
 	@QueryProjection
-	public ContractStatQueryRes(Long totalContractCount, Long newContractCount, Long expectedToExpiredCount) {
+	public ContractStatQueryRes(long totalContractCount, long newContractCount, long expectedToExpiredCount) {
 		this.totalContractCount = totalContractCount;
 		this.newContractCount = newContractCount;
 		this.expectedToExpiredCount = expectedToExpiredCount;

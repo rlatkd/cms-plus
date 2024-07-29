@@ -1,0 +1,38 @@
+name: BE PIPELINE
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'server/**'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET: t3-back-cicdbucket
+
+jobs:
+  be-pipline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: prod
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp DEPLOY_FILE/server/cmsplus-main-0.0.1-SNAPSHOT.jar s3://${{ env.S3_BUCKET }}/cmsplus-main-0.0.1-SNAPSHOT.jar

@@ -12,13 +12,13 @@ import lombok.ToString;
 public abstract class MessageDto { // sms, email은 이걸 상속해서 각자 타입에 맞는 핸드폰번호, email주소를 주입해야함
 
     @NotNull
-    private MessageSendMethod method;
+    private String method;
 
     @NotNull
     private String text;
 
     public MessageDto(MessageSendMethod method, String text) {
-        this.method = method;
+        this.method = method.getCode();
         this.text = text;
     }
 

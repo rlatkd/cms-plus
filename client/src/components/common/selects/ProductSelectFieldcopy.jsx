@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Checkbox from '@/components/common/inputs/CheckBox';
 import Arrow from '@/assets/Arrow';
 
@@ -15,20 +15,36 @@ const ProductSelectFieldcopy = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const dropdownRef = useRef(null);
 
+  // <----- 검색 필터링 ----->
   const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    option.value.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const toggleOption = product => {
     const newSelectedOptions = selectedOptions.find(p => p.productId === product.productId)
       ? selectedOptions.filter(p => p.productId !== product.productId)
       : [{ ...product, quantity: 1 }, ...selectedOptions];
+
     onChange(newSelectedOptions);
   };
 
+  const handleClickOutside = event => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className={`${classContainer} relative`}>
+    <div className={`${classContainer} relative`} ref={dropdownRef}>
       <label
         className={`block text-text_black text-15 font-700 mb-2 ml-2 
                   ${required ? "after:ml-1 after:text-red-500 after:content-['*']" : ''}`}>
@@ -43,7 +59,7 @@ const ProductSelectFieldcopy = ({
       </button>
 
       {isOpen && (
-        <div className='z-10 absolute mt-1 bg-white rounded-lg shadow w-72 p-3'>
+        <div className='z-10 absolute mt-1 bg-white rounded-lg shadow w-80 p-3'>
           <div>
             <input
               type='text'
