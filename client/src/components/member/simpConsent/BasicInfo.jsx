@@ -1,12 +1,22 @@
 import Input from '@/components/common/inputs/Input';
 import AddressInput from '@/components/common/inputs/AddressInput';
 import { validateField } from '@/utils/validators';
+import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 
 const BasicInfo = ({ userData, setUserData }) => {
   const handleChange = e => {
     const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === 'phone' || name === 'homePhone') {
+      // 입력 시 대시 제거
+      const cleanedValue = removeDashes(value);
+      // 포맷팅된 값
+      formattedValue = formatPhone(cleanedValue);
+    }
+
     setUserData({
-      memberDTO: { [name]: value },
+      memberDTO: { [name]: name === 'phone' || name === 'homePhone' ? removeDashes(formattedValue) : formattedValue, },
     });
   };
 
@@ -39,8 +49,8 @@ const BasicInfo = ({ userData, setUserData }) => {
           name='phone'
           type='tel'
           required
-          placeholder="'-' 없이, 최대 11자리"
-          value={userData.memberDTO.phone || ''}
+          placeholder="최대 11자리"
+          value={formatPhone(userData.memberDTO.phone) || ''}
           onChange={handleChange}
           maxLength={11}
           tabIndex={0}
@@ -51,8 +61,8 @@ const BasicInfo = ({ userData, setUserData }) => {
           label='유선전화'
           name='homePhone'
           type='tel'
-          placeholder="'-' 없이, 최대 10자리"
-          value={userData.memberDTO.homePhone || ''}
+          placeholder="최대 10자리"
+          value={formatPhone(userData.memberDTO.homePhone) || ''}
           onChange={handleChange}
           maxLength={10}
           isValid={ userData.memberDTO.homePhone === '' || validateField('homePhone', userData.memberDTO.homePhone)}
