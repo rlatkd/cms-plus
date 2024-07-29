@@ -103,8 +103,11 @@ const InputCalendar = ({
   `;
 
   useEffect(() => {
-    if (!value) return;
-    setSelectedDate(dayjs(value));
+    if (value && dayjs(value).isValid()) {
+      setSelectedDate(dayjs(value));
+    } else {
+      setSelectedDate(null);
+    }
   }, [value]);
 
   return (

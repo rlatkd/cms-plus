@@ -26,17 +26,8 @@ export const sendReqSimpConsent = async contractId => {
 
 /* 간편서명동의 회원 데이터 보내기 */
 export const sendSimpleConsentData = async userData => {
-  try {
-    const res = await privateAxios.post('/v1/simple-consent', userData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return res.data;
-  } catch (err) {
-    console.error('간편서명동의 회원 데이터 보내기 실패:', err);
-    throw err;
-  }
+  const res = await privateAxios.post('/v1/simple-consent', userData);
+  return res.data;
 };
 
 // 간편서명동의 URL 전송

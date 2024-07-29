@@ -26,6 +26,7 @@ const ProductSelectFieldcopy = ({
     option.value.toLowerCase().includes(debouncedSearchTerm)
   );
 
+  // <----- 상품 선택 추가 ----->
   const toggleOption = product => {
     const newSelectedOptions = selectedOptions.find(p => p.productId === product.productId)
       ? selectedOptions.filter(p => p.productId !== product.productId)

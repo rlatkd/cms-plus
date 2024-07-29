@@ -31,6 +31,15 @@ export const validateField = (id, value) => {
     case 'contractName': // 9. 계약정보명
       return regex.contractName.test(value);
 
+    case 'accountNumber': // 10. 계좌번호
+      return regex.accountNumber.test(value);
+
+    case 'cardNumber': // 11. 카드번호
+      return regex.cardNumber.test(value);
+
+    case 'cardMonth': // 12. 카드 유효기간 (월)
+      return regex.cardMonth.test(value);
+
     default: // 기타. 빈값을 확인
       return value.trim() !== '';
   }
