@@ -156,6 +156,7 @@ const BasicInfoForm = ({ formType, memberData }) => {
           disabled={isDisabled}
           classContainer='mb-3'
           onChange={e => handleChangeAddress(e.target.id, e.target.value)}
+          maxLength={100}
         />
         <TextArea
           id='memberMemo'
@@ -164,6 +165,7 @@ const BasicInfoForm = ({ formType, memberData }) => {
           classTextarea='h-52'
           value={dataSource.memberMemo}
           onChange={handleChangeValue}
+          maxLength={2000}
         />
       </div>
     </div>
