@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ProductSelectField2 } from '@/components/common/selects/ProductSelectField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -126,9 +126,9 @@ const BillingForm = ({
         </div>
       </div>
       <div className='flex-1 overflow-auto'>
-        <table className='w-full'>
+        <table className='w-full relative'>
           <thead>
-            <tr className='bg-gray-100'>
+            <tr className='bg-gray-100 sticky top-0'>
               <th className='p-2 text-left'>상품명</th>
               <th className='p-2 text-left'>단가</th>
               <th className='p-2 text-left'>수량</th>

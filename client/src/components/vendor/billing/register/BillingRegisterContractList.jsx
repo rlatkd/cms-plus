@@ -1,8 +1,8 @@
-import React from 'react';
 import PagiNation from '@/components/common/PagiNation';
 import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { formatProducts, formatProductsForList } from '@/utils/format/formatProducts';
+import { useState } from 'react';
 
 const typeOtions = [
   { value: 'memberName', label: '회원명' },
@@ -31,8 +31,15 @@ const ContractList = ({
   pageGroup,
   setPageGroup,
 }) => {
+  const [selectedContractId, setSelectedContractId] = useState(null);
+
+  const onSelected = contract => {
+    setSelectedContractId(contract.contractId);
+    handleSelectContract(contract);
+  };
+
   return (
-    <div className='w-2/5 p-6 overflow-auto'>
+    <div className='w-2/5 p-6'>
       <h2 className='text-2xl font-semibold mb-4 text-text_black'>계약 목록</h2>
       <div className='flex justify-between w-full my-2 '>
         <SelectField
@@ -67,8 +74,10 @@ const ContractList = ({
           {contractList.map(contract => (
             <tr
               key={contract.contractId}
-              onClick={() => handleSelectContract(contract)}
-              className='cursor-pointer hover:bg-gray-100'>
+              onClick={() => onSelected(contract)}
+              className={`cursor-pointer  ${
+                selectedContractId === contract.contractId ? 'bg-blue-100' : 'hover:bg-gray-100'
+              }`}>
               <td className='border-b border-ipt_border p-2 text-text_black'>
                 {contract.memberName}
               </td>
