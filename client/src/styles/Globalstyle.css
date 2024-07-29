@@ -135,3 +135,58 @@
   background: #c7ccd0;
   border-radius: 30px;
 }
+
+/* 풀캘린더 대시보드 */
+.fc .fc-button-primary {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.fc .fc-button-primary:disabled {
+  background-color: #edf2f7;
+  border-color: #e2e8f0;
+  color: #a0aec0;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #e2e8f0;
+  border-color: #cbd5e0;
+  color: #2d3748;
+}
+
+.fc .fc-prev-button::before,
+.fc .fc-next-button::before {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
+.fc .fc-prev-button::before {
+  content: '\f104'; /* FontAwesome chevron-left icon */
+}
+
+.fc .fc-next-button::before {
+  content: '\f105'; /* FontAwesome chevron-right icon */
+}
+
+.fc .fc-button .fc-icon {
+  font-size: 1.2em;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.25em;
+  color: #2d3748;
+}
+
+/* Hide default button text */
+.fc .fc-prev-button span,
+.fc .fc-next-button span {
+  display: none;
+}

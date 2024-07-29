@@ -12,19 +12,21 @@ import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import { useStatusStore } from '@/stores/useStatusStore';
-import AlertContext from '@/utils/dialog/alert/AlertContext';
 import { formatCardYearForStorage } from '@/utils/format/formatCard';
-import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import close from '@/assets/close.svg';
 import { sendReqSimpConsent } from '@/apis/simpleConsent';
+import useAlert from '@/hooks/useAlert';
+import { validateField } from '@/utils/validators';
+import { useEffect } from 'react';
 
 const MemberRegisterPage = () => {
   const start = 0;
   const end = 4;
-  const { status, reset } = useStatusStore();
+  const { status, reset, setStatus } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const navigate = useNavigate();
+  const onAlert = useAlert();
 
   // <------ 회원등록 입력 데이터 ------>
   const { basicInfo, resetBasicInfo } = useMemberBasicStore();
@@ -50,9 +52,10 @@ const MemberRegisterPage = () => {
     3: { title: '청구정보', component: RegisterBillingInfo }, // 청구정보
   };
 
+  // <----- loading 컴포넌트로 교체 시 UX적으로 좋아질듯 ----->
   const { title, component: Content } = componentMap[status] || {
-    title: 'error',
-    component: () => 'error',
+    title: '',
+    component: () => '',
   };
 
   // <----- 회원등록 API ----->
@@ -65,6 +68,11 @@ const MemberRegisterPage = () => {
           paymentCreateReq: transformPaymentInfo(), // 결제정보
           ...billingInfo, // 청구정보
         };
+        // validation 체크
+        if (!validateBasicInfo()) return;
+        if (!validateContractInfo()) return;
+        if (!validatePaymentInfo(data.paymentCreateReq)) return;
+
         const res = await postCreateMember(data);
         console.log('!----회원등록 성공----!'); // 삭제예정
 
@@ -73,7 +81,7 @@ const MemberRegisterPage = () => {
         }
 
         await navigate('/vendor/members');
-        onAlert('회원정보가 등록되었습니다!');
+        onAlert({ msg: '회원정보가 등록되었습니다!', type: 'success' });
       }
     } catch (err) {
       console.error('axiosCreateMember => ', err.response);
@@ -141,10 +149,102 @@ const MemberRegisterPage = () => {
     return paymentCreateReq;
   };
 
-  // <----- 기본정보 수정 성공 Alert창 ------>
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async msg => {
-    await alertComp(msg);
+  // <----- 유효성 검사 : BasicInfo ----->
+  const validateBasicInfo = () => {
+    const isValidName = validateField('name', basicInfo.memberName);
+    const isValidPhone = validateField('phone', basicInfo.memberPhone);
+    const isValidEnrollDate = basicInfo.memberEnrollDate !== '';
+    const isValidHomePhone = basicInfo.memberHomePhone
+      ? validateField('homePhone', basicInfo.memberHomePhone)
+      : true;
+    const isValidEmail = validateField('email', basicInfo.memberEmail);
+    const isSuccess =
+      isValidName && isValidPhone && isValidEmail && isValidEnrollDate && isValidHomePhone;
+
+    if (!isSuccess) {
+      setStatus(-1);
+      onAlert({ msg: '기본정보가 잘못 입력되었습니다.', type: 'error', title: '입력 정보 오류' });
+    }
+    return isSuccess;
+  };
+
+  // <----- 유효성 검사 : ContractInfo ----->
+  const validateContractInfo = () => {
+    const isValidContractName = validateField('contractName', contractInfo.contractName);
+    const isValidContractProducts =
+      contractInfo.contractProducts.length >= 1 && contractInfo.contractProducts.length <= 10;
+
+    const isSuccess = isValidContractName && isValidContractProducts;
+
+    if (!isSuccess) {
+      setStatus(0);
+      onAlert({ msg: '계약정보가 잘못 입력되었습니다.', type: 'error', title: '입력 정보 오류' });
+    }
+    return isSuccess;
+  };
+
+  // <----- 유효성 검사 : PaymentInfo ----->
+  const validatePaymentInfo = data => {
+    const isValidStartDate =
+      contractInfo.contractStartDate && !isNaN(new Date(contractInfo.contractStartDate).getTime());
+    const isValidEndDate =
+      contractInfo.contractEndDate &&
+      !isNaN(new Date(contractInfo.contractEndDate).getTime()) &&
+      new Date(contractInfo.contractEndDate) >= new Date(contractInfo.contractStartDate);
+    const isValidContractDay = contractInfo.contractDay >= 1 && contractInfo.contractDay <= 31;
+
+    let isSuccess = isValidStartDate && isValidEndDate && isValidContractDay;
+
+    const paymentTypeInfoReq = data.paymentTypeInfoReq;
+    const paymentMethodInfoReq = data.paymentMethodInfoReq && data.paymentMethodInfoReq;
+
+    // 자동결제 선택한 경우
+    if (paymentTypeInfoReq.paymentType === 'AUTO') {
+      // Cms 선택한 경우
+      if (paymentMethodInfoReq.paymentMethod === 'CMS') {
+        const isValidBank = paymentMethodInfoReq.bank !== '';
+        const isValidAccountNumber = validateField(
+          'accountNumber',
+          paymentMethodInfoReq.accountNumber
+        );
+        const isValidAccountOwner = validateField('name', paymentMethodInfoReq.accountOwner);
+        const isValidAccountOwnerBirth = paymentMethodInfoReq.accountOwnerBirth !== '';
+
+        isSuccess =
+          isSuccess &&
+          isValidBank &&
+          isValidAccountNumber &&
+          isValidAccountOwner &&
+          isValidAccountOwnerBirth;
+      }
+      // Card 선택한 경우
+      else if (paymentMethodInfoReq.paymentMethod === 'CARD') {
+        const isValidCardNumber = validateField('cardNumber', paymentMethodInfoReq.cardNumber);
+        const isValidCardMonth = validateField('cardMonth', paymentMethodInfoReq.cardMonth);
+        const isValidCardYear = paymentMethodInfoReq.cardYear !== '';
+        const isValidCardOwner = validateField('name', paymentMethodInfoReq.cardOwner);
+        const isValidCardOwnerBirth = paymentMethodInfoReq.cardOwnerBirth !== '';
+
+        isSuccess =
+          isSuccess &&
+          isValidCardNumber &&
+          isValidCardMonth &&
+          isValidCardYear &&
+          isValidCardOwner &&
+          isValidCardOwnerBirth;
+      }
+    }
+    if (paymentTypeInfoReq.paymentType === 'VIRTUAL') {
+      const isValidBank = paymentTypeInfoReq.bank !== '';
+      const isValidAccountOwner = validateField('name', paymentTypeInfoReq.accountOwner);
+      isSuccess = isSuccess && isValidBank && isValidAccountOwner;
+    }
+
+    if (!isSuccess) {
+      setStatus(1);
+      onAlert({ msg: '결제정보가 잘못 입력되었습니다.', type: 'error', title: '입력 정보 오류' });
+    }
+    return isSuccess;
   };
 
   // <----- 페이지 이탈 시 Status reset ----->
@@ -163,11 +263,6 @@ const MemberRegisterPage = () => {
       paymentResetFunctions.resetPaymentMethodInfoReq_Card();
     };
   }, []);
-
-  // <----- 회원등록 입력 데이터 reset ----->
-  // useEffect(() => {
-
-  // }, []);
 
   return (
     <>

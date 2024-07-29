@@ -2,6 +2,7 @@ import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import bankOptions from '@/utils/bank/bankOptions';
+import { validateField } from '@/utils/validators';
 
 const VirtualAccountTypeForm = ({ paymentType, formType }) => {
   const { paymentTypeInfoReq_Virtual, setPaymentTypeInfoReq_Virtual } = useMemberPaymentStore();
@@ -41,6 +42,8 @@ const VirtualAccountTypeForm = ({ paymentType, formType }) => {
         classInput='py-3 pr-20'
         value={paymentTypeInfoReq_Virtual.accountOwner}
         onChange={handleChangeInput}
+        isValid={validateField('name', paymentTypeInfoReq_Virtual.accountOwner)}
+        errorMsg='올바른 형식 아닙니다.'
       />
     </div>
   );

@@ -7,8 +7,15 @@ const ConDetailContract = ({ contractData, updateAllInfo }) => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate(`/vendor/contracts/update/${contractData.contractId}/${contractData.memberId}`);
+    if (contractData?.contractId && contractData?.memberId) {
+      navigate(`/vendor/contracts/update/${contractData.contractId}/${contractData.memberId}`);
+    } else {
+      console.error('Contract ID or Member ID is missing');
+    }
   };
+
+  const contractProducts = contractData?.contractProducts ?? [];
+  const contractPrice = contractData?.contractPrice ?? 0;
 
   return (
     <div className='sub-dashboard w-1/2 h-full'>
@@ -28,21 +35,19 @@ const ConDetailContract = ({ contractData, updateAllInfo }) => {
       </div>
       <div className='my-8 flex flex-col h-5/6'>
         <div className='flex justify-between items-center border-b border-ipt_border px-2 pt-1 pb-3 mx-5'>
+          <p className='text-text_black text-lg font-400'>상품수 : {contractProducts.length}개</p>
           <p className='text-text_black text-lg font-400'>
-            상품수 : {contractData.contractProducts.length}개
-          </p>
-          <p className='text-text_black text-lg font-400'>
-            총금액 : {contractData.contractPrice.toLocaleString()}원
+            총금액 : {contractPrice.toLocaleString()}원
           </p>
         </div>
         <div className='mt-5'>
-          {contractData.contractProducts.map((product, idx) => (
+          {contractProducts.map((product, idx) => (
             <div
               key={idx}
               className='flex justify-between border border-ipt_border px-5 py-5 m-3 rounded-lg'>
-              <p>{product.name}</p>
-              <p>{product.price.toLocaleString()}원</p>
-              <p>{product.quantity}개</p>
+              <p>{product?.name ?? '상품명 없음'}</p>
+              <p>{(product?.price ?? 0).toLocaleString()}원</p>
+              <p>{product?.quantity ?? 0}개</p>
             </div>
           ))}
         </div>

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import SelectField from '@/components/common/selects/SelectField';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
+import InputWeb from '@/components/common/inputs/InputWeb';
 
 const typeOtions = [
   { value: '', label: '청구타입을 선택하세요' },
@@ -18,9 +19,6 @@ const BillingForm = ({
   handleProductChange,
   handleProductRemove,
 }) => {
-  console.log(billingData);
-  console.log(products);
-
   const [editingState, setEditingState] = useState({});
 
   const handleDateChange = date => {
@@ -37,29 +35,34 @@ const BillingForm = ({
     }, 0);
   };
 
-  const handleBlur = (idx, field) => {
-    setEditingState(prev => ({ ...prev, [idx]: { ...prev[idx], [field]: false } }));
+  const handleInputChange = (idx, field, value) => {
+    if (field === 'price' && value && value.length >= 7) {
+      alert('상품 가격은 최대 99만원입니다.');
+      return;
+    } else if (field === 'quantity' && value && value.length >= 2) {
+      alert('상품 수량은 최대 9개입니다.');
+      return;
+    }
+    const numericValue = value.replace(/\D/g, '');
+    handleProductChange(idx, field, numericValue);
   };
 
   const renderEditableField = (item, idx, field) => {
-    const isEditing = editingState[idx]?.[field];
     const value = item[field];
 
-    return isEditing ? (
-      <input
-        type='number'
-        value={value}
-        onChange={e => handleProductChange(idx, field, e.target.value)}
-        onBlur={() => handleBlur(idx, field)}
-        className='text-center w-3/4 p-4 focus:border-mint focus:outline-none 
+    return (
+      <InputWeb
+        id={field}
+        type='text'
+        placeholder={`${field === 'price' ? '가격' : '수량'}`}
+        required
+        classInput='text-center p-4 w-1/12 focus:border-mint focus:outline-none 
                     focus:ring-mint focus:ring-1 rounded-lg'
-        autoFocus
+        value={value.toLocaleString()}
+        onChange={e => handleInputChange(idx, field, e.target.value)}
+        autoComplete='off'
+        maxLength={field === 'price' ? 7 : 2}
       />
-    ) : (
-      <div
-        className={`${'border rounded-lg focus:border-mint focus:outline-none focus:ring-mint focus:ring-1'} p-4 w-3/4 text-center`}>
-        {`${value.toLocaleString()}${field === 'price' ? '원' : '개'}`}
-      </div>
     );
   };
 
@@ -130,7 +133,7 @@ const BillingForm = ({
           <thead>
             <tr className='bg-gray-100'>
               <th className='p-2 text-left'>상품명</th>
-              <th className='p-2 text-left'>단가</th>
+              <th className='p-2 text-left'>상품금액</th>
               <th className='p-2 text-left'>수량</th>
               <th className='p-2 text-left'>금액</th>
               <th className='p-2 text-left' />

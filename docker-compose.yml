@@ -10,9 +10,10 @@ services:
     container_name: mysql
     build:
       context: ./database
+      # context: ./server-batch
       dockerfile: Dockerfile
     ports:
-      - '3306:3306'
+      - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped

@@ -55,7 +55,10 @@ export const validateField = (id, value) => {
     case 'birth': // 12. 생년월일
       return regex.birth.test(value) && isValidDate(value);
 
-    case 'expiryDate': // 13. 카드 만료일
+    case 'cardMonth': // 13. 카드 유효기간 (월)
+      return regex.cardMonth.test(value);
+      
+    case 'expiryDate': // 14. 카드 만료일
       return regex.expiryDate.test(value) && isValidExpiryDate(value);
 
     default: // 기타. 빈값을 확인

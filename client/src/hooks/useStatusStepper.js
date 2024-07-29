@@ -63,7 +63,7 @@ const useStatusStepper = (type, start, end) => {
     if (status < end) {
       increment();
     }
-    if (status === end) {
+    if (status === end && type !== CASES.MEMBERREGISTER) {
       reset();
       // // 삭제 예정
       // if (type !== 'simpconsent') {
@@ -84,12 +84,12 @@ const useStatusStepper = (type, start, end) => {
       case CASES.ACCOUNT:
         if (status === 2) navigate(`/member/invoice/${invoiceInfo.billingId}/payment/account`);
         break;
-      case CASES.MEMBERREGISTER:
-        if (status === 3) {
-          reset();
-          navigate('/vendor/members');
-        }
-        break;
+      // case CASES.MEMBERREGISTER:
+      //   if (status === 3) {
+      //     reset();
+      //     navigate('/vendor/members');
+      //   }
+      //   break;
       default:
         break;
     }

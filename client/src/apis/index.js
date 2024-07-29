@@ -98,9 +98,6 @@ export const publicUploadFileAxios = axios.create({
           //     `${(data.errors.length > 0 ? data.errors.join('\n') : data.message) || '잘못된 입력입니다.'}`
           //   );
           //   break;
-          case 401:
-            window.location.href = '/error/forbidden';
-            break;
           case 403:
             window.location.href = '/error/forbidden';
             break;

@@ -1,4 +1,5 @@
 import Checkbox from '@/components/common/inputs/CheckBox';
+import useAlert from '@/hooks/useAlert';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 
 const paymentMethods = [
@@ -9,6 +10,8 @@ const paymentMethods = [
 const BuyerTypeForm = ({ paymentType, formType }) => {
   const { paymentTypeInfoReq_Buyer, setAvailableMethods } = useMemberPaymentStore();
 
+  const onAlert = useAlert();
+
   // <----- 체크박스 선택값 변경 ----->
   const handleChangeCheckbox = value => {
     const updatedMethods = paymentTypeInfoReq_Buyer.availableMethods.includes(value)
@@ -17,7 +20,7 @@ const BuyerTypeForm = ({ paymentType, formType }) => {
 
     // 납부자결제 수단은 최소 한 개 이상
     if (!updatedMethods || updatedMethods.length < 1) {
-      alert('최소 한 개 이상의 수단이 등록되어야 합니다.');
+      onAlert({ msg: '최소 한 개 이상의 수단이 등록되어야 합니다.', type: 'success' });
       return;
     }
 

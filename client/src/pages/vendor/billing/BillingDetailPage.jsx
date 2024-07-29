@@ -18,7 +18,6 @@ import BillingDetailProduct from '@/components/vendor/billing/detail/BillingDeta
 import BillingDetailEditButtons from '@/components/vendor/billing/detail/BillingDetailEditButtons';
 import BillingDetailButtons from '@/components/vendor/billing/detail/BillingDetailButtons';
 import { cols } from '@/utils/tableElements/billingProductElement';
-import AlertContext from '@/utils/dialog/alert/AlertContext';
 import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
 import useAlert from '@/hooks/useAlert';
 
@@ -57,6 +56,7 @@ const BillingDetailPage = () => {
     setIsLoading(true);
     try {
       const res = await getBillingDetail(billingId);
+      console.log(billingData, res);
       setBillingData(res.data);
       setBillingReq(prevReq => ({
         ...prevReq,

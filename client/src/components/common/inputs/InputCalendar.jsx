@@ -56,6 +56,7 @@ const InputCalendar = ({
     .ant-picker-input > input {
       padding-left: 5px !important; 
       font-size: ${type === 'search' ? '13px' : '14px'} !important; 
+      color: ${disabled ? '#000000' : 'inherit'} !important; // Text color change
     }
 
     .ant-picker-input > input::placeholder {
@@ -103,8 +104,11 @@ const InputCalendar = ({
   `;
 
   useEffect(() => {
-    if (!value) return;
-    setSelectedDate(dayjs(value));
+    if (value && dayjs(value).isValid()) {
+      setSelectedDate(dayjs(value));
+    } else {
+      setSelectedDate(null);
+    }
   }, [value]);
 
   return (
@@ -119,7 +123,7 @@ const InputCalendar = ({
       )}
       <div className='relative '>
         <ConfigProvider locale={koKR} theme={datePickerCustomTheme}>
-          <div>
+          <div className='cursor-pointer'>
             <style>{customCSS}</style>
             <Space direction='vertical' style={{ width: '100%' }}>
               <DatePicker
