@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Month {
-	String message() default "Invalid month";
+	String message() default "잘못된 날짜 형식입니다";
 
 	Class<?>[] groups() default {};
 

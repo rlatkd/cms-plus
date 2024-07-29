@@ -3,25 +3,39 @@ import edit from '@/assets/edit.svg';
 import remove from '@/assets/remove.svg';
 import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
 import { deleteMember, getBillingListByMember, getContractListByMember } from '@/apis/member';
-import { useContext, useState } from 'react';
-import AlertContext from '@/utils/dialog/alert/AlertContext';
-import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
+import useAlert from '@/hooks/useAlert';
+import useConfirm from '@/hooks/useConfirm';
 
-const MemDetailBasicInfo = () => {
+const MemDetailBasicInfo = ({ memberData }) => {
   const { basicInfo } = useMemberBasicStore();
   const navigate = useNavigate();
-
+  const onAlert = useAlert();
+  const onConfirm = useConfirm();
   const { id: memberId } = useParams();
+  const { setBasicInfo } = useMemberBasicStore();
 
-  // id값은 추후 변경
+  // <----- id값은 추후 변경 ----->
   const handleGoDetail = () => {
+    updateBasicInfo(memberData);
     navigate(`/vendor/members/update/${memberId}`);
   };
 
-  // <----- 글자생 변경 ----->
-  const styledText = text => {
-    return text.replace(/건/g, '<span style="color: red;">건</span>');
+  // <----- 회원 정보 zustand 저장 ----->
+  const updateBasicInfo = data => {
+    setBasicInfo({
+      memberName: data.memberName,
+      memberPhone: data.memberPhone,
+      memberEnrollDate: data.memberEnrollDate,
+      memberHomePhone: data.memberHomePhone,
+      memberEmail: data.memberEmail,
+      memberMemo: data.memberMemo,
+      memberAddress: {
+        address: data.memberAddress.address,
+        addressDetail: data.memberAddress.addressDetail,
+        zipcode: data.memberAddress.zipcode,
+      },
+    });
   };
 
   // <----- 회원의 계약, 청구 건수 API ----->
@@ -30,26 +44,17 @@ const MemDetailBasicInfo = () => {
       const contractRes = await getContractListByMember(memberId);
       const billingRes = await getBillingListByMember(memberId);
       console.log('!----회원의 계약, 청구 건수----!'); // 삭제예정
-
       const contractCount = contractRes.data.content.length;
       const billingCount = billingRes.data;
-      let isDelete = false;
 
-      if (contractCount === 0 && billingCount === 0) {
-        isDelete = await onConfirm(`"${basicInfo.memberName}"님을 삭제 하시겠습니까?`);
-        if (isDelete) {
-          axiosdeleteMember();
-        }
-      } else {
-        isDelete = await onConfirm(
-          `${styledText(`"${contractCount}건"`)} 의 계약과 ${styledText(
-            `"${billingCount}건"`
-          )} 의 청구가 함께 삭제됩니다. "${basicInfo.memberName}" 님을 삭제 하시겠습니까?`
-        );
+      let confirmMessage =
+        contractCount === 0 && billingCount === 0
+          ? `"${basicInfo.memberName}"님을 삭제 하시겠습니까?`
+          : `${contractCount}건의 계약과 ${billingCount}건의 청구가 함께 삭제됩니다. "${basicInfo.memberName}"님을 삭제 하시겠습니까?`;
 
-        if (isDelete) {
-          axiosdeleteMember();
-        }
+      const isDelete = await onConfirm(confirmMessage, 'warning', '회원 삭제 확인');
+      if (isDelete) {
+        axiosDeleteMember();
       }
     } catch (err) {
       console.error('axiosContractBillingByMember => ', err.response);
@@ -57,26 +62,20 @@ const MemDetailBasicInfo = () => {
   };
 
   // <----- 회원 삭제 API ----->
-  const axiosdeleteMember = async () => {
+  const axiosDeleteMember = async () => {
     try {
       const res = await deleteMember(memberId);
       console.log('!----회원 삭제 성공----!'); // 삭제예정
-      console.log(res);
-      onAlert(`"${basicInfo.memberName}"님의 정보가 삭제되었습니다!`);
+      onAlert({
+        msg: `"${basicInfo.memberName}"님의 정보가 삭제되었습니다!`,
+        type: 'success',
+        title: '삭제 성공',
+      });
       navigate('/vendor/members');
     } catch (err) {
+      onAlert({ msg: '회원 삭제에 실패하셨습니다.', type: 'error', title: '삭제 오류' });
       console.error('axiosdeleteMember => ', err.response);
     }
-  };
-
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async msg => {
-    await alertComp(msg);
-  };
-
-  const { confirm: confrimComp } = useContext(ConfirmContext);
-  const onConfirm = async msg => {
-    return await confrimComp(msg);
   };
 
   return (
@@ -102,7 +101,7 @@ const MemDetailBasicInfo = () => {
           </button>
         </div>
       </div>
-      <BasicInfoForm formType='DETAIL' />
+      <BasicInfoForm formType='DETAIL' memberData={memberData} />
     </div>
   );
 };

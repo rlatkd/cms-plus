@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
@@ -210,26 +210,42 @@ public class MemberService {
     public List<ExcelErrorRes<MemberExcelDto>> uploadMembersByExcel(Long vendorId, List<MemberExcelDto> memberList) {
         Vendor vendor = Vendor.of(vendorId);
 
+        List<Member> toSaves = new ArrayList<>(memberList.size());
         List<ExcelErrorRes<MemberExcelDto>> errors = new ArrayList<>();
 
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            Validator validator = factory.getValidator();
+            // 변환 중 오류난 것들 따로 다시 리턴
+            for (MemberExcelDto memberExcelDto : memberList) {
+                if (memberExcelDto == null) {
+                    ExcelErrorRes<MemberExcelDto> errorRes = ExcelErrorRes.<MemberExcelDto>builder()
+                        .notSaved(memberExcelDto)
+                        .message("형식이 잘못된 값 입력")
+                        .build();
 
-        // 엔티티 변환
-        // 변환 중 오류난 것들 따로 다시 리턴
-        for (MemberExcelDto memberExcelDto : memberList) {
-            Member member = memberExcelDto.toEntity(vendor);
-            String errorMsg = getErrorMessage(member, validator);
+                    errors.add(errorRes);
+                    continue;
+                }
 
-            if (errorMsg == null) {
-                memberRepository.save(member);
-            } else {
-                ExcelErrorRes<MemberExcelDto> errorRes = ExcelErrorRes.<MemberExcelDto>builder()
-                    .notSaved(memberExcelDto)
-                    .message(errorMsg)
-                    .build();
+                Member member = memberExcelDto.toEntity(vendor);
+                String errorMsg = getErrorMessage(member, validator);
 
-                errors.add(errorRes);
+                if (errorMsg == null) {
+                    toSaves.add(member);
+                } else {
+                    ExcelErrorRes<MemberExcelDto> errorRes = ExcelErrorRes.<MemberExcelDto>builder()
+                        .notSaved(memberExcelDto)
+                        .message(errorMsg)
+                        .build();
+
+                    errors.add(errorRes);
+                }
             }
+        } catch (Exception e) {
+            log.error("upload members by excel {}", e.getMessage());
+            throw new IllegalArgumentException("upload members by excel " + e.getMessage());
+        } finally {
+            memberCustomRepository.bulkInsert(toSaves);
         }
 
         return errors;
@@ -247,7 +263,7 @@ public class MemberService {
             validation += "\n";
         }
 
-        String duplicated = canSave ? "" : "휴대전화 혹은 이메일이 중복되었습니다.";
+        String duplicated = canSave ? "" : "휴대전화 혹은 이메일이 중복되었습니다";
 
         return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }
@@ -258,7 +274,7 @@ public class MemberService {
      * */
     private void validateMemberUser(Long vendorId, Long memberId) {
         if(!memberCustomRepository.isExistMemberById(memberId, vendorId)) {
-            throw new EntityNotFoundException("회원 ID 없음(" + memberId + ")");
+            throw new MemberNotFoundException("회원이 존재하지 않습니다");
         }
     }
 

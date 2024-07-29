@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PersonName {
-	String message() default "Invalid person name";
+	String message() default "잘못된 사람 이름 형식입니다";
 
 	Class<?>[] groups() default {};
 

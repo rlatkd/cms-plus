@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import PostCodeModal from '@/components/vendor/modal/PostCodeModal';
 import openeye from '@/assets/openeye.svg';
 import closeeye from '@/assets/closeeye.svg';
+import Timer from '../Timer';
 
 const InputWeb = ({
   id,
@@ -18,6 +19,8 @@ const InputWeb = ({
   classInput = '',
   isValid = true, // 유효성여부 boolean
   errorMsg, // 유효성탈락 메세지
+  time,
+  setTime,
   handleChangeAddress,
   ...props
 }) => {
@@ -101,6 +104,15 @@ const InputWeb = ({
               handleSelectAddress={handleSelectAddress}
             />
           </div>
+        )}
+
+        {/* 인증번호 타이머 */}
+        {time !== 0 && time && (
+          <Timer
+            time={time}
+            setTime={setTime}
+            style='absolute top-4 right-5 text-negative text-15 font-700'
+          />
         )}
       </div>
     </div>

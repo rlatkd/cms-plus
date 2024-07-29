@@ -8,8 +8,7 @@ import { faTimes, faSave } from '@fortawesome/free-solid-svg-icons';
 import BillingForm from '@/components/vendor/billing/register/BillingRegisterBillingForm';
 import ContractList from '@/components/vendor/billing/register/BillingRegisterContractList';
 import { createBilling } from '@/apis/billing';
-import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
-import convertBadReqMsg from '@/utils/dialog/alertwidth/convertBadReqMsg';
+import useAlert from '@/hooks/useAlert';
 
 const BillingRegisterPage = () => {
   /**
@@ -35,10 +34,7 @@ const BillingRegisterPage = () => {
     products: [],
   });
 
-  const { alertWidth: alertWidthComp } = useContext(AlertWdithContext);
-  const onAlertWidth = async msg => {
-    await alertWidthComp(msg);
-  };
+  const onAlert = useAlert();
 
   const fetchContractList = useCallback(
     async (page = currentPage) => {
@@ -161,15 +157,11 @@ const BillingRegisterPage = () => {
   const handleBillingSubmit = async () => {
     try {
       await createBilling(billingData);
-      onAlertWidth('청구가 생성되었습니다.');
+      onAlert('청구가 생성되었습니다.', 'success', '청구 생성 완료');
       navigate(-1);
     } catch (err) {
       console.log(err);
-      if (err.response.status === 400) {
-        onAlertWidth(convertBadReqMsg(err));
-      } else {
-        onAlertWidth(err.response.data.message);
-      }
+      onAlert('', 'error', '청구 생성 실패', err);
       console.error('axiosBillingCreate => ', err.response);
     }
   };

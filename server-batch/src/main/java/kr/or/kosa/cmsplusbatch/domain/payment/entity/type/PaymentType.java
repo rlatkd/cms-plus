@@ -1,0 +1,60 @@
+package kr.or.kosa.cmsplusbatch.domain.payment.entity.type;
+
+import java.util.Collections;
+import java.util.List;
+
+import kr.or.kosa.cmsplusbatch.domain.base.entity.BaseEnum;
+import kr.or.kosa.cmsplusbatch.domain.payment.entity.method.PaymentMethod;
+import lombok.RequiredArgsConstructor;
+
+/* 결제방식 */
+@RequiredArgsConstructor
+public enum PaymentType implements BaseEnum {
+	AUTO("자동결제", List.of(PaymentMethod.CMS, PaymentMethod.CARD), true),
+	BUYER("납부자결제", List.of(PaymentMethod.CARD, PaymentMethod.ACCOUNT), false),
+	VIRTUAL("가상계좌", Collections.emptyList(), false);
+
+	private final String title;
+	private final List<PaymentMethod> availablePaymentMethods;
+
+	private final boolean canReqSimpConsent;
+
+	public static class Const {
+		public static final String AUTO = "AUTO";
+		public static final String BUYER = "BUYER";
+		public static final String VIRTUAL = "VIRTUAL";
+	}
+
+	public boolean canReqSimpConsent() {
+		return canReqSimpConsent;
+	}
+
+	/* 자동결제수단 확인용 */
+	public static List<PaymentMethod> getAutoPaymentMethods() {
+		return PaymentType.AUTO.availablePaymentMethods;
+	}
+
+	/* 납부자결제 수단 확인용 */
+	public static List<PaymentMethod> getBuyerPaymentMethods() {
+		return PaymentType.BUYER.availablePaymentMethods;
+	}
+
+	public static PaymentType fromCode(String code) {
+		for (PaymentType paymentType : PaymentType.values()) {
+			if (paymentType.name().equals(code)) {
+				return paymentType;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String getCode() {
+		return name();
+	}
+
+	@Override
+	public String getTitle() {
+		return title;
+	}
+}

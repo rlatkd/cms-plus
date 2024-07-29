@@ -14,7 +14,6 @@ const Header = () => {
   const { vendorInfo } = useVendorInfoStore();
   const confirm = useConfirm();
   const mainRef = useRef(null);
-
   const [time, setTime] = useState(() => JSON.parse(localStorage.getItem('time')) || 3600);
 
   // <----- 시간 로컬 스토리지에 저장 ----->

@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HomePhone {
-	String message() default "Invalid home phone number";
+	String message() default "잘못된 유선전화 형식입니다";
 
 	Class<?>[] groups() default {};
 

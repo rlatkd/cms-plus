@@ -7,6 +7,7 @@ import SelectField from '@/components/common/selects/SelectField';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
+import dayjs from 'dayjs';
 
 const PaymentType = [
   { label: '자동결제', value: 'AUTO' },
@@ -29,7 +30,20 @@ const PaymentInfoForm = ({ formType }) => {
 
   const handleChangeContractInfo = e => {
     const { id, value } = e.target;
+    if (id === 'contractStartDate') {
+      setContractInfoItem({ contractEndDate: '' });
+    }
     setContractInfoItem({ [id]: value });
+  };
+
+  // <----- 오늘 날짜 이전을 비활성화 ----->
+  const disabledStartDate = current => {
+    return current && current < dayjs().startOf('day');
+  };
+
+  // <----- 선택된 시작일 이후 날짜만 활성화 ----->
+  const disabledEndDate = current => {
+    return current && current <= dayjs(contractInfo.contractStartDate).startOf('day');
   };
 
   const renderPaymentTypeForm = () => {
@@ -73,7 +87,7 @@ const PaymentInfoForm = ({ formType }) => {
           label='약정일'
           classContainer=' mx-6'
           classLabel='text-15 text-text_black font-700'
-          classSelect='py-3 pr-40 rounded-lg'
+          classSelect='py-3 pl-4 pr-12 rounded-lg'
           required
           value={contractInfo.contractDay}
           options={contractDays}
@@ -88,6 +102,7 @@ const PaymentInfoForm = ({ formType }) => {
             readOnly
             disabled={isDisabled}
             value={contractInfo.contractStartDate}
+            disabledDate={disabledStartDate}
             handleChangeValue={handleChangeContractInfo}
           />
           <p className='mx-3 mt-10 text-text_grey'>~</p>
@@ -99,6 +114,7 @@ const PaymentInfoForm = ({ formType }) => {
             readOnly
             disabled={isDisabled}
             value={contractInfo.contractEndDate}
+            disabledDate={disabledEndDate}
             handleChangeValue={handleChangeContractInfo}
           />
         </div>

@@ -1,33 +1,39 @@
 import { updateMemberBaic } from '@/apis/member';
 import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
 import ProgressBar from '@/components/common/ProgressBar';
+import useAlert from '@/hooks/useAlert';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
-import AlertContext from '@/utils/dialog/alert/AlertContext';
-import { useContext } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const MemberInfoUpdatePage = () => {
-  const { basicInfo } = useMemberBasicStore();
+  const { basicInfo, resetBasicInfo } = useMemberBasicStore();
   const navigate = useNavigate();
   const memberId = useParams();
+  const onAlert = useAlert();
 
-  // <--------기본 정보 수정 API-------->
+  // <-----기본 정보 수정 API ----->
   const axiosUpdateMemberBasic = async () => {
     try {
       await updateMemberBaic(memberId.id, basicInfo);
       console.log('!----기본정보 수정 성공----!'); // 삭제예정
       await navigate(`/vendor/members/detail/${memberId.id}`);
-      onAlert('회원정보가 수정되었습니다!');
+      onAlert({
+        msg: '회원정보가 수정되었습니다!',
+        type: 'success',
+        title: '회원 수정 성공',
+      });
     } catch (err) {
       console.error('axiosUpdateMemberBasic => ', err.response);
     }
   };
 
-  // <--------기본정보 수정 성공 Alert창-------->
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async msg => {
-    const result = await alertComp(msg);
-  };
+  // <----- 회원정보 zustand reset ----->
+  useEffect(() => {
+    return () => {
+      resetBasicInfo();
+    };
+  }, []);
 
   return (
     <>
