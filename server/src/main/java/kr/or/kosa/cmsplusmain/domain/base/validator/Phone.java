@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Phone {
-	String message() default "Invalid phone number";
+	String message() default "잘못된 휴대전화 형식입니다";
 
 	Class<?>[] groups() default {};
 

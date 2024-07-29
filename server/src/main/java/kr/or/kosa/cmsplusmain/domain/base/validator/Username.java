@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Username {
-	String message() default "Invalid Login ID";
+	String message() default "아이디 형식이 잘못되었습니다";
 
 	Class<?>[] groups() default {};
 

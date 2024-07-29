@@ -40,10 +40,10 @@ public class MemberExcelDto {
 		return Member.builder()
 			.vendor(vendor)
 			.name(memberName)
-			.phone(memberPhone)
+			.phone(memberPhone != null ? memberPhone.replaceAll("[^0-9]", "") : null)
 			.address(mAddress)
 			.enrollDate(memberEnrollDate)
-			.homePhone(memberHomePhone)
+			.homePhone(memberHomePhone != null ? memberHomePhone.replaceAll("[^0-9]", "") : null)
 			.email(memberEmail)
 			.build();
 	}

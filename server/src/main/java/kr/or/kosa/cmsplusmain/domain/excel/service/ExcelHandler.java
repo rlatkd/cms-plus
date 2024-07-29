@@ -5,33 +5,33 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import kr.or.kosa.cmsplusmain.domain.excel.ExcelColumn;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ExcelHandler<T> {
+
 	public List<T> handleExcelUpload(MultipartFile file, Class<T> clazz) {
 		List<T> dataList = new ArrayList<>();
 
 		try (InputStream inputStream = file.getInputStream()) {
 			dataList.addAll(parseExcel(inputStream, clazz));
 		} catch (IOException e) {
-			e.printStackTrace();
+			return Collections.emptyList();
 		}
 
 		return dataList;
@@ -95,8 +95,8 @@ public class ExcelHandler<T> {
 				cellIndex++;
 			}
 		} catch (Exception e) {
-			// 예외 처리 로직 추가
-			e.printStackTrace();
+			log.error("excel upload error: {}", e.getMessage());
+			return null;
 		}
 		return dataDTO;
 	}
@@ -105,21 +105,28 @@ public class ExcelHandler<T> {
 		Class<?> fieldType = field.getType();
 		field.setAccessible(true);
 
-		if (fieldType == String.class) {
-			DataFormatter formatter = new DataFormatter();
-			field.set(dataDTO, formatter.formatCellValue(cell));
-		} else if (fieldType == int.class || fieldType == Integer.class) {
-			field.set(dataDTO, (int) cell.getNumericCellValue());
-		} else if (fieldType == long.class || fieldType == Long.class) {
-			field.set(dataDTO, (long) cell.getNumericCellValue());
-		} else if (fieldType == double.class || fieldType == Double.class) {
-			field.set(dataDTO, cell.getNumericCellValue());
-		} else if (fieldType == boolean.class || fieldType == Boolean.class) {
-			field.set(dataDTO, cell.getBooleanCellValue());
-		} else if (fieldType == LocalDate.class) {
-			String dateString = cell.getStringCellValue();
-			field.set(dataDTO, LocalDate.parse(dateString));
+		switch (cell.getCellType()) {
+			case STRING -> {
+				if (fieldType == String.class) {
+					field.set(dataDTO, cell.getStringCellValue());
+				} else if (fieldType == LocalDate.class) {
+					field.set(dataDTO, LocalDate.parse(cell.getStringCellValue()));
+				}
+			}
+			case NUMERIC -> {
+				if (fieldType == Double.class || fieldType == double.class) {
+					field.set(dataDTO, cell.getNumericCellValue());
+				} else if (fieldType == int.class || fieldType == Integer.class) {
+					field.set(dataDTO, (int)cell.getNumericCellValue());
+				} else if (fieldType == long.class || fieldType == Long.class) {
+					field.set(dataDTO, (long)cell.getNumericCellValue());
+				}
+			}
+			case BOOLEAN -> {
+				if (fieldType == Boolean.class || fieldType == boolean.class) {
+					field.set(dataDTO, cell.getBooleanCellValue());
+				}
+			}
 		}
 	}
-
 }
