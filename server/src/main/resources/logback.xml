@@ -29,6 +29,7 @@
 
     <!--KAFKA에 찍히는 로그 설정-->
     <appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+        <filter class="package kr.or.kosa.cmsplusmain.LogbackFilter"/>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <layout class="ch.qos.logback.classic.PatternLayout">
                 <pattern>${FILE_LOG_PATTERN}</pattern>
