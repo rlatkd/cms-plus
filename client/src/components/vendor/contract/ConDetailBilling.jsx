@@ -60,7 +60,7 @@ const ConDetailBilling = ({ contractData, updateAllInfo, children }) => {
         <InputWeb
           id='sendMethod'
           label='청구서 발송 수단'
-          value={contractData.invoiceSendMethod.title}
+          value={contractData.invoiceSendMethod?.title}
           type='text'
           disabled={true}
         />
@@ -68,7 +68,7 @@ const ConDetailBilling = ({ contractData, updateAllInfo, children }) => {
       <div className='flex-row justify-between items-center px-2 pt-1 pb-3 mx-5'>
         <p className='text-text_black text-lg font-400 mb-2'>전체청구 / 합계금액</p>
         <p className='text-text_black text-xl font-800'>
-          총 {contractData.totalBillingCount}건 / {contractData.totalBillingPrice.toLocaleString()}
+          총 {contractData.totalBillingCount}건 / {contractData.totalBillingPrice?.toLocaleString()}
           원
         </p>
       </div>

@@ -15,12 +15,11 @@ import DashBoardCalendar, {
 import BillingSummary from '@/components/vendor/dashboard/DashBoardBillingSummary';
 import formatNumber from '@/utils/format/formatNumber';
 
-// 상태값 별 색상 정의
 export const STATUS_COLORS = {
-  PAID: 'bg-emerald-100 text-emerald-800',
-  WAITING_PAYMENT: 'bg-cyan-100 text-cyan-800',
-  NON_PAID: 'bg-rose-100 text-rose-800',
-  CREATED: 'bg-mint text-white',
+  PAID: 'bg-green-100 text-green-800',
+  WAITING_PAYMENT: 'bg-yellow-100 text-yellow-800',
+  NON_PAID: 'bg-red-100 text-red-800',
+  CREATED: 'bg-blue-100 text-blue-800',
 };
 
 const StatItem = ({ icon, title, value, subStat }) => (
@@ -34,7 +33,6 @@ const StatItem = ({ icon, title, value, subStat }) => (
   </div>
 );
 
-// <----- React.memo displayName 명시 ----->
 const Stats = React.memo(({ statInfo }) => (
   <div className='mb-10 grid grid-cols-1 md:grid-cols-4 gap-6'>
     <StatItem
@@ -57,14 +55,13 @@ const Stats = React.memo(({ statInfo }) => (
     />
     <StatItem
       icon={faChartLine}
-      title='전월 대비 매출'
+      title={`${new Date().getMonth()}월 대비 매출`}
       value={`${statInfo.billingPriceGrowth > 0 ? '+' : ''}${statInfo.billingPriceGrowth?.toFixed(1)}%`}
       subStat={`회원: ${statInfo.memberGrowth >= 0 ? '+' : ''}${statInfo.memberGrowth?.toFixed(1)}%`}
     />
   </div>
 ));
 
-// react개발 도구에서 해당 컴포넌트의 이름을 볼 수 있어 디버깅에 도움됨
 Stats.displayName = 'Stats';
 
 const DashBoardPage = () => {
@@ -99,7 +96,6 @@ const DashBoardPage = () => {
     try {
       const res = await getMonthBillingInfo(year, month);
       setBillingInfo(res.data);
-      console.log(res.data);
       setEvents(convertToCalendarEvents(res.data));
     } catch (error) {
       console.error('Error fetching billing info:', error);
@@ -108,6 +104,7 @@ const DashBoardPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const date = new Date();
       const curYear = date.getFullYear();
       const curMonth = date.getMonth() + 1;
       const [statRes, topRes] = await Promise.all([getStatInfo(curYear, curMonth), getTopInfo()]);
@@ -137,23 +134,7 @@ const DashBoardPage = () => {
   }, []);
 
   const handleCalendarEventClicked = useCallback(async info => {
-    const date = info.event.start;
-    if (date) {
-      // TODO: Implement event click handling
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const date = new Date();
-      const curYear = date.getFullYear();
-      const curMonth = date.getMonth() + 1;
-      const [statRes, topRes] = await Promise.all([getStatInfo(curYear, curMonth), getTopInfo()]);
-      setStatInfo(statRes.data);
-      setTopFive(topRes.data);
-    };
-
-    fetchData();
+    // TODO: Implement event click handling
   }, []);
 
   const memoizedCalendar = useMemo(
@@ -170,7 +151,7 @@ const DashBoardPage = () => {
   );
 
   return (
-    <div className='min-h-screen py-8 bg-gray-100'>
+    <div className='min-h-screen py-8 bg-gray-50'>
       <div className='container mx-auto px-4'>
         {statInfo && <Stats statInfo={statInfo} />}
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>

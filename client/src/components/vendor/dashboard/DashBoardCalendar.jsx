@@ -4,6 +4,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import formatNumber from '@/utils/format/formatNumber';
 import { STATUS_COLORS } from '@/pages/vendor/DashBoardPage';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const getEventPriorityStatus = statusCounts => {
   if (statusCounts.NON_PAID > 0) return 'NON_PAID';
@@ -14,18 +16,8 @@ const getEventPriorityStatus = statusCounts => {
 };
 
 const getEventColor = status => {
-  switch (status) {
-    case 'NON_PAID':
-      return STATUS_COLORS.NON_PAID.split(' ')[0]; // bg 색상만 사용
-    case 'WAITING_PAYMENT':
-      return STATUS_COLORS.WAITING_PAYMENT.split(' ')[0];
-    case 'PAID':
-      return STATUS_COLORS.PAID.split(' ')[0];
-    case 'CREATED':
-      return STATUS_COLORS.CREATED.split(' ')[0];
-    default:
-      return 'bg-gray-200';
-  }
+  const color = STATUS_COLORS[status];
+  return color ? color.split(' ')[0] : 'bg-gray-200';
 };
 
 export const convertToCalendarEvents = billingInfo => {
@@ -47,19 +39,36 @@ const EventTooltip = ({ event }) => {
   const { totalPrice, totalCount, statusCounts } = event.extendedProps;
   return (
     <div className='bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-sm'>
+      <p className='mb-2'>
+        <span className='font-semibold'>총 청구액:</span> ₩{formatNumber(totalPrice)}
+      </p>
+      <p className='mb-2'>
+        <span className='font-semibold'>총 건수:</span> {formatNumber(totalCount)}건
+      </p>
       <div className='grid grid-cols-2 gap-2'>
         <p>
-          <span className='font-semibold text-green-600'>완납:</span> {statusCounts.PAID || 0}건
+          <span
+            className={`inline-block w-3 h-3 rounded-full ${STATUS_COLORS.PAID.split(' ')[0]} mr-1`}
+          />
+          <span className='font-semibold'>완납:</span> {statusCounts.PAID || 0}건
         </p>
         <p>
-          <span className='font-semibold text-yellow-600'>수납 대기중:</span>{' '}
-          {statusCounts.WAITING_PAYMENT || 0}건
+          <span
+            className={`inline-block w-3 h-3 rounded-full ${STATUS_COLORS.WAITING_PAYMENT.split(' ')[0]} mr-1`}
+          />
+          <span className='font-semibold'>수납 대기중:</span> {statusCounts.WAITING_PAYMENT || 0}건
         </p>
         <p>
-          <span className='font-semibold text-red-600'>미납:</span> {statusCounts.NON_PAID || 0}건
+          <span
+            className={`inline-block w-3 h-3 rounded-full ${STATUS_COLORS.NON_PAID.split(' ')[0]} mr-1`}
+          />
+          <span className='font-semibold'>미납:</span> {statusCounts.NON_PAID || 0}건
         </p>
         <p>
-          <span className='font-semibold text-blue-600'>생성:</span> {statusCounts.CREATED || 0}건
+          <span
+            className={`inline-block w-3 h-3 rounded-full ${STATUS_COLORS.CREATED.split(' ')[0]} mr-1`}
+          />
+          <span className='font-semibold'>생성:</span> {statusCounts.CREATED || 0}건
         </p>
       </div>
     </div>
@@ -108,8 +117,8 @@ const DashBoardCalendar = ({ events, onEventClick, calendarRef, onNext, onPrev }
         height='auto'
         showNonCurrentDates={true}
         headerToolbar={{
-          left: '',
-          center: 'title',
+          left: 'title',
+          center: '',
           right: 'mPrev,mNext',
         }}
         events={Array.isArray(events) ? events : []}
@@ -117,12 +126,14 @@ const DashBoardCalendar = ({ events, onEventClick, calendarRef, onNext, onPrev }
         ref={calendarRef}
         customButtons={{
           mNext: {
-            text: '다음 달',
+            text: '다음',
             click: onNext,
+            className: 'fc-next-button',
           },
           mPrev: {
-            text: '이전 달',
+            text: '이전',
             click: onPrev,
+            className: 'fc-prev-button',
           },
         }}
         eventContent={eventInfo => {
@@ -131,7 +142,8 @@ const DashBoardCalendar = ({ events, onEventClick, calendarRef, onNext, onPrev }
           const backgroundColor = getEventColor(priorityStatus);
 
           return (
-            <div className={`p-1 text-xs rounded-sm ${backgroundColor} text-text_black`}>
+            <div
+              className={`p-1 text-xs rounded-sm ${backgroundColor} ${STATUS_COLORS[priorityStatus].split(' ')[1]}`}>
               <div className='font-bold whitespace-nowrap overflow-hidden text-ellipsis'>
                 {formatNumber(totalCount)}건
               </div>
@@ -147,6 +159,23 @@ const DashBoardCalendar = ({ events, onEventClick, calendarRef, onNext, onPrev }
         eventBackgroundColor='transparent'
         dayCellDidMount={arg => {
           arg.el.style.height = '100px';
+        }}
+        dayHeaderContent={arg => {
+          const days = ['일', '월', '화', '수', '목', '금', '토'];
+          return days[arg.dow];
+        }}
+        titleFormat={{ year: 'numeric', month: 'long' }}
+        locale='ko'
+        buttonText={{
+          today: '오늘',
+          month: '월',
+          week: '주',
+          day: '일',
+          list: '목록',
+        }}
+        buttonIcons={{
+          prev: 'chevron-left',
+          next: 'chevron-right',
         }}
       />
       {tooltipEvent && (

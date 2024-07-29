@@ -25,22 +25,22 @@ const BillingSummary = ({ billingInfo, month }) => (
           {[
             {
               label: '완납',
-              value: billingInfo.statusCounts.PAID,
+              value: billingInfo.statusCounts?.PAID,
               color: STATUS_COLORS.PAID,
             },
             {
               label: '수납 대기중',
-              value: billingInfo.statusCounts.WAITING_PAYMENT,
+              value: billingInfo.statusCounts?.WAITING_PAYMENT,
               color: STATUS_COLORS.WAITING_PAYMENT,
             },
             {
               label: '미납',
-              value: billingInfo.statusCounts.NON_PAID,
+              value: billingInfo.statusCounts?.NON_PAID,
               color: STATUS_COLORS.NON_PAID,
             },
             {
               label: '생성',
-              value: billingInfo.statusCounts.CREATED,
+              value: billingInfo.statusCounts?.CREATED,
               color: STATUS_COLORS.CREATED,
             },
           ].map(({ label, value, color }) => (
