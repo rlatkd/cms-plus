@@ -3,12 +3,12 @@ import Input from '@/components/common/inputs/Input';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { verifyCMS } from '@/apis/validation';
 import { formatBirthDate } from '@/utils/format/formatBirth';
+import { validateField } from '@/utils/validators';
 
-const AccountInfo = ({ accountInfo, setAccountInfo }) => {
-  const selectedCard = useInvoiceStore(state => state.selectedCard);
+const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified  }) => {
+  const selectedBank = useInvoiceStore(state => state.selectedBank);
 
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState(null);
 
   const handleInputChange = e => {
@@ -66,7 +66,7 @@ const AccountInfo = ({ accountInfo, setAccountInfo }) => {
             name='bankNumber'
             type='text'
             required
-            placeholder={selectedCard}
+            placeholder={selectedBank}
             disabled
             className='disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none'
           />
@@ -79,16 +79,20 @@ const AccountInfo = ({ accountInfo, setAccountInfo }) => {
             value={accountInfo.accountOwner}
             onChange={handleInputChange}
             maxLength={20}
+            isValid={accountInfo.accountOwner === '' || validateField('name', accountInfo.accountOwner)}
+            errorMsg='올바른 예금주명을 입력해주세요.'
           />
           <Input
             label='계좌번호'
             name='accountNumber'
             type='text'
             required
-            placeholder='최대 20자리'
+            placeholder='최대 14자리'
             value={accountInfo.accountNumber}
             onChange={handleInputChange}
-            maxLength={20}
+            maxLength={14}
+            isValid={accountInfo.accountNumber === '' || validateField('accountNumber', accountInfo.accountNumber)}
+            errorMsg='올바른 계좌번호를 입력해주세요.'
           />
           <Input
             label='생년월일'
@@ -99,6 +103,8 @@ const AccountInfo = ({ accountInfo, setAccountInfo }) => {
             value={accountInfo.accountOwnerBirth}
             onChange={handleInputChange}
             maxLength={10}
+            isValid={accountInfo.accountOwnerBirth === '' || validateField('birth', accountInfo.accountOwnerBirth)}
+            errorMsg='올바른 생년월일을 입력해주세요.'
           />
           <button
             type='submit'

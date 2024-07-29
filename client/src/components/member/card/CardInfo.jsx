@@ -3,28 +3,36 @@ import Input from '@/components/common/inputs/Input';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { verifyCard } from '@/apis/validation';
 import { formatBirthDate } from '@/utils/format/formatBirth';
+import { validateField } from '@/utils/validators';
 import { formatCardNumber, formatExpiryDate } from '@/utils/format/formatCard';
 
-const CardInfo = ({ cardInfo, setCardInfo }) => {
+const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
   const selectedCard = useInvoiceStore(state => state.selectedCard);
 
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState(null);
 
   const handleInputChange = e => {
     const { name, value } = e.target;
     let formattedValue = value;
-
+    let prevLength;
+  
     switch (name) {
       case 'cardNumber':
         formattedValue = formatCardNumber(value);
         break;
       case 'expiryDate':
+        prevLength = cardInfo.expiryDate.length;
         formattedValue = formatExpiryDate(value);
+        if (formattedValue.length < prevLength && formattedValue.endsWith('/')) {
+          formattedValue = formattedValue.slice(0, -1);
+        }
         break;
       case 'cardOwnerBirth':
         formattedValue = formatBirthDate(value);
+        break;
+      case 'cardOwner':
+        formattedValue = value;
         break;
       default:
         break;
@@ -90,6 +98,8 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
             value={cardInfo.cardNumber}
             onChange={handleInputChange}
             maxLength={19}
+            isValid={cardInfo.cardNumber === '' || validateField('cardNumber', cardInfo.cardNumber)}
+            errorMsg='올바른 카드번호를 입력해주세요.'
           />
           <Input
             label='유효기간'
@@ -100,6 +110,8 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
             value={cardInfo.expiryDate}
             onChange={handleInputChange}
             maxLength={5}
+            isValid={cardInfo.expiryDate === '' || validateField('expiryDate', cardInfo.expiryDate)}
+            errorMsg='올바른 유효기간을 입력해주세요.'
           />
           <Input
             label='명의자'
@@ -109,6 +121,8 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
             placeholder='최대 15자리'
             value={cardInfo.cardOwner}
             onChange={handleInputChange}
+            isValid={cardInfo.cardOwner === '' || validateField('name', cardInfo.cardOwner)}
+            errorMsg='올바른 명의자를 입력해주세요.'
           />
           <Input
             label='생년월일'
@@ -119,6 +133,8 @@ const CardInfo = ({ cardInfo, setCardInfo }) => {
             value={cardInfo.cardOwnerBirth}
             onChange={handleInputChange}
             maxLength={10}
+            isValid={cardInfo.cardOwnerBirth === '' || validateField('birth', cardInfo.cardOwnerBirth)}
+            errorMsg='올바른 생년월일을 입력해주세요.'
           />
           <button
             type='submit'
