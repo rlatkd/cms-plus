@@ -5,29 +5,32 @@ import ConDetailPaymentVirtual from './ConDetailPaymentVirtual';
 import formatDateTime from '@/utils/format/formatDateTime';
 
 const ConDetailPaymentMethod = ({ contractData }) => {
-  const paymentTypeInfo = contractData.paymentTypeInfo;
-  const paymentType = paymentTypeInfo.paymentType.code;
+  const paymentTypeInfo = contractData?.paymentTypeInfo ?? {};
+  const paymentType = paymentTypeInfo?.paymentType?.code ?? '';
 
   const componentMap = {
     AUTO: () => {
-      const paymentMethodInfo = contractData.paymentMethodInfo;
-      const paymentMethod = paymentMethodInfo ? paymentMethodInfo.paymentMethod : null;
-      const paymentMethodCode = paymentMethod ? paymentMethod.code : '';
+      const paymentMethodInfo = contractData?.paymentMethodInfo ?? {};
+      const paymentMethodCode = paymentMethodInfo?.paymentMethod?.code ?? '';
 
-      let res;
+      let PaymentComponent = null;
       if (paymentMethodCode === 'CARD') {
-        res = <ConDetailPaymentCard contractData={contractData} />;
+        PaymentComponent = ConDetailPaymentCard;
       } else if (paymentMethodCode === 'CMS') {
-        res = <ConDetailPaymentCMS contractData={contractData} />;
+        PaymentComponent = ConDetailPaymentCMS;
       }
 
       return (
         <>
-          {res}
+          {PaymentComponent && <PaymentComponent contractData={contractData} />}
           <InputWeb
             id='simpConsentInfo'
             label='간편동의여부'
-            value={`${paymentTypeInfo.consentStatus.title} (${formatDateTime(paymentTypeInfo.simpleConsentReqDateTime)})`}
+            value={
+              paymentTypeInfo.consentStatus?.title && paymentTypeInfo.simpleConsentReqDateTime
+                ? `${paymentTypeInfo.consentStatus.title} (${formatDateTime(paymentTypeInfo.simpleConsentReqDateTime)})`
+                : '정보 없음'
+            }
             type='text'
             classContainer='w-1/2'
             disabled={true}
@@ -38,7 +41,7 @@ const ConDetailPaymentMethod = ({ contractData }) => {
     VIRTUAL: () => <ConDetailPaymentVirtual contractData={contractData} />,
   };
 
-  const Content = componentMap[paymentType] || (() => '');
+  const Content = componentMap[paymentType] ?? (() => null);
 
   return (
     <div className='flex-col p-5'>

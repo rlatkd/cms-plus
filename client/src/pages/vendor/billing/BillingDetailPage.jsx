@@ -56,6 +56,7 @@ const BillingDetailPage = () => {
     setIsLoading(true);
     try {
       const res = await getBillingDetail(billingId);
+      console.log(billingData, res);
       setBillingData(res.data);
       setBillingReq(prevReq => ({
         ...prevReq,

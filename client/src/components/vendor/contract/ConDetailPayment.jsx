@@ -29,7 +29,7 @@ const ConDetailPayment = ({ contractData, updateAllInfo }) => {
         </button>
       </div>
       <ConDetailPaymentType contractData={contractData} />
-      {contractData.paymentTypeInfo.paymentType.code !== 'BUYER' && (
+      {contractData?.paymentTypeInfo?.paymentType?.code !== 'BUYER' && (
         <>
           <div className='flex justify-between items-center border-b border-ipt_border px-2 pt-1 pb-3'>
             <p className='text-text_black text-xl font-800'>현재 결제수단</p>
