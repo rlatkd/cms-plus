@@ -16,8 +16,8 @@ export const initialSearch = [
   { key: 'order', type: 'hidden', value: '', width: 'w-1/12' },
   { key: 'memberName', type: 'text', value: '', width: 'w-2/12' },
   { key: 'memberPhone', type: 'text', value: '', width: 'w-2/12' },
-  { key: 'contractPrice', type: 'num', value: '', width: 'w-2/12' },
-  { key: 'contractCount', type: 'num', value: '', width: 'w-1/12' },
+  { key: 'contractPrice', type: 'num', value: '', width: 'w-2/12', lower: true },
+  { key: 'contractCount', type: 'num', value: '', width: 'w-1/12', lower: true },
   { key: 'memberEnrollDate', type: 'calendar', value: '', width: 'w-2/12' },
   { key: 'memberEmail', type: 'text', value: '', width: 'w-3/12' },
 ];

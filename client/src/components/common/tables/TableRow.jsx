@@ -12,7 +12,7 @@ const TableRow = ({
 }) => {
   // 검색어 하이라이트 함수
   const highlightSearchTerm = (text, searchConditions, field) => {
-    if ('contractPrice billingPrice'.includes(field)) {
+    if ('contractPrice billingPrice productPrice'.includes(field)) {
       return text;
     }
     const searchTerm =
