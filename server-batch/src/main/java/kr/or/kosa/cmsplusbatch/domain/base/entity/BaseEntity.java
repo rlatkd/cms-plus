@@ -1,0 +1,39 @@
+package kr.or.kosa.cmsplusbatch.domain.base.entity;
+
+import java.time.LocalDateTime;
+
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+public abstract class BaseEntity {
+
+	protected static final String NON_DELETED_QUERY = "deleted = 0";
+
+	@CreatedDate
+	@Column(name = "created_datetime", nullable = false, updatable = false)
+	private LocalDateTime createdDateTime;
+
+	@LastModifiedDate
+	@Column(name = "modified_datetime")
+	private LocalDateTime modifiedDateTime;
+
+	@Column(name = "deleted", nullable = false)
+	private boolean deleted = false;
+
+	@Column(name = "deleted_datetime")
+	private LocalDateTime deletedDateTime;
+
+	public void delete() {
+		deleted = true;
+		deletedDateTime = LocalDateTime.now();
+	}
+}
