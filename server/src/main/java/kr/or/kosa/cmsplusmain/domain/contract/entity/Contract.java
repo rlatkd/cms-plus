@@ -2,9 +2,11 @@ package kr.or.kosa.cmsplusmain.domain.contract.entity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -23,6 +25,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Day;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.contract.exception.EmptyContractProductException;
 import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -45,7 +48,8 @@ import lombok.Setter;
 public class Contract extends BaseEntity {
 
 	// 최소 계약상품 수
-	private static final int MIN_CONTRACT_PRODUCT_NUMBER = 1;
+	public static final int MIN_CONTRACT_PRODUCT_NUMBER = 1;
+	public static final int MAX_CONTRACT_PRODUCT_NUMBER = 9;
 
 	@Id
 	@Column(name = "contract_id")
@@ -100,10 +104,13 @@ public class Contract extends BaseEntity {
 	private ContractStatus contractStatus = ContractStatus.ENABLED;
 
 	/* 계약한 상품 목록 */
+	// 계약 상품은 상품 ID 별로 하나만 존재할 수 있다.
+	// 동일 상품 추가 안됨
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	@Builder.Default
-	private List<ContractProduct> contractProducts = new ArrayList<>();
+	@BatchSize(size = 10)	// 계약 상품은 각 계약 별 최대 10개이다.
+	private Set<ContractProduct> contractProducts = new HashSet<>();
 
 	/* 계약한 청구 목록 */
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)

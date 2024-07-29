@@ -25,17 +25,23 @@ import kr.or.kosa.cmsplusmain.domain.billing.exception.BillingNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.V2BillingProductRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.V2BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.exception.ContractNotFoundException;
+import kr.or.kosa.cmsplusmain.domain.contract.repository.V2ContractRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class V2BillingService {
 	private final V2BillingRepository billingRepository;
 	private final V2BillingProductRepository billingProductRepository;
+	private final V2ContractRepository contractRepository;
 
 	@Transactional
 	public void createBilling(Long vendorId, BillingCreateReq billingCreateReq) {
-		// TODO 고객의 계약 여부 확인
+		if (!contractRepository.existsContractByVendorId(vendorId, billingCreateReq.getContractId())) {
+			throw new ContractNotFoundException("계약이 없습니다");
+		}
 
 		List<BillingProduct> billingProducts = billingCreateReq.getProducts().stream()
 			.map(BillingProductReq::toEntity)
@@ -55,11 +61,10 @@ public class V2BillingService {
 
 	/**
 	 * 청구목록 조회 |
-	 * 3+x회 쿼리 발생 | 청구목록조회, 청구상품조회 * x(배치사이즈: 100), 전체 개수(페이징)
+	 * 2회 쿼리 발생 | 청구목록조회, 전체 개수(페이징)
 	 * */
 	public PageRes<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		List<BillingListItemRes> content =
-			billingRepository.searchBillings(vendorId, search, pageReq);
+		List<BillingListItemRes> content = billingRepository.searchBillings(vendorId, search, pageReq);
 
 		int totalContentCount = (int)billingRepository.countSearchedBillings(vendorId, search);
 
@@ -82,7 +87,7 @@ public class V2BillingService {
 
 	/**
 	 * 청구 수정
-	 * 6+a+b+x회 쿼리 발생 | 청구존재여부, 청구 조회, 청구상품 조회 * x(배치사이즈: 100), 청구상품 생성 * a, 청구 수정, 청구상품 수정 * b, 청구상품 삭제
+	 * 7+a+b회 쿼리 발생 | 청구존재여부, 청구 조회, 청구상품 조회, 청구상품 생성 * a, 청구 수정, 청구상품 수정 * b, 청구상품 삭제
 	 * */
 	@Transactional
 	public void updateBilling(Long vendorId, Long billingId, BillingUpdateReq billingUpdateReq) {
@@ -110,7 +115,7 @@ public class V2BillingService {
 		List<BillingProduct> newBillingProducts = new ArrayList<>(mNewBillingProducts);
 
 		// 삭제될 청구상품 ID
-		// 삭제 상태 수정을 IN을 사용해 업데이트 쿼리 횟수 감소 목적
+		// 삭제 상태 수정을 bulk update 사용해 업데이트 쿼리 횟수 감소 목적
 		List<Long> toRemoveIds = new ArrayList<>();
 
 		// 수정될 청구상품 수정
