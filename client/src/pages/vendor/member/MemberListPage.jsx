@@ -92,6 +92,13 @@ const MemberListPage = () => {
     setCurrentSearchParams(searchParams);
   };
 
+  const handleSetMemberExcelModal = value => {
+    if (isShowExcelModal) {
+      axiosMemberList();
+    }
+    setIsShowExcelModal(value);
+  };
+
   // <----- 검색 클릭 이벤트 핸들러 ----->
   const handleClickSearch = async () => {
     axiosMemberList(debouncedSearchParams);
@@ -169,10 +176,9 @@ const MemberListPage = () => {
 
       <MemberExcelModal
         isShowModal={isShowExcelModal}
-        setIsShowModal={setIsShowExcelModal}
+        setIsShowModal={handleSetMemberExcelModal}
         icon={user}
         modalTitle={'대량 회원 등록'}
-        axiosMemberList={axiosMemberList}
       />
     </div>
   );

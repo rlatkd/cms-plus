@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Memo {
-	String message() default "Invalid memo";
+	String message() default "잘못된 메시지 형식입니다";
 
 	Class<?>[] groups() default {};
 

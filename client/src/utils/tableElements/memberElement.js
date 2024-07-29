@@ -27,4 +27,6 @@ export const selectOptions = [
   { label: '계약금액 적은순', orderBy: 'contractPrice', order: 'ASC' },
   { label: '계약 많은순', orderBy: 'contractCount', order: 'DESC' },
   { label: '계약 적은순', orderBy: 'contractCount', order: 'ASC' },
+  { label: '회원이름 오름차순', orderBy: 'memberName', order: 'ASC' },
+  { label: '회원이름 내림차순', orderBy: 'memberName', order: 'DESC' },
 ];

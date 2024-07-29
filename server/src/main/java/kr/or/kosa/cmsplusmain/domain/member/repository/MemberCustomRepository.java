@@ -1,13 +1,31 @@
 package kr.or.kosa.cmsplusmain.domain.member.repository;
 
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 
-import com.querydsl.core.types.Expression;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
@@ -16,23 +34,15 @@ import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 
-import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
-
 
 @Repository
 public class MemberCustomRepository extends BaseCustomRepository<Member> {
-    public MemberCustomRepository(EntityManager em, JPAQueryFactory jpaQueryFactory) {
+    public MemberCustomRepository(EntityManager em, JPAQueryFactory jpaQueryFactory, JdbcTemplate jdbcTemplate) {
         super(em, jpaQueryFactory);
+        this.jdbcTemplate = jdbcTemplate;
     }
+
+    private final JdbcTemplate jdbcTemplate;
 
     /*
     * 회원 목록 조회
@@ -174,7 +184,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             .selectOne()
             .from(member)
             .where(
-                memberPhoneEq(phone).or(memberEmailEq(email)),
+                memberPhoneAndEmailEq(phone, email),
                 memberNotDel()
             )
             .fetchOne();
@@ -182,6 +192,13 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         return res == null;
     }
 
+    private BooleanExpression memberPhoneAndEmailEq(String phone, String email) {
+        BooleanExpression memberPhoneEq = memberPhoneEq(phone);
+        if (memberPhoneEq == null) {
+            return memberEmailEq(email);
+        }
+        return memberPhoneEq.or(memberEmailEq(email));
+    }
     public Optional<Member> findMemberByPhone(Long vendorId, String phone) {
         return Optional.ofNullable(
             jpaQueryFactory
@@ -209,6 +226,48 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         return res != null;
     }
 
+    /**
+     * 대량 회원 등록을 위한 bulk insert
+     * */
+    @Transactional
+    public void bulkInsert(List<Member> members) {
+        String sql = "INSERT INTO member (deleted, member_auto_billing, member_auto_invoice_send, " +
+            "member_enroll_date, created_datetime, modified_datetime, vendor_id, member_home_phone, member_phone, " +
+            "member_name, member_email, member_memo, zipcode, address, address_detail, " +
+            "member_invoice_send_method, member_status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                Member member = members.get(i);
+                ps.setBoolean(1, member.isDeleted());
+                ps.setBoolean(2, member.isAutoBilling());
+                ps.setBoolean(3, member.isAutoInvoiceSend());
+                ps.setDate(4, java.sql.Date.valueOf(member.getEnrollDate()));
+                ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+                ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+                ps.setLong(7, member.getVendor().getId());
+                ps.setString(8, member.getHomePhone());
+                ps.setString(9, member.getPhone());
+                ps.setString(10, member.getName());
+                ps.setString(11, member.getEmail());
+                ps.setString(12, member.getMemo());
+                ps.setString(13, member.getAddress().getZipcode());
+                ps.setString(14, member.getAddress().getAddress());
+                ps.setString(15, member.getAddress().getAddressDetail());
+                ps.setString(16, member.getInvoiceSendMethod().name());
+                ps.setString(17, member.getStatus().name());
+            }
+
+            @Override
+            public int getBatchSize() {
+                // SQL 최대 길이 제한
+                return Math.min(members.size(), 500);
+            }
+        });
+    }
+
     private OrderSpecifier<?> buildMemberOrderSpecifier(PageReq pageReq) {
         if (pageReq == null || !StringUtils.hasText(pageReq.getOrderBy())) {
             return member.createdDateTime.desc();
@@ -223,6 +282,11 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
 
         if (orderBy.equals("contractCount")) {
             NumberExpression<Long> exp = contract.countDistinct();
+            return pageReq.isAsc() ? exp.asc() : exp.desc();
+        }
+
+        if (orderBy.equals("memberName")) {
+            StringExpression exp = member.name;
             return pageReq.isAsc() ? exp.asc() : exp.desc();
         }
 
