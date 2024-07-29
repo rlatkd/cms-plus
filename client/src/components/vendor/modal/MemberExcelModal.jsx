@@ -1,10 +1,10 @@
 import { convertMember, uploadMembers } from '@/apis/member';
 import BaseModal from '@/components/common/BaseModal';
 import { useState, useContext, useEffect } from 'react';
-import AlertWdithContext from '@/utils/dialog/alertwidth/AlertWidthContext';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip';
 import { FaExclamationCircle, FaUpload, FaSave, FaDownload } from 'react-icons/fa';
+import useAlert from '@/hooks/useAlert';
 
 const headers = [
   { name: '회원명', key: 'memberName', required: true },
@@ -22,19 +22,13 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => 
   const [data, setData] = useState([]);
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const { alertWidth: alertCompWidth } = useContext(AlertWdithContext);
+  const onAlert = useAlert();
 
   useEffect(() => {
     setData([]);
     setFile(null);
     setErrors([]);
   }, [isShowModal]);
-
-  const onAlert = async msg => {
-    const result = await alertCompWidth(msg);
-    console.log('onAlertWidth : ', result);
-  };
 
   const handleFileChange = e => {
     if (e.target.files[0].size > 3000000) {
