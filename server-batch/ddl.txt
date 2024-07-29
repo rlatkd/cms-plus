@@ -1,0 +1,419 @@
+create table BATCH_JOB_EXECUTION_SEQ
+(
+    ID         bigint not null,
+    UNIQUE_KEY char   not null,
+    constraint UNIQUE_KEY_UN
+        unique (UNIQUE_KEY)
+);
+
+create table BATCH_JOB_INSTANCE
+(
+    JOB_INSTANCE_ID bigint       not null
+        primary key,
+    VERSION         bigint       null,
+    JOB_NAME        varchar(100) not null,
+    JOB_KEY         varchar(32)  not null,
+    constraint JOB_INST_UN
+        unique (JOB_NAME, JOB_KEY)
+);
+
+create table BATCH_JOB_EXECUTION
+(
+    JOB_EXECUTION_ID bigint        not null
+        primary key,
+    VERSION          bigint        null,
+    JOB_INSTANCE_ID  bigint        not null,
+    CREATE_TIME      datetime(6)   not null,
+    START_TIME       datetime(6)   null,
+    END_TIME         datetime(6)   null,
+    STATUS           varchar(10)   null,
+    EXIT_CODE        varchar(2500) null,
+    EXIT_MESSAGE     varchar(2500) null,
+    LAST_UPDATED     datetime(6)   null,
+    constraint JOB_INST_EXEC_FK
+        foreign key (JOB_INSTANCE_ID) references BATCH_JOB_INSTANCE (JOB_INSTANCE_ID)
+);
+
+create table BATCH_JOB_EXECUTION_CONTEXT
+(
+    JOB_EXECUTION_ID   bigint        not null
+        primary key,
+    SHORT_CONTEXT      varchar(2500) not null,
+    SERIALIZED_CONTEXT text          null,
+    constraint JOB_EXEC_CTX_FK
+        foreign key (JOB_EXECUTION_ID) references BATCH_JOB_EXECUTION (JOB_EXECUTION_ID)
+);
+
+create table BATCH_JOB_EXECUTION_PARAMS
+(
+    JOB_EXECUTION_ID bigint        not null,
+    PARAMETER_NAME   varchar(100)  not null,
+    PARAMETER_TYPE   varchar(100)  not null,
+    PARAMETER_VALUE  varchar(2500) null,
+    IDENTIFYING      char          not null,
+    constraint JOB_EXEC_PARAMS_FK
+        foreign key (JOB_EXECUTION_ID) references BATCH_JOB_EXECUTION (JOB_EXECUTION_ID)
+);
+
+create table BATCH_JOB_SEQ
+(
+    ID         bigint not null,
+    UNIQUE_KEY char   not null,
+    constraint UNIQUE_KEY_UN
+        unique (UNIQUE_KEY)
+);
+
+create table BATCH_STEP_EXECUTION
+(
+    STEP_EXECUTION_ID  bigint        not null
+        primary key,
+    VERSION            bigint        not null,
+    STEP_NAME          varchar(100)  not null,
+    JOB_EXECUTION_ID   bigint        not null,
+    CREATE_TIME        datetime(6)   not null,
+    START_TIME         datetime(6)   null,
+    END_TIME           datetime(6)   null,
+    STATUS             varchar(10)   null,
+    COMMIT_COUNT       bigint        null,
+    READ_COUNT         bigint        null,
+    FILTER_COUNT       bigint        null,
+    WRITE_COUNT        bigint        null,
+    READ_SKIP_COUNT    bigint        null,
+    WRITE_SKIP_COUNT   bigint        null,
+    PROCESS_SKIP_COUNT bigint        null,
+    ROLLBACK_COUNT     bigint        null,
+    EXIT_CODE          varchar(2500) null,
+    EXIT_MESSAGE       varchar(2500) null,
+    LAST_UPDATED       datetime(6)   null,
+    constraint JOB_EXEC_STEP_FK
+        foreign key (JOB_EXECUTION_ID) references BATCH_JOB_EXECUTION (JOB_EXECUTION_ID)
+);
+
+create table BATCH_STEP_EXECUTION_CONTEXT
+(
+    STEP_EXECUTION_ID  bigint        not null
+        primary key,
+    SHORT_CONTEXT      varchar(2500) not null,
+    SERIALIZED_CONTEXT text          null,
+    constraint STEP_EXEC_CTX_FK
+        foreign key (STEP_EXECUTION_ID) references BATCH_STEP_EXECUTION (STEP_EXECUTION_ID)
+);
+
+create table BATCH_STEP_EXECUTION_SEQ
+(
+    ID         bigint not null,
+    UNIQUE_KEY char   not null,
+    constraint UNIQUE_KEY_UN
+        unique (UNIQUE_KEY)
+);
+
+create table payment_method_info
+(
+    deleted                bit         not null,
+    created_datetime       datetime(6) not null,
+    deleted_datetime       datetime(6) null,
+    modified_datetime      datetime(6) null,
+    payment_method_info_id bigint auto_increment
+        primary key,
+    payment_method         varchar(31) not null
+)
+    comment '결제수단 세부정보';
+
+create table card_payment_method
+(
+    card_info_owner_birth    date         not null comment '카드 소유주 생년월일',
+    card_info_validity_month int          not null comment '카드 유효기간 월',
+    card_info_validity_year  int          not null comment '카드 유효기간 년',
+    payment_method_info_id   bigint       not null
+        primary key,
+    card_info_number         varchar(255) not null comment '카드 번호',
+    card_info_owner          varchar(255) not null comment '카드 소유주명',
+    constraint FKqgcwydsuy6o8bp2kll4bvtryj
+        foreign key (payment_method_info_id) references payment_method_info (payment_method_info_id)
+)
+    comment '결제수단 - 카드';
+
+create table cms_payment_method
+(
+    cms_owner_birth        date         not null comment 'CMS 계좌 소유주 생년월일',
+    payment_method_info_id bigint       not null
+        primary key,
+    cms_account_number     varchar(15)  not null comment 'CMS 계좌번호',
+    cms_account_owner      varchar(40)  not null comment 'CMS 계좌 소유주명',
+    cms_account_bank       varchar(255) not null comment 'CMS 계좌 은행',
+    constraint FK68m8g24h1u0oenji4g0j0uvyu
+        foreign key (payment_method_info_id) references payment_method_info (payment_method_info_id)
+)
+    comment '결제수단 - CMS';
+
+create table payment_type_info
+(
+    deleted              bit         not null,
+    created_datetime     datetime(6) not null,
+    deleted_datetime     datetime(6) null,
+    modified_datetime    datetime(6) null,
+    payment_type_info_id bigint auto_increment
+        primary key,
+    payment_type         varchar(31) not null
+)
+    comment '결제방식 정보';
+
+create table auto_payment_type
+(
+    payment_simpconsent_request_date datetime(6)   null comment '간편동의 마지막 요청시간',
+    payment_type_info_id             bigint        not null
+        primary key,
+    payment_consent_img_url          varchar(2000) null comment '고객이 등록한 동의서 이미지 URL',
+    payment_sign_img_url             varchar(2000) null comment '회원 간편동의 서명 이미지 URL',
+    constraint FK3e3yqssdryfjacp0wukb2x3gk
+        foreign key (payment_type_info_id) references payment_type_info (payment_type_info_id)
+)
+    comment '결제방식 - 자동결제';
+
+create table buyer_payment_type
+(
+    payment_type_info_id bigint not null
+        primary key,
+    constraint FKkuw6t4v26ux1y5k1qmub1aqme
+        foreign key (payment_type_info_id) references payment_type_info (payment_type_info_id)
+)
+    comment '납부자결제 - 설정된 가능 결제수단';
+
+create table buyer_payment_method
+(
+    buyer_payment_type_payment_type_info_id bigint                          not null,
+    buyer_payment_method                    enum ('ACCOUNT', 'CARD', 'CMS') null,
+    constraint FKtlm48ajtksvpltojeqxqbmtgy
+        foreign key (buyer_payment_type_payment_type_info_id) references buyer_payment_type (payment_type_info_id)
+);
+
+create table payment
+(
+    deleted                bit                               not null,
+    created_datetime       datetime(6)                       not null,
+    deleted_datetime       datetime(6)                       null,
+    modified_datetime      datetime(6)                       null,
+    payment_id             bigint auto_increment
+        primary key,
+    payment_method_info_id bigint                            null comment '결제수단 정보',
+    payment_type_info_id   bigint                            not null comment '결제방식 정보',
+    payment_method         enum ('ACCOUNT', 'CARD', 'CMS')   null comment '결제수단',
+    payment_type           enum ('AUTO', 'BUYER', 'VIRTUAL') null comment '결제방식',
+    constraint UKmtrxlhm3d54uajshu90543otw
+        unique (payment_type_info_id),
+    constraint UKnwgbrdp0h505k1wb746cmdv21
+        unique (payment_method_info_id),
+    constraint FKdnk37gixn1h2jppfx01gjgvpm
+        foreign key (payment_type_info_id) references payment_type_info (payment_type_info_id),
+    constraint FKrkudfg0e6utb9ylk3yh2urma6
+        foreign key (payment_method_info_id) references payment_method_info (payment_method_info_id)
+)
+    comment '결제정보';
+
+create table setting_simpconsent
+(
+    deleted                bit         not null,
+    created_datetime       datetime(6) not null,
+    deleted_datetime       datetime(6) null,
+    modified_datetime      datetime(6) null,
+    setting_simpconsent_id bigint auto_increment
+        primary key
+);
+
+create table simpconsent_vendor_auto_payment_method
+(
+    simp_consent_setting_setting_simpconsent_id bigint                          not null,
+    simpconsent_auto_payment_method             enum ('ACCOUNT', 'CARD', 'CMS') null,
+    constraint FKtmw140sdogvmpv6wieaw0x0me
+        foreign key (simp_consent_setting_setting_simpconsent_id) references setting_simpconsent (setting_simpconsent_id)
+);
+
+create table vendor
+(
+    deleted               bit                                 not null,
+    created_datetime      datetime(6)                         not null,
+    deleted_datetime      datetime(6)                         null,
+    modified_datetime     datetime(6)                         null,
+    setting_simpconset_id bigint                              not null,
+    vendor_id             bigint auto_increment
+        primary key,
+    vendor_homephone      varchar(20)                         null comment '고객 유선전화',
+    vendor_phone          varchar(20)                         not null comment '고객 휴대전화',
+    vendor_username       varchar(20)                         not null comment '고객 로그인 아이디',
+    vendor_dept           varchar(40)                         not null comment '고객 부서명',
+    vendor_name           varchar(40)                         not null comment '고객 이름',
+    vendor_email          varchar(100)                        not null comment '고객 이메일',
+    vendor_password       varchar(255)                        not null comment '고객 로그인 비밀번호',
+    user_role             enum ('ROLE_MEMBER', 'ROLE_VENDOR') not null comment '사용자 역할',
+    constraint UKeof6wy4n8w0fjefuwwf7iakqx
+        unique (setting_simpconset_id),
+    constraint unique_vendor_email
+        unique (vendor_email),
+    constraint unique_vendor_phone
+        unique (vendor_phone),
+    constraint unique_vendor_username
+        unique (vendor_username),
+    constraint FKqlkcnr07mbsyu8f5faw2q71tm
+        foreign key (setting_simpconset_id) references setting_simpconsent (setting_simpconsent_id)
+)
+    comment '고객 (학원의 원장 - 사용자)';
+
+create table member
+(
+    deleted                    bit                          not null,
+    member_auto_billing        bit                          not null comment '회원 청구 자동 생성 여부',
+    member_auto_invoice_send   bit                          not null comment '회원 청구서 자동 발송 여부',
+    member_enroll_date         date                         not null comment '회원 등록일',
+    created_datetime           datetime(6)                  not null,
+    deleted_datetime           datetime(6)                  null,
+    member_id                  bigint auto_increment
+        primary key,
+    modified_datetime          datetime(6)                  null,
+    vendor_id                  bigint                       not null comment '회원의 고객',
+    member_home_phone          varchar(20)                  null comment '회원 유선전화',
+    member_phone               varchar(20)                  not null comment '회원 휴대전화',
+    member_name                varchar(40)                  not null comment '회원 이름',
+    member_email               varchar(100)                 not null comment '회원 이메일',
+    member_memo                varchar(2000)                null comment '회원 메모',
+    address                    varchar(255)                 null comment '회원 주소',
+    address_detail             varchar(255)                 null comment '회원 주소',
+    zipcode                    varchar(255)                 null comment '회원 주소',
+    member_invoice_send_method enum ('EMAIL', 'SMS')        not null comment '회원 청구서 발송 수단',
+    member_status              enum ('DISABLED', 'ENABLED') not null comment '회원 상태',
+    constraint unique_member_email
+        unique (vendor_id, member_email),
+    constraint unique_member_phone
+        unique (vendor_id, member_phone),
+    constraint FKt74h38694fikrpr06pb5ih645
+        foreign key (vendor_id) references vendor (vendor_id)
+)
+    comment '회원 (학원의 학생)';
+
+create table contract
+(
+    contract_day        int         not null comment '계약 약정일',
+    contract_end_date   date        not null comment '청구 가능 기간 - 종료일',
+    contract_start_date date        not null comment '청구 가능 기간 - 시작일',
+    contract_status     tinyint     not null comment '계약 상태',
+    deleted             bit         not null,
+    contract_id         bigint auto_increment
+        primary key,
+    created_datetime    datetime(6) not null,
+    deleted_datetime    datetime(6) null,
+    member_id           bigint      not null comment '계약한 회원',
+    modified_datetime   datetime(6) null,
+    payment_id          bigint      not null comment '계약 결제정보',
+    vendor_id           bigint      not null comment '계약한 회원의 고객',
+    contract_name       varchar(40) not null comment '계약 이름',
+    constraint UKh0a0fcawjl24jqqnywo8tqkeh
+        unique (payment_id),
+    constraint FK7cvb5qyribwre9sdruy102qee
+        foreign key (payment_id) references payment (payment_id),
+    constraint FKpc7kwq3a6sixvv90l2osreiay
+        foreign key (member_id) references member (member_id),
+    constraint FKshfkbo84dmjtff60xrwjk6rk9
+        foreign key (vendor_id) references vendor (vendor_id)
+)
+    comment '회원과 고객간의 계약 (학원 - 학생 간 계약)';
+
+create table billing
+(
+    billing_contract_day          int                                                     not null comment '청구의 약정일 (청구 생성시 설정한 결제일 != 계약의 약정일과 다를 수 있다.)',
+    billing_date                  date                                                    not null comment '결제일 (= 약정일, 납부 시작 및 종료 기간[납부기간은 하루이다.])',
+    deleted                       bit                                                     not null,
+    billing_id                    bigint auto_increment
+        primary key,
+    billing_invoice_send_datetime datetime(6)                                             null comment '청구서 보낸시각',
+    billing_paid_datetime         datetime(6)                                             null comment '청구 결제된 시각',
+    contract_id                   bigint                                                  not null comment '청구 기준 기반이된 계약',
+    created_datetime              datetime(6)                                             not null,
+    deleted_datetime              datetime(6)                                             null,
+    modified_datetime             datetime(6)                                             null,
+    billing_invoice_message       varchar(2000)                                           null comment '청구서 메시지',
+    billing_status                enum ('CREATED', 'NON_PAID', 'PAID', 'WAITING_PAYMENT') not null comment '청구 상태',
+    billing_type                  enum ('IRREGULAR', 'REGULAR')                           not null comment '청구 타입 [정기 or 추가]',
+    constraint FK5hq7fal9gny2sl49xp4ca9uvp
+        foreign key (contract_id) references contract (contract_id)
+)
+    comment '청구 (매 달 새로 쌓이는 정보)';
+
+create table product
+(
+    deleted           bit                          not null,
+    product_price     int                          not null comment '상품 금액',
+    created_datetime  datetime(6)                  not null,
+    deleted_datetime  datetime(6)                  null,
+    modified_datetime datetime(6)                  null,
+    product_id        bigint auto_increment
+        primary key,
+    vendor_id         bigint                       not null comment '상품을 등록한 고객',
+    product_name      varchar(20)                  not null comment '상품 이름',
+    product_memo      varchar(2000)                null comment '상품 비고',
+    product_status    enum ('DISABLED', 'ENABLED') not null comment '상품 상태',
+    constraint FK9tnjxr4w1dcvbo2qejikpxpfy
+        foreign key (vendor_id) references vendor (vendor_id)
+)
+    comment '고객이 등록한 상품';
+
+create table billing_product
+(
+    billing_product_price    int          not null comment '청구상품의 가격',
+    billing_product_quantity int          not null comment '청구상품의 수량',
+    deleted                  bit          not null,
+    billing_id               bigint       null comment '청구상품의 청구기준',
+    billing_product_id       bigint auto_increment
+        primary key,
+    created_datetime         datetime(6)  not null,
+    deleted_datetime         datetime(6)  null,
+    modified_datetime        datetime(6)  null,
+    product_id               bigint       not null comment '청구상품의 상품',
+    billing_product_name     varchar(255) not null comment '청구상품의 이름',
+    constraint FKd3nmqpihsqdjratlbtie38gk1
+        foreign key (product_id) references product (product_id),
+    constraint FKsr5dpk1k7igp61am8ny54gq7n
+        foreign key (billing_id) references billing (billing_id)
+);
+
+create table contract_product
+(
+    contract_product_price    int          null comment '계약_상품 가격',
+    contract_product_quantity int          null comment '계약_상품 수량',
+    deleted                   bit          not null,
+    contract_id               bigint       not null,
+    contract_product_id       bigint auto_increment
+        primary key,
+    created_datetime          datetime(6)  not null,
+    deleted_datetime          datetime(6)  null,
+    modified_datetime         datetime(6)  null,
+    product_id                bigint       not null,
+    contract_product_name     varchar(255) not null comment '계약_상품 이름',
+    constraint FKcypveko4d778htqy57j8fpvqq
+        foreign key (contract_id) references contract (contract_id),
+    constraint FKmygg675doa79tb14x7lhgwxy8
+        foreign key (product_id) references product (product_id)
+)
+    comment '계약 - 상품 중계테이블. 상품 변동에 영향을 받지 않는다.';
+
+create table simpconsent_vendor_product
+(
+    product_id             bigint not null,
+    setting_simpconsent_id bigint not null,
+    primary key (product_id, setting_simpconsent_id),
+    constraint FKdjtgm2s2vb24dhk9b2xw2n9tu
+        foreign key (product_id) references product (product_id),
+    constraint FKwouahq6d2icw9geuwfgb72nr
+        foreign key (setting_simpconsent_id) references setting_simpconsent (setting_simpconsent_id)
+);
+
+create table virtual_account_payment_type
+(
+    payment_type_info_id           bigint      not null
+        primary key,
+    virtual_payment_account_number varchar(14) not null comment '가상계좌 계좌번호',
+    virtual_payment_bank_code      varchar(20) not null comment '가상계좌 은행코드',
+    virtual_payment_account_owner  varchar(40) not null comment '가상계좌 예금주명',
+    constraint FKkhyhab9pb2p5aopl9506sm3qt
+        foreign key (payment_type_info_id) references payment_type_info (payment_type_info_id)
+)
+    comment '결제방식 - 가상계좌';
+

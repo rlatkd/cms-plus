@@ -1,16 +1,20 @@
 package kr.or.kosa.cmsplusbatch.domain.base.repository;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import kr.or.kosa.cmsplusbatch.domain.base.entity.BaseEntity;
+import kr.or.kosa.cmsplusbatch.domain.billing.entity.Billing;
+import kr.or.kosa.cmsplusbatch.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import jakarta.annotation.Nonnull;
+import org.springframework.data.repository.query.Param;
 
 
 /**
@@ -56,4 +60,5 @@ public interface BaseRepository<T extends BaseEntity, ID extends Serializable> e
 	@Modifying
 	@Query("UPDATE #{#entityName} e SET e.deleted = false WHERE e.id = ?1")
 	void restore(ID id);
+
 }
