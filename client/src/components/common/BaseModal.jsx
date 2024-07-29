@@ -1,7 +1,16 @@
 import closeIcon from '@/assets/close.svg';
 import { useEffect, useRef } from 'react';
 
-const BaseModal = ({ icon, isShowModal, setIsShowModal, modalTitle, height, width, children }) => {
+const BaseModal = ({
+  icon,
+  isShowModal,
+  setIsShowModal,
+  modalTitle,
+  height,
+  width,
+  children,
+  close = false,
+}) => {
   const modalRef = useRef();
 
   // <----- ESC 키를 눌렀을 때 모달 닫기 ----->
@@ -20,6 +29,7 @@ const BaseModal = ({ icon, isShowModal, setIsShowModal, modalTitle, height, widt
 
   // <----- 모달창 닫기 ----->
   useEffect(() => {
+    if (close) return;
     // 이벤트 리스너 추가
     document.addEventListener('keydown', handleEscape);
     document.addEventListener('mousedown', handleClickOutside);
