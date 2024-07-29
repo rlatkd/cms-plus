@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class ProductQuantityValidator implements ConstraintValidator<ProductQuantity, Integer> {
 
-    private static final int MAX_PRODUCT_QUANTITY = 100000000; // 1억
+    private static final int MAX_PRODUCT_QUANTITY = 10; // 1억
 
     @Override
     public void initialize(ProductQuantity constraintAnnotation) {
@@ -13,6 +13,9 @@ public class ProductQuantityValidator implements ConstraintValidator<ProductQuan
 
     @Override
     public boolean isValid(Integer productQuantity, ConstraintValidatorContext context) {
+        if (productQuantity == null) {
+            return true;
+        }
         return productQuantity <= MAX_PRODUCT_QUANTITY;
     }
 }

@@ -9,6 +9,7 @@ const fieldToName = {
 // type : 4가지(default, width, success, error), "" = defalut
 // title : alert제목 , "" = 효성 CMS#
 // 사용법 => const onAlert = useAlert(); 정의
+
 const useAlert = () => {
   const { alert: alertComp } = useContext(AlertContext);
 

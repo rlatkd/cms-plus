@@ -125,6 +125,9 @@ const BillingRegisterPage = () => {
 
   const handleProductAdd = newProduct => {
     if (!newProduct) return;
+    if (billingData.products.length === 10) {
+      alert('청구는 최대 10 개의 상품을 지녀야합니다.');
+    }
     setBillingData(prev => ({
       ...prev,
       products: [...prev.products, { ...newProduct, quantity: 1 }],

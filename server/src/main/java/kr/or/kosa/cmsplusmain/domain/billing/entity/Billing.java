@@ -43,8 +43,9 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Billing extends BaseEntity {
 
-	// 최소 청구상품 개수
+	// 최소, 최대 청구상품 개수
 	public static final int MIN_BILLING_PRODUCT_NUMBER = 1;
+	public static final int MAX_BILLING_PRODUCT_NUMBER = 9;
 
 	@Id
 	@Column(name = "billing_id")
@@ -147,9 +148,9 @@ public class Billing extends BaseEntity {
 	}
 
 	/**
-	* 청구서명
-	* @return "YYYY년 MM월 청구서" (결제일 기준)
-	* */
+	 * 청구서명
+	 * @return "YYYY년 MM월 청구서" (결제일 기준)
+	 * */
 	public String getInvoiceName() {
 		String year = Integer.toString(billingDate.getYear());
 		String month = Integer.toString(billingDate.getMonthValue());
@@ -171,9 +172,9 @@ public class Billing extends BaseEntity {
 	}
 
 	/**
-	* 청구서 발송 완료
+	 * 청구서 발송 완료
 	 * @throws InvalidBillingStatusException 청구서 발송 불가능인경우
-	* */
+	 * */
 	public void setInvoiceSent() {
 		BillingState.Field.SEND_INVOICE.validateState(this);
 		billingStatus = BillingStatus.WAITING_PAYMENT;

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ProductSelectField2 } from '@/components/common/selects/ProductSelectField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import InputWeb from '@/components/common/inputs/InputWeb';
 
 const BillingDetailProduct = ({ billingProducts, products, editable, onChange, billingId }) => {
   const [localBillingProducts, setLocalBillingProducts] = useState(billingProducts);
-  const [editingState, setEditingState] = useState({});
 
   useEffect(() => {
     setLocalBillingProducts(billingProducts);
@@ -23,13 +23,16 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
       price: option.value.price,
       quantity: option.value.quantity || 1,
     }));
+    if (newBillingProducts.length > 10) {
+      alert('청구는 최대 10 개의 상품을 지녀야합니다.');
+    }
     setLocalBillingProducts(newBillingProducts);
     onChange(newBillingProducts);
   };
 
-  const handleInputChange = (idx, field, value) => {
+  const handleProductChange = (idx, field, value) => {
     const newBillingProducts = [...localBillingProducts];
-    newBillingProducts[idx][field] = parseInt(value, 10);
+    newBillingProducts[idx][field] = value;
     setLocalBillingProducts(newBillingProducts);
     onChange(newBillingProducts);
   };
@@ -46,33 +49,36 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
     onChange(newBillingProducts);
   };
 
-  const handleEditClick = (idx, field) => {
-    if (editable) {
-      setEditingState(prev => ({ ...prev, [idx]: { ...prev[idx], [field]: true } }));
+  const handleInputChange = (idx, field, value) => {
+    if (field === 'price' && value && value.length >= 8) {
+      alert('상품 가격은 최대 100만원입니다.');
+      return;
+    } else if (field === 'quantity' && value && value.length >= 2) {
+      alert('상품 수량은 최대 10개입니다.');
+      return;
     }
-  };
-
-  const handleBlur = (idx, field) => {
-    setEditingState(prev => ({ ...prev, [idx]: { ...prev[idx], [field]: false } }));
+    const numericValue = value.replace(/\D/g, '') || '';
+    handleProductChange(idx, field, numericValue);
   };
 
   const renderEditableField = (item, idx, field) => {
-    const isEditing = editable && editingState[idx]?.[field];
     const value = item[field];
 
-    return isEditing ? (
-      <input
-        type='number'
-        value={value}
-        onChange={e => handleInputChange(idx, field, e.target.value)}
-        onBlur={() => handleBlur(idx, field)}
-        className='text-center w-3/4 p-4 focus:border-mint focus:outline-none 
+    return editable ? (
+      <InputWeb
+        id={field}
+        type='text'
+        placeholder={`${field === 'price' ? '가격' : '수량'}`}
+        required
+        classInput='text-center p-4 w-1/12 focus:border-mint focus:outline-none 
                     focus:ring-mint focus:ring-1 rounded-lg'
-        autoFocus
+        value={value.toLocaleString()}
+        onChange={e => handleInputChange(idx, field, e.target.value)}
+        autoComplete='off'
+        maxLength={field === 'price' ? 8 : 3}
       />
     ) : (
       <div
-        onClick={() => handleEditClick(idx, field)}
         className={`${editable ? 'cursor-pointer border rounded-lg focus:border-mint focus:outline-none focus:ring-mint focus:ring-1' : ''} p-4 w-3/4 text-center`}>
         {`${value.toLocaleString()}${field === 'price' ? '원' : '개'}`}
       </div>
@@ -131,12 +137,8 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
             {localBillingProducts.map((product, idx) => (
               <tr key={product.productId} className='border-b'>
                 <td className='p-2'>{product.name}</td>
-                <td className='p-2' onClick={() => handleEditClick(idx, 'price')}>
-                  {renderEditableField(product, idx, 'price')}
-                </td>
-                <td className='p-2' onClick={() => handleEditClick(idx, 'quantity')}>
-                  {renderEditableField(product, idx, 'quantity')}
-                </td>
+                <td className='p-2'>{renderEditableField(product, idx, 'price')}</td>
+                <td className='p-2'>{renderEditableField(product, idx, 'quantity')}</td>
                 <td className='p-2'>{(product.price * product.quantity).toLocaleString()}원</td>
                 {editable && (
                   <td className='p-2'>

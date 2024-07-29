@@ -22,6 +22,7 @@ const BillingDetailBilling = ({
   };
 
   const makeStatusText = billingData => {
+    if (!billingData) return;
     const { billingStatus, createdDateTime, invoiceSendDateTime, paidDateTime } = billingData;
     switch (billingStatus.code) {
       case 'CREATED':
