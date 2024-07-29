@@ -8,7 +8,6 @@ import useAlert from '@/hooks/useAlert';
 import useConfirm from '@/hooks/useConfirm';
 
 const MemDetailBasicInfo = ({ memberData }) => {
-  const { basicInfo } = useMemberBasicStore();
   const navigate = useNavigate();
   const onAlert = useAlert();
   const onConfirm = useConfirm();
@@ -49,10 +48,14 @@ const MemDetailBasicInfo = ({ memberData }) => {
 
       let confirmMessage =
         contractCount === 0 && billingCount === 0
-          ? `"${basicInfo.memberName}"님을 삭제 하시겠습니까?`
-          : `${contractCount}건의 계약과 ${billingCount}건의 청구가 함께 삭제됩니다. "${basicInfo.memberName}"님을 삭제 하시겠습니까?`;
+          ? `"${memberData.memberName}"님을 삭제 하시겠습니까?`
+          : `${contractCount}건의 계약과 ${billingCount}건의 청구가 함께 삭제됩니다. "${memberData.memberName}"님을 삭제 하시겠습니까?`;
 
-      const isDelete = await onConfirm(confirmMessage, 'warning', '회원 삭제 확인');
+      const isDelete = await onConfirm({
+        msg: confirmMessage,
+        type: 'warning',
+        title: '회원 삭제 확인',
+      });
       if (isDelete) {
         axiosDeleteMember();
       }
@@ -67,7 +70,7 @@ const MemDetailBasicInfo = ({ memberData }) => {
       const res = await deleteMember(memberId);
       console.log('!----회원 삭제 성공----!'); // 삭제예정
       onAlert({
-        msg: `"${basicInfo.memberName}"님의 정보가 삭제되었습니다!`,
+        msg: `"${memberData.memberName}"님의 정보가 삭제되었습니다!`,
         type: 'success',
         title: '삭제 성공',
       });

@@ -12,7 +12,7 @@ import useConfirm from '@/hooks/useConfirm';
 const Header = () => {
   const { pathname } = useLocation();
   const { vendorInfo } = useVendorInfoStore();
-  const confirm = useConfirm();
+  const onConfirm = useConfirm();
   const mainRef = useRef(null);
   const [time, setTime] = useState(() => JSON.parse(localStorage.getItem('time')) || 3600);
 
@@ -24,11 +24,11 @@ const Header = () => {
   // <----- 로그인 연장(refresh 토큰 재발급) API ----->
   const axiosExtendLogin = async () => {
     try {
-      const isExtendLogin = await confirm(
-        '로그인 연장 시 로그인 시간이 60분으로 늘어납니다!',
-        'warning',
-        '로그인 연장 하시겠습니까?'
-      );
+      const isExtendLogin = onConfirm({
+        msg: `로그인 연장 시 로그인 시간이 60분으로 늘어납니다!`,
+        type: 'warning',
+        title: '로그인을 연장 하시겠습니까?',
+      });
       if (!isExtendLogin) return;
 
       const res = await postRefreshToken();

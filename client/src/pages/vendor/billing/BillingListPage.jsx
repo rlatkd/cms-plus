@@ -125,7 +125,7 @@ const BillingListPage = () => {
   // 실시간 결제
   const handleRealtimePay = async () => {
     if (!selectedBillings || selectedBillings.length === 0) {
-      onAlert('선택된 청구가 없습니다!');
+      onAlert({ msg: '선택된 청구가 없습니다.', type: 'default' });
       return;
     }
 
@@ -147,10 +147,10 @@ const BillingListPage = () => {
     if (errors.length !== 0) {
       setPayErrors(errors);
       setIsShowPayErrorModal(true);
-    }
+    } 
     // 실패항목이 없는 경우
     else {
-      onAlert(`${selectedBillings.length}개의 청구 결제를 성공했습니다.`);
+      onAlert({ msg: `${selectedBillings.length}개의 청구 결제를 성공했습니다.`, type: 'success' });
       axiosBillingList();
     }
   };
@@ -158,7 +158,7 @@ const BillingListPage = () => {
   // 청구서 발송
   const handleInvoiceSend = async () => {
     if (!selectedBillings || selectedBillings.length === 0) {
-      onAlert(`선택된 청구가 없습니다.`);
+      onAlert({ msg: '선택된 청구가 없습니다.', type: 'error' });
       return;
     }
 
@@ -181,7 +181,10 @@ const BillingListPage = () => {
       setInvoiceErrors(errors);
       setIsShowInvoiceErrorModal(true);
     } else {
-      onAlert(`${selectedBillings.length}개의 청구서 발송을 성공했습니다.`);
+      onAlert({
+        msg: `${selectedBillings.length}개의 청구서 발송을 성공했습니다.`,
+        type: 'success',
+      });
       axiosBillingList();
     }
   };

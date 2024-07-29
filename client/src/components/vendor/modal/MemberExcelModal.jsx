@@ -32,7 +32,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => 
 
   const handleFileChange = e => {
     if (e.target.files[0].size > 3000000) {
-      alert('최대 3mb 까지 업로드 가능합니다!');
+      onAlert({ msg: '최대 3mb 까지 업로드 가능합니다!', type: 'error' });
       return;
     }
     setFile(e.target.files[0]);
@@ -69,19 +69,21 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => 
       if (errors.data.length > 0) {
         setData(errors.data.map(e => e.notSaved));
         setErrors(errors.data.map(e => e.message));
-        onAlert(
-          `총: ${data.length} 성공: ${data.length - errors.data.length} 실패: ${errors.data.length}`
-        );
+        onAlert({
+          msg: `총: ${data.length} 성공: ${data.length - errors.data.length} 실패: ${errors.data.length}`,
+          type: 'success',
+        });
         return;
       }
 
-      alert('회원 정보가 모두 성공적으로 등록되었습니다.');
+      alert();
+      onAlert({ msg: '회원 정보가 모두 성공적으로 등록되었습니다.', type: 'success' });
       setData([]);
       setErrors([]);
       setIsShowModal(false);
     } catch (error) {
       console.error('Error submitting data:', error);
-      onAlert('회원 정보 등록 중 오류가 발생했습니다.');
+      onAlert({ msg: '회원 정보 등록 중 오류가 발생했습니다.', type: 'error' });
     } finally {
       setIsLoading(false);
     }
