@@ -109,7 +109,6 @@ public class Contract extends BaseEntity {
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	@Builder.Default
-	@BatchSize(size = 10)	// 계약 상품은 각 계약 별 최대 10개이다.
 	private Set<ContractProduct> contractProducts = new HashSet<>();
 
 	/* 계약한 청구 목록 */

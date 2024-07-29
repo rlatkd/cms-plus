@@ -103,7 +103,6 @@ public class Billing extends BaseEntity {
 	// 동일 상품 추가 안됨
 	@OneToMany(mappedBy = "billing", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
-	@BatchSize(size = 10)	// 청구 상품은 각 청구 별 최대 10개이다.
 	private Set<BillingProduct> billingProducts = new HashSet<>();
 
 	public Billing(Contract contract, BillingType billingType, LocalDate billingDate, int contractDay, List<BillingProduct> billingProducts) {
