@@ -8,9 +8,9 @@ public class LogbackFilter extends Filter<ILoggingEvent> {
 
     @Override
     public FilterReply decide(ILoggingEvent event) {
-        if (event.getMessage().contains("kafka")) {
+        if (event.getLoggerName() != null && event.getLoggerName().toLowerCase().contains("kafka")) {
             return FilterReply.DENY;
-        }else{
+        } else {
             return FilterReply.ACCEPT;
         }
     }
