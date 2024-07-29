@@ -7,7 +7,7 @@ import { useState } from 'react';
 const typeOtions = [
   { value: 'memberName', label: '회원명' },
   { value: 'contractDay', label: '약정일' },
-  { value: 'contractProducts', label: '상품명' },
+  { value: 'productName', label: '상품명' },
   { value: 'contractPrice', label: '계약금액' },
 ];
 
