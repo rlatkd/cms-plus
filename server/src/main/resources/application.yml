@@ -48,3 +48,6 @@ kafkaGroup:
 kafkaTopic:
   messagingTopic: ${MESSAGING_TOPIC}
   paymentTopic: ${PAYMENT_TOPIC}
+
+host:
+  front: ${FRONT_HOST}

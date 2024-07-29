@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,18 @@ import kr.or.kosa.cmsplusmain.domain.billing.repository.V2BillingRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.exception.ContractNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.V2ContractRepository;
+import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CMSMethodRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
+import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
+import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,6 +50,15 @@ public class V2BillingService {
 	private final V2BillingProductRepository billingProductRepository;
 	private final V2ContractRepository contractRepository;
 
+	private final PaymentService paymentService;
+
+	@Value("host.front")
+	private String FRONT_HOST_URL;
+
+	/**
+	 * 청구생성 |
+	 * 2 + n 쿼리 발생 | 계약 존재여부, 청구 생성, 청구상품 생성 * n
+	 * */
 	@Transactional
 	public void createBilling(Long vendorId, BillingCreateReq billingCreateReq) {
 		if (!contractRepository.existsContractByVendorId(vendorId, billingCreateReq.getContractId())) {
@@ -145,6 +167,148 @@ public class V2BillingService {
 
 		// 없어진 청구상품 삭제
 		billingProductRepository.deleteAllById(toRemoveIds);
+	}
+
+	/**
+	 * 청구 삭제 | 연관된 청구상품도 동시에 삭제된다.
+	 * 5회 쿼리 발생 | 청구존재여부, 청구 조회, 청구상품 조회, 청구삭제, 청구상품 삭제
+	 * */
+	@Transactional
+	public void deleteBilling(Long vendorId, Long billingId) {
+		validateBillingOwner(billingId, vendorId);
+		Billing billing = billingRepository.findById(billingId);
+		BillingState.Field.DELETE.validateState(billing);
+
+		List<Long> billingProductIds = billing.getBillingProducts().stream()
+			.mapToLong(BillingProduct::getId)
+			.boxed().toList();
+
+		// 청구 상품은 bulk update 한 쿼리 내에서 삭제처리
+		billing.deleteWithoutProducts();
+		billingProductRepository.deleteAllById(billingProductIds);
+	}
+
+	/**
+	 * 청구서 발송
+	 * 3회 쿼리발생 | 존재여부, 청구조회, 청구상태수정
+	 * */
+	@Transactional
+	public void sendInvoice(Long vendorId, Long billingId) {
+		validateBillingOwner(billingId, vendorId);
+		Billing billing = billingRepository.findById(billingId);
+		BillingState.Field.SEND_INVOICE.validateState(billing);
+
+		Contract contract = billing.getContract();
+		Member member = contract.getMember();
+
+		String invoiceMessage = createInvoiceMessage(billing, member);
+		sendInvoiceMessage(invoiceMessage, member);
+
+		billing.setInvoiceSent();
+	}
+
+	/**
+	 * 회원이 받을 청구서 링크 문자(이메일) 내용 생성.
+	 * */
+	private String createInvoiceMessage(Billing billing, Member member) {
+		String memberName = member.getName();
+		String invoiceName = billing.getInvoiceName();
+		String billingPrice = FormatUtil.formatMoney(billing.getBillingPrice());
+		String billingDate = billing.getBillingDate().toString();
+
+		String url = FRONT_HOST_URL + "/member/invoice/" + billing.getId();
+		return
+			"""
+			%s님의 청구서가 도착했습니다.
+			
+			- 청구서명: %s
+			- 납부할금액: %s원
+			- 납부 기한: %s
+			
+			납부하기: %s
+			""".formatted(memberName, invoiceName, billingPrice, billingDate, url)
+			.trim();
+	}
+
+	/**
+	 * 문자 발송 이벤트 카프카 전송
+	 * */
+	private void sendInvoiceMessage(String message, Member member) {
+		//청구서 링크 발송
+		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
+
+		switch (sendMethod) {
+			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+				// kafkaMessagingService.produceMessaging(smsMessageDto);
+			}
+			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+				// kafkaMessagingService.produceMessaging(emailMessageDto);
+			}
+		}
+	}
+
+	/**
+	 * 청구서 발송 취소
+	 * 3회 쿼리 | 존재여부, 청구조회, 청구상태수정
+	 * */
+	@Transactional
+	public void cancelInvoice(Long vendorId, Long billingId) {
+		validateBillingOwner(billingId, vendorId);
+		Billing billing = billingRepository.findById(billingId);
+		BillingState.Field.CANCEL_INVOICE.validateState(billing);
+
+		billing.setInvoiceCancelled();
+	}
+
+	/**
+	 * 청구 실시간 결제
+	 * 3회 쿼리 | 존재여부, 청구조회, 청구상태수정
+	 * */
+	@Transactional
+	public void payRealTimeBilling(Long vendorId, Long billingId) {
+		validateBillingOwner(billingId, vendorId);
+		Billing billing = billingRepository.findById(billingId);
+		BillingState.Field.PAY_REALTIME.validateState(billing);
+
+		sendPayRealtimeEvent(billing);
+		billing.setPaid();
+	}
+
+	private void sendPayRealtimeEvent(Billing billing) {
+		Long billingId = billing.getId();
+
+		// TODO 반정규화 필요성 검토
+		Contract contract = billing.getContract();
+		Member member = contract.getMember();
+		Payment payment = contract.getPayment();
+		PaymentMethod method = payment.getPaymentMethod();
+
+		switch (method) {
+			case CARD -> {
+				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfo(payment);
+				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(), cardMethodRes.getCardNumber());
+				// kafkaPaymentService.producePayment(cardPaymentDto);
+			}
+			case CMS -> {
+				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfo(payment);
+				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(), cmsMethodRes.getAccountNumber());
+				// kafkaPaymentService.producePayment(accountPaymentDto);
+			}
+
+		}
+	}
+
+	/**
+	 * 청구 실시간 결제 취소
+	 * 3회 쿼리 | 존재여부, 청구조회, 청구상태수정
+	 * */
+	@Transactional
+	public void cancelPayBilling(Long vendorId, Long billingId) {
+		validateBillingOwner(billingId, vendorId);
+		Billing billing = billingRepository.findById(billingId);
+		BillingState.Field.CANCEL_PAYMENT.validateState(billing);
+
+		billing.setPayCanceled();
 	}
 
 	/**
