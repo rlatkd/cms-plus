@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class CardNumberValidator implements ConstraintValidator<CardNumber, String> {
 
 	private static final Pattern CARDNUMBER_PATTERN = Pattern.compile(
-		"^4[0-9]{12}[0-9]{3}$"
+		"^\\d{16}$\n"
 	);
 
 	@Override

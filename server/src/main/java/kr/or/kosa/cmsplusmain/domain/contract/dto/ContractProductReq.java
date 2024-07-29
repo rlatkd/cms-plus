@@ -15,11 +15,15 @@ import lombok.ToString;
 @Builder
 @ToString
 public class ContractProductReq {
-	@NotNull
+	@NotNull(message = "상품 정보가 필요합니다")
 	private Long productId;				// 상품 ID
-	@ProductPrice @NotNull
+
+	@ProductPrice
+	@NotNull(message = "상품 가격이 설정되지 않았습니다")
 	private Integer price;				// 계약 상품 가격
-	@ProductQuantity @NotNull
+
+	@ProductQuantity
+	@NotNull(message = "상품 수량이 설정되지 않았습니다")
 	private Integer quantity;			// 계약 상품 수량
 
     public ContractProduct toEntity(String name) {
