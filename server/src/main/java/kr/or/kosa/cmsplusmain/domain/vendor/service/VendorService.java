@@ -2,18 +2,24 @@ package kr.or.kosa.cmsplusmain.domain.vendor.service;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.or.kosa.cmsplusmain.domain.base.RandomNumberGenerator;
 import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
@@ -23,31 +29,23 @@ import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.EmailIdFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.IdFindRes;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.Identifier.SmsIdFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
+import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.authenticationNumber.NumberReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.EmailPwFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwFindReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.PwResetReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.password.SmsPwFindReq;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import kr.or.kosa.cmsplusmain.domain.vendor.exception.VendorEmailDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.vendor.exception.VendorPhoneDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.vendor.exception.VendorUsernameDuplicationException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.RefreshTokenRes;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.SignupReq;
-import kr.or.kosa.cmsplusmain.domain.vendor.entity.UserRole;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -60,7 +58,7 @@ public class VendorService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
-	private final KafkaMessagingService kafkaMessagingService;
+	// private final KafkaMessagingService kafkaMessagingService;
 
 	@Transactional
 	public void join(SignupReq signupReq) {
@@ -308,7 +306,7 @@ public class VendorService {
 			messageDto = new EmailMessageDto(messageText, numberReq.getMethodInfo());
 			System.out.println("[이메일메세지]" + messageDto.toString());
 		}
-		kafkaMessagingService.produceMessaging(messageDto);
+		// kafkaMessagingService.produceMessaging(messageDto);
 
 		// Redis에서 저장된 값 확인
 		String storedValue = redisTemplate.opsForValue().get(key);

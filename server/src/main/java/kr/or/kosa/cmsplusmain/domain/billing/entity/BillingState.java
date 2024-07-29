@@ -38,6 +38,7 @@ public class BillingState {
 		DELETE {
 			@Override
 			public BillingState checkState(Billing billing) {
+				// TODO 청구 삭제 가능하도록 하고 링크를 받은 회원이 알 수 있도록
 				if (billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT) {
 					return new BillingState(DELETE, false,
 						"[%s] 상태에서는 청구 삭제가 불가능합니다".formatted(billing.getBillingStatus().getTitle()));

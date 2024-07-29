@@ -23,7 +23,7 @@
 //import com.fasterxml.jackson.databind.SerializerProvider;
 //import com.fasterxml.jackson.databind.module.SimpleModule;
 //import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEnum;
-//import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+//import kr.or.kosa.cmsplusmain.domain.billing.dto.res.BillingListItemRes;
 //import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 //import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 //import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;

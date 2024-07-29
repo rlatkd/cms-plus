@@ -1,10 +1,13 @@
 package kr.or.kosa.cmsplusmain.domain.contract.repository;
 
-
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
+import static kr.or.kosa.cmsplusmain.domain.payment.entity.type.QPaymentTypeInfo.*;
 
 import java.util.List;
 
-import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -14,17 +17,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractSearchReq;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.extern.slf4j.Slf4j;
-
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.payment;
-import static kr.or.kosa.cmsplusmain.domain.payment.entity.type.QPaymentTypeInfo.paymentTypeInfo;
 
 @Slf4j
 @Repository

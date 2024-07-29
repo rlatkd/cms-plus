@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.contract.dto;
+package kr.or.kosa.cmsplusmain.domain.contract.dto.response;
 
 import java.time.LocalDate;
 import java.util.List;

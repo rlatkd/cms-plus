@@ -1,7 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.contract.controller;
 
-import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,7 +11,11 @@ import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractSearchReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractDetailRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import lombok.RequiredArgsConstructor;
 
@@ -58,6 +60,7 @@ public class ContractController {
 	 * 나오는 수정 화면에서 호출해서 정보를 수정한다.
 	 * 즉, 계약과 결제 수정에 사용된다.
 	 * */
+	@Deprecated
 	@PutMapping("/{contractId}")
 	public void updateContract(@VendorId Long vendorId, @PathVariable Long contractId, @RequestBody @Valid ContractUpdateReq contractUpdateReq) {
 		contractService.updateContract(vendorId, contractId, contractUpdateReq);

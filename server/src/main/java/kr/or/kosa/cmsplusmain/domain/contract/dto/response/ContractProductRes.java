@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.contract.dto;
+package kr.or.kosa.cmsplusmain.domain.contract.dto.response;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
 import lombok.Builder;

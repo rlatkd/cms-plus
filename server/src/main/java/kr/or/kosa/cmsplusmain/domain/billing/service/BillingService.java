@@ -13,14 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.InvoiceRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingCreateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingProductReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingDetailRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingProductRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.InvoiceRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
@@ -35,8 +35,6 @@ import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
-import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CMSMethodRes;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;
@@ -58,8 +56,8 @@ public class BillingService {
 	private final BillingCustomRepository billingCustomRepository;
 	private final BillingProductRepository billingProductRepository;
 	private final ContractCustomRepository contractCustomRepository;
-	private final KafkaMessagingService kafkaMessagingService;
-	private final KafkaPaymentService kafkaPaymentService;
+	// private final KafkaMessagingService kafkaMessagingService;
+	// private final KafkaPaymentService kafkaPaymentService;
 	private final PaymentService paymentService;
 
 	// 청구서 URL(청구 ID), 청구서 메시지 내용
@@ -114,9 +112,11 @@ public class BillingService {
 
 		 switch (sendMethod) {
 		 	case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
-		 					kafkaMessagingService.produceMessaging(smsMessageDto); }
+		 					// kafkaMessagingService.produceMessaging(smsMessageDto);
+			 }
 		 	case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
-		 					kafkaMessagingService.produceMessaging(emailMessageDto); }
+		 					// kafkaMessagingService.produceMessaging(emailMessageDto);
+			 }
 		 }
 	}
 
@@ -148,12 +148,12 @@ public class BillingService {
 			case CARD -> {
 				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfo(payment);
 				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(), cardMethodRes.getCardNumber());
-				kafkaPaymentService.producePayment(cardPaymentDto);
+				// kafkaPaymentService.producePayment(cardPaymentDto);
 			}
 			case CMS -> {
 				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfo(payment);
 				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(), cmsMethodRes.getAccountNumber());
-				kafkaPaymentService.producePayment(accountPaymentDto);
+				// kafkaPaymentService.producePayment(accountPaymentDto);
 			}
 
 		}

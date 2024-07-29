@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingProductReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingCreateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingProductReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingDetailRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;

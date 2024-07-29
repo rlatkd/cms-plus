@@ -20,12 +20,10 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
-import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
-import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.repository.V2BaseRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.QV2ContractListItemRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.V2ContractListItemRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractSearchReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.QV2ContractListItemRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.V2ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,6 +70,7 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 			.where(
 				contractVendorIdEq(vendorId),
 				contractStatusEq(search.getContractStatus()),
+				contractDayEq(search.getContractDay()),
 				memberNameContains(search.getMemberName()),
 				memberPhoneContains(search.getMemberPhone()),
 				paymentTypeEq(search.getPaymentType()),
@@ -144,6 +143,11 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 			return pageReq.isAsc() ? expression.asc() : expression.desc();
 		}
 
-		throw new BusinessException("잘못된 정렬조건입니다", ErrorCode.INVALID_INPUT_VALUE);
+		if (orderBy.equals("memberName")) {
+			StringExpression expression = member.name;
+			return pageReq.isAsc() ? expression.asc() : expression.desc();
+		}
+
+		return contract.createdDateTime.desc();
 	}
 }

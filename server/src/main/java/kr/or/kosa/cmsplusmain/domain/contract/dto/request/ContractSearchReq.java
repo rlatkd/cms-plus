@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.contract.dto;
+package kr.or.kosa.cmsplusmain.domain.contract.dto.request;
 
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;

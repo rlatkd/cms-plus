@@ -15,7 +15,7 @@
 //import java.util.Random;
 //
 //import com.fasterxml.jackson.databind.SerializationFeature;
-//import kr.or.kosa.cmsplusmain.domain.contract.dto.MemberContractListItemRes;
+//import kr.or.kosa.cmsplusmain.domain.contract.dto.response.MemberContractListItemRes;
 //import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 //import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 //import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoReq;

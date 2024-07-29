@@ -1,9 +1,8 @@
-package kr.or.kosa.cmsplusmain.domain.contract.dto;
+package kr.or.kosa.cmsplusmain.domain.contract.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductPrice;
 import kr.or.kosa.cmsplusmain.domain.product.validator.ProductQuantity;

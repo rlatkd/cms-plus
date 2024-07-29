@@ -9,7 +9,6 @@ import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import java.time.LocalDate;
 import java.util.List;
 
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -22,8 +21,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.QBillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;

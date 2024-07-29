@@ -14,7 +14,7 @@
 //import jakarta.persistence.EntityManager;
 //import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 //import kr.or.kosa.cmsplusmain.domain.base.dto.SortPageDto;
-//import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
+//import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractSearchReq;
 //import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 //
 //@SpringBootTest

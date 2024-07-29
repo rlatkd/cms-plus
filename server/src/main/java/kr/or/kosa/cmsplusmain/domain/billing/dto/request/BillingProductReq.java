@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.billing.dto;
+package kr.or.kosa.cmsplusmain.domain.billing.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;

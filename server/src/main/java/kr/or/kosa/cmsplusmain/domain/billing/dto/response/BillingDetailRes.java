@@ -1,7 +1,8 @@
-package kr.or.kosa.cmsplusmain.domain.billing.dto;
+package kr.or.kosa.cmsplusmain.domain.billing.dto.response;
 
 import java.util.Map;
 
+import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDto;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;

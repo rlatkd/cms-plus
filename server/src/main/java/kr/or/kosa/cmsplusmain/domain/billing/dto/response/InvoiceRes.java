@@ -1,12 +1,9 @@
-package kr.or.kosa.cmsplusmain.domain.billing.dto;
+package kr.or.kosa.cmsplusmain.domain.billing.dto.response;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
-import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
-import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
 import lombok.Builder;
 import lombok.Getter;
 

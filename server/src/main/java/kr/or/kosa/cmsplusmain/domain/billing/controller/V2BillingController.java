@@ -12,11 +12,11 @@ import jakarta.validation.Valid;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingCreateReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDetailRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingCreateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingUpdateReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingDetailRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.service.V2BillingService;
 import lombok.RequiredArgsConstructor;
 

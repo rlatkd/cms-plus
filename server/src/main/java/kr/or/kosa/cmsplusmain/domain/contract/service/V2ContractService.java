@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.V2BillingRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.V2ContractListItemRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractSearchReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractProductRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.V2ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.exception.ContractNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.V2ContractProductRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.V2ContractRepository;

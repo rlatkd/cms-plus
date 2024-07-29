@@ -1,14 +1,14 @@
 package kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto;
 
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractCreateReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductReq;
-import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractCreateReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractProductReq;
+import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder

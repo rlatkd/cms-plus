@@ -1,10 +1,10 @@
-package kr.or.kosa.cmsplusmain.domain.contract.dto;
+package kr.or.kosa.cmsplusmain.domain.contract.dto.request;
+
+import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class ContractUpdateReq {

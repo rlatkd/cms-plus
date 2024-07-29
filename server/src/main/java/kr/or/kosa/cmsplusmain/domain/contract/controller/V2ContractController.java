@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractProductRes;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractSearchReq;
-import kr.or.kosa.cmsplusmain.domain.contract.dto.V2ContractListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractSearchReq;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractProductRes;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.V2ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.service.V2ContractService;
 import lombok.RequiredArgsConstructor;
 
@@ -50,7 +50,7 @@ public class V2ContractController {
 	}
 
 	/**
-	 * 계약 상세 조회 - 청구 목록
+	 * 계약 상세 조회 - 청구 상품 목록
 	 * */
 	@GetMapping("/{contractId}/product")
 	public List<ContractProductRes> getBillingListByContract(@VendorId Long vendorId, @PathVariable Long contractId) {

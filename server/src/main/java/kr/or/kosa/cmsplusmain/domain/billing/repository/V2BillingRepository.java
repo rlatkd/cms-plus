@@ -21,12 +21,10 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
-import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
-import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.repository.V2BaseRepository;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingSearchReq;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.QBillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.QBillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 
 @Repository
@@ -172,6 +170,6 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 			return pageReq.isAsc() ? expression.asc() : expression.desc();
 		}
 
-		throw new BusinessException("잘못된 정렬조건입니다", ErrorCode.INVALID_INPUT_VALUE);
+		return billing.createdDateTime.desc();
 	}
 }
