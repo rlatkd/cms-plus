@@ -2,19 +2,13 @@ server:
   port: 8100
 
 spring:
-
+  profiles:
+    active: dev
   application:
     name: cmsplus-batch
-
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${MYSQL_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: false
