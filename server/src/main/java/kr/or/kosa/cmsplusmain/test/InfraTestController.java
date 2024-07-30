@@ -11,7 +11,7 @@ public class InfraTestController {
     @GetMapping("/infra-test")
     public String infraTest() {
         log.error("infraTest");
-        return "infra-test v0729-3";
+        return "infra-test v0730-1";
     }
 
 }

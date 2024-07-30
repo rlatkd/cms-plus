@@ -15,6 +15,15 @@ const Table = ({
 }) => {
   const [selection, setSelection] = useState([]);
   const itemKey = cols[0].key;
+  const [searchConditions, setSearchConditions] = useState({});
+
+  const handleSearchChange = (key, value) => {
+    setSearchConditions(prev => ({
+      ...prev,
+      [key]: value,
+    }));
+    handleChangeSearch(key, value);
+  };
 
   // <----- 체크박스 하나 선택 ----->
   const handleClickCheckBox = value => {
@@ -55,7 +64,7 @@ const Table = ({
         {search && (
           <TableSearch
             search={search}
-            handleChangeSearch={handleChangeSearch}
+            handleChangeSearch={handleSearchChange}
             handleClickSearch={handleClickSearch}
           />
         )}
@@ -70,7 +79,8 @@ const Table = ({
               itemKey={itemKey}
               selection={selection}
               handleClickCheckBox={handleClickCheckBox}
-              onRowClick={onRowClick} // onRowClick 이벤트 전달
+              onRowClick={onRowClick}
+              searchConditions={searchConditions} // 검색 조건 객체 전달
             />
           ))}
       </tbody>

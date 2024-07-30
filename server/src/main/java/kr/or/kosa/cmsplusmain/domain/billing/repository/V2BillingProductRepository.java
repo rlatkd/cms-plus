@@ -18,4 +18,10 @@ public class V2BillingProductRepository extends V2BaseRepository<BillingProduct,
 			.set(billingProduct.deleted, true)
 			.execute();
 	}
+
+	public List<BillingProduct> findAllByBillingId(Long billingId) {
+		return selectFrom(billingProduct)
+			.where(billingProduct.billing.id.eq(billingId))
+			.fetch();
+	}
 }

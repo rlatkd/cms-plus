@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusbatch.domain.kafka;
+package kr.or.kosa.cmsplusbatch.batch;
 
 import kr.or.kosa.cmsplusbatch.domain.base.entity.BaseEnum;
 import lombok.Getter;

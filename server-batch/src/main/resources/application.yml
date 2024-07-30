@@ -28,11 +28,12 @@ spring:
     init:
       mode: always
 
+kafkaServer:
+  ip: ${KAFKASERVER_IP}
 
-exchange:
-  authKey: EXCHANGE_AUTHKEY
-  data: EXCHANGE_DATA
+kafkaTopic:
+  messagingTopic: ${MESSAGING_TOPIC}
 
-logging:
-  level:
-    sql: debug
+#logging:
+#  level:
+#    sql: debug

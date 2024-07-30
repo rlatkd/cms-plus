@@ -7,7 +7,7 @@ import java.util.List;
 import jakarta.persistence.*;
 import kr.or.kosa.cmsplusbatch.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusbatch.domain.contract.entity.Contract;
-import kr.or.kosa.cmsplusbatch.domain.kafka.MessageSendMethod;
+import kr.or.kosa.cmsplusbatch.batch.MessageSendMethod;
 import kr.or.kosa.cmsplusbatch.domain.vendor.entity.Vendor;
 
 import lombok.*;

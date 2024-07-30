@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ContractName {
-	String message() default "Invalid contract name";
+	String message() default "유효하지 않은 계약명";
 
 	Class<?>[] groups() default {};
 

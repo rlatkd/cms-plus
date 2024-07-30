@@ -2,9 +2,11 @@ package kr.or.kosa.cmsplusmain.domain.contract.entity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -23,6 +25,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Day;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.contract.exception.EmptyContractProductException;
 import kr.or.kosa.cmsplusmain.domain.contract.validator.ContractName;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -45,7 +48,8 @@ import lombok.Setter;
 public class Contract extends BaseEntity {
 
 	// 최소 계약상품 수
-	private static final int MIN_CONTRACT_PRODUCT_NUMBER = 1;
+	public static final int MIN_CONTRACT_PRODUCT_NUMBER = 1;
+	public static final int MAX_CONTRACT_PRODUCT_NUMBER = 9;
 
 	@Id
 	@Column(name = "contract_id")
@@ -100,10 +104,12 @@ public class Contract extends BaseEntity {
 	private ContractStatus contractStatus = ContractStatus.ENABLED;
 
 	/* 계약한 상품 목록 */
+	// 계약 상품은 상품 ID 별로 하나만 존재할 수 있다.
+	// 동일 상품 추가 안됨
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	@Builder.Default
-	private List<ContractProduct> contractProducts = new ArrayList<>();
+	private Set<ContractProduct> contractProducts = new HashSet<>();
 
 	/* 계약한 청구 목록 */
 	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)
@@ -111,7 +117,7 @@ public class Contract extends BaseEntity {
 	@Builder.Default
 	private List<Billing> billings = new ArrayList<>();
 
-	/*
+	/**
 	 * 계약 상품 추가
 	 * */
 	public void addContractProduct(ContractProduct contractProduct) {
@@ -119,7 +125,7 @@ public class Contract extends BaseEntity {
 		contractProduct.setContract(this);
 	}
 
-	/*
+	/**
 	 * 계약 상품 삭제
 	 * */
 	public void removeContractProduct(ContractProduct contractProduct) {
@@ -131,7 +137,7 @@ public class Contract extends BaseEntity {
 		contractProducts.remove(contractProduct);
 	}
 
-	/*
+	/**
 	 * 계약금액
 	 * */
 	public Long getContractPrice() {
@@ -140,7 +146,7 @@ public class Contract extends BaseEntity {
 			.sum();
 	}
 
-	/*
+	/**
 	* 계약 삭제
 	* 계약상품도 같이 삭제된다
 	* 청구도 같이 삭제된다
@@ -154,7 +160,7 @@ public class Contract extends BaseEntity {
 		payment.delete();
 	}
 
-	/*
+	/**
 	* 계약 활성화 여부
 	* */
 	public boolean isEnabled() {
@@ -162,7 +168,7 @@ public class Contract extends BaseEntity {
 		return curDate.isBefore(contractEndDate);
 	}
 
-	/*
+	/**
 	 * id만 들고있는 빈 객체
 	 * */
 	public static Contract of(Long contractId) {

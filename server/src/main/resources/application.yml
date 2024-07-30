@@ -16,7 +16,7 @@ spring:
         show_sql: false
         format_sql: true
         highlight_sql: true
-        default_batch_fetch_size: 100
+        default_batch_fetch_size: 10  # 기본 페이지 사이즈는 10이므로 batchsize 10
     open-in-view: false
     defer-datasource-initialization: true
 
@@ -48,3 +48,6 @@ kafkaGroup:
 kafkaTopic:
   messagingTopic: ${MESSAGING_TOPIC}
   paymentTopic: ${PAYMENT_TOPIC}
+
+host:
+  front: ${FRONT_HOST}

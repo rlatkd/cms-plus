@@ -174,7 +174,6 @@ public class Billing extends BaseEntity {
 	 * @throws InvalidBillingStatusException 청구서 발송 불가능인경우
 	* */
 	public void setInvoiceSent() {
-		BillingState.Field.SEND_INVOICE.validateState(this);
 		billingStatus = BillingStatus.WAITING_PAYMENT;
 		invoiceSendDateTime = LocalDateTime.now();
 	}
