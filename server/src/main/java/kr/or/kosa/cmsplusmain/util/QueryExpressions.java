@@ -3,6 +3,7 @@ package kr.or.kosa.cmsplusmain.util;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
 import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
 import static kr.or.kosa.cmsplusmain.domain.payment.entity.QPayment.*;
 import static org.springframework.util.StringUtils.*;
@@ -33,6 +34,12 @@ public class QueryExpressions {
     public static BooleanExpression contractDayEq(Integer contractDay) {
         return (contractDay != null) ? contract.contractDay.eq(contractDay) : null;
     }
+    public static BooleanExpression contractCountLoe(Integer contractCount) {
+        return contractCount != null ? contract.countDistinct().intValue().loe(contractCount) : null;
+    }
+    public static BooleanExpression contractPriceLoe(Long contractPrice) {
+        return contractPrice != null ? contractProduct.price.multiply(contractProduct.quantity).sum().loe(contractPrice) : null;
+    }
 
     /*********** 결제 조건 ************/
     public static BooleanExpression paymentTypeEq(PaymentType paymentType) {
@@ -62,5 +69,11 @@ public class QueryExpressions {
     }
     public static BooleanExpression memberPhoneContains(String memberPhone) {
         return hasText(memberPhone) ? member.phone.containsIgnoreCase(memberPhone) : null;
+    }
+    public static BooleanExpression memberEmailContains(String memberEmail) {
+        return hasText(memberEmail) ? member.phone.containsIgnoreCase(memberEmail) : null;
+    }
+    public static BooleanExpression memberEnrollDateEq(LocalDate memberEnrollDate) {
+        return (memberEnrollDate != null) ? member.enrollDate.eq(memberEnrollDate) : null;
     }
 }

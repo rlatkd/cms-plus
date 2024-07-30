@@ -3,6 +3,7 @@ import Input from '@/components/common/inputs/Input';
 import SelectField from '@/components/common/selects/SelectField';
 import { verifyCMS } from '@/apis/validation';
 import { validateField } from '@/utils/validators';
+import { formatBirthDate } from '@/utils/format/formatBirth'; 
 
 const bankOptions = [
   { value: '', label: '은행을 선택해주세요' },
@@ -61,20 +62,6 @@ const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVeri
     },
     [onInputChange]
   );
-
-  const formatBirthDate = value => {
-    const cleaned = value.replace(/\D/g, '');
-    let formatted = cleaned;
-
-    if (cleaned.length > 4) {
-      formatted = `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`;
-    }
-    if (cleaned.length > 6) {
-      formatted = `${formatted.slice(0, 7)}-${formatted.slice(7)}`;
-    }
-
-    return formatted.slice(0, 10);
-  };
 
   return (
     <div className='flex flex-col bg-white p-1'>

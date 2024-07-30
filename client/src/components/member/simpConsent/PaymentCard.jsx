@@ -1,14 +1,19 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import Input from '@/components/common/inputs/Input';
 import { verifyCard } from '@/apis/validation';
 import { validateField } from '@/utils/validators';
+import { formatCardNumber, unformatCardNumber } from '@/utils/format/formatCard';
+import { formatBirthDate } from '@/utils/format/formatBirth'; 
+import { formatExpiryDate } from '@/utils/format/formatExpiryDate';
 
 const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVerified }) => {
+  const [formattedCardNumber, setFormattedCardNumber] = useState('');
+
   const handleCardVerification = useCallback(async () => {
     try {
       const cardData = {
         paymentMethod: 'CARD',
-        cardNumber: paymentData.cardNumber,
+        cardNumber: unformatCardNumber(paymentData.cardNumber),
         cardOwner: paymentData.cardHolder,
         cardOwnerBirth: paymentData.cardOwnerBirth,
       };
@@ -33,12 +38,13 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
       onInputChange('isVerified', false);
       alert('카드 인증에 실패했습니다. 다시 시도해주세요.');
     }
-  }, [paymentData, onVerificationComplete]);
+  }, [paymentData, onVerificationComplete, onInputChange]);
 
   const handleInputChange = useCallback(
     e => {
       const { name, value } = e.target;
       let formattedValue = value;
+      let storedValue = value;
 
       if (name === 'cardOwnerBirth') {
         formattedValue = formatBirthDate(value);
@@ -55,46 +61,16 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
       } 
       else if (name === 'cardNumber') {
         formattedValue = formatCardNumber(value);
+        storedValue = unformatCardNumber(value);
+        setFormattedCardNumber(formattedValue);
       }
 
+      onInputChange(name, storedValue);
       onInputChange(name, formattedValue);
+      
     },
     [onInputChange]
   );
-
-  const formatBirthDate = value => {
-    const cleaned = value.replace(/\D/g, '');
-    let formatted = cleaned;
-
-    if (cleaned.length > 4) {
-      formatted = `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`;
-    }
-    if (cleaned.length > 6) {
-      formatted = `${formatted.slice(0, 7)}-${formatted.slice(7)}`;
-    }
-
-    return formatted.slice(0, 10);
-  };
-
-  const formatExpiryDate = value => {
-    const cleaned = value.replace(/\D/g, '');
-
-    if (cleaned.length === 0) return '';
-    if (cleaned.length <= 2) return cleaned;
-
-    return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}`;
-  };
-
-  const formatCardNumber = value => {
-    const cleaned = value.replace(/\D/g, '');
-    const chunks = [];
-
-    for (let i = 0; i < cleaned.length; i += 4) {
-      chunks.push(cleaned.slice(i, i + 4));
-    }
-
-    return chunks.join('-').slice(0, 19);
-  };
 
   return (
     <div className='flex flex-col bg-white p-1'>
@@ -105,10 +81,10 @@ const PaymentCard = ({ paymentData, onInputChange, onVerificationComplete, isVer
           type='text'
           required
           placeholder='카드번호 16자리'
-          value={paymentData.cardNumber}
+          value={formattedCardNumber}
           onChange={handleInputChange}
           maxLength={19}
-          isValid={paymentData.cardNumber === '' || validateField('cardNumber', paymentData.cardNumber)}
+          isValid={paymentData.cardNumber === '' || validateField('cardNumber', unformatCardNumber(paymentData.cardNumber))}
           errorMsg='올바른 카드번호를 입력해주세요.'
         />
         <Input

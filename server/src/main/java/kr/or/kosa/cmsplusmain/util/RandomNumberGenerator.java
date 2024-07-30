@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.base;
+package kr.or.kosa.cmsplusmain.util;
 
 import java.util.Random;
 

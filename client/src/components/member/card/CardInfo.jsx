@@ -2,9 +2,10 @@ import { useState } from 'react';
 import Input from '@/components/common/inputs/Input';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { verifyCard } from '@/apis/validation';
-import { formatBirthDate } from '@/utils/format/formatBirth';
 import { validateField } from '@/utils/validators';
-import { formatCardNumber, formatExpiryDate } from '@/utils/format/formatCard';
+import { formatCardNumber, unformatCardNumber } from '@/utils/format/formatCard';
+import { formatBirthDate } from '@/utils/format/formatBirth'; 
+import { formatExpiryDate } from '@/utils/format/formatExpiryDate';
 
 const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
   const selectedCard = useInvoiceStore(state => state.selectedCard);
@@ -19,7 +20,7 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
   
     switch (name) {
       case 'cardNumber':
-        formattedValue = formatCardNumber(value);
+        formattedValue = unformatCardNumber(value);
         break;
       case 'expiryDate':
         prevLength = cardInfo.expiryDate.length;
@@ -38,6 +39,8 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
         break;
     }
 
+    console.log(cardInfo)
+
     setCardInfo(prevState => ({
       ...prevState,
       [name]: formattedValue,
@@ -52,7 +55,7 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
     try {
       const cardData = {
         paymentMethod: 'CARD',
-        cardNumber: cardInfo.cardNumber.replace(/-/g, ''),
+        cardNumber: unformatCardNumber(cardInfo.cardNumber),
         cardOwner: cardInfo.cardOwner,
         cardOwnerBirth: cardInfo.cardOwnerBirth,
       };
@@ -94,11 +97,11 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
             name='cardNumber'
             type='text'
             required
-            placeholder="'-' 없이 숫자만 입력해주세요"
-            value={cardInfo.cardNumber}
+            placeholder="숫자만 입력해주세요"
+            value={formatCardNumber(cardInfo.cardNumber)}
             onChange={handleInputChange}
             maxLength={19}
-            isValid={cardInfo.cardNumber === '' || validateField('cardNumber', cardInfo.cardNumber)}
+            isValid={cardInfo.cardNumber === '' || validateField('cardNumber', unformatCardNumber(cardInfo.cardNumber))}
             errorMsg='올바른 카드번호를 입력해주세요.'
           />
           <Input

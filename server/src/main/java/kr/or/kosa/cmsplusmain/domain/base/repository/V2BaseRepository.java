@@ -74,7 +74,6 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 	}
 
 	protected final <T> JPAQuery<T> applyPaging(JPAQuery<T> query, PageReq pageReq) {
-
 		return query
 			.offset(pageReq.getPage())
 			.limit(pageReq.getSize());
