@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.member.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import lombok.Builder;
@@ -30,6 +31,16 @@ public class MemberListItemRes {
                 .contractPrice(member.totalContractPrice())
                 .contractCount(member.getContractNum())
                 .build();
+    }
 
+    @QueryProjection
+    public MemberListItemRes(Long memberId, String memberName, String memberPhone, String memberEmail, LocalDate memberEnrollDate, Long contractPrice, Integer contractCount) {
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.memberPhone = memberPhone;
+        this.memberEmail = memberEmail;
+        this.memberEnrollDate = memberEnrollDate;
+        this.contractPrice = contractPrice;
+        this.contractCount = contractCount;
     }
 }

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.or.kosa.cmsplusmain.domain.base.RandomNumberGenerator;
+import kr.or.kosa.cmsplusmain.util.RandomNumberGenerator;
 import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
@@ -58,7 +59,7 @@ public class VendorService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
-	// private final KafkaMessagingService kafkaMessagingService;
+ 	private final KafkaMessagingService kafkaMessagingService;
 
 	@Transactional
 	public void join(SignupReq signupReq) {
@@ -85,8 +86,6 @@ public class VendorService {
 		if (isExistEmail) {
 			throw new VendorEmailDuplicationException("이메일이 중복되었습니다");
 		}
-
-
 
 		Vendor vendor = signupReq.toEntity(username, password, role);
 
@@ -132,6 +131,7 @@ public class VendorService {
 				refreshToken = cookie.getValue();
 			}
 		}
+
 		// refreshToken cookie 검증
 		if (refreshToken == null) {
 			log.info("refreshToken cookie 검증 : refresh token null");
@@ -166,12 +166,12 @@ public class VendorService {
 		Long id = Long.valueOf(jwtUtil.getId(refreshToken));
 
 		// JWT 토큰 생성
-		String newAccessToken = jwtUtil.createJwt("access", username, id, role, 30 * 60 * 1000L);
-		String newRefreshToken = jwtUtil.createJwt("refresh", username, id, role, 24 * 60 * 60 * 1000L);
+		String newAccessToken = jwtUtil.createJwt("access", username, id, role, 60 * 60 * 1000L);
+		String newRefreshToken = jwtUtil.createJwt("refresh", username, id, role, 7 * 24 * 60 * 60 * 1000L);
 
 		// 기존 토큰을 Redis에서 제거 후 새로운 토큰 저장
 		redisTemplate.delete(username);
-		redisTemplate.opsForValue().set(username, newRefreshToken, 14, TimeUnit.DAYS);
+		redisTemplate.opsForValue().set(username, newRefreshToken, 7, TimeUnit.DAYS);
 
 		// refresh token 응답
 		response.addCookie(createCookie("refresh_token", newRefreshToken));
@@ -186,7 +186,7 @@ public class VendorService {
 	private Cookie createCookie(String key, String value) {
 
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(24*60*60);
+		cookie.setMaxAge(7 * 24 * 60 * 60);
 		//cookie.setSecure(true);
 		//cookie.setPath("/");
 		cookie.setHttpOnly(true);
@@ -277,7 +277,6 @@ public class VendorService {
 
 		// 고객 여부 확인
 		validateVendorUser(pwResetReq.getUsername());
-
 		Vendor vendor = vendorCustomRepository.findByUsername(pwResetReq.getUsername());
 		vendor.setPassword(bCryptPasswordEncoder.encode(pwResetReq.getNewPassword()));
 	}
@@ -306,7 +305,7 @@ public class VendorService {
 			messageDto = new EmailMessageDto(messageText, numberReq.getMethodInfo());
 			System.out.println("[이메일메세지]" + messageDto.toString());
 		}
-		// kafkaMessagingService.produceMessaging(messageDto);
+		kafkaMessagingService.produceMessaging(messageDto);
 
 		// Redis에서 저장된 값 확인
 		String storedValue = redisTemplate.opsForValue().get(key);

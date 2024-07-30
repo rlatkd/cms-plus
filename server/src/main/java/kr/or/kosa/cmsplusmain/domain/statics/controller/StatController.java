@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.statics.controller;
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,20 +22,20 @@ public class StatController {
 	private final StatService statService;
 
 	@GetMapping("/info")
-	public StatInfoRes getStatInfo(int year, int month) {
-		Long vendorId = 1L;
+	public StatInfoRes getStatInfo(@VendorId Long vendorId, int year, int month) {
+//		Long vendorId = 1L;
 		return statService.getStatInfo(vendorId, year, month);
 	}
 
 	@GetMapping("/billings")
-	public MonthBillingInfoRes getBillingStat(int year, int month) {
-		Long vendorId = 1L;
+	public MonthBillingInfoRes getBillingStat(@VendorId Long vendorId, int year, int month) {
+//		Long vendorId = 1L;
 		return statService.getMonthBillingInfo(vendorId, year, month);
 	}
 
 	@GetMapping("/top")
-	public TopInfoRes getTopFive() {
-		Long vendorId = 1L;
+	public TopInfoRes getTopFive(@VendorId Long vendorId) {
+//		Long vendorId = 1L;
 		return statService.getTopInfo(vendorId);
 	}
 }

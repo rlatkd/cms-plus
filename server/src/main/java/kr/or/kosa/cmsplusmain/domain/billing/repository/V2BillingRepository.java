@@ -31,8 +31,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 
 	public Billing findById(Long id) {
-		return selectWithNotDel(billing, billing)
-			.from(billing)
+		return selectFrom(billing)
 			.where(billing.id.eq(id))
 			.fetchOne();
 	}

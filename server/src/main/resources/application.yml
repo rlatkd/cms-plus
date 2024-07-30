@@ -10,7 +10,7 @@ spring:
     secret: ${JWT_SECRET}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: false
@@ -51,3 +51,11 @@ kafkaTopic:
 
 host:
   front: ${FRONT_HOST}
+
+
+logging:
+  level:
+    kr:
+      or:
+        kosa:
+          cmsplusmain: DEBUG
