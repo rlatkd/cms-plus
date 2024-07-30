@@ -105,11 +105,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 		Integer res = selectOneFrom(billing)
 			.from(billing)
 			.join(billing.contract, contract)
-			.where(
-				// billingNotDel(),
-				contract.vendor.id.eq(vendorId),
-				billing.id.eq(billingId)
-			)
+			.where(contract.vendor.id.eq(vendorId), billing.id.eq(billingId))
 			.fetchOne();
 
 		return res != null;
@@ -124,12 +120,10 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 			.join(billing.contract, contract).fetchJoin()
 			.join(contract.member, member).fetchJoin()
 			.join(contract.payment, payment).fetchJoin()
-			.where(
-				// billingNotDel(),
-				billing.id.eq(billingId)
-			)
+			.where(billing.id.eq(billingId))
 			.fetchOne();
 	}
+
 
 	/*********** 조건 ************/
 	private StringExpression getFirstProductName(String productName) {
