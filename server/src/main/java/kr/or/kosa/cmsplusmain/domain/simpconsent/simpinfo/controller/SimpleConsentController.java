@@ -23,10 +23,8 @@ public class SimpleConsentController {
     private static final Logger logger = LoggerFactory.getLogger(SimpleConsentController.class);
 
     @PostMapping
-    public ResponseEntity<MemberDetail> processSimpleConsent(
-            @AuthenticationPrincipal VendorUserDetailsDto userDetails,
-            @RequestBody SimpleConsentRequestDTO simpleConsentRequestDTO) {
-        Long vendorId = 1L;
+    public ResponseEntity<MemberDetail> processSimpleConsent(@VendorId Long vendorId , @RequestBody SimpleConsentRequestDTO simpleConsentRequestDTO) {
+//        Long vendorId = 1L;
         //String vendorName = userDetails.getName();
 
         logger.info("Processing simple consent for vendor: (ID: {})", vendorId);

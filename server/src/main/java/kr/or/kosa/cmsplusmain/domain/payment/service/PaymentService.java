@@ -1,12 +1,11 @@
 package kr.or.kosa.cmsplusmain.domain.payment.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import kr.or.kosa.cmsplusmain.domain.base.RandomNumberGenerator;
+import kr.or.kosa.cmsplusmain.util.RandomNumberGenerator;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.exception.ContractNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
-import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.*;
@@ -14,7 +13,6 @@ import kr.or.kosa.cmsplusmain.domain.payment.dto.type.*;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.*;
 import kr.or.kosa.cmsplusmain.domain.payment.repository.*;
-import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
-import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.stereotype.Service;
 
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -30,14 +27,7 @@ import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CardPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.CmsPaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethodInfo;
 
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
-
-import com.querydsl.jpa.hibernate.HibernateUtil;
 
 @Slf4j
 @Service

@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.contract.controller;
 
+import kr.or.kosa.cmsplusmain.LogExecutionTime;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,6 +30,7 @@ public class ContractController {
 	/*
 	 * 계약 목록 조회
 	 * */
+	@LogExecutionTime("계약 목록 조회")
 	@GetMapping
 	public PageRes<ContractListItemRes> searchContracts(@VendorId Long vendorId, ContractSearchReq contractSearchReq, PageReq pageReq) {
 		return contractService.searchContracts(vendorId, contractSearchReq, pageReq);
@@ -40,6 +42,7 @@ public class ContractController {
 	 * 계약 상세 페이지에서 청구목록을 뺀 나머지 정보 제공
 	 * (청구정보에서 청구서 발송 수단, 자동 청구서 발송, 자동 청구 생성은 포함되어서 보내진다.)
 	 * */
+	@LogExecutionTime("계약 목록 상세 조회")
 	@GetMapping("/{contractId}")
 	public ContractDetailRes getContractDetail(@VendorId Long vendorId, @PathVariable Long contractId) {
 		return contractService.getContractDetail(vendorId, contractId);
@@ -48,6 +51,7 @@ public class ContractController {
 	/*
 	 * 계약 상세 조회 - 청구 목록
 	 * */
+	@LogExecutionTime("계약 상세 조회 - 청구 목록")
 	@GetMapping("/{contractId}/billing")
 	public PageRes<BillingListItemRes> getBillingListByContract(@VendorId Long vendorId, @PathVariable Long contractId, PageReq pageReq) {
 		return contractService.getBillingsByContract(vendorId, contractId, pageReq);

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import kr.or.kosa.cmsplusmain.domain.member.repository.V2MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +56,8 @@ public class MemberService {
     private final ContractRepository contractRepository;
     private final ContractProductRepository contractProductRepository;
 
+    private final V2MemberRepository v2MemberRepository;
+
     /**
      * 회원 목록 조회
      * */
@@ -67,6 +70,9 @@ public class MemberService {
                 .stream()
                 .map(MemberListItemRes::fromEntity)
                 .toList();
+
+//        List<MemberListItemRes> memberListItemRes = v2MemberRepository
+//                .searchAllMemberByVendor(vendorId, memberSearch, pageable);
 
         return new PageRes<>(countMemberListItem, pageable.getSize(), memberListItemRes);
     }

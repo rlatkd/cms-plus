@@ -3,7 +3,7 @@ import MoveButton from '@/components/common/buttons/MoveButton';
 import PagiNation from '@/components/common/PagiNation';
 import SortSelect from '@/components/common/selects/SortSelect';
 import Table from '@/components/common/tables/Table';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import addItem from '@/assets/addItem.svg';
 import card from '@/assets/card.svg';
@@ -38,9 +38,9 @@ const BillingListPage = () => {
   const [isShowInvoiceErrorModal, setIsShowInvoiceErrorModal] = useState(false);
 
   const [selectedBillings, setSelectedBillings] = useState([]); // 선택된 청구 목록
+  const isFirstRender = useRef(true); // 최초 렌더링 여부 확인
 
   const onAlert = useAlert();
-
   const navigate = useNavigate();
 
   // <--------청구 목록 조회-------->
@@ -147,7 +147,7 @@ const BillingListPage = () => {
     if (errors.length !== 0) {
       setPayErrors(errors);
       setIsShowPayErrorModal(true);
-    } 
+    }
     // 실패항목이 없는 경우
     else {
       onAlert({ msg: `${selectedBillings.length}개의 청구 결제를 성공했습니다.`, type: 'success' });
@@ -201,15 +201,22 @@ const BillingListPage = () => {
   };
 
   // <--------디바운스 커스텀훅-------->
-  const debouncedSearchParams = useDebounce(currentSearchParams, 500);
+  const debouncedSearchParams = useDebounce(currentSearchParams, 300);
 
   useEffect(() => {
-    handleClickSearch();
+    if (!isFirstRender.current) {
+      handleClickSearch();
+    }
   }, [debouncedSearchParams]);
 
   useEffect(() => {
     axiosBillingList(currentSearchParams, currentorder, currentorderBy, currentPage);
   }, [currentPage]);
+
+  // <----- 최초 렌더링 판단 ----->
+  useEffect(() => {
+    isFirstRender.current = false;
+  }, []);
 
   return (
     <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>

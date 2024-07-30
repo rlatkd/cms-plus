@@ -35,9 +35,6 @@ import kr.or.kosa.cmsplusmain.domain.settings.entity.SimpConsentSetting;
 	@UniqueConstraint(name = "unique_vendor_phone", columnNames = {"vendor_phone"})
 })
 
-//TODO
-// Build, ALL, No 이렇게 세개 전부다 사용해도 괜찮을까
-
 @Getter
 @Builder
 @AllArgsConstructor

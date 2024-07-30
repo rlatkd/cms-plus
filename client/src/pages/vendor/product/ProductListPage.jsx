@@ -5,7 +5,7 @@ import SortSelect from '@/components/common/selects/SortSelect';
 import Table from '@/components/common/tables/Table';
 import ProductModal from '@/components/vendor/modal/ProductModal';
 import { validateField } from '@/utils/validators';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import addItem from '@/assets/addItem.svg';
 import Item from '@/assets/Item';
 import useDebounce from '@/hooks/useDebounce';
@@ -31,6 +31,8 @@ const ProductListPage = () => {
   const [modalTitle, setModalTitle] = useState(''); // 모달 제목
   const [isShowModal, setIsShowModal] = useState(false); // 모달 on,off
   const [isValid, setIsValid] = useState(true); // 유효성 flag
+
+  const isFirstRender = useRef(true); // 최초 렌더링 여부 확인
 
   // axiosProductLists는 useEffect 훅 내부에서 사용하고 있기 때문에
   // 종속성 배열에 포함시키고 useCallback으로 함수 재생성 방지
@@ -140,16 +142,23 @@ const ProductListPage = () => {
   };
 
   // <--------디바운스 커스텀훅-------->
-  const debouncedSearchParams = useDebounce(currentSearchParams, 500);
+  const debouncedSearchParams = useDebounce(currentSearchParams, 300);
 
   useEffect(() => {
-    handleClickSearch();
+    if (!isFirstRender.current) {
+      handleClickSearch();
+    }
   }, [debouncedSearchParams]);
 
   // <-------- 페이지 진입 시 상품 목록 조회-------->
   useEffect(() => {
     axiosProductList(currentSearchParams, currentorder, currentorderBy, currentPage);
   }, [currentPage]);
+
+  // <----- 최초 렌더링 판단 ----->
+  useEffect(() => {
+    isFirstRender.current = false;
+  }, []);
 
   return (
     <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>

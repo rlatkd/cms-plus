@@ -58,14 +58,14 @@ public class SampleDataLoader {
 	private final ContractRepository contractRepository;
 	private final BillingRepository billingRepository;
 
-	private final Random random = new Random();
+	private final Random random = new Random(System.currentTimeMillis());
 	private final RandomGenerator randomGenerator = new RandomGenerator(random);
 
 	private final List<Bank> allBanks = Arrays.stream(Bank.values()).toList();
 	private final List<BillingStatus> allBillingStatus = Arrays.stream(BillingStatus.values()).toList();
 	private final List<BillingType> allBillingType = Arrays.stream(BillingType.values()).toList();
 
-	@PostConstruct
+//	@PostConstruct
 	public void init() {
 		Vendor vendor = vendorRepository.save(
 			createVendorWithDefaultProduct(
@@ -75,7 +75,7 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-		generateSampleData(vendor, 100, 100, 100, 100);
+		generateSampleData(vendor, 10000, 10000, 10000, 10000);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
