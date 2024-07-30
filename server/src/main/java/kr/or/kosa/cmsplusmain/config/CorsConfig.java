@@ -17,10 +17,10 @@ public class CorsConfig {
 		CorsConfiguration config = new CorsConfiguration();
 
 		config.setAllowCredentials(true);
-		config.setAllowedOriginPatterns(Collections.singletonList("*")); // 개발 편의를 위한 임시 정책
-		config.setAllowedOrigins(List.of("http://localhost:3000"));
+//		config.setAllowedOriginPatterns(Collections.singletonList("*")); // 개발 편의를 위한 임시 정책
+		config.setAllowedOrigins(List.of("http://localhost:3000", "https://www.hyosungcmsplus.site"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
-		config.setAllowedHeaders(List.of("Authorization", "Authorization-refresh", "*"));
+		config.setAllowedHeaders(List.of("Authorization", "Authorization-refresh", "Content-Type"));
 		config.setExposedHeaders(List.of("Authorization", "Authorization-refresh", "*"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

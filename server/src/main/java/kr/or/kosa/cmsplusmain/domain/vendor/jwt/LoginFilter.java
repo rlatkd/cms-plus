@@ -79,7 +79,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String refreshToken = jwtUtil.createJwt("refresh", username, vendorId, role, 7 * 24 * 60 * 60 * 1000L);
 
 		// Redis에 저장
-		redisTemplate.opsForValue().set(username, refreshToken, 14, TimeUnit.DAYS);
+		redisTemplate.opsForValue().set(username, refreshToken, 7, TimeUnit.DAYS);
 
 		// 저장된 토큰 확인
 		String savedToken = redisTemplate.opsForValue().get(username);

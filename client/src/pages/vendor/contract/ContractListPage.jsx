@@ -1,5 +1,5 @@
 import MemberChooseModal from '@/components/vendor/modal/MemberChooseModal';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Table from '@/components/common/tables/Table.jsx';
 import { getContractList } from '@/apis/contract.js';
@@ -32,6 +32,7 @@ const ContractListPage = () => {
   const buttonCount = 5; // 버튼 갯수
 
   const [selectedContracts, setSelectedContracts] = useState([]); // 선택된 계약 목록
+  const isFirstRender = useRef(true); // 최초 렌더링 여부 확인
 
   const [isShowModal, setIsShowModal] = useState(false);
 
@@ -158,15 +159,22 @@ const ContractListPage = () => {
   };
 
   // <--------디바운스 커스텀훅-------->
-  const debouncedSearchParams = useDebounce(currentSearchParams, 500);
+  const debouncedSearchParams = useDebounce(currentSearchParams, 300);
 
   useEffect(() => {
-    handleClickSearch();
+    if (!isFirstRender.current) {
+      handleClickSearch();
+    }
   }, [debouncedSearchParams]);
 
   useEffect(() => {
     axiosContractList(currentSearchParams, currentorder, currentorderBy, currentPage);
   }, [currentPage]);
+
+  // <----- 최초 렌더링 판단 ----->
+  useEffect(() => {
+    isFirstRender.current = false;
+  }, []);
 
   return (
     <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>

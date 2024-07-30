@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class VendorController {
 	private final VendorService vendorService;
 
-	/*
+	/**
 	 * 회원 가입
 	 * */
 	@PostMapping("/join")
@@ -46,7 +46,7 @@ public class VendorController {
 		}
 	}
 
-	/*
+	/**
 	 * 아이디 중복체크
 	 * */
 	@GetMapping("/check-username")
@@ -55,7 +55,7 @@ public class VendorController {
 		return ResponseEntity.ok(isExist);
 	}
 
-	/*
+	/**git
 	 * 리프레쉬 토큰 발급
 	 * */
 	@PostMapping("/refresh")
@@ -70,7 +70,7 @@ public class VendorController {
 		}
 	}
 
-	/*
+	/**
 	 * 아이디 찾기
 	 * */
 	@PostMapping("/id-inquiry")
@@ -78,7 +78,7 @@ public class VendorController {
 		return vendorService.findIdentifire(idFindReq);
 	}
 
-	/*
+	/**
 	 * 비밀번호 찾기
 	 * */
 	@PostMapping("/pw-inquiry")
@@ -86,7 +86,7 @@ public class VendorController {
 		return vendorService.findPassword(pwFindReq);
 	}
 
-	/*
+	/**
 	 * 비밀번호 재설정
 	 * */
 	@PostMapping("/pw-reset")
@@ -94,7 +94,7 @@ public class VendorController {
 		vendorService.resetPassword(pwResetReq);
 	}
 
-	/*
+	/**
 	 * 인증번호 요청
 	 * */
 	@PostMapping("/request-number")
