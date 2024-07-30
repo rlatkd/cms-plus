@@ -58,4 +58,37 @@ public class V2BillingController {
 	public void updateBilling(@VendorId Long vendorId, @PathVariable Long billingId, @RequestBody @Valid BillingUpdateReq billingUpdateReq) {
 		billingService.updateBilling(vendorId, billingId, billingUpdateReq);
 	}
+
+	/**
+	 * 청구서 발송
+	 * */
+	@GetMapping("/{billingId}/sendInvoice")
+	public void sendInvoice(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.sendInvoice(vendorId, billingId);
+	}
+
+	/**
+	 * 청구서 발송 취소
+	 * */
+	@GetMapping("/{billingId}/cancelInvoice")
+	public void cancelInvoice(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.cancelInvoice(vendorId, billingId);
+	}
+
+	/**
+	 * 청구 실시간 결제
+	 * */
+	@GetMapping("/{billingId}/realtimePay")
+	public void payRealtimeBilling(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.payRealTimeBilling(vendorId, billingId);
+	}
+
+	/**
+	 * 청구 결제 취소
+	 * 실시간 결제 외에도 일반 납부자결제의 경우에도 사용되는 api
+	 * */
+	@GetMapping("/{billingId}/cancelPay")
+	public void cancelPay(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.cancelPayBilling(vendorId, billingId);
+	}
 }

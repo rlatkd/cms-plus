@@ -99,6 +99,9 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 	 * 고객이 해당 청구를 가지고 있는지 확인
 	 * */
 	public boolean existByVendorId(Long billingId, Long vendorId) {
+		if (billingId == null || vendorId == null) {
+			return false;
+		}
 		Integer res = selectOneFrom(billing)
 			.from(billing)
 			.join(billing.contract, contract)
