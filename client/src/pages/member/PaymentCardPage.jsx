@@ -12,6 +12,7 @@ import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { requestCardPayment } from '@/apis/payment';
 import { useState } from 'react';
 import { validateField } from '@/utils/validators';
+import { unformatCardNumber } from '@/utils/format/formatCard';
 
 const PaymentCardPage = () => {
   const start = 0;
@@ -37,7 +38,7 @@ const PaymentCardPage = () => {
     if (!isVerified) missingFields.push('카드 인증');
 
     if (!cardNumber) missingFields.push('카드번호');
-    else if (!validateField('cardNumber', cardNumber)) invalidFields.push('카드번호');
+    else if (!validateField('cardNumber', unformatCardNumber(cardNumber))) invalidFields.push('카드번호');
 
     if (!expiryDate) missingFields.push('유효기간');
     else if (!validateField('expiryDate', expiryDate)) invalidFields.push('유효기간');
