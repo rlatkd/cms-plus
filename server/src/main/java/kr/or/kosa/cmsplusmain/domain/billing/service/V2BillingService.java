@@ -19,6 +19,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingState;
@@ -105,6 +106,17 @@ public class V2BillingService {
 			.collect(Collectors.toMap(field -> field, field -> field.checkState(billing)));
 
 		return BillingDetailRes.fromEntity(billing, fieldToState);
+	}
+
+	/**
+	 * 청구상품 조회
+	 * 2회 쿼리 발생 | 청구존재여부, 청구상품
+	 * */
+	public List<BillingProductRes> getBillingProducts(Long vendorId, Long billingId) {
+		validateBillingOwner(billingId, vendorId);
+		return billingProductRepository.findAllByBillingId(billingId).stream()
+			.map(BillingProductRes::fromEntity)
+			.toList();
 	}
 
 	/**

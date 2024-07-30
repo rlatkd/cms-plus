@@ -1,5 +1,8 @@
 package kr.or.kosa.cmsplusmain.domain.billing.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +20,7 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingProductRes;
 import kr.or.kosa.cmsplusmain.domain.billing.service.V2BillingService;
 import lombok.RequiredArgsConstructor;
 
@@ -52,11 +56,28 @@ public class V2BillingController {
 	}
 
 	/**
+	 * 청구상품 조회
+	 * */
+	@GetMapping("/{billingId}/product")
+	public List<BillingProductRes> getBillingProducts(@VendorId Long vendorId, @PathVariable Long billingId) {
+		return billingService.getBillingProducts(vendorId, billingId);
+	}
+
+
+	/**
 	 * 청구 수정
 	 * */
 	@PutMapping("/{billingId}")
 	public void updateBilling(@VendorId Long vendorId, @PathVariable Long billingId, @RequestBody @Valid BillingUpdateReq billingUpdateReq) {
 		billingService.updateBilling(vendorId, billingId, billingUpdateReq);
+	}
+
+	/**
+	 * 청구 삭제
+	 * */
+	@DeleteMapping("/{billingId}")
+	public void deleteBilling(@VendorId Long vendorId, @PathVariable Long billingId) {
+		billingService.deleteBilling(vendorId, billingId);
 	}
 
 	/**
