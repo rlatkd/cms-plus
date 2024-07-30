@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,11 +16,11 @@ public class InvoiceWriterService implements ItemWriter<Billing> {
     private final BillingRepository billingRepository;
 
     @Override
+    @Transactional
     public void write(Chunk<? extends Billing> chunk) throws Exception {
         for (Billing billing : chunk) {
             billing.setBillingStatus(BillingStatus.WAITING_PAYMENT);
             billingRepository.save(billing);
         }
     }
-
 }

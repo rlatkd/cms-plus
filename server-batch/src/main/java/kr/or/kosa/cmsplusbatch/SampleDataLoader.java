@@ -71,7 +71,7 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-		generateSampleData(vendor, 5, 5, 5, 5);
+		generateSampleData(vendor, 10000, 10000, 10000, 10000);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {

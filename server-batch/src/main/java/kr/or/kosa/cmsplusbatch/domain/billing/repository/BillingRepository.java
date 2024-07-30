@@ -12,6 +12,6 @@ import java.time.LocalDate;
 
 @Repository
 public interface BillingRepository extends BaseRepository<Billing, Long> {
-    @Query("SELECT b FROM Billing b WHERE b.billingDate = :billingDate AND b.contract.member.autoInvoiceSend = true AND b.deleted = false")
-    Page<Billing> findAllByBillingDateAndMemberInvoiceSendMethod(@Param("billingDate") LocalDate billingDate, Pageable pageable);
+//    @Query("SELECT b FROM Billing b WHERE b.billingDate = :billingDate AND b.contract.member.autoInvoiceSend = true AND b.deleted = false")
+//    Page<Billing> findAllByBillingDateAndMemberInvoiceSendMethod(@Param("billingDate") LocalDate billingDate, Pageable pageable);
 }
