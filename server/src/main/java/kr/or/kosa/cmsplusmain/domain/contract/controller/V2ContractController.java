@@ -50,7 +50,7 @@ public class V2ContractController {
 	}
 
 	/**
-	 * 계약 상세 조회 - 청구 상품 목록
+	 * 계약 상세 조회 - 계약 상품 목록
 	 * */
 	@GetMapping("/{contractId}/product")
 	public List<ContractProductRes> getBillingListByContract(@VendorId Long vendorId, @PathVariable Long contractId) {

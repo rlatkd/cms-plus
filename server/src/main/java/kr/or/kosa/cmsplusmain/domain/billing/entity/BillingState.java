@@ -6,8 +6,6 @@ import kr.or.kosa.cmsplusmain.util.FormatUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-// TODO base interface
-
 /**
  * 청구의 여러 동작들의 수행 가능 여부를 판단
  * */

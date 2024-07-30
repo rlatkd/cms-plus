@@ -1,8 +1,8 @@
 import { privateAxios } from '.';
 
 // 청구 생성
-export const createBilling = async billingData => {
-  const res = await privateAxios.post('/v2/vendor/billing', billingData);
+export const createBilling = async billingReq => {
+  const res = await privateAxios.post('/v2/vendor/billing', billingReq);
   return res;
 };
 
@@ -24,7 +24,7 @@ export const getBillingDetail = async billingId => {
 
 // 청구 상세 조회 - 청구상품 목록
 export const getBillingProducts = async billingId => {
-  const res = await privateAxios.get(`/v1/vendor/billing/products/${billingId}`);
+  const res = await privateAxios.get(`/v2/vendor/billing/${billingId}/product`);
   return res;
 };
 
@@ -36,31 +36,31 @@ export const updateBilling = async (billingId, billingReq) => {
 
 // 청구 삭제
 export const deleteBilling = async billingId => {
-  const res = await privateAxios.delete(`/v1/vendor/billing/${billingId}`);
+  const res = await privateAxios.delete(`/v2/vendor/billing/${billingId}`);
   return res;
 };
 
 // 청구서 발송
 export const sendInvoice = async billingId => {
-  const res = await privateAxios.get(`/v1/vendor/billing/send-invoice/${billingId}`);
+  const res = await privateAxios.get(`/v2/vendor/billing/${billingId}/sendInvoice`);
   return res;
 };
 
 // 청구서 발송취소
 export const cancelSendInvoice = async billingId => {
-  const res = await privateAxios.get(`/v1/vendor/billing/invoice/cancel/${billingId}`);
+  const res = await privateAxios.get(`/v2/vendor/billing/${billingId}/cancelInvoice`);
   return res;
 };
 
 // 청구 실시간 결제
 export const payRealTimeBilling = async billingId => {
-  const res = await privateAxios.get(`/v1/vendor/billing/payment/${billingId}`);
+  const res = await privateAxios.get(`/v2/vendor/billing/${billingId}/realtimePay`);
   return res;
 };
 
 // 청구 실시간 결제취소
 export const cancelPayBilling = async billingId => {
-  const res = await privateAxios.get(`/v1/vendor/billing/payment/${billingId}/cancel`);
+  const res = await privateAxios.get(`/v2/vendor/billing/${billingId}/cancelPay`);
   return res;
 };
 
