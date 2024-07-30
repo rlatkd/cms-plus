@@ -58,7 +58,7 @@ public class KafkaPaymentService {
 
             try {
                 log.error("[result 결과]: {}", paymentResultDto.getResult());
-                if (paymentResultDto.getResult().equals("결제가 완료되었습니다.")) {
+                if (paymentResultDto.getResult().equals("안녕하세요 효성CMS#입니다. 결제가 완료되었습니다.")) {
                     billing.setPaid(); // 결제결과가 성공이면 청구상태를 결제완료로 바꿈
                     log.info("결제성공");
                     log.info("paymentREsultDto{}", paymentResultDto.toString());
