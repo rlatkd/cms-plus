@@ -48,8 +48,8 @@ const LoginForm = () => {
   const axiosLogin = async data => {
     try {
       // 아이디 입력 여부
+
       if (!data.username) {
-        console.log('???');
         onAlert({ msg: '아이디를 입력해주세요!', type: 'error', title: '로그인 오류' });
         return;
       }
@@ -57,14 +57,6 @@ const LoginForm = () => {
       // 비밀번호 입력 여부
       if (!data.password) {
         onAlert({ msg: '비밀번호를 입력해주세요!', type: 'error', title: '로그인 오류' });
-        return;
-      }
-
-      // 아이디 존재 여부
-      const resCheckUsername = await getCheckUsername(data.username);
-      const isChecked = resCheckUsername.data;
-      if (isChecked) {
-        onAlert({ msg: '비밀번호가 올바르지 않습니다.', type: 'error', title: '로그인 오류' });
         return;
       }
 
@@ -76,6 +68,14 @@ const LoginForm = () => {
       setVendorInfo(vendorInfo);
       navigate('/vendor/dashboard');
     } catch (err) {
+      // 아이디 존재 여부
+      const resCheckUsername = await getCheckUsername(data.username);
+      const isChecked = resCheckUsername.data;
+      if (isChecked) {
+        onAlert({ msg: '비밀번호가 올바르지 않습니다.', type: 'error', title: '로그인 오류' });
+        return;
+      }
+
       onAlert({ msg: '존재하지 않는 아이디입니다.', type: 'error', title: '로그인 오류' });
       console.error('axiosJoin => ', err.response);
     }
