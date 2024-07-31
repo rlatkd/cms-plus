@@ -6,11 +6,12 @@ import kr.or.kosa.cmsplusbatch.domain.billing.repository.BillingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class InvoiceWriterService implements ItemWriter<Billing> {
+public class V1InvoiceWriterService implements ItemWriter<Billing> {
 
     private final BillingRepository billingRepository;
 

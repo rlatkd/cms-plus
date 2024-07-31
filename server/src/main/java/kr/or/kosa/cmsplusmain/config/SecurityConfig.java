@@ -56,20 +56,22 @@ public class SecurityConfig {
 		http.httpBasic((auth) -> auth.disable());
 
 		http.authorizeHttpRequests((auth) -> auth
+//				.requestMatchers("/api/v1/**","/**").permitAll()
 				.requestMatchers("/api/v1/vendor/auth/login").permitAll()
 				.requestMatchers("/api/v1/vendor/auth/join").permitAll()
 				.requestMatchers("/api/v1/vendor/auth/logout").permitAll()
 				.requestMatchers("/api/v1/vendor/auth/refresh").permitAll()
-				.requestMatchers("/api/v1/vendor/auth/username-check").permitAll()
+				.requestMatchers("/api/v1/vendor/auth/check-username").permitAll()
 				.requestMatchers("/api/v1/vendor/auth/id-inquiry").permitAll()
 				.requestMatchers("/api/v1/vendor/auth/pw-inquiry").permitAll()
 				.requestMatchers("/api/v1/vendor/auth/pw-reset").permitAll()
 				.requestMatchers("/api/v1/vendor/auth/request-number").permitAll()
-				.requestMatchers("/api/v1/**","/**").permitAll()
+				.requestMatchers("/api/v1/simple-consent/cms/verify").permitAll()
+				.requestMatchers("/api/v1/simple-consent/card/verify").permitAll()
+				.requestMatchers("/api/v1/simple-consent/sign").permitAll()
 				.requestMatchers("/error").permitAll()
 				.requestMatchers("/vendor").hasRole("VENDOR")
 				.requestMatchers("/member").hasRole("MEMBER")
-
 				.anyRequest().authenticated());
 
 		http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);

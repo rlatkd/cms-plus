@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.contract.repository;
 
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
@@ -17,6 +19,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
@@ -35,28 +38,34 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 	 * 계약목록 검색 |
 	 * */
 	public List<V2ContractListItemRes> searchContracts(Long vendorId, ContractSearchReq search, PageReq pageReq) {
+
+		// 검색어를 프론트에 표시할 상품 이름에 표시하기 위한 서브쿼리
+		// Querydsl 에서는 서브쿼리에 limit 조건이 반영 안되므로 min 사용
+		JPQLQuery<String> firstProductNameSubQuery = from(contractProduct)
+			.select(contractProduct.name.min())
+			.where(
+				contractProduct.contract.eq(contract),
+				productNameContains(search.getProductName()));
+
 		JPAQuery<V2ContractListItemRes> query = searchQuery(vendorId, search)
 			.select(new QV2ContractListItemRes(
 				contract.id, member.name, member.phone, contract.contractDay,
-				contractProduct.price.longValue().multiply(contractProduct.quantity).sum(),
+				contract.contractPrice,
 				payment.paymentType, contract.contractStatus,
-				getFirstProductName(search.getProductName()),
-				contractProduct.countDistinct()
+				firstProductNameSubQuery,
+				contract.contractProductCnt
 			))
-			.groupBy(member.name, member.phone, contract.contractDay, payment.paymentType, contract.contractStatus)
 			.orderBy(buildOrderSpecifier(pageReq));
 
 		return applyPaging(query, pageReq).fetch();
 	}
 
 	/**
-	 * 고객의 전체 청구 수 (검색 조건 반영된 청구 수)
+	 * 고객의 전체 계약 수 (검색 조건 반영된 계약 수)
 	 * */
-	public long countSearchedContracts(Long vendorId, ContractSearchReq search) {
-		// fetchCount : 서브쿼리를 생성해서 count 해준다.
-		// 기본적으로 count 쿼리보다 성능이 좋지 않지만
-		// groupBY 절에서 어차피 서브쿼리를 통해 카운트 필요
-		return searchQuery(vendorId, search).fetchCount();
+	public Long countSearchedContracts(Long vendorId, ContractSearchReq search) {
+		Long res = searchQuery(vendorId, search).select(contract.count()).fetchOne();
+		return res == null ? 0 : res;
 	}
 
 	/**
@@ -66,20 +75,17 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 		return from(contract)
 			.join(contract.member, member)
 			.join(contract.payment, payment)
-			.leftJoin(contract.contractProducts, contractProduct).on(isNotDeleted(contractProduct))
 			.where(
-				contractVendorIdEq(vendorId),
-				contractStatusEq(search.getContractStatus()),
-				contractDayEq(search.getContractDay()),
-				memberNameContains(search.getMemberName()),
-				memberPhoneContains(search.getMemberPhone()),
-				paymentTypeEq(search.getPaymentType()),
-				paymentMethodEq(search.getPaymentMethod()),
-				productNameContainsInContract(search.getProductName()),
-				memberIdEq(search.getMemberId())
-			)
-			.groupBy(contract.id)
-			.having(contractPriceLoe(search.getContractPrice()));
+				contractVendorIdEq(vendorId),					// 고객의 계약
+				contractStatusEq(search.getContractStatus()),	// 계약 상태 일치
+				contractPriceLoe(search.getContractPrice()),	// 계약 금액 이하
+				contractDayEq(search.getContractDay()),			// 계약일 일치
+				memberNameContains(search.getMemberName()),		// 회원명 포함
+				memberPhoneContains(search.getMemberPhone()),	// 휴대전화 포함
+				paymentTypeEq(search.getPaymentType()),			// 결제방식 일치
+				paymentMethodEq(search.getPaymentMethod()),		// 결제수단 일치
+				memberIdEq(search.getMemberId())				// 회원 ID 일치 (회원 상세 계약목록)
+			);
 	}
 
 	/**
@@ -100,6 +106,13 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 	}
 
 	/*********** 조건 ************/
+	private BooleanExpression productNameContains(String productName) {
+		return StringUtils.hasText(productName) ? contractProduct.name.contains(productName) : null;
+	}
+
+	/**
+	 * @deprecated groupby 절 삭제로, 일반 서브쿼리 대체
+	 * */
 	private StringExpression getFirstProductName(String productName) {
 		if (StringUtils.hasText(productName)) {
 			return Expressions.stringTemplate(
@@ -118,9 +131,13 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 	}
 
 	private BooleanExpression contractPriceLoe(Long contractPrice) {
-		return contractPrice != null ? contractProduct.price.multiply(contractProduct.quantity).sum().loe(contractPrice) : null;
+		return contractPrice != null ? contract.contractPrice.loe(contractPrice) : null;
 	}
 
+	/**
+	 * @deprecated where subquery -> select subquery 변경됨
+	 * */
+	@Deprecated
 	private BooleanExpression productNameContainsInContract(String productName) {
 		if (!StringUtils.hasText(productName)) {
 			return null;
@@ -140,19 +157,21 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 
 		String orderBy = pageReq.getOrderBy();
 
-		if (orderBy.equals("contractPrice")) {
-			NumberExpression<Long> expression = contractProduct.price.longValue().multiply(contractProduct.quantity).sum();
-			return pageReq.isAsc() ? expression.asc() : expression.desc();
-		}
-
-		if (orderBy.equals("contractDay")) {
-			NumberExpression<Integer> expression = contract.contractDay;
-			return pageReq.isAsc() ? expression.asc() : expression.desc();
-		}
-
-		if (orderBy.equals("memberName")) {
-			StringExpression expression = member.name;
-			return pageReq.isAsc() ? expression.asc() : expression.desc();
+		switch (orderBy) {
+			case "contractPrice" -> {
+				NumberExpression<Long> expression = contractProduct.price.longValue()
+					.multiply(contractProduct.quantity)
+					.sum();
+				return pageReq.isAsc() ? expression.asc() : expression.desc();
+			}
+			case "contractDay" -> {
+				NumberExpression<Integer> expression = contract.contractDay;
+				return pageReq.isAsc() ? expression.asc() : expression.desc();
+			}
+			case "memberName" -> {
+				StringExpression expression = member.name;
+				return pageReq.isAsc() ? expression.asc() : expression.desc();
+			}
 		}
 
 		return contract.createdDateTime.desc();

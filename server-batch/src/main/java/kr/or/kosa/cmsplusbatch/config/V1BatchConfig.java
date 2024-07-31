@@ -1,7 +1,7 @@
 package kr.or.kosa.cmsplusbatch.config;
 
-import kr.or.kosa.cmsplusbatch.batch.service.InvoiceProcessorService;
-import kr.or.kosa.cmsplusbatch.batch.service.InvoiceWriterService;
+import kr.or.kosa.cmsplusbatch.batch.service.V1InvoiceProcessorService;
+import kr.or.kosa.cmsplusbatch.batch.service.V1InvoiceWriterService;
 import kr.or.kosa.cmsplusbatch.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusbatch.domain.billing.repository.BillingRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.Collections;
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor
-public class BatchConfig {
+public class V1BatchConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -42,7 +42,7 @@ public class BatchConfig {
     @Bean
     public Step sendInvoiceStep() {
         return new StepBuilder("sendInvoiceStep", jobRepository)
-                .<Billing, Billing>chunk(5, transactionManager)
+                .<Billing, Billing>chunk(1000, transactionManager)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
@@ -61,19 +61,19 @@ public class BatchConfig {
         reader.setRepository(billingRepository);
         reader.setMethodName("findAllByBillingDateAndMemberInvoiceSendMethod");
         reader.setArguments(Arrays.asList(LocalDate.now()));
-        reader.setPageSize(5);
+        reader.setPageSize(1000);
         reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
         return reader;
     }
 
     @Bean
-    public InvoiceProcessorService processor() {
-        return new InvoiceProcessorService();
+    public V1InvoiceProcessorService processor() {
+        return new V1InvoiceProcessorService();
     }
 
     @Bean
-    public InvoiceWriterService writer() {
-        return new InvoiceWriterService(billingRepository);
+    public V1InvoiceWriterService writer() {
+        return new V1InvoiceWriterService(billingRepository);
     }
 
 }

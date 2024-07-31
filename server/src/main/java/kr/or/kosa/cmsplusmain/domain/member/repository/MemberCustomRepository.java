@@ -28,8 +28,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
-import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
-import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -44,10 +42,10 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
 
     private final JdbcTemplate jdbcTemplate;
 
-    /*
+    /**
     * 회원 목록 조회
-    *
     * 기본 정렬: 최신 등록된 회원(회원 등록일 기준, not db 생성)
+    * 4회 쿼리발생 | 계약카운트, 회원 정보 조회, 계약 정보 조회, 계약 상품 정보 조회
     * */
     public List<Member> searchAllMemberByVendor(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
         return jpaQueryFactory
@@ -57,7 +55,6 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             .where(
                 member.vendor.id.eq(vendorId),
                 memberNotDel(),
-
                 memberNameContains(memberSearch.getMemberName()),
                 memberPhoneContains(memberSearch.getMemberPhone()),
                 memberEmailContains(memberSearch.getMemberEmail()),
@@ -184,7 +181,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             .selectOne()
             .from(member)
             .where(
-                memberPhoneAndEmailEq(phone, email),
+                memberPhoneOrEmailEq(phone, email),
                 memberNotDel()
             )
             .fetchOne();
@@ -192,13 +189,14 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         return res == null;
     }
 
-    private BooleanExpression memberPhoneAndEmailEq(String phone, String email) {
+    private BooleanExpression memberPhoneOrEmailEq(String phone, String email) {
         BooleanExpression memberPhoneEq = memberPhoneEq(phone);
         if (memberPhoneEq == null) {
             return memberEmailEq(email);
         }
         return memberPhoneEq.or(memberEmailEq(email));
     }
+
     public Optional<Member> findMemberByPhone(Long vendorId, String phone) {
         return Optional.ofNullable(
             jpaQueryFactory
@@ -289,8 +287,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             StringExpression exp = member.name;
             return pageReq.isAsc() ? exp.asc() : exp.desc();
         }
-
-        throw new BusinessException("잘못된 정렬조건입니다", ErrorCode.INVALID_INPUT_VALUE);
+        return member.createdDateTime.desc();
     }
     private BooleanExpression memberEmailEq(String email) {
         return StringUtils.hasText(email) ?  member.email.eq(email) : null;

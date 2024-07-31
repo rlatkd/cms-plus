@@ -11,6 +11,7 @@ import kr.or.kosa.cmsplusbatch.domain.billing.exception.EmptyBillingProductExcep
 import kr.or.kosa.cmsplusbatch.domain.billing.exception.InvalidBillingStatusException;
 import kr.or.kosa.cmsplusbatch.domain.billing.exception.InvalidUpdateBillingException;
 import kr.or.kosa.cmsplusbatch.domain.contract.entity.Contract;
+import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
@@ -29,17 +30,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 // TODO member, vendor 비정규화
 
 @Comment("청구 (매 달 새로 쌓이는 정보)")
 @Entity
 @Table(name = "billing")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Billing extends BaseEntity {
 

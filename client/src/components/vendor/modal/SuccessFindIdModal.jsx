@@ -23,8 +23,8 @@ const SuccessFindIdModal = ({
       icon={icon}
       height={'h-360'}
       width={'w-420'}>
-      <div className='w-full h-full flex flex-col justify-end '>
-        <div className='flex flex-col justify-center items-center h-full pt-8 px-12'>
+      <div className='w-full h-full flex flex-col justify-end'>
+        <div className='flex flex-col justify-center items-center h-full p-8 px-12 '>
           <p className='text-lg text-text_grey font-700 break-words text-center mb-6 '>
             입력하신 정보와 일치하는 계정은 다음과 같습니다.
           </p>

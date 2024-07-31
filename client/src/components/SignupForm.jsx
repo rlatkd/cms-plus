@@ -43,18 +43,16 @@ const SignupForm = () => {
       const res = await getCheckUsername(vendorFormData.username);
       isChecked = res.data;
       console.log('!----아이디 중복확인 성공----!'); // 삭제예정
+      // false면 중복된 아이디 없다.
+      if (isChecked === false) {
+        setCheckedUsername(vendorFormData.username);
+        onAlert({ msg: '사용 가능한 아이디입니다.', type: 'success' });
+      } else {
+        setCheckedUsername('');
+        onAlert({ msg: '이미 사용 중인 아이디입니다.', type: 'error' });
+      }
     } catch (err) {
       console.error('axiosJoin => ', err.response);
-    }
-
-    // false면 중복된 아이디 없다.
-    if (isChecked === false) {
-      setCheckedUsername(vendorFormData.username);
-      onAlert({ msg: '사용 가능한 아이디입니다.', type: 'success' });
-    } else {
-      console.log('?????');
-      setCheckedUsername('');
-      onAlert({ msg: '이미 사용 중인 아이디입니다.', type: 'error' });
     }
   };
 
@@ -94,7 +92,9 @@ const SignupForm = () => {
     const isValidEmail = validateField('email', vendorFormData.email);
     const isValidPhone = validateField('phone', vendorFormData.phone);
     const isValidDepartment = validateField('department', vendorFormData.department);
-    const isValidHomePhone = validateField('homePhone', vendorFormData.homePhone);
+    const isValidHomePhone =
+      !vendorFormData.homePhone ||
+      (vendorFormData.homePhone && validateField('homePhone', vendorFormData.homePhone));
 
     // 모든 필드가 유효한지 확인
     return (

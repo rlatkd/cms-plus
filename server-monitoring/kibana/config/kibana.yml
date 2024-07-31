@@ -1,5 +1,6 @@
 server.name: kibana
 server.host: "0.0.0.0"
+server.publicBaseUrl: "http://monitoring.hyosungcmsplus.site:5601"
 
 elasticsearch.hosts: http://elasticsearch:9200
 elasticsearch.username: "elastic"

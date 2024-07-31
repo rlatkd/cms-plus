@@ -82,10 +82,10 @@ const FindVendoPasswordModal = ({
     try {
       const res = await postFindPassword(vendorPasswordFormData);
       console.log('!----비밀번호 찾기 요청 성공----!'); // 삭제예정
-      // if (res.data) {
-      setIsShowModal(false);
-      setIsShowResetPasswordModal(true);
-      // }
+      if (res.data) {
+        setIsShowModal(false);
+        setIsShowResetPasswordModal(true);
+      }
     } catch (err) {
       // TODO
       // 아이디가 없을 시 예외 처리
@@ -143,7 +143,7 @@ const FindVendoPasswordModal = ({
           placeholder='이름을 입력해 주세요.'
           value={vendorPasswordFormData.username}
           classContainer='mb-6'
-          classInput='py-4 rounded-xl'
+          classInput='py-4 rounded-lg'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           maxLength={20}
@@ -161,7 +161,7 @@ const FindVendoPasswordModal = ({
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
-              classInput='rounded-xl'
+              classInput='rounded-lg'
               isValid={validateField('phone', vendorPasswordFormData.phone)}
               errorMsg='올바른 형식 아닙니다.'
               time={time}
@@ -178,7 +178,7 @@ const FindVendoPasswordModal = ({
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
-              classInput='rounded-xl'
+              classInput='rounded-lg'
               isValid={validateField('email', vendorPasswordFormData.email)}
               errorMsg='올바른 형식 아닙니다.'
               time={time}
@@ -187,7 +187,7 @@ const FindVendoPasswordModal = ({
             />
           )}
           <button
-            className={`ml-3 w-3/12 disabled: text-white text-base font-700 h-54 rounded-xl 
+            className={`ml-3 w-3/12 disabled: text-white text-base font-700 h-54 rounded-lg 
               ${
                 (vendorPasswordFormData.phone || vendorPasswordFormData.email) &&
                 (vendorPasswordFormData.phone?.length > 0 ||
@@ -206,7 +206,7 @@ const FindVendoPasswordModal = ({
           type='text'
           placeholder='인증번호 6자리를 입력해 주세요.'
           value={vendorPasswordFormData.authenticationNumber}
-          classInput='mb-8 rounded-xl'
+          classInput='mb-8 rounded-lg'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           isValid={isAuthentication}
@@ -217,14 +217,14 @@ const FindVendoPasswordModal = ({
           disabled={
             vendorPasswordFormData.method === 'SMS' ? !isValidateSmsForm() : isValidateEmailForm()
           }
-          className={`font-700 px-4 py-3 text-white rounded-xl transition-all duration-200 ${
+          className={`font-700 px-4 py-3 text-white rounded-lg transition-all duration-200 ${
             (vendorPasswordFormData.method === 'SMS' && isValidateSmsForm()) ||
             (vendorPasswordFormData.method === 'EMAIL' && isValidateEmailForm())
               ? 'hover:bg-mint_hover bg-mint '
               : 'bg-btn_disa'
           }`}
           onClick={axiosFindPassword}>
-          인증번호 받기
+          비밀번호 찾기
         </button>
       </div>
     </BaseModal>

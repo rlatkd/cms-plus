@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
-import { getCheckUsername, postLogin } from '@/apis/auth';
+import { getCheckUsername, postLogin, postRequestAuthenticationNumber } from '@/apis/auth';
 import { useEffect, useState } from 'react';
 import FindVendoPasswordModal from '@/components/vendor/modal/FIndVendorPasswordModal';
 import FindVendorIdModal from '@/components/vendor/modal/FindVendorIdModal';
@@ -10,7 +10,6 @@ import user from '@/assets/user.svg';
 import password from '@/assets/password.svg';
 import { useVendorInfoStore } from '@/stores/useVendorInfoStore';
 import useAlert from '@/hooks/useAlert';
-import { validateField } from '@/utils/validators';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -48,8 +47,8 @@ const LoginForm = () => {
   const axiosLogin = async data => {
     try {
       // 아이디 입력 여부
+
       if (!data.username) {
-        console.log('???');
         onAlert({ msg: '아이디를 입력해주세요!', type: 'error', title: '로그인 오류' });
         return;
       }
@@ -57,14 +56,6 @@ const LoginForm = () => {
       // 비밀번호 입력 여부
       if (!data.password) {
         onAlert({ msg: '비밀번호를 입력해주세요!', type: 'error', title: '로그인 오류' });
-        return;
-      }
-
-      // 아이디 존재 여부
-      const resCheckUsername = await getCheckUsername(data.username);
-      const isChecked = resCheckUsername.data;
-      if (isChecked) {
-        onAlert({ msg: '비밀번호가 올바르지 않습니다.', type: 'error', title: '로그인 오류' });
         return;
       }
 
@@ -76,6 +67,14 @@ const LoginForm = () => {
       setVendorInfo(vendorInfo);
       navigate('/vendor/dashboard');
     } catch (err) {
+      // 아이디 존재 여부
+      const resCheckUsername = await getCheckUsername(data.username);
+      const isChecked = resCheckUsername.data;
+      if (isChecked) {
+        onAlert({ msg: '비밀번호가 올바르지 않습니다.', type: 'error', title: '로그인 오류' });
+        return;
+      }
+
       onAlert({ msg: '존재하지 않는 아이디입니다.', type: 'error', title: '로그인 오류' });
       console.error('axiosJoin => ', err.response);
     }
@@ -89,7 +88,7 @@ const LoginForm = () => {
         methodInfo: formData.method === 'SMS' ? formData.phone : formData.email,
         method: formData.method,
       };
-      // const res = await postRequestAuthenticationNumber(data);
+      const res = await postRequestAuthenticationNumber(data);
       console.log('!----인증번호 요청 성공----!'); // 삭제예정
       setTime(300);
     } catch (err) {
@@ -100,6 +99,10 @@ const LoginForm = () => {
   useEffect(() => {
     setTime(0);
   }, [isShowIdModal, isShowPasswordModal]);
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   return (
     <div className='absolute left-0 top-0 h-[100vh] mobile:h-full w-full mobile:w-[56vw] flex justify-center items-center'>

@@ -128,7 +128,7 @@ const FindVendorIdModal = ({
           placeholder='이름을 입력해 주세요.'
           value={vendorIdFormData.name}
           classContainer='mb-6'
-          classInput='py-4 rounded-xl'
+          classInput='py-4 rounded-lg'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           maxLength={40}
@@ -146,7 +146,7 @@ const FindVendorIdModal = ({
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
-              classInput='rounded-xl'
+              classInput='rounded-lg'
               isValid={validateField('phone', vendorIdFormData.phone)}
               errorMsg='올바른 형식 아닙니다.'
               time={time}
@@ -163,7 +163,7 @@ const FindVendorIdModal = ({
               onChange={handleChangeValue}
               onKeyDown={handleKeyDown}
               classContainer='w-9/12'
-              classInput='rounded-xl'
+              classInput='rounded-lg'
               isValid={validateField('email', vendorIdFormData.email)}
               errorMsg='올바른 형식 아닙니다.'
               time={time}
@@ -172,7 +172,7 @@ const FindVendorIdModal = ({
             />
           )}
           <button
-            className={`ml-3 w-3/12 disabled: text-white text-base font-700 h-54 rounded-xl 
+            className={`ml-3 w-3/12 disabled: text-white text-base font-700 h-54 rounded-lg 
               ${
                 (vendorIdFormData.phone || vendorIdFormData.email) &&
                 (vendorIdFormData.phone?.length > 0 || vendorIdFormData.email?.length > 0)
@@ -191,7 +191,7 @@ const FindVendorIdModal = ({
           placeholder='인증번호 6자리를 입력해 주세요.'
           value={vendorIdFormData.authenticationNumber}
           classContainer='mb-6'
-          classInput='py-4 rounded-xl'
+          classInput='py-4 rounded-lg'
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
           isValid={isAuthentication}
@@ -202,14 +202,14 @@ const FindVendorIdModal = ({
           disabled={
             vendorIdFormData.method === 'SMS' ? !isValidateSmsForm() : isValidateEmailForm()
           }
-          className={`font-700 px-4 py-3 text-white rounded-xl transition-all duration-200 ${
+          className={`font-700 px-4 py-3 text-white rounded-lg transition-all duration-200 ${
             (vendorIdFormData.method === 'SMS' && isValidateSmsForm()) ||
             (vendorIdFormData.method === 'EMAIL' && isValidateEmailForm())
               ? 'hover:bg-mint_hover bg-mint '
               : 'bg-btn_disa'
           }`}
           onClick={axiosFindIdentifier}>
-          인증번호 받기
+          아이디 찾기
         </button>
       </div>
     </BaseModal>

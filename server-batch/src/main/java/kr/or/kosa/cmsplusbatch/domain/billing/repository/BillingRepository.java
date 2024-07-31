@@ -9,9 +9,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface BillingRepository extends BaseRepository<Billing, Long> {
     @Query("SELECT b FROM Billing b WHERE b.billingDate = :billingDate AND b.contract.member.autoInvoiceSend = true AND b.deleted = false")
     Page<Billing> findAllByBillingDateAndMemberInvoiceSendMethod(@Param("billingDate") LocalDate billingDate, Pageable pageable);
+
 }

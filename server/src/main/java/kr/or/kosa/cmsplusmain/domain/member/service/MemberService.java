@@ -1,7 +1,11 @@
 package kr.or.kosa.cmsplusmain.domain.member.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,6 +37,7 @@ import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
+import kr.or.kosa.cmsplusmain.domain.member.repository.V2MemberRepository;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
@@ -55,6 +60,8 @@ public class MemberService {
     private final ContractRepository contractRepository;
     private final ContractProductRepository contractProductRepository;
 
+    private final V2MemberRepository v2MemberRepository;
+
     /**
      * 회원 목록 조회
      * */
@@ -67,6 +74,9 @@ public class MemberService {
                 .stream()
                 .map(MemberListItemRes::fromEntity)
                 .toList();
+
+//        List<MemberListItemRes> memberListItemRes = v2MemberRepository
+//                .searchAllMemberByVendor(vendorId, memberSearch, pageable);
 
         return new PageRes<>(countMemberListItem, pageable.getSize(), memberListItemRes);
     }
@@ -143,6 +153,12 @@ public class MemberService {
     }
 
     /**
+     * 회원 등록 - 이메일, 전화번호 중복 확인
+     * */
+
+
+
+    /**
      * 회원 수정 - 기본 정보
      *
      * 총 발생 쿼리수: 3회
@@ -207,56 +223,104 @@ public class MemberService {
     * 회원 엑셀로 대량 등록
     * */
     @Transactional
-    public List<ExcelErrorRes<MemberExcelDto>> uploadMembersByExcel(Long vendorId, List<MemberExcelDto> memberList) {
-        Vendor vendor = Vendor.of(vendorId);
+    public List<ExcelErrorRes<MemberExcelDto>> uploadMembersByExcel(Long vendorId, List<MemberExcelDto> mMemberList) {
 
-        List<Member> toSaves = new ArrayList<>(memberList.size());
+        List<MemberExcelDto> memberList = new ArrayList<>(mMemberList);
         List<ExcelErrorRes<MemberExcelDto>> errors = new ArrayList<>();
 
+        // memberList 에서 삭제된다.
+        errors.addAll(findAndRemoveConvertErrors(memberList));           // 엑셀 타입 변환 오류 처리
+        errors.addAll(findAndRemoveDuplicatedEmailOrPhone(memberList));  // 엑셀 내 중복 처리
+
+        Vendor vendor = Vendor.of(vendorId);
+
+        List<Member> toSaves = new ArrayList<>();
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             Validator validator = factory.getValidator();
-            // 변환 중 오류난 것들 따로 다시 리턴
-            for (MemberExcelDto memberExcelDto : memberList) {
-                if (memberExcelDto == null) {
-                    ExcelErrorRes<MemberExcelDto> errorRes = ExcelErrorRes.<MemberExcelDto>builder()
-                        .notSaved(memberExcelDto)
-                        .message("형식이 잘못된 값 입력")
-                        .build();
 
-                    errors.add(errorRes);
-                    continue;
-                }
+            memberList.forEach(dto -> {
+                    Member member = dto.toEntity(vendor);
+                    String errorMsg = validateError(member, validator);
+                    if (errorMsg == null) {
+                        toSaves.add(member);
+                    } else {
+                        errors.add(ExcelErrorRes.<MemberExcelDto>builder()
+                            .notSaved(dto)
+                            .message(errorMsg)
+                            .build());
+                    }
+                });
 
-                Member member = memberExcelDto.toEntity(vendor);
-                String errorMsg = getErrorMessage(member, validator);
-
-                if (errorMsg == null) {
-                    toSaves.add(member);
-                } else {
-                    ExcelErrorRes<MemberExcelDto> errorRes = ExcelErrorRes.<MemberExcelDto>builder()
-                        .notSaved(memberExcelDto)
-                        .message(errorMsg)
-                        .build();
-
-                    errors.add(errorRes);
-                }
-            }
         } catch (Exception e) {
             log.error("upload members by excel {}", e.getMessage());
             throw new IllegalArgumentException("upload members by excel " + e.getMessage());
-        } finally {
+        }
+        // 최종 저장
+        finally {
             memberCustomRepository.bulkInsert(toSaves);
         }
 
         return errors;
     }
 
-    private String getErrorMessage(Member member, Validator validator) {
+    /**
+     * DB 에는 없지만 엑셀 내부 중복 체크
+     * */
+    private List<ExcelErrorRes<MemberExcelDto>> findAndRemoveDuplicatedEmailOrPhone(List<MemberExcelDto> members) {
+        Map<String, List<MemberExcelDto>> phoneToMembers = new HashMap<>();
+        Map<String, List<MemberExcelDto>> emailToMembers = new HashMap<>();
+        Set<MemberExcelDto> duplicates = new HashSet<>();
+
+        for (MemberExcelDto member : members) {
+            phoneToMembers.computeIfAbsent(member.getMemberPhone(), k -> new ArrayList<>()).add(member);
+            emailToMembers.computeIfAbsent(member.getMemberEmail(), k -> new ArrayList<>()).add(member);
+        }
+
+        phoneToMembers.values().stream()
+            .filter(list -> list.size() > 1)
+            .forEach(duplicates::addAll);
+
+        emailToMembers.values().stream()
+            .filter(list -> list.size() > 1)
+            .forEach(duplicates::addAll);
+
+        List<ExcelErrorRes<MemberExcelDto>> res = duplicates.stream()
+            .map(m -> ExcelErrorRes.<MemberExcelDto>builder()
+                .notSaved(m)
+                .message("휴대전화 혹은 이메일이 중복되었습니다")
+                .build())
+            .toList();
+
+        members.removeIf(duplicates::contains);
+
+        return res;
+    }
+
+    /**
+     * 타입 변환 에러 처리
+     * */
+    private List<ExcelErrorRes<MemberExcelDto>> findAndRemoveConvertErrors(List<MemberExcelDto> members) {
+        List<ExcelErrorRes<MemberExcelDto>> res = members.stream()
+            .filter(Objects::isNull)
+            .map(m -> ExcelErrorRes.<MemberExcelDto>builder()
+                .notSaved(null)
+                .message("잘못된 값 입력")
+                .build())
+            .toList();
+
+        members.removeIf(Objects::isNull);
+        return res;
+    }
+
+    /**
+     * 엑셀 한 row 마다 저장 불가 이유를 가져오고, 저장 불가 외에는 저장하기 위한 유효성 검사 선행
+     * */
+    private String validateError(Member member, Validator validator) {
         Set<ConstraintViolation<Member>> validate = validator.validate(member);
         boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
 
         String validation = validate.stream()
-            .map(ConstraintViolation::getMessage)
+            .map(ConstraintViolation::getMessageTemplate)
             .collect(Collectors.joining("\n"));
 
         if (!validate.isEmpty()) {
@@ -277,5 +341,4 @@ public class MemberService {
             throw new MemberNotFoundException("회원이 존재하지 않습니다");
         }
     }
-
 }

@@ -2,7 +2,7 @@ import MoveButton from '@/components/common/buttons/MoveButton';
 import PagiNation from '@/components/common/PagiNation';
 import SortSelect from '@/components/common/selects/SortSelect';
 import Table from '@/components/common/tables/Table';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import registerManyUser from '@/assets/registerManyUser.svg';
 import registerUser from '@/assets/registerUser.svg';
@@ -29,6 +29,7 @@ const MemberListPage = () => {
   const buttonCount = 5; // 버튼 갯수
 
   const [isShowExcelModal, setIsShowExcelModal] = useState(false); // 대량 회원 등록
+  const isFirstRender = useRef(true); // 최초 렌더링 여부 확인
 
   const navigate = useNavigate();
 
@@ -112,15 +113,22 @@ const MemberListPage = () => {
   };
 
   // <----- 디바운스 커스텀훅 ----->
-  const debouncedSearchParams = useDebounce(currentSearchParams, 500);
+  const debouncedSearchParams = useDebounce(currentSearchParams, 300);
 
   useEffect(() => {
-    handleClickSearch();
+    if (!isFirstRender.current) {
+      handleClickSearch();
+    }
   }, [debouncedSearchParams]);
 
   useEffect(() => {
     axiosMemberList(currentSearchParams, currentorder, currentorderBy, currentPage);
   }, [currentPage]);
+
+  // <----- 최초 렌더링 판단 ----->
+  useEffect(() => {
+    isFirstRender.current = false;
+  }, []);
 
   return (
     <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>
