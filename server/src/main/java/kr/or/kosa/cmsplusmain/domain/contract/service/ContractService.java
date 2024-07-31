@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.contract.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -175,7 +176,7 @@ public class ContractService {
 	* */
 	private void updateContractProducts(Contract contract, List<ContractProduct> newContractProducts) {
 		// 기존 계약상품
-		List<ContractProduct> oldContractProducts = contract.getContractProducts();
+		Set<ContractProduct> oldContractProducts = contract.getContractProducts();
 
 		// 새롭게 추가되는 계약상품 저장
 		newContractProducts.stream()

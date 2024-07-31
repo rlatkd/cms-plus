@@ -86,8 +86,15 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 	 * 해당 고객에게 계약이 존재하는지 여부
 	 * */
 	public boolean existsContractByVendorId(Long vendorId, Long contractId) {
+		if (contractId == null || vendorId == null) {
+			return false;
+		}
+
 		Integer res = selectOneFrom(contract)
-			.where(contractVendorIdEq(vendorId))
+			.where(
+				contractVendorIdEq(vendorId),
+				contractIdEq(contractId)
+			)
 			.fetchOne();
 		return res != null;
 	}

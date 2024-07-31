@@ -68,14 +68,14 @@ public class ContractProduct extends BaseEntity {
 		this.quantity = quantity;
 	}
 
-	/*
+	/**
 	* 계약 상품 계산된 금액
 	* */
 	public long getContractProductPrice() {
 		return (long)price * quantity;
 	}
 
-	/*
+	/**
 	 * 계약상품 동일성 비교
 	 * 기반이된 상품, 계약상품 가격, 계약상품 수량
 	 * */

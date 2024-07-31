@@ -21,20 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class V2ContractService {
 
 	private final V2ContractRepository contractRepository;
 	private final V2BillingRepository billingRepository;
 	private final V2ContractProductRepository contractProductRepository;
 
-	/*
-	 * 계약 목록 조회
-	 *
-	 * 총 발생 쿼리수: 3회
-	 * 내용:
-	 * 	계약 조회, 계약상품 목록 조회(+? batch_size=100), 전체 개수 조회
+	/**
+	 * 계약 목록 조회 |
+	 * 2회 쿼리 발생 | 청구목록조회, 전체 개수(페이징)
 	 * */
 	public PageRes<V2ContractListItemRes> searchContracts(Long vendorId, ContractSearchReq search, PageReq pageReq) {
 		// 단일 페이지 결과
@@ -47,7 +44,8 @@ public class V2ContractService {
 	}
 
 	/**
-	 * 계약의 모든 청구
+	 * 계약의 모든 청구 목록 조회
+	 * 3회 쿼리 발생 | 존재 여부, 청구 목록 조회, 전체 개수(페이징)
 	 * */
 	public PageRes<BillingListItemRes> getBillingsByContract(Long vendorId, Long contractId, PageReq pageReq) {
 		validateContractByVendor(vendorId, contractId);
@@ -62,7 +60,8 @@ public class V2ContractService {
 	}
 
 	/**
-	 * 계약의 모든 계약상품
+	 * 계약의 모든 계약상품 |
+	 * 2회 쿼리 발생 | 계약 존재여부, 계약 상품조회
 	 * */
 	public List<ContractProductRes> getContractProducts(Long vendorId, Long contractId) {
 		validateContractByVendor(vendorId, contractId);

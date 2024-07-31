@@ -19,7 +19,6 @@ public class KafkaAdminConfig {
     * TopicConfig에서 서버 올라갈 때 topic을 생성하지 않아도
     * KafkaTemplate을 통헤 produce할 때 없는 topic이더라도 생성하면서 produce함
     * */
-
     @Value("${kafkaServer.ip}")
     private String kafkaServerIp;
 
