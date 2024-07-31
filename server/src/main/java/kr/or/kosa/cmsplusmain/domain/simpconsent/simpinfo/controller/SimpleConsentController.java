@@ -51,7 +51,7 @@ public class SimpleConsentController {
         return simpleConsentService.getSimpleConsentInfo(vendorId, contractId);
     }
 
-    @PostMapping("/{vendorId}}")
+    @PostMapping("/{vendorId}")
     public void uploadSignUrl(@PathVariable Long vendorId, @RequestBody SimpConsentSignReq simpConsentSignReq) {
         simpleConsentService.setSigned(vendorId, simpConsentSignReq);
     }
