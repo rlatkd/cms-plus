@@ -157,15 +157,6 @@ public class Contract extends BaseEntity {
 	}
 
 	/**
-	 * 계약금액
-	 * */
-	public Long getContractPrice() {
-		return contractProducts.stream()
-			.mapToLong(ContractProduct::getContractProductPrice)
-			.sum();
-	}
-
-	/**
 	* 계약 삭제
 	* 계약상품도 같이 삭제된다
 	* 청구도 같이 삭제된다
