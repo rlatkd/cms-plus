@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.member.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -220,8 +221,10 @@ public class MemberService {
 
         List<MemberExcelDto> memberList = new ArrayList<>(mMemberList);
         List<ExcelErrorRes<MemberExcelDto>> errors = new ArrayList<>();
-        errors.addAll(findDuplicatedEmailOrPhone(memberList));  // 엑셀 내 중복 처리
-        errors.addAll(findConvertErrors(memberList));           // 엑셀 타입 변환 오류 처리
+
+        // memberList 에서 삭제된다.
+        errors.addAll(findAndRemoveConvertErrors(memberList));           // 엑셀 타입 변환 오류 처리
+        errors.addAll(findAndRemoveDuplicatedEmailOrPhone(memberList));  // 엑셀 내 중복 처리
 
         Vendor vendor = Vendor.of(vendorId);
 
@@ -257,10 +260,10 @@ public class MemberService {
     /**
      * DB 에는 없지만 엑셀 내부 중복 체크
      * */
-    private List<ExcelErrorRes<MemberExcelDto>> findDuplicatedEmailOrPhone(List<MemberExcelDto> members) {
+    private List<ExcelErrorRes<MemberExcelDto>> findAndRemoveDuplicatedEmailOrPhone(List<MemberExcelDto> members) {
         Map<String, List<MemberExcelDto>> phoneToMembers = new HashMap<>();
         Map<String, List<MemberExcelDto>> emailToMembers = new HashMap<>();
-        List<MemberExcelDto> duplicates = new ArrayList<>();
+        Set<MemberExcelDto> duplicates = new HashSet<>();
 
         for (MemberExcelDto member : members) {
             phoneToMembers.computeIfAbsent(member.getMemberPhone(), k -> new ArrayList<>()).add(member);
@@ -290,7 +293,7 @@ public class MemberService {
     /**
      * 타입 변환 에러 처리
      * */
-    private List<ExcelErrorRes<MemberExcelDto>> findConvertErrors(List<MemberExcelDto> members) {
+    private List<ExcelErrorRes<MemberExcelDto>> findAndRemoveConvertErrors(List<MemberExcelDto> members) {
         List<ExcelErrorRes<MemberExcelDto>> res = members.stream()
             .filter(Objects::isNull)
             .map(m -> ExcelErrorRes.<MemberExcelDto>builder()
