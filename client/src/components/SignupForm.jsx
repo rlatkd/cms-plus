@@ -48,7 +48,6 @@ const SignupForm = () => {
         setCheckedUsername(vendorFormData.username);
         onAlert({ msg: '사용 가능한 아이디입니다.', type: 'success' });
       } else {
-        console.log('?????');
         setCheckedUsername('');
         onAlert({ msg: '이미 사용 중인 아이디입니다.', type: 'error' });
       }
@@ -93,7 +92,9 @@ const SignupForm = () => {
     const isValidEmail = validateField('email', vendorFormData.email);
     const isValidPhone = validateField('phone', vendorFormData.phone);
     const isValidDepartment = validateField('department', vendorFormData.department);
-    const isValidHomePhone = validateField('homePhone', vendorFormData.homePhone);
+    const isValidHomePhone =
+      !vendorFormData.homePhone ||
+      (vendorFormData.homePhone && validateField('homePhone', vendorFormData.homePhone));
 
     // 모든 필드가 유효한지 확인
     return (

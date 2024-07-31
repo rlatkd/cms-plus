@@ -10,7 +10,6 @@ import user from '@/assets/user.svg';
 import password from '@/assets/password.svg';
 import { useVendorInfoStore } from '@/stores/useVendorInfoStore';
 import useAlert from '@/hooks/useAlert';
-import { validateField } from '@/utils/validators';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -100,6 +99,10 @@ const LoginForm = () => {
   useEffect(() => {
     setTime(0);
   }, [isShowIdModal, isShowPasswordModal]);
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   return (
     <div className='absolute left-0 top-0 h-[100vh] mobile:h-full w-full mobile:w-[56vw] flex justify-center items-center'>

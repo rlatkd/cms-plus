@@ -1,3 +1,5 @@
+
+
 package kr.or.kosa.cmsplusmain.domain.member.entity;
 
 import java.time.LocalDate;
@@ -24,8 +26,8 @@ import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 @Comment("회원 (학원의 학생)")
 @Entity
 @Table(name = "member", uniqueConstraints = {
-	@UniqueConstraint(name = "unique_member_email", columnNames = {"vendor_id", "member_email"}),
-	@UniqueConstraint(name = "unique_member_phone", columnNames = {"vendor_id", "member_phone"})
+		@UniqueConstraint(name = "unique_member_email", columnNames = {"vendor_id", "member_email"}),
+		@UniqueConstraint(name = "unique_member_phone", columnNames = {"vendor_id", "member_phone"})
 })
 @Getter
 @AllArgsConstructor
@@ -106,6 +108,14 @@ public class Member extends BaseEntity {
 	@Builder.Default
 	private List<Contract> contracts = new ArrayList<>();
 
+	@Comment("계약금액")
+	@Column(name = "member_contract_price", nullable = false)
+	private Long contractPrice;
+
+	@Comment("계약수")
+	@Column(name = "member_contract_count", nullable = false)
+	private int contractCount;
+
 	/************ 청구정보 ************/
 
 	@Comment("회원 청구서 발송 수단")
@@ -128,6 +138,13 @@ public class Member extends BaseEntity {
 	@Builder.Default
 	private boolean autoBilling = true;
 
+	@PrePersist
+	@PreUpdate
+	private void calcContractPriceAndCnt() {
+		this.contractPrice = totalContractPrice();
+		this.contractCount = getContractNum();
+	}
+
 	/*
 	 * 계약금액합
 	 * */
@@ -138,8 +155,8 @@ public class Member extends BaseEntity {
 	}
 
 	/*
-	* 총 계약 수
-	* */
+	 * 총 계약 수
+	 * */
 	public int getContractNum() {
 		return contracts.size();
 	}
