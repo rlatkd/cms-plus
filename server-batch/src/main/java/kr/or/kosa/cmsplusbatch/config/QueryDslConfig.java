@@ -1,22 +1,22 @@
-package kr.or.kosa.cmsplusbatch.config;
+// package kr.or.kosa.cmsplusbatch.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
 
-import com.querydsl.jpa.JPQLTemplates;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+// import com.querydsl.jpa.JPQLTemplates;
+// import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+// import jakarta.persistence.EntityManager;
+// import jakarta.persistence.PersistenceContext;
 
-@Configuration
-public class QueryDslConfig {
+// @Configuration
+// public class QueryDslConfig {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+//     @PersistenceContext
+//     private EntityManager entityManager;
 
-    @Bean
-    public JPAQueryFactory jpaQueryFactory() {
-        return new JPAQueryFactory(JPQLTemplates.DEFAULT, entityManager);
-    }
-}
+//     @Bean
+//     public JPAQueryFactory jpaQueryFactory() {
+//         return new JPAQueryFactory(JPQLTemplates.DEFAULT, entityManager);
+//     }
+// }
