@@ -149,6 +149,12 @@ public class MemberService {
     }
 
     /**
+     * 회원 등록 - 이메일, 전화번호 중복 확인
+     * */
+
+
+
+    /**
      * 회원 수정 - 기본 정보
      *
      * 총 발생 쿼리수: 3회
@@ -283,5 +289,4 @@ public class MemberService {
             throw new MemberNotFoundException("회원이 존재하지 않습니다");
         }
     }
-
 }
