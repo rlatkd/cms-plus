@@ -2,28 +2,42 @@
 
 package kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.ContractDto;
+import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractProductRes;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
+import kr.or.kosa.cmsplusmain.domain.contract.exception.ContractNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
+import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.method.PaymentMethodInfoRes;
+import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.AutoPaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
 import kr.or.kosa.cmsplusmain.domain.payment.exception.InvalidPaymentTypeException;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductListItemRes;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto.SimpConsentInfoRes;
+import kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto.SimpConsentSignReq;
 import kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto.SimpleConsentContractDTO;
 import kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto.SimpleConsentMemberDTO;
 import kr.or.kosa.cmsplusmain.domain.simpconsent.simpinfo.dto.SimpleConsentPaymentDTO;
@@ -104,5 +118,66 @@ public class SimpleConsentService {
 
         // kafkaMessagingService.produceMessaging(messageDto);
 
+    }
+
+    public SimpConsentInfoRes getSimpleConsentInfo(Long vendorId, Long contractId) {
+        if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
+            throw new ContractNotFoundException("해당하는 계약이 없습니다");
+        }
+
+        Contract contract = contractCustomRepository.findContractDetailById(contractId);
+        Member member = contract.getMember();
+        Payment payment = contract.getPayment();
+
+        if (!payment.canReqSimpConsent()) {
+            throw new InvalidPaymentTypeException("간편동의가 불가능한 결제방식입니다.");
+        }
+
+        ContractDto contractDto = ContractDto.fromEntity(contract);
+        List<ContractProductRes> contractProductRes = contract.getContractProducts().stream()
+            .map(ContractProductRes::fromEntity)
+            .toList();
+        MemberDto memberDto = MemberDto.fromEntity(member);
+        PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfo(payment);
+        PaymentMethodInfoRes paymentMethodInfoRes = paymentService.getPaymentMethodInfo(payment);
+
+        return SimpConsentInfoRes.builder()
+            .contract(contractDto)
+            .contractProducts(contractProductRes)
+            .member(memberDto)
+            .paymentTypeInfo(paymentTypeInfoRes)
+            .paymentMethodInfo(paymentMethodInfoRes)
+            .build();
+    }
+
+    @Transactional
+    public void setSigned(Long vendorId, SimpConsentSignReq simpConsentSignReq) {
+        Long contractId = simpConsentSignReq.getContractId();
+
+        if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
+            throw new ContractNotFoundException("해당하는 계약이 없습니다");
+        }
+
+        Contract contract = contractCustomRepository.findContractDetailById(contractId);
+        Payment payment = contract.getPayment();
+
+        if (!payment.canReqSimpConsent()) {
+            throw new InvalidPaymentTypeException("간편동의가 불가능한 결제방식입니다.");
+        }
+
+        PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
+        // proxy 객체인 경우 자식 클래스로 캐스팅이 안된다.
+        // 프록시를 자식 객체로써 받아온다.
+        if (!Hibernate.isInitialized(paymentTypeInfo)) {
+            LazyInitializer lazyInitializer = HibernateProxy.extractLazyInitializer(paymentTypeInfo);
+            if (lazyInitializer != null) {
+                paymentTypeInfo = (PaymentTypeInfo) lazyInitializer.getImplementation();
+            } else {
+                throw new IllegalStateException("Provided payment type is not initialized");
+            }
+        }
+
+        AutoPaymentType autoPaymentType = (AutoPaymentType)paymentTypeInfo;
+        autoPaymentType.setSignImgUrl(simpConsentSignReq.getSignImgUrl());
     }
 }

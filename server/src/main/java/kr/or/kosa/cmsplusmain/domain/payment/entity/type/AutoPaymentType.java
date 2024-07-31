@@ -2,19 +2,19 @@ package kr.or.kosa.cmsplusmain.domain.payment.entity.type;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.DiscriminatorValue;
-import kr.or.kosa.cmsplusmain.domain.base.validator.BlobUrl;
-import lombok.Builder;
 import org.hibernate.annotations.Comment;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import kr.or.kosa.cmsplusmain.domain.base.validator.HttpUrl;
+import kr.or.kosa.cmsplusmain.domain.base.validator.BlobUrl;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Comment("결제방식 - 자동결제")
 @Entity
@@ -25,7 +25,7 @@ public class AutoPaymentType extends PaymentTypeInfo {
 
 	@Comment("회원 간편동의 서명 이미지 URL")
 	@Column(name = "payment_sign_img_url", length = 2000)
-	@BlobUrl
+	@BlobUrl @Setter
 	private String signImgUrl;
 
 	@Comment("고객이 등록한 동의서 이미지 URL")
