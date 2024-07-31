@@ -1,6 +1,7 @@
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
 import { useContext, useState } from 'react';
+import Statistic from '@/components/common/statistics/Statistics';
 
 const Test = () => {
   // msg : 원하는 메세지
@@ -41,8 +42,8 @@ const Test = () => {
   };
 
   return (
-    <div>
-      <div style={{ display: 'flex', marginBottom: '20px' }}>
+    <div className='w-full'>
+      {/* <div style={{ display: 'flex', marginBottom: '20px' }}>
         <button
           style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}>
           카드결제버튼
@@ -163,8 +164,10 @@ const Test = () => {
           strokeLinejoin='round'>
           <path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' />
         </svg>
-      </label>
+      </label> */}
+        <Statistic/>
     </div>
+   
   );
 };
 

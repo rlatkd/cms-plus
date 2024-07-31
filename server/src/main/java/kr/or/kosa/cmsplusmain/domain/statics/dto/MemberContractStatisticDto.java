@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class MemberContractStatisticDto {
     private Long memberId;
     private String memberName;
-    private LocalDate enrollDate;
+    private Integer enrollYear;
     private Integer contractDuration;
     private Long totalContractAmount;
     private String paymentMethod;
@@ -20,10 +20,10 @@ public class MemberContractStatisticDto {
     public MemberContractStatisticDto(Long memberId, String memberName, LocalDate enrollDate, Integer contractDuration, Long totalContractAmount, PaymentMethod paymentMethod, Boolean renewed) {
         this.memberId = memberId;
         this.memberName = memberName;
-        this.enrollDate = enrollDate;
+        this.enrollYear = enrollDate.getYear();
         this.contractDuration = contractDuration;
         this.totalContractAmount = totalContractAmount;
-        this.paymentMethod = paymentMethod.getCode();
+        this.paymentMethod = paymentMethod != null ? paymentMethod.getCode() : null;
         this.renewed = renewed;
     }
 }

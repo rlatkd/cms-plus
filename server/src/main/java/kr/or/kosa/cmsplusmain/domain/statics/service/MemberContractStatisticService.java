@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.statics.service;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.MemberContractStatisticDto;
 import kr.or.kosa.cmsplusmain.domain.statics.repository.MemberContractStatisticRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +14,9 @@ import java.util.List;
 public class MemberContractStatisticService {
 
     private final MemberContractStatisticRepository memberContractStatisticRepository;
-    private final JPAQueryFactory queryFactory;
 
-    public List<MemberContractStatisticDto> getMemberContractStatistics() {
-        // repository
-
-
-        return memberContractStatisticRepository.findMemberContractStatistics();
+    public List<MemberContractStatisticDto> getMemberContractStatistics(Long vendorId) {
+        return memberContractStatisticRepository.findMemberContractStatistic(vendorId);
     }
+
 }
