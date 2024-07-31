@@ -3,7 +3,7 @@ import AddressInput from '@/components/common/inputs/AddressInput';
 import { validateField } from '@/utils/validators';
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 
-const BasicInfo = ({ userData, setUserData }) => {
+const BasicInfo = ({ userData, setUserData, contractId }) => {
   const handleChange = e => {
     const { name, value } = e.target;
     let formattedValue = value;
@@ -16,7 +16,10 @@ const BasicInfo = ({ userData, setUserData }) => {
     }
 
     setUserData({
-      memberDTO: { [name]: name === 'phone' || name === 'homePhone' ? removeDashes(formattedValue) : formattedValue, },
+      memberDTO: {
+        [name]:
+          name === 'phone' || name === 'homePhone' ? removeDashes(formattedValue) : formattedValue,
+      },
     });
   };
 
@@ -43,30 +46,36 @@ const BasicInfo = ({ userData, setUserData }) => {
           tabIndex={0}
           isValid={!userData.memberDTO.name || validateField('name', userData.memberDTO.name)}
           errorMsg='올바른 회원명을 입력해주세요.'
+          disabled={!!contractId}
         />
         <Input
           label='휴대전화'
           name='phone'
           type='tel'
           required
-          placeholder="최대 11자리"
+          placeholder='최대 11자리'
           value={formatPhone(userData.memberDTO.phone) || ''}
           onChange={handleChange}
           maxLength={11}
           tabIndex={0}
           isValid={!userData.memberDTO.phone || validateField('phone', userData.memberDTO.phone)}
           errorMsg='올바른 휴대전화 번호를 입력해주세요.'
+          disabled={!!contractId}
         />
         <Input
           label='유선전화'
           name='homePhone'
           type='tel'
-          placeholder="최대 10자리"
+          placeholder='최대 10자리'
           value={formatPhone(userData.memberDTO.homePhone) || ''}
           onChange={handleChange}
           maxLength={10}
-          isValid={ userData.memberDTO.homePhone === '' || validateField('homePhone', userData.memberDTO.homePhone)}
+          isValid={
+            userData.memberDTO.homePhone === '' ||
+            validateField('homePhone', userData.memberDTO.homePhone)
+          }
           errorMsg='올바른 유선전화 번호를 입력해주세요.'
+          disabled={!!contractId}
         />
         <Input
           label='이메일'
@@ -79,8 +88,9 @@ const BasicInfo = ({ userData, setUserData }) => {
           maxLength={50}
           isValid={!userData.memberDTO.email || validateField('email', userData.memberDTO.email)}
           errorMsg='올바른 이메일 번호를 입력해주세요.'
+          disabled={!!contractId}
         />
-        <AddressInput userData={userData} setUserData={setUserData} />
+        <AddressInput userData={userData} setUserData={setUserData} disabled={!!contractId} />
       </form>
     </div>
   );

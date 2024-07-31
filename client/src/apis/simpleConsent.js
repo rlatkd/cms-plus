@@ -6,14 +6,27 @@ export const getAvailableOptions = async vendorId => {
   return res.data;
 };
 
-/* 간편서명동의 회원 데이터 보내기 */
+/* 간편서명동의 기존 계약 데이터 가져오기 */
+export const getContractInfo = async (vendorId, contractId) => {
+  const res = await publicAxios.get('/v1/simple-consent', {
+    params: {
+      ...indexParams,
+    },
+  });
+  return res.data;
+};
+
+/* 간편서명동의 기존 계약 서명이미지 업데이트*/
+export const sendSimpleConsentSignImage = async vendorId => {
+  const res = await publicAxios.post(`/v1/simple-consent/${vendorId}`);
+  return res.data;
+};
+
+/* 간편서명동의 회원/비회원 데이터 보내기 */
 export const sendSimpleConsentData = async (vendorId, userData) => {
   const res = await publicAxios.post(`/v1/simple-consent/${vendorId}`, userData);
   return res.data;
 };
-
-/* 간편서명동의 기존 계약 데이터 가져오기 */
-export const getContractInfo = async () => {};
 
 /* 간편서명동의 설정 업데이트 */
 export const updateSimpleConsent = async data => {

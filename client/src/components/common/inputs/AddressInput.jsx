@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAddressStore } from '@/stores/useAddressStore';
 
-const AddressInput = ({ userData, setUserData }) => {
+const AddressInput = ({ userData, setUserData, disabled }) => {
   const { zipcode, address, addressDetail, setZipcode, setAddress, setAddressDetail } =
     useAddressStore();
   const [localAddressDetail, setLocalAddressDetail] = useState(addressDetail);
@@ -58,9 +58,10 @@ const AddressInput = ({ userData, setUserData }) => {
           type='text'
           name='zipcode'
           value={zipcode}
-          className='flex-grow min-w-0 text-sm rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm h-10'
+          className={`${disabled ? 'bg-ipt_disa ' : 'bg-white'} flex-grow min-w-0 text-sm rounded-md border border-slate-300  px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm h-10`}
           placeholder='우편번호'
           readOnly
+          disabled
           autoComplete='postal-code'
         />
         <button
@@ -74,9 +75,10 @@ const AddressInput = ({ userData, setUserData }) => {
         type='text'
         name='address'
         value={address}
-        className='mb-2 w-full text-sm  rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
+        className={`${disabled ? 'bg-ipt_disa ' : 'bg-white'} mb-2 w-full text-sm  rounded-md border border-slate-300  px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm`}
         placeholder='주소'
         readOnly
+        disabled
         autoComplete='street-address'
       />
       <input
@@ -85,8 +87,9 @@ const AddressInput = ({ userData, setUserData }) => {
         value={localAddressDetail}
         onChange={handleAddressDetailChange}
         onBlur={handleAddressDetailBlur}
-        className='w-full text-sm rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
+        className={`${disabled ? 'bg-ipt_disa ' : 'bg-white'} w-full text-sm rounded-md border border-slate-300  px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm`}
         placeholder='상세 주소'
+        disabled
         autoComplete='address-line2'
       />
     </div>

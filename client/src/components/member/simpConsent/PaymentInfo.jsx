@@ -4,7 +4,7 @@ import PaymentCMS from './PaymentCMS';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import { getAvailableOptions } from '@/apis/simpleConsent';
 
-const PaymentInfo = ({ userData, setUserData, vendorId }) => {
+const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
   const [isVerified, setIsVerified] = useState(false);
 

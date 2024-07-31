@@ -6,7 +6,7 @@ import { getAvailableOptions } from '@/apis/simpleConsent';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
 
-const ContractInfo = ({ userData, setUserData, vendorId }) => {
+const ContractInfo = ({ userData, setUserData, vendorId, contractId }) => {
   const [availableProducts, setAvailableProducts] = useState([]);
 
   useEffect(() => {
@@ -159,6 +159,7 @@ const ContractInfo = ({ userData, setUserData, vendorId }) => {
           validateField('contractName', userData.contractDTO.contractName)
         }
         errorMsg='올바른 계약명을 입력해주세요.'
+        disabled={!!contractId}
       />
 
       <SelectField
