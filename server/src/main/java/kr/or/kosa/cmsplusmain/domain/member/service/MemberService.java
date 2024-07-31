@@ -1,11 +1,11 @@
 package kr.or.kosa.cmsplusmain.domain.member.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import kr.or.kosa.cmsplusmain.domain.member.repository.V2MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +34,7 @@ import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
+import kr.or.kosa.cmsplusmain.domain.member.repository.V2MemberRepository;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
@@ -219,6 +220,10 @@ public class MemberService {
         List<Member> toSaves = new ArrayList<>(memberList.size());
         List<ExcelErrorRes<MemberExcelDto>> errors = new ArrayList<>();
 
+        // 원래는 없지만 엑셀 내부 중복
+        Set<String> phoneNumbers = new HashSet<>();
+        Set<String> emails = new HashSet<>();
+
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             Validator validator = factory.getValidator();
             // 변환 중 오류난 것들 따로 다시 리턴
@@ -234,6 +239,31 @@ public class MemberService {
                 }
 
                 Member member = memberExcelDto.toEntity(vendor);
+
+                if (phoneNumbers.contains(member.getPhone())) {
+                    ExcelErrorRes<MemberExcelDto> errorRes = ExcelErrorRes.<MemberExcelDto>builder()
+                        .notSaved(memberExcelDto)
+                        .message("중복 휴대번호")
+                        .build();
+
+                    errors.add(errorRes);
+                    continue;
+                } else {
+                    phoneNumbers.add(member.getPhone());
+                }
+
+                if (emails.contains(member.getEmail())) {
+                    ExcelErrorRes<MemberExcelDto> errorRes = ExcelErrorRes.<MemberExcelDto>builder()
+                        .notSaved(memberExcelDto)
+                        .message("중복 이메일")
+                        .build();
+
+                    errors.add(errorRes);
+                    continue;
+                } else {
+                    emails.add(member.getEmail());
+                }
+
                 String errorMsg = getErrorMessage(member, validator);
 
                 if (errorMsg == null) {
@@ -262,7 +292,7 @@ public class MemberService {
         boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
 
         String validation = validate.stream()
-            .map(ConstraintViolation::getMessage)
+            .map(ConstraintViolation::getMessageTemplate)
             .collect(Collectors.joining("\n"));
 
         if (!validate.isEmpty()) {
