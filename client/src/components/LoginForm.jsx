@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import InputWeb from './common/inputs/InputWeb';
-import { getCheckUsername, postLogin } from '@/apis/auth';
+import { getCheckUsername, postLogin, postRequestAuthenticationNumber } from '@/apis/auth';
 import { useEffect, useState } from 'react';
 import FindVendoPasswordModal from '@/components/vendor/modal/FIndVendorPasswordModal';
 import FindVendorIdModal from '@/components/vendor/modal/FindVendorIdModal';
@@ -89,7 +89,7 @@ const LoginForm = () => {
         methodInfo: formData.method === 'SMS' ? formData.phone : formData.email,
         method: formData.method,
       };
-      // const res = await postRequestAuthenticationNumber(data);
+      const res = await postRequestAuthenticationNumber(data);
       console.log('!----인증번호 요청 성공----!'); // 삭제예정
       setTime(300);
     } catch (err) {
