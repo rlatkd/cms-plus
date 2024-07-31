@@ -23,7 +23,6 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
-import kr.or.kosa.cmsplusmain.domain.billing.dto.response.QBillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
@@ -43,40 +42,41 @@ public class BillingCustomRepository extends BaseCustomRepository<Billing> {
 	 * 기본정렬: 생성시간 내림차순
 	 * */
 	public List<BillingListItemRes> findBillingListWithCondition(Long vendorId, BillingSearchReq search, PageReq pageReq) {
-		return jpaQueryFactory
-			.select(new QBillingListItemRes(
-				billing.id,
-				member.name,
-				member.phone,
-				billingProduct.price.longValue().multiply(billingProduct.quantity).sum(),
-				billing.billingStatus,
-				payment.paymentType,
-				billing.billingDate,
-				getFirstProductName(search.getProductName()),
-				billingProduct.countDistinct()
-			))
-			.from(billing)
-			.join(billing.contract, contract)
-			.join(contract.member, member)
-			.join(contract.payment, payment)
-			.leftJoin(billing.billingProducts, billingProduct).on(billingProduct.deleted.isFalse())
-			.where(
-				billingNotDel(),
-				contractVendorIdEq(vendorId),
-				memberNameContains(search.getMemberName()),
-				memberPhoneContains(search.getMemberPhone()),
-				billingStatusEq(search.getBillingStatus()),
-				paymentTypeEq(search.getPaymentType()),
-				billingDateEq(search.getBillingDate()),
-				productNameContainsInBilling(search.getProductName()),
-				contractIdEq(search.getContractId())
-			)
-			.groupBy(billing.id, member.name, member.phone, billing.billingStatus, payment.paymentType, billing.billingDate)
-			.having(billingPriceLoe(search.getBillingPrice()))
-			.orderBy(buildOrderSpecifier(pageReq).orElse(billing.createdDateTime.desc()))
-			.limit(pageReq.getSize())
-			.offset(pageReq.getPage())
-			.fetch();
+		// return jpaQueryFactory
+		// 	.select(new QBillingListItemRes(
+		// 		billing.id,
+		// 		member.name,
+		// 		member.phone,
+		// 		billingProduct.price.longValue().multiply(billingProduct.quantity).sum(),
+		// 		billing.billingStatus,
+		// 		payment.paymentType,
+		// 		billing.billingDate,
+		// 		getFirstProductName(search.getProductName()),
+		// 		billingProduct.countDistinct()
+		// 	))
+		// 	.from(billing)
+		// 	.join(billing.contract, contract)
+		// 	.join(contract.member, member)
+		// 	.join(contract.payment, payment)
+		// 	.leftJoin(billing.billingProducts, billingProduct).on(billingProduct.deleted.isFalse())
+		// 	.where(
+		// 		billingNotDel(),
+		// 		contractVendorIdEq(vendorId),
+		// 		memberNameContains(search.getMemberName()),
+		// 		memberPhoneContains(search.getMemberPhone()),
+		// 		billingStatusEq(search.getBillingStatus()),
+		// 		paymentTypeEq(search.getPaymentType()),
+		// 		billingDateEq(search.getBillingDate()),
+		// 		productNameContainsInBilling(search.getProductName()),
+		// 		contractIdEq(search.getContractId())
+		// 	)
+		// 	.groupBy(billing.id, member.name, member.phone, billing.billingStatus, payment.paymentType, billing.billingDate)
+		// 	.having(billingPriceLoe(search.getBillingPrice()))
+		// 	.orderBy(buildOrderSpecifier(pageReq).orElse(billing.createdDateTime.desc()))
+		// 	.limit(pageReq.getSize())
+		// 	.offset(pageReq.getPage())
+		// 	.fetch();
+		return null;
 	}
 
 	/**

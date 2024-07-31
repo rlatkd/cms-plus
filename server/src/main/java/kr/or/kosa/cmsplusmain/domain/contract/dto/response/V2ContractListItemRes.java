@@ -20,12 +20,12 @@ public class V2ContractListItemRes {
 	private final PaymentType paymentType;								// 결제방식
 	private final ContractStatus contractStatus;						// 계약상태
 	@Setter private String firstProductName;							// 첫번째 상품명
-	private final Long totalProductCount;								// 전체 계약상품 수
+	private final Integer totalProductCount;								// 전체 계약상품 수
 
 	@QueryProjection
 	public V2ContractListItemRes(Long contractId, String memberName, String memberPhone, Integer contractDay,
 		Long contractPrice, PaymentType paymentType, ContractStatus contractStatus, String firstProductName,
-		Long totalProductCount) {
+		Integer totalProductCount) {
 		this.contractId = contractId;
 		this.memberName = memberName;
 		this.memberPhone = memberPhone;

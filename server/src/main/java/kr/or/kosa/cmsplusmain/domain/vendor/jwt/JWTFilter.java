@@ -52,6 +52,10 @@ public class JWTFilter extends OncePerRequestFilter {
 			// response status code
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
+		} catch (Exception e) {
+			log.error("jwt: unknown: {}", e.getMessage());
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return;
 		}
 
 		String category = jwtUtil.getCategory(accessToken);

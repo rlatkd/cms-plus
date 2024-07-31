@@ -23,10 +23,10 @@ import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 
 @Comment("회원 (학원의 학생)")
 @Entity
-//@Table(name = "member", uniqueConstraints = {
-//	@UniqueConstraint(name = "unique_member_email", columnNames = {"vendor_id", "member_email"}),
-//	@UniqueConstraint(name = "unique_member_phone", columnNames = {"vendor_id", "member_phone"})
-//})
+@Table(name = "member", uniqueConstraints = {
+	@UniqueConstraint(name = "unique_member_email", columnNames = {"vendor_id", "member_email"}),
+	@UniqueConstraint(name = "unique_member_phone", columnNames = {"vendor_id", "member_phone"})
+})
 @Getter
 @AllArgsConstructor
 @Builder
