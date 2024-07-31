@@ -1,37 +1,25 @@
-package kr.or.kosa.cmsplusmain.domain.statics.repository;
+package kr.or.kosa.cmsplusmain.domain.dashboard.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
-import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
-import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.query.*;
 import kr.or.kosa.cmsplusmain.domain.member.entity.MemberStatus;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.BillingStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.ContractStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.DayBillingQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.MemberStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QBillingStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QContractStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QDayBillingQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QMemberStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QRecentFiveContractQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.QTopFiveMemberQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.RecentFiveContractQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.TopFiveMemberQueryRes;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.billing;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.billingProduct;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.contract;
+import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.contractProduct;
+import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.member;
 
 @Repository
 @RequiredArgsConstructor

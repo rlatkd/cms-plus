@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.statics.dto.query;
+package kr.or.kosa.cmsplusmain.domain.dashboard.dto.query;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

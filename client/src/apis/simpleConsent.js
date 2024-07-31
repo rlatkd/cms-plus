@@ -1,14 +1,15 @@
+import { publicAxios } from '.';
 import { privateAxios } from '.';
 
 /* 간편서명동의 데이터 가져오기 */
 export const getSimpleConsent = async () => {
-  const res = await privateAxios.get('/v1/vendor/simple-consent');
+  const res = await publicAxios.get('/v1/vendor/simple-consent');
   return res.data;
 };
 
 /* 간편서명동의 설정 업데이트 */
 export const updateSimpleConsent = async data => {
-  const res = await privateAxios.put('/v1/vendor/simple-consent', data);
+  const res = await publicAxios.put('/v1/vendor/simple-consent', data);
   return res.data;
 };
 

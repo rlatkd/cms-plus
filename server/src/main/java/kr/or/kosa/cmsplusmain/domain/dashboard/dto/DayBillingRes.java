@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.statics.dto;
+package kr.or.kosa.cmsplusmain.domain.dashboard.dto;
 
 import java.time.LocalDate;
 import java.util.Map;

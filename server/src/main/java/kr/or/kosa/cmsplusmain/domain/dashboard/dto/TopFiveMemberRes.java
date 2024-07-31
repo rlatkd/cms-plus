@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.statics.dto;
+package kr.or.kosa.cmsplusmain.domain.dashboard.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
