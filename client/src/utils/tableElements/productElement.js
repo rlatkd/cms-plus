@@ -14,8 +14,8 @@ export const initialSearch = [
   { key: 'checkbox', type: 'hidden', value: '', width: 'w-1/12' },
   { key: 'order', type: 'hidden', value: '', width: 'w-1/12' },
   { key: 'productName', type: 'text', value: '', width: 'w-3/12' },
-  { key: 'productPrice', type: 'num', value: '', width: 'w-3/12', lower: true },
-  { key: 'contractNumber', type: 'num', value: '', width: 'w-3/12', lower: true },
+  { key: 'productPrice', type: 'number', value: '', width: 'w-3/12', lower: true },
+  { key: 'contractNumber', type: 'number', value: '', width: 'w-3/12', lower: true },
   { key: 'productCreatedDate', type: 'calendar', value: '', width: 'w-3/12' },
   { key: 'productMemo', type: 'text', value: '', width: 'w-3/12' },
 ];
