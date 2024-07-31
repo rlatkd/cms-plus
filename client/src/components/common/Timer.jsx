@@ -13,7 +13,8 @@ const Timer = ({ time, setTime, timeOut, style }) => {
         if (prevTime <= 0) {
           clearInterval(timer);
           if (timeOut) {
-            timeOut(); // 시간이 0일 때 timeOut 함수 호출
+            // 시간이 0일 때 timeOut 함수 호출
+            timeOut();
           }
           return 0;
         }
@@ -22,7 +23,7 @@ const Timer = ({ time, setTime, timeOut, style }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [setTime, timeOut]);
 
   return <div className={`${style}`}>{formatTime(time)}</div>;
 };

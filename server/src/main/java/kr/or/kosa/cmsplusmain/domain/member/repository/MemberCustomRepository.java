@@ -198,6 +198,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         }
         return memberPhoneEq.or(memberEmailEq(email));
     }
+
     public Optional<Member> findMemberByPhone(Long vendorId, String phone) {
         return Optional.ofNullable(
             jpaQueryFactory

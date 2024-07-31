@@ -1,7 +1,7 @@
 import BreadCrumb from '@/components/common/BreadCrumb';
 import Timer from '@/components/common/Timer';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import profile from '@/assets/profile.svg';
 import clock from '@/assets/clock.svg';
 import Reset from '@/assets/Reset';
@@ -13,28 +13,37 @@ const Header = () => {
   const { pathname } = useLocation();
   const { vendorInfo } = useVendorInfoStore();
   const onConfirm = useConfirm();
+  const navigate = useNavigate();
   const mainRef = useRef(null);
   const [time, setTime] = useState(() => JSON.parse(localStorage.getItem('time')) || 3600);
 
   // <----- 시간 로컬 스토리지에 저장 ----->
   useEffect(() => {
+    console.log('시작??');
     localStorage.setItem('time', JSON.stringify(time));
   }, [time]);
 
   // <----- 로그인 연장(refresh 토큰 재발급) API ----->
   const axiosExtendLogin = async () => {
     try {
-      const isExtendLogin = onConfirm({
+      const isExtendLogin = await onConfirm({
         msg: `로그인 연장 시 로그인 시간이 60분으로 늘어납니다!`,
         type: 'warning',
         title: '로그인을 연장 하시겠습니까?',
       });
-      if (!isExtendLogin) return;
+      if (!isExtendLogin) {
+        if (time === 0) {
+          localStorage.clear(); // 로컬 스토리지 비우기
+          navigate('/');
+        }
+        return;
+      }
 
       const res = await postRefreshToken();
-      localStorage.setItem('access_token', res.accessToken);
+      localStorage.setItem('access_token', res.data.accessToken);
       console.log('!----로그인 연장----!'); // 삭제예정
       setTime(3600);
+      console.log('time : ', time);
     } catch (err) {
       console.error('axiosExtendLogin => ', err.response);
     }
