@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -22,6 +21,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
@@ -104,6 +105,22 @@ public class Billing extends BaseEntity {
 	@OneToMany(mappedBy = "billing", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	private Set<BillingProduct> billingProducts = new HashSet<>();
+
+	@Comment("청구금액 SUM(청구 상품 가격 * 수량) 미리 계산")
+	private Long billingPrice;
+
+	@Comment("청구상품 수 미리 계산")
+	private Integer billingProductCnt;
+
+	@PrePersist
+	@PreUpdate
+	private void calculateBillingPriceAndProductCnt() {
+		this.billingPrice = billingProducts.stream()
+			.mapToLong(BillingProduct::getBillingProductPrice)
+			.sum();
+
+		this.billingProductCnt = billingProducts.size();
+	}
 
 	public Billing(Contract contract, BillingType billingType, LocalDate billingDate, int contractDay, List<BillingProduct> billingProducts) {
 		// 청구는 최소 한 개의 상품을 가져야한다.

@@ -89,7 +89,7 @@ public class V2BillingService {
 	public PageRes<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		List<BillingListItemRes> content = billingRepository.searchBillings(vendorId, search, pageReq);
 
-		int totalContentCount = (int)billingRepository.countSearchedBillings(vendorId, search);
+		int totalContentCount = billingRepository.countSearchedBillings(vendorId, search).intValue();
 
 		return new PageRes<>(totalContentCount, pageReq.getSize(), content);
 	}

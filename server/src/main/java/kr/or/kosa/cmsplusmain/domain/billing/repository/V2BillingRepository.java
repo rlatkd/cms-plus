@@ -18,6 +18,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
@@ -41,19 +42,26 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 	 * 기본정렬: 생성시간 내림차순
 	 * */
 	public List<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
+
+		// 검색어를 프론트에 표시할 상품 이름에 표시하기 위한 서브쿼리
+		JPQLQuery<String> firstProductNameSubQuery = from(billingProduct)
+			.select(billingProduct.name.min())
+			.where(
+				billingProduct.billing.eq(billing),
+				productNameContains(search.getProductName()));
+
 		JPAQuery<BillingListItemRes> query = searchQuery(vendorId, search)
 			.select(new QBillingListItemRes(
 				billing.id,
 				member.name,
 				member.phone,
-				billingProduct.price.longValue().multiply(billingProduct.quantity).sum(),
+				billing.billingPrice,
 				billing.billingStatus,
 				payment.paymentType,
 				billing.billingDate,
-				getFirstProductName(search.getProductName()),
-				billingProduct.countDistinct()
+				firstProductNameSubQuery,
+				billing.billingProductCnt
 			))
-			.groupBy(member.name, member.phone, billing.billingStatus, payment.paymentType, billing.billingDate)
 			.orderBy(buildOrderSpecifier(pageReq));
 
 		return applyPaging(query, pageReq).fetch();
@@ -62,11 +70,9 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 	/**
 	 * 고객의 전체 계약 수 (검색 조건 반영된 계약 수)
 	 * */
-	public long countSearchedBillings(Long vendorId, BillingSearchReq search) {
-		// fetchCount : 서브쿼리를 생성해서 count 해준다.
-		// 기본적으로 count 쿼리보다 성능이 좋지 않지만
-		// groupBY 절에서 어차피 서브쿼리를 통해 카운트 필요
-		return searchQuery(vendorId, search).fetchCount();
+	public Long countSearchedBillings(Long vendorId, BillingSearchReq search) {
+		Long res = searchQuery(vendorId, search).select(billing.count()).fetchOne();
+		return res == null ? 0 : res;
 	}
 
 	/**
@@ -79,7 +85,6 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 			.join(billing.contract, contract)
 			.join(contract.member, member)
 			.join(contract.payment, payment)
-			.leftJoin(billing.billingProducts, billingProduct).on(isNotDeleted(billingProduct))
 			.where(
 				contractVendorIdEq(vendorId),							// 고객 일치
 				memberNameContains(search.getMemberName()),				// 회원명 포함
@@ -87,11 +92,8 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 				billingStatusEq(search.getBillingStatus()),				// 청구상태 일치
 				paymentTypeEq(search.getPaymentType()),					// 결제방식 일치
 				billingDateEq(search.getBillingDate()),					// 결제일 일치
-				productNameContainsInBilling(search.getProductName()),	// 상품명 포함
 				contractIdEq(search.getContractId())					// 계약 ID 일치 (계약 상세 청구목록)
-			)
-			.groupBy(billing.id)
-			.having(billingPriceLoe(search.getBillingPrice()));
+			);
 	}
 
 	/**
@@ -140,6 +142,10 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 		} else {
 			return billingProduct.name.min();
 		}
+	}
+
+	private BooleanExpression productNameContains(String productName) {
+		return StringUtils.hasText(productName) ? billingProduct.name.contains(productName) : null;
 	}
 
 	private BooleanExpression productNameContainsInBilling(String productName) {

@@ -20,12 +20,12 @@ public class BillingListItemRes {
 	private final LocalDate billingDate;
 	@Setter
 	private String firstProductName;
-	private final Long totalProductCount;
+	private final Integer totalProductCount;
 
 	@QueryProjection
 	public BillingListItemRes(Long billingId, String memberName, String memberPhone, Long billingPrice,
 		BillingStatus billingStatus, PaymentType paymentType, LocalDate billingDate, String firstProductName,
-		Long totalProductCount) {
+		Integer totalProductCount) {
 		this.billingId = billingId;
 		this.memberName = memberName;
 		this.memberPhone = memberPhone;
