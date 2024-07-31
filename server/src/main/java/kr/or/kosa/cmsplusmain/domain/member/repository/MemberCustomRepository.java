@@ -28,8 +28,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
-import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
-import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -183,7 +181,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             .selectOne()
             .from(member)
             .where(
-                memberPhoneAndEmailEq(phone, email),
+                memberPhoneOrEmailEq(phone, email),
                 memberNotDel()
             )
             .fetchOne();
@@ -191,7 +189,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         return res == null;
     }
 
-    private BooleanExpression memberPhoneAndEmailEq(String phone, String email) {
+    private BooleanExpression memberPhoneOrEmailEq(String phone, String email) {
         BooleanExpression memberPhoneEq = memberPhoneEq(phone);
         if (memberPhoneEq == null) {
             return memberEmailEq(email);
