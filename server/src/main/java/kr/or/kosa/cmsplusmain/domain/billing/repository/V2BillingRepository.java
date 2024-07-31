@@ -44,6 +44,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 	public List<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 
 		// 검색어를 프론트에 표시할 상품 이름에 표시하기 위한 서브쿼리
+		// Querydsl 에서는 서브쿼리에 limit 조건이 반영 안되므로 min 사용
 		JPQLQuery<String> firstProductNameSubQuery = from(billingProduct)
 			.select(billingProduct.name.min())
 			.where(
@@ -90,6 +91,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 				memberNameContains(search.getMemberName()),				// 회원명 포함
 				memberPhoneContains(search.getMemberPhone()),			// 휴대전화 포함
 				billingStatusEq(search.getBillingStatus()),				// 청구상태 일치
+				billingPriceLoe(search.getBillingPrice()),				// 청구금액 이하
 				paymentTypeEq(search.getPaymentType()),					// 결제방식 일치
 				billingDateEq(search.getBillingDate()),					// 결제일 일치
 				contractIdEq(search.getContractId())					// 계약 ID 일치 (계약 상세 청구목록)
@@ -127,6 +129,10 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 
 
 	/*********** 조건 ************/
+	/**
+	 * @deprecated groupby 절 삭제로, 일반 서브쿼리 대체
+	 * */
+	@Deprecated
 	private StringExpression getFirstProductName(String productName) {
 		if (StringUtils.hasText(productName)) {
 			return Expressions.stringTemplate(
@@ -148,6 +154,14 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 		return StringUtils.hasText(productName) ? billingProduct.name.contains(productName) : null;
 	}
 
+	private BooleanExpression billingPriceLoe(Long billingPrice) {
+		return billingPrice != null ? billing.billingPrice.loe(billingPrice) : null;
+	}
+
+	/**
+	 * @deprecated where subquery -> select subquery 변경됨
+	 * */
+	@Deprecated
 	private BooleanExpression productNameContainsInBilling(String productName) {
 		if (!StringUtils.hasText(productName)) {
 			return null;

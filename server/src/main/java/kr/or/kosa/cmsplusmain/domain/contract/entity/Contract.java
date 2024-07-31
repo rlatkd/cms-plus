@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -21,6 +20,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
@@ -103,6 +104,14 @@ public class Contract extends BaseEntity {
 	@Builder.Default
 	private ContractStatus contractStatus = ContractStatus.ENABLED;
 
+	@Comment("계약금액 SUM(계약 상품 가격 * 수량) 미리 계산")
+	@Column(name = "contract_contract_price", nullable = false)
+	private Long contractPrice;
+
+	@Comment("계약상품 수 미리 계산")
+	@Column(name = "contract_contract_prodcut_cnt", nullable = false)
+	private Integer contractProductCnt;
+
 	/* 계약한 상품 목록 */
 	// 계약 상품은 상품 ID 별로 하나만 존재할 수 있다.
 	// 동일 상품 추가 안됨
@@ -116,6 +125,16 @@ public class Contract extends BaseEntity {
 	@SQLRestriction(BaseEntity.NON_DELETED_QUERY)
 	@Builder.Default
 	private List<Billing> billings = new ArrayList<>();
+
+	@PrePersist
+	@PreUpdate
+	private void calculateContractPriceAndProductCnt() {
+		this.contractPrice = contractProducts.stream()
+			.mapToLong(ContractProduct::getContractProductPrice)
+			.sum();
+
+		this.contractProductCnt = contractProducts.size();
+	}
 
 	/**
 	 * 계약 상품 추가

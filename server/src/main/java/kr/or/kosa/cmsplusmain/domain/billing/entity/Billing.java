@@ -107,9 +107,11 @@ public class Billing extends BaseEntity {
 	private Set<BillingProduct> billingProducts = new HashSet<>();
 
 	@Comment("청구금액 SUM(청구 상품 가격 * 수량) 미리 계산")
+	@Column(name = "billing_billing_price", nullable = false)
 	private Long billingPrice;
 
 	@Comment("청구상품 수 미리 계산")
+	@Column(name = "billing_billing_prodcut_cnt", nullable = false)
 	private Integer billingProductCnt;
 
 	@PrePersist
