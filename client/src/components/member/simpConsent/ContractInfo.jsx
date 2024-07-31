@@ -6,13 +6,13 @@ import { getAvailableOptions } from '@/apis/simpleConsent';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
 
-const ContractInfo = ({ userData, setUserData }) => {
+const ContractInfo = ({ userData, setUserData, vendorId }) => {
   const [availableProducts, setAvailableProducts] = useState([]);
 
   useEffect(() => {
     const fetchAvailableOptions = async () => {
       try {
-        const options = await getAvailableOptions();
+        const options = await getAvailableOptions(vendorId);
         setAvailableProducts(options.availableProducts);
       } catch (error) {
         console.error('상품 리스트 업데이트 실패:', error);
@@ -154,7 +154,10 @@ const ContractInfo = ({ userData, setUserData }) => {
         value={userData.contractDTO.contractName}
         onChange={handleInputChange}
         maxLength={20}
-        isValid={!userData.contractDTO.contractName || validateField('contractName', userData.contractDTO.contractName)}
+        isValid={
+          !userData.contractDTO.contractName ||
+          validateField('contractName', userData.contractDTO.contractName)
+        }
         errorMsg='올바른 계약명을 입력해주세요.'
       />
 

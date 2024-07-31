@@ -41,9 +41,8 @@ public class SimpConsentSettingController {
     /**
      * 간편동의 상품, 결제수단 리스트 조회
      * */
-    @GetMapping("/available-options")
-    public ResponseEntity<?> getAvailableOptions(@VendorId Long vendorId) {
-//        Long vendorId = 1L;
+    @GetMapping("/available-options/{vendorId}")
+    public ResponseEntity<?> getAvailableOptions(@PathVariable Long vendorId) {
         AvailableOptionsDto options = simpConsentSettingService.getAvailableOptions(vendorId);
         return ResponseEntity.ok(options);
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Main from '@/components/member/simpConsent/Main';
 import BasicInfo from '@/components/member/simpConsent/BasicInfo';
 import ContractInfo from '@/components/member/simpConsent/ContractInfo';
@@ -15,6 +15,7 @@ import { useUserDataStore } from '@/stores/useUserDataStore';
 import useStatusStepper from '@/hooks/useStatusStepper';
 import { sendSimpleConsentData } from '@/apis/simpleConsent';
 import { validateField } from '@/utils/validators';
+import { useLocation } from 'react-router-dom';
 
 const SimpConsentPage = () => {
   const start = 0;
@@ -22,12 +23,18 @@ const SimpConsentPage = () => {
   const { status, setStatus, reset } = useStatusStore();
   const { userData, setUserData } = useUserDataStore();
   const [isCardVerified, setIsCardVerified] = useState(false);
+  const isFirstRender = useRef(true); // 최초 렌더링 여부 확인
 
   const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
     'simpconsent',
     start,
     end
   );
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const contractId = searchParams.get('contractId');
+  const vendorId = searchParams.get('vendorId');
 
   const handleCardVerificationComplete = verified => {
     setIsCardVerified(verified);
@@ -54,7 +61,7 @@ const SimpConsentPage = () => {
     if (!phone) missingFields.push('휴대전화');
     else if (!validateField('phone', phone)) invalidFields.push('휴대전화');
 
-    if (!validateField('homePhone', homePhone)) invalidFields.push('유선전화');
+    if (homePhone && !validateField('homePhone', homePhone)) invalidFields.push('유선전화');
 
     if (!email) missingFields.push('이메일');
     else if (!validateField('email', email)) invalidFields.push('이메일');
@@ -110,7 +117,6 @@ const SimpConsentPage = () => {
 
       if (!cardOwnerBirth) missingFields.push('생년월일');
       else if (!validateField('birth', cardOwnerBirth)) invalidFields.push('생년월일');
-
     } else if (paymentMethod === 'CMS') {
       if (!isVerified) missingFields.push('계좌 인증');
       if (!bank) missingFields.push('은행');
@@ -172,20 +178,16 @@ const SimpConsentPage = () => {
       return;
     }
 
-    if (invalidFields.length > 0){
+    if (invalidFields.length > 0) {
       alert(`다음 필드의 형식이 올바르지 않습니다: ${invalidFields.join(', ')}`);
       return;
     }
 
     if (status === 4) {
-      console.log('회원 DTO (stringified):', JSON.stringify(userData.memberDTO, null, 2));
-      console.log('결제 DTO (stringified):', JSON.stringify(userData.paymentDTO, null, 2));
-      console.log('계약 DTO (stringified):', JSON.stringify(userData.contractDTO, null, 2));
-
       try {
         setStatus(5); // 로딩
         const preparedData = prepareData(userData);
-        await sendSimpleConsentData(preparedData);
+        await sendSimpleConsentData(vendorId, preparedData);
         setStatus(6); // 성공
       } catch (error) {
         console.error('API request failed', error);
@@ -199,13 +201,14 @@ const SimpConsentPage = () => {
     }
   };
 
+  // <----- 컴포넌트 변경 ----->
   const componentMap = {
     0: Main,
     1: BasicInfo,
     2: ContractInfo,
     3: PaymentInfo,
     4: Signature,
-    5: () => <Loading content={'등록중...'} />,
+    5: Loading,
     6: Success,
   };
 
@@ -213,7 +216,14 @@ const SimpConsentPage = () => {
 
   // <----- 페이지 렌더링 시 초기화 ----->
   useEffect(() => {
-    reset();
+    if (!isFirstRender.current) {
+      reset();
+    }
+  }, []);
+
+  // <----- 최초 렌더링 판단 ----->
+  useEffect(() => {
+    isFirstRender.current = false;
   }, []);
 
   return (
@@ -223,6 +233,9 @@ const SimpConsentPage = () => {
         setUserData={setUserData}
         onVerificationComplete={handleCardVerificationComplete}
         isCardVerified={isCardVerified}
+        vendorId={vendorId}
+        contractId={contractId}
+        content={'등록중...'}
       />
       <div className='h-28' />
       <div className='fixed bottom-0 left-0 w-full'>

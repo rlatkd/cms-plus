@@ -22,8 +22,11 @@ public class SimpleConsentController {
     private final SimpleConsentService simpleConsentService;
     private static final Logger logger = LoggerFactory.getLogger(SimpleConsentController.class);
 
-    @PostMapping
-    public ResponseEntity<MemberDetail> processSimpleConsent(@VendorId Long vendorId , @RequestBody SimpleConsentRequestDTO simpleConsentRequestDTO) {
+    /**
+     * 고객 간편동의 (회원, 비회원) 등록
+     * */
+    @PostMapping("/{vendorId}")
+    public ResponseEntity<MemberDetail> processSimpleConsent(@PathVariable Long vendorId , @RequestBody SimpleConsentRequestDTO simpleConsentRequestDTO) {
 //        Long vendorId = 1L;
         //String vendorName = userDetails.getName();
 

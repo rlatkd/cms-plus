@@ -15,7 +15,7 @@ const memberRoute = () => {
       element: <Navigate replace to='simpconsent' />,
     },
     {
-      path: 'simpconsent/:memberid?',
+      path: 'simpconsent',
       element: <SimpConsent />,
     },
     {

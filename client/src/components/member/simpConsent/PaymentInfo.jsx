@@ -4,14 +4,14 @@ import PaymentCMS from './PaymentCMS';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import { getAvailableOptions } from '@/apis/simpleConsent';
 
-const PaymentInfo = ({ userData, setUserData }) => {
+const PaymentInfo = ({ userData, setUserData, vendorId }) => {
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
   const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
     const fetchAvailableOptions = async () => {
       try {
-        const options = await getAvailableOptions();
+        const options = await getAvailableOptions(vendorId);
         setAvailablePaymentMethods(options.availablePaymentMethods);
       } catch (error) {
         console.error('결제 수단 옵션 가져오기 실패:', error);
