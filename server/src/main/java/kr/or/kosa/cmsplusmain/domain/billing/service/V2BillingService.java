@@ -58,7 +58,7 @@ public class V2BillingService {
 
 	private final PaymentService paymentService;
 
-	@Value("host.front")
+	@Value("${host.front}")
 	private String FRONT_HOST_URL;
 
 	/**
