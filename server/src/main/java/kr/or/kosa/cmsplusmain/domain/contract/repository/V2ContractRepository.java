@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.contract.repository;
 
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
+import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
@@ -36,24 +38,14 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 	 * 계약목록 검색 |
 	 * */
 	public List<V2ContractListItemRes> searchContracts(Long vendorId, ContractSearchReq search, PageReq pageReq) {
-
-		// 검색어를 프론트에 표시할 상품 이름에 표시하기 위한 서브쿼리
-		// Querydsl 에서는 서브쿼리에 limit 조건이 반영 안되므로 min 사용
-		JPQLQuery<String> firstProductNameSubQuery = from(contractProduct)
-			.select(contractProduct.name.min())
-			.where(
-				contractProduct.contract.eq(contract),
-				productNameContains(search.getProductName()));
-
 		JPAQuery<V2ContractListItemRes> query = searchQuery(vendorId, search)
 			.select(new QV2ContractListItemRes(
 				contract.id, member.name, member.phone, contract.contractDay,
 				contract.contractPrice,
 				payment.paymentType, contract.contractStatus,
-				firstProductNameSubQuery,
+				firstProductNameSubQuery(search.getProductName()),
 				contract.contractProductCnt
 			))
-			.where(firstProductNameSubQuery.isNotNull())
 			.orderBy(buildOrderSpecifier(pageReq));
 
 		return applyPaging(query, pageReq).fetch();
@@ -83,6 +75,7 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 				memberPhoneContains(search.getMemberPhone()),	// 휴대전화 포함
 				paymentTypeEq(search.getPaymentType()),			// 결제방식 일치
 				paymentMethodEq(search.getPaymentMethod()),		// 결제수단 일치
+				firstProductNameSubQuery(search.getProductName()).isNotNull(),	// 상품명 포함
 				memberIdEq(search.getMemberId())				// 회원 ID 일치 (회원 상세 계약목록)
 			);
 	}
@@ -147,6 +140,16 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 				.from(contractProduct)
 				.where(contractProduct.name.contains(productName))
 		);
+	}
+
+	private JPAQuery<String> firstProductNameSubQuery(String productName) {
+		// 검색어를 프론트에 표시할 상품 이름에 표시하기 위한 서브쿼리
+		// Querydsl 에서는 서브쿼리에 limit 조건이 반영 안되므로 min 사용
+		return from(contractProduct)
+			.select(contractProduct.name.min())
+			.where(
+				contractProduct.contract.eq(contract),
+				productNameContains(productName));
 	}
 
 	private OrderSpecifier<?> buildOrderSpecifier(PageReq pageReq) {
