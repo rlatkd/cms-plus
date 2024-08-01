@@ -3,6 +3,10 @@ import AlertContext from '@/utils/dialog/alert/AlertContext';
 
 const fieldToName = {
   billingType: '청구타입',
+  memberEmail: '이메일은',
+  memberPhone: '핸드폰 번호는',
+  memberName: '회원 이름은',
+  memberEnrollDate: '등록일은',
 };
 
 // msg : 원하는 메세지
@@ -14,16 +18,16 @@ const useAlert = () => {
   const { alert: alertComp } = useContext(AlertContext);
 
   const onAlert = async ({ msg, type = 'default', title = '효성 CMS#', err = null }) => {
-    console.log('??', err);
-
     if (err != null) {
       const data = err.response.data;
       const fieldErrors = data.errors;
       msg = data.message;
+      type = 'error';
       if (fieldErrors && fieldErrors.length > 0) {
-        msg = fieldErrors.map(
-          fieldError => `${fieldToName[fieldError.field] || ''} ${fieldError.reason}`
-        );
+        // msg = fieldErrors.map(
+        //   fieldError => `${fieldToName[fieldError.field] || ''} ${fieldError.reason}`
+        // );
+        msg = `${fieldToName[fieldErrors[0].field] || ''} ${fieldErrors[0].reason}`;
       }
     }
 

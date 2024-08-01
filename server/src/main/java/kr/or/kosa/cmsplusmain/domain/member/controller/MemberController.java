@@ -1,12 +1,10 @@
 package kr.or.kosa.cmsplusmain.domain.member.controller;
 
-import java.time.Instant;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.LogExecutionTime;
 import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +25,6 @@ import kr.or.kosa.cmsplusmain.domain.excel.service.ExcelHandler;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -90,8 +87,8 @@ public class MemberController {
      * 회원 등록 - 기본 정보
      */
     @PostMapping("/members/basic")
-    public void createMemberBaisc(@VendorId Long vendorId, @RequestBody @Valid MemberBasicCreateReq memberBasicCreateReq) {
-        return memberService.createMemberBasic(vendorId, memberBasicCreateReq);
+    public void createMemberBasic(@VendorId Long vendorId, @RequestBody @Valid MemberBasicCreateReq memberBasicCreateReq) {
+        memberService.createMemberBasic(vendorId, memberBasicCreateReq);
     }
 
 

@@ -22,7 +22,7 @@ import { useEffect } from 'react';
 
 const ContractRegisterPage = () => {
   const start = 0;
-  const end = 4;
+  const end = 3;
   const { status, reset, setStatus } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const navigate = useNavigate();

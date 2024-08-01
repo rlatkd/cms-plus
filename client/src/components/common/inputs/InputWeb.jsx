@@ -49,6 +49,11 @@ const InputWeb = ({
     setIsAddressModalOpen(false);
   };
 
+  const isNotValid = value => {
+    if (!value) return false;
+    return value && !isValid;
+  };
+
   return (
     <div className={`${classContainer}`}>
       {label && (
@@ -75,7 +80,7 @@ const InputWeb = ({
         />
 
         {/* 유효성검사 */}
-        {(value || value !== 0) && !isValid && (
+        {isNotValid(value) && (
           <p className='absolute text-negative text-[13px] ml-2 -bottom-6'>{errorMsg}</p>
         )}
 

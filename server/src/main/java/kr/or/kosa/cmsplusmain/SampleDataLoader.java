@@ -71,9 +71,9 @@ public class SampleDataLoader {
 		Vendor vendor = vendorRepository.save(
 			createVendorWithDefaultProduct(
 				"vendor1",
-				"테스트고객",
-				"testvendor@fms.com",
-				"01012341234",
+				"정현우",
+				"gusehd502@naver.com",
+				"01026963279",
 				"Qwer123!")
 		);
 

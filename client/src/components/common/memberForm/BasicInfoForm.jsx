@@ -4,6 +4,7 @@ import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
+import { disableFutureDates } from '@/utils/format/formatCalender';
 
 // formType : CREATE, UPDATE, DETAIL
 const BasicInfoForm = ({ formType, memberData }) => {
@@ -71,7 +72,7 @@ const BasicInfoForm = ({ formType, memberData }) => {
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
-          maxLength={11}
+          maxLength={13}
           isValid={validateField('phone', dataSource.memberPhone)}
           errorMsg='올바른 형식 아닙니다.'
         />
@@ -85,6 +86,7 @@ const BasicInfoForm = ({ formType, memberData }) => {
           width='100%'
           classContainer='w-full'
           disabled={isDisabled}
+          disabledDate={disableFutureDates}
           value={dataSource.memberEnrollDate}
           handleChangeValue={handleChangeValue}
         />
@@ -98,7 +100,7 @@ const BasicInfoForm = ({ formType, memberData }) => {
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
-          maxLength={10}
+          maxLength={12}
           isValid={validateField('homePhone', dataSource.memberHomePhone)}
           errorMsg='올바른 형식 아닙니다.'
         />

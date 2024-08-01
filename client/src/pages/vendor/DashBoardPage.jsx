@@ -151,7 +151,7 @@ const DashBoardPage = () => {
   );
 
   return (
-    <div className='min-h-screen py-8 bg-gray-50 border border-red-400'>
+    <div className='min-h-screen py-8 bg-gray-50 '>
       <div className='container mx-auto px-4'>
         {statInfo && <Stats statInfo={statInfo} />}
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>

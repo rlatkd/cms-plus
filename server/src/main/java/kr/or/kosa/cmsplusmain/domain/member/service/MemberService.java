@@ -27,9 +27,8 @@ import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
-import kr.or.kosa.cmsplusmain.domain.member.exception.EmailDuplicationException;
+import kr.or.kosa.cmsplusmain.domain.member.exception.MemberDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
-import kr.or.kosa.cmsplusmain.domain.member.exception.PhoneDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.V2MemberRepository;
@@ -151,8 +150,10 @@ public class MemberService {
     public void createMemberBasic(Long vendorId, MemberBasicCreateReq memberBasicCreateReq) {
         // 회원 정보를 DB에 저장한다.
         Member member = memberBasicCreateReq.toEntity(vendorId);
-
-        member = memberRepository.save(member);
+        if (!memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail())) {
+            throw new MemberDuplicationException("핸드폰 번호 혹은 이메일이 중복되었습니다");
+        }
+        memberRepository.save(member);
     }
 
     /**
@@ -184,7 +185,7 @@ public class MemberService {
         if (!memberCustomRepository.canSaveMember(newPhone, newEmail)) {
             log.info(newPhone + " " + newEmail);
             log.error(member.getPhone() + " " + member.getEmail());
-            throw new EmailDuplicationException("핸드폰 번호 혹은 이메일이 중복되었습니다");
+            throw new MemberDuplicationException("핸드폰 번호 혹은 이메일이 중복되었습니다");
         }
 
         member.setName(memberUpdateReq.getMemberName());

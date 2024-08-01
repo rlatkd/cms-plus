@@ -6,6 +6,12 @@ export const postCreateMember = async memberData => {
   return res;
 };
 
+// 회원 등록 - 기본정보
+export const postCreateMemberBasic = async memberData => {
+  const res = await privateAxios.post('/v1/vendor/management/members/basic', memberData);
+  return res;
+};
+
 // 회원 목록 조회
 export const getMemberList = async (searchParams = {}) => {
   const res = await privateAxios.get('/v1/vendor/management/members', {

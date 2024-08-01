@@ -70,7 +70,6 @@ const useStatusStepper = (type, start, end) => {
       increment();
     }
     if (status === end && type !== CASES.MEMBERREGISTER) {
-      console.log('이건데??');
       reset();
     }
 
