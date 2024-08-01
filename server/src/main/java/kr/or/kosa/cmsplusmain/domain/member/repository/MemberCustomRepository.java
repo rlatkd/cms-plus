@@ -176,7 +176,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     /*
     * 회원 존재 여부 판단 번호와 이메일
     * */
-    public boolean canSaveMember(String phone, String email) {
+    public boolean hasNotDuplicatedPhoneAndEmail(String phone, String email) {
         if (phone == null && email == null) return true;
 
         Integer res = jpaQueryFactory

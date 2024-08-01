@@ -36,7 +36,6 @@ import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.exception.EmailDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
-import kr.or.kosa.cmsplusmain.domain.member.exception.PhoneDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.V2MemberRepository;
@@ -180,7 +179,7 @@ public class MemberService {
         String newEmail = member.getEmail().equals(memberUpdateReq.getMemberEmail()) ?
             null : memberUpdateReq.getMemberEmail();
 
-        if (!memberCustomRepository.canSaveMember(newPhone, newEmail)) {
+        if (!memberCustomRepository.hasNotDuplicatedPhoneAndEmail(newPhone, newEmail)) {
             log.info(newPhone + " " + newEmail);
             log.error(member.getPhone() + " " + member.getEmail());
             throw new EmailDuplicationException("핸드폰 번호 혹은 이메일이 중복되었습니다");
@@ -331,7 +330,7 @@ public class MemberService {
      * */
     private String validateError(Member member, Validator validator) {
         Set<ConstraintViolation<Member>> validate = validator.validate(member);
-        boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
+        boolean canSave = memberCustomRepository.hasNotDuplicatedPhoneAndEmail(member.getPhone(), member.getEmail());
 
         // dto validate 변경 -> 메시지 커스텀
         String validation = validate.stream()

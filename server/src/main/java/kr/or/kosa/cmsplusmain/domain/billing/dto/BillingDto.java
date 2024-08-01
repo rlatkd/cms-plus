@@ -6,11 +6,12 @@ import java.time.LocalDateTime;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public class BillingDto {
 	/************ 기본정보 ************/
 	private Long billingId;
