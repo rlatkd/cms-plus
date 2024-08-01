@@ -10,5 +10,5 @@ export const formatProducts = contractProducts => {
 };
 
 export const formatProductsForList = (firstProductName, totalProductCount) => {
-  return firstProductName + (totalProductCount > 1 ? ' +' + totalProductCount : '');
+  return firstProductName + (totalProductCount > 1 ? ' +' + (totalProductCount - 1) : '');
 };
