@@ -148,14 +148,14 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => 
         </div>
 
         <div className='flex-1 overflow-hidden'>
-          <div className='overflow-x-auto overflow-y-auto h-full shadow-md rounded-lg'>
+          <div className='relative   overflow-x-auto overflow-y-auto h-full shadow-md rounded-lg'>
             {isLoading && (
-              <div className='text-center mb-4 z-50'>
-                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto' />
-                <p className='mt-2 text-gray-600'>업로드 중...</p>
+              <div className='absolute top-24 text-center mb-4 z-50 w-full '>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-mint mx-auto' />
+                <p className='mt-2 text-text_black font-700'>업로드 중...</p>
               </div>
             )}
-            <table className='w-full h-5/6 table-auto'>
+            <table className='w-full h-5/6 table-auto '>
               <thead className='sticky top-0 bg-gray-100'>
                 <tr>
                   {headers.map((header, index) => (
@@ -168,6 +168,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => 
                   ))}
                 </tr>
               </thead>
+
               <tbody className='bg-white divide-y divide-gray-200'>
                 {data.length > 0 ? (
                   data.map((row, rowIndex) => (

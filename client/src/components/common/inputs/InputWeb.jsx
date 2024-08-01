@@ -75,7 +75,7 @@ const InputWeb = ({
           disabled={disabled}
           readOnly={readOnly}
           type={type !== 'password' ? type : showPassword ? 'text' : 'password'}
-          placeholder={placeholder}
+          placeholder={disabled ? '' : placeholder}
           {...props}
         />
 
