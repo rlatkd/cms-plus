@@ -3,7 +3,7 @@ import { postRefreshToken } from './auth';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 axios.defaults.withCredentials = true;
-const TOKEN = import.meta.env.VITE_TOKEN;
+// const TOKEN = import.meta.env.VITE_TOKEN;
 
 export const publicAxios = axios.create({
   baseURL: BASE_URL,
@@ -13,14 +13,14 @@ export const publicAxios = axios.create({
   },
 });
 
-// export const privateAxios = axios.create({
-//   baseURL: BASE_URL,
-//   headers: {
-//     'Access-Control-Allow-Origin': `${BASE_URL}`,
-//     'Content-Type': 'application/json',
-//     Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-//   },
-// });
+export const privateAxios = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Access-Control-Allow-Origin': `${BASE_URL}`,
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+  },
+});
 
 export const publicUploadFileAxios = axios.create({
   baseURL: BASE_URL,
@@ -30,36 +30,36 @@ export const publicUploadFileAxios = axios.create({
   },
 });
 
-// export const UploadFileAxios = axios.create({
-//   baseURL: BASE_URL,
-//   headers: {
-//     'Access-Control-Allow-Origin': `${BASE_URL}`,
-//     'Content-Type': 'multipart/form-data',
-//     Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-//   },
-// });
-
-// <=====================================================>
-
-// 개발전용
-export const privateAxios = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Access-Control-Allow-Origin': `${BASE_URL}`,
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${TOKEN}`,
-  },
-});
-
-// 개발전용
 export const UploadFileAxios = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Access-Control-Allow-Origin': `${BASE_URL}`,
     'Content-Type': 'multipart/form-data',
-    Authorization: `Bearer ${TOKEN}`,
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
   },
 });
+
+// <=====================================================>
+
+// // 개발전용
+// export const privateAxios = axios.create({
+//   baseURL: BASE_URL,
+//   headers: {
+//     'Access-Control-Allow-Origin': `${BASE_URL}`,
+//     'Content-Type': 'application/json',
+//     Authorization: `Bearer ${TOKEN}`,
+//   },
+// });
+
+// // 개발전용
+// export const UploadFileAxios = axios.create({
+//   baseURL: BASE_URL,
+//   headers: {
+//     'Access-Control-Allow-Origin': `${BASE_URL}`,
+//     'Content-Type': 'multipart/form-data',
+//     Authorization: `Bearer ${TOKEN}`,
+//   },
+// });
 
 // 테스트
 export const testAxios = axios.create({
