@@ -1,7 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.contract.repository;
 
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBilling.*;
-import static kr.or.kosa.cmsplusmain.domain.billing.entity.QBillingProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContract.*;
 import static kr.or.kosa.cmsplusmain.domain.contract.entity.QContractProduct.*;
 import static kr.or.kosa.cmsplusmain.domain.member.entity.QMember.*;
@@ -159,9 +157,7 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 
 		switch (orderBy) {
 			case "contractPrice" -> {
-				NumberExpression<Long> expression = contractProduct.price.longValue()
-					.multiply(contractProduct.quantity)
-					.sum();
+				NumberExpression<Long> expression = contract.contractPrice;
 				return pageReq.isAsc() ? expression.asc() : expression.desc();
 			}
 			case "contractDay" -> {

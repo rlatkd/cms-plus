@@ -34,6 +34,8 @@ import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.AccountPaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.CardPaymentDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CMSMethodRes;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.method.CardMethodRes;
@@ -50,6 +52,9 @@ public class V2BillingService {
 	private final V2BillingRepository billingRepository;
 	private final V2BillingProductRepository billingProductRepository;
 	private final V2ContractRepository contractRepository;
+	private final KafkaMessagingService kafkaMessagingService;
+	private final KafkaPaymentService kafkaPaymentService;
+
 
 	private final PaymentService paymentService;
 
@@ -251,10 +256,10 @@ public class V2BillingService {
 
 		switch (sendMethod) {
 			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
-				// kafkaMessagingService.produceMessaging(smsMessageDto);
+				kafkaMessagingService.produceMessaging(smsMessageDto);
 			}
 			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
-				// kafkaMessagingService.produceMessaging(emailMessageDto);
+				kafkaMessagingService.produceMessaging(emailMessageDto);
 			}
 		}
 	}
@@ -299,12 +304,12 @@ public class V2BillingService {
 			case CARD -> {
 				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfoRes(payment);
 				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(), cardMethodRes.getCardNumber());
-				// kafkaPaymentService.producePayment(cardPaymentDto);
+				kafkaPaymentService.producePayment(cardPaymentDto);
 			}
 			case CMS -> {
 				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfoRes(payment);
 				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(), cmsMethodRes.getAccountNumber());
-				// kafkaPaymentService.producePayment(accountPaymentDto);
+				kafkaPaymentService.producePayment(accountPaymentDto);
 			}
 
 		}
