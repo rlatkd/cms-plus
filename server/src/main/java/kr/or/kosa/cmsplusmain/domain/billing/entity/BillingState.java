@@ -34,7 +34,8 @@ public class BillingState {
 		UPDATE {
 			@Override
 			public BillingState checkState(Billing billing) {
-				if (billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT) {
+				if (billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT
+					|| billing.getBillingStatus() == BillingStatus.PAID) {
 					return new BillingState(UPDATE, false,
 						"[%s] 상태에서는 청구 수정이 불가능합니다".formatted(billing.getBillingStatus().getTitle()));
 				}
@@ -45,7 +46,9 @@ public class BillingState {
 			@Override
 			public BillingState checkState(Billing billing) {
 				// TODO 청구 삭제 가능하도록 하고 링크를 받은 회원이 알 수 있도록
-				if (billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT) {
+				if (
+					billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT
+					|| billing.getBillingStatus() == BillingStatus.PAID) {
 					return new BillingState(DELETE, false,
 						"[%s] 상태에서는 청구 삭제가 불가능합니다".formatted(billing.getBillingStatus().getTitle()));
 				}
@@ -98,8 +101,7 @@ public class BillingState {
 				PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
 				AutoPaymentType autoPaymentType = HibernateUtils.getImplements(paymentTypeInfo, AutoPaymentType.class);
 				if (autoPaymentType == null) {
-					return new BillingState(PAY_REALTIME, false,
-						"현재 설정된 결제방식으로는 실시간 결제가 불가능합니다");
+					throw new IllegalStateException("canPayRealtime에서 자동결제 여부가 판단되지 않아 결제 방식이 자동결제가 아닌 상태");
 				}
 
 				if (autoPaymentType.getConsentStatus() != ConsentStatus.ACCEPT) {

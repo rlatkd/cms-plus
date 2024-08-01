@@ -50,7 +50,7 @@ kafkaTopic:
   paymentTopic: ${PAYMENT_TOPIC}
 
 host:
-  front: ${FRONT_HOST}
+  front: https://www.hyosungcmsplus.site
 
 
 logging:
