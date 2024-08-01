@@ -53,6 +53,7 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 				firstProductNameSubQuery,
 				contract.contractProductCnt
 			))
+			.where(firstProductNameSubQuery.isNotNull())
 			.orderBy(buildOrderSpecifier(pageReq));
 
 		return applyPaging(query, pageReq).fetch();

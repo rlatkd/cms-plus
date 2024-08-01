@@ -45,7 +45,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 
 		// 검색어를 프론트에 표시할 상품 이름에 표시하기 위한 서브쿼리
 		// Querydsl 에서는 서브쿼리에 limit 조건이 반영 안되므로 min 사용
-		JPQLQuery<String> firstProductNameSubQuery = from(billingProduct)
+		JPAQuery<String> firstProductNameSubQuery = from(billingProduct)
 			.select(billingProduct.name.min())
 			.where(
 				billingProduct.billing.eq(billing),
@@ -63,6 +63,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 				firstProductNameSubQuery,
 				billing.billingProductCnt
 			))
+			.where(firstProductNameSubQuery.isNotNull())
 			.orderBy(buildOrderSpecifier(pageReq));
 
 		return applyPaging(query, pageReq).fetch();
