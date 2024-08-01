@@ -8,10 +8,12 @@ import java.util.Set;
 
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -40,7 +42,6 @@ import lombok.Setter;
 
 @Comment("청구 (매 달 새로 쌓이는 정보)")
 @Entity
-@Table(name = "billing")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Billing extends BaseEntity {
@@ -108,15 +109,19 @@ public class Billing extends BaseEntity {
 
 	@Comment("청구금액 SUM(청구 상품 가격 * 수량) 미리 계산")
 	@Column(name = "billing_billing_price", nullable = false)
-	private Long billingPrice;
+	private long billingPrice;
 
 	@Comment("청구상품 수 미리 계산")
 	@Column(name = "billing_billing_prodcut_cnt", nullable = false)
-	private Integer billingProductCnt;
+	private int billingProductCnt;
 
+	/**
+	 * 청구 상품만 수정하는 경우 호출 안되므로 청구 상품 변경 메서드에서
+	 * 메서드 호출 필수
+	 * 목록 조회 성능 개선을 위한 미리 계산
+	 * */
 	@PrePersist
-	@PreUpdate
-	private void calculateBillingPriceAndProductCnt() {
+	public void calculateBillingPriceAndProductCnt() {
 		this.billingPrice = billingProducts.stream()
 			.mapToLong(BillingProduct::getBillingProductPrice)
 			.sum();
@@ -176,7 +181,7 @@ public class Billing extends BaseEntity {
 		if (this.billingDate.equals(billingDate)) {
 			return;
 		}
-		if (LocalDate.now().isAfter(this.billingDate)) {
+		if (billingDate.isBefore(LocalDate.now())) {
 			throw new InvalidUpdateBillingException("청구 결제일은 이미 지난 날짜로 설정될 수 없습니다");
 		}
 		this.billingDate = billingDate;

@@ -131,7 +131,7 @@ const BillingForm = ({
       <div className='flex-1 overflow-auto'>
         <table className='w-full relative'>
           <thead>
-            <tr className='bg-gray-100 sticky top-0'>
+            <tr className='bg-gray-100 sticky top-0 z-10'>
               <th className='p-2 text-left'>상품명</th>
               <th className='p-2 text-left'>상품금액</th>
               <th className='p-2 text-left'>수량</th>

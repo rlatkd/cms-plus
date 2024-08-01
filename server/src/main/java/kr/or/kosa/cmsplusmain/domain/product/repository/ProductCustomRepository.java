@@ -12,6 +12,7 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.error.ErrorCode;
 import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 import kr.or.kosa.cmsplusmain.domain.base.repository.BaseCustomRepository;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductQueryDto;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductSearchReq;
 import kr.or.kosa.cmsplusmain.domain.product.dto.ProductUpdateReq;
@@ -55,7 +56,9 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
                 .select(contract.id.countDistinct())
                 .from(contractProduct)
                 .join(contractProduct.contract, contract) // 계약-상품 테이블의 외래키인 계약ID를 타고 들어감
-                .where(contractProduct.product.id.eq(productId),
+                .where(
+                    contractProduct.product.id.eq(productId),
+                        contract.contractStatus.eq(ContractStatus.ENABLED), // 진행중 계약
                         contractNotDel())
                 .fetchOne();
 

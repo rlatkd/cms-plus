@@ -109,6 +109,7 @@ const ProductModal = ({
           msg: '상품 삭제에 실패했습니다.',
           type: 'error',
           title: '삭제 실패',
+          err: err,
         });
         console.error('axiosProductDelete => ', err.response);
       }
@@ -128,7 +129,8 @@ const ProductModal = ({
       modalTitle={modalTitle}
       icon={icon}
       height='h-640'
-      width='w-640'>
+      width='w-640'
+      close={true}>
       <div className='flex flex-col justify-between gap-1.5'>
         <div className='mb-4 flex gap-4'>
           <div className='w-1/2'>
