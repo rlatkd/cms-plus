@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -56,6 +57,7 @@ public class SampleDataLoader {
 	private final MemberRepository memberRepository;
 	private final ContractRepository contractRepository;
 	private final BillingRepository billingRepository;
+	private final BCryptPasswordEncoder passwordEncoder;
 
 	private final Random random = new Random(System.currentTimeMillis());
 	private final RandomGenerator randomGenerator = new RandomGenerator(random);
@@ -64,17 +66,18 @@ public class SampleDataLoader {
 	private final List<BillingStatus> allBillingStatus = Arrays.stream(BillingStatus.values()).toList();
 	private final List<BillingType> allBillingType = Arrays.stream(BillingType.values()).toList();
 
-	// @PostConstruct
+	@PostConstruct
 	public void init() {
 		Vendor vendor = vendorRepository.save(
 			createVendorWithDefaultProduct(
 				"vendor1",
 				"테스트고객",
 				"testvendor@fms.com",
-				"01012341234")
+				"01012341234",
+				"Qwer123!")
 		);
 
-		generateSampleData(vendor, 500, 5000, 5000, 5000);
+		generateSampleData(vendor, 100, 500, 500, 500);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
@@ -172,14 +175,14 @@ public class SampleDataLoader {
 			.build();
 	}
 
-	public Vendor createVendorWithDefaultProduct(String username, String name, String email, String phone) {
+	public Vendor createVendorWithDefaultProduct(String username, String name, String email, String phone, String password) {
 		// 간편동의 설정
 		SimpConsentSetting simpConsentSetting = new SimpConsentSetting();
 		simpConsentSetting.addPaymentMethod(PaymentMethod.CMS);
 		simpConsentSetting.addPaymentMethod(PaymentMethod.CARD);
 
 		// 고객
-		Vendor vendor = createTestVendor(username, name, email, phone);
+		Vendor vendor = createTestVendor(username, name, email, phone, password);
 		vendor.setSimpConsentSetting(simpConsentSetting);
 		vendor = vendorRepository.save(vendor);
 
@@ -314,10 +317,10 @@ public class SampleDataLoader {
 		};
 	}
 
-	public Vendor createTestVendor(String username, String name, String email, String phone) {
+	public Vendor createTestVendor(String username, String name, String email, String phone, String password) {
 		return Vendor.builder()
 			.username(username)
-			.password("password123!")
+			.password(passwordEncoder.encode(password))
 			.name(name)
 			.email(email)
 			.phone(phone)
