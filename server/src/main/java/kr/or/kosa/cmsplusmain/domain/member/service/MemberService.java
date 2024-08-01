@@ -319,6 +319,7 @@ public class MemberService {
         Set<ConstraintViolation<Member>> validate = validator.validate(member);
         boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
 
+        // dto validate 변경 -> 메시지 커스텀
         String validation = validate.stream()
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.joining("\n"));
@@ -327,7 +328,7 @@ public class MemberService {
             validation += "\n";
         }
 
-        String duplicated = canSave ? "" : "휴대전화 혹은 이메일이 중복되었습니다";
+        String duplicated = canSave ? "" : "\n휴대전화 혹은 이메일이 중복되었습니다";
 
         return (validate.isEmpty() && canSave) ? null : validation + duplicated;
     }
