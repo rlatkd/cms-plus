@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useAddressStore } from '@/stores/useAddressStore';
+import { useEffect } from 'react';
+import { useUserDataStore } from '@/stores/useUserDataStore';
 
-const AddressInput = ({ userData, setUserData }) => {
-  const { zipcode, address, addressDetail, setZipcode, setAddress, setAddressDetail } =
-    useAddressStore();
-  const [localAddressDetail, setLocalAddressDetail] = useState(addressDetail);
+const AddressInput = ({ disabled }) => {
+  const {
+    userData: { memberDTO },
+    setMemberField,
+  } = useUserDataStore();
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -20,15 +21,9 @@ const AddressInput = ({ userData, setUserData }) => {
     new window.daum.Postcode({
       oncomplete: function (data) {
         console.log('Selected address:', data);
-        setZipcode(data.zonecode);
-        setAddress(data.address);
+        setMemberField('zipcode', data.zonecode);
+        setMemberField('address', data.address);
         // 주소 정보를 useUserDataStore에도 저장
-        setUserData({
-          memberDTO: {
-            zipcode: data.zonecode,
-            address: data.address,
-          },
-        });
         document.querySelector('input[name=address_detail]').focus();
       },
       width: '100%',
@@ -37,17 +32,7 @@ const AddressInput = ({ userData, setUserData }) => {
   };
 
   const handleAddressDetailChange = e => {
-    const newAddressDetail = e.target.value;
-    setLocalAddressDetail(newAddressDetail);
-  };
-
-  const handleAddressDetailBlur = () => {
-    setAddressDetail(localAddressDetail);
-    setUserData({
-      memberDTO: {
-        addressDetail: localAddressDetail,
-      },
-    });
+    setMemberField('addressDetail', e.target.value);
   };
 
   return (
@@ -57,10 +42,11 @@ const AddressInput = ({ userData, setUserData }) => {
         <input
           type='text'
           name='zipcode'
-          value={zipcode}
-          className='flex-grow min-w-0 text-sm rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm h-10'
+          value={memberDTO.zipcode}
+          className={`${disabled ? 'bg-ipt_disa ' : 'bg-white'} flex-grow min-w-0 text-sm rounded-md border border-slate-300  px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm h-10`}
           placeholder='우편번호'
           readOnly
+          disabled={disabled}
           autoComplete='postal-code'
         />
         <button
@@ -73,20 +59,21 @@ const AddressInput = ({ userData, setUserData }) => {
       <input
         type='text'
         name='address'
-        value={address}
-        className='mb-2 w-full text-sm  rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
+        value={memberDTO.address}
+        className={`${disabled ? 'bg-ipt_disa ' : 'bg-white'} mb-2 w-full text-sm  rounded-md border border-slate-300  px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm`}
         placeholder='주소'
         readOnly
+        disabled={disabled}
         autoComplete='street-address'
       />
       <input
         type='text'
         name='address_detail'
-        value={localAddressDetail}
+        value={memberDTO.addressDetail}
         onChange={handleAddressDetailChange}
-        onBlur={handleAddressDetailBlur}
-        className='w-full text-sm rounded-md border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
+        className={`${disabled ? 'bg-ipt_disa ' : 'bg-white'} w-full text-sm rounded-md border border-slate-300  px-3 py-2 placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm`}
         placeholder='상세 주소'
+        disabled={disabled}
         autoComplete='address-line2'
       />
     </div>

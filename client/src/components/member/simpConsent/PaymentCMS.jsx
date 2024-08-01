@@ -1,38 +1,27 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Input from '@/components/common/inputs/Input';
 import SelectField from '@/components/common/selects/SelectField';
 import { verifyCMS } from '@/apis/validation';
 import { validateField } from '@/utils/validators';
-import { formatBirthDate } from '@/utils/format/formatBirth'; 
+import { formatBirthDate } from '@/utils/format/formatBirth';
+import bankOptions from '@/utils/bank/bankOptions';
 
-const bankOptions = [
-  { value: '', label: '은행을 선택해주세요' },
-  { value: 'SHINHAN', label: '신한은행' },
-  { value: 'KB', label: '국민은행' },
-  { value: 'WOORI', label: '우리은행' },
-  { value: 'IBK', label: '기업은행' },
-  { value: 'SUHYUP', label: '수협은행' },
-  { value: 'NH', label: 'NH농협은행' },
-  { value: 'BUSAN', label: '부산은행' },
-  { value: 'HANA', label: '하나은행' },
-  { value: 'GWANGJU', label: '광주은행' },
-  { value: 'POST', label: '우체국' },
-  { value: 'IM', label: 'iM뱅크' },
-  { value: 'KNB', label: '경남은행' },
-];
-
-const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVerified }) => {
+const PaymentCMS = ({
+  paymentData,
+  onInputChange,
+  onVerificationComplete,
+  isVerified,
+  contractId,
+}) => {
+  const cmsData = {
+    paymentMethod: 'CMS',
+    accountNumber: paymentData.accountNumber,
+    accountOwner: paymentData.accountHolder,
+    accountOwnerBirth: paymentData.accountOwnerBirth,
+  };
   const handleCMSVerification = useCallback(async () => {
     try {
-      const cmsData = {
-        paymentMethod: 'CMS',
-        accountNumber: paymentData.accountNumber,
-        accountOwner: paymentData.accountHolder,
-        accountOwnerBirth: paymentData.accountOwnerBirth,
-      };
-
       const result = await verifyCMS(cmsData);
-
       if (result === true) {
         onVerificationComplete(true);
         onInputChange('isVerified', true);
@@ -73,6 +62,7 @@ const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVeri
           options={bankOptions}
           value={paymentData.bank}
           onChange={handleInputChange}
+          disabled={!!contractId}
         />
         <Input
           label='예금주명'
@@ -83,8 +73,11 @@ const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVeri
           value={paymentData.accountHolder}
           onChange={handleInputChange}
           maxLength={20}
-          isValid={paymentData.accountHolder === '' || validateField('name', paymentData.accountHolder)}
+          isValid={
+            paymentData.accountHolder === '' || validateField('name', paymentData.accountHolder)
+          }
           errorMsg='올바른 예금주명을 입력해주세요.'
+          disabled={!!contractId}
         />
         <Input
           label='생년월일'
@@ -95,8 +88,12 @@ const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVeri
           value={paymentData.accountOwnerBirth}
           onChange={handleInputChange}
           maxLength={10}
-          isValid={paymentData.accountOwnerBirth === '' || validateField('birth', paymentData.accountOwnerBirth)}
+          isValid={
+            paymentData.accountOwnerBirth === '' ||
+            validateField('birth', paymentData.accountOwnerBirth)
+          }
           errorMsg='올바른 생년월일을 입력해주세요.'
+          disabled={!!contractId}
         />
         <Input
           label='계좌번호'
@@ -107,8 +104,13 @@ const PaymentCMS = ({ paymentData, onInputChange, onVerificationComplete, isVeri
           value={paymentData.accountNumber}
           onChange={handleInputChange}
           maxLength={14}
-          isValid={paymentData.accountNumber === '' || validateField('accountNumber', paymentData.accountNumber)}
+          isValid={
+            paymentData.accountNumber === '' ||
+            !!contractId ||
+            validateField('accountNumber', paymentData.accountNumber)
+          }
           errorMsg='올바른 계좌번호를 입력해주세요.'
+          disabled={!!contractId}
         />
       </form>
       <button

@@ -39,6 +39,40 @@ export const UploadFileAxios = axios.create({
   },
 });
 
+// <=====================================================>
+
+// // 개발전용
+// export const privateAxios = axios.create({
+//   baseURL: BASE_URL,
+//   headers: {
+//     'Access-Control-Allow-Origin': `${BASE_URL}`,
+//     'Content-Type': 'application/json',
+//     Authorization: `Bearer ${TOKEN}`,
+//   },
+// });
+
+// // 개발전용
+// export const UploadFileAxios = axios.create({
+//   baseURL: BASE_URL,
+//   headers: {
+//     'Access-Control-Allow-Origin': `${BASE_URL}`,
+//     'Content-Type': 'multipart/form-data',
+//     Authorization: `Bearer ${TOKEN}`,
+//   },
+// });
+
+// 테스트
+export const testAxios = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Access-Control-Allow-Origin': `${BASE_URL}`,
+    'Content-Type': 'application/json',
+    // Authorization: `Bearer ${TOKEN}`,
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+  },
+});
+// <=====================================================>
+
 // <----- 응답 인터셉터 설정 ----->
 [publicAxios, publicUploadFileAxios, privateAxios].forEach(instance => {
   instance.interceptors.response.use(
@@ -117,36 +151,3 @@ privateAxios.interceptors.response.use(
     return Promise.reject(err);
   }
 );
-
-// <=====================================================>
-
-// // 개발전용
-// export const privateAxios = axios.create({
-//   baseURL: BASE_URL,
-//   headers: {
-//     'Access-Control-Allow-Origin': `${BASE_URL}`,
-//     'Content-Type': 'application/json',
-//     Authorization: `Bearer ${TOKEN}`,
-//   },
-// });
-
-// // 개발전용
-// export const UploadFileAxios = axios.create({
-//   baseURL: BASE_URL,
-//   headers: {
-//     'Access-Control-Allow-Origin': `${BASE_URL}`,
-//     'Content-Type': 'multipart/form-data',
-//     Authorization: `Bearer ${TOKEN}`,
-//   },
-// });
-
-// 테스트
-export const testAxios = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Access-Control-Allow-Origin': `${BASE_URL}`,
-    'Content-Type': 'application/json',
-    // Authorization: `Bearer ${TOKEN}`,
-    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-  },
-});

@@ -6,13 +6,13 @@ import { getAvailableOptions } from '@/apis/simpleConsent';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
 
-const ContractInfo = ({ userData, setUserData }) => {
+const ContractInfo = ({ userData, setUserData, vendorId, contractId }) => {
   const [availableProducts, setAvailableProducts] = useState([]);
 
   useEffect(() => {
     const fetchAvailableOptions = async () => {
       try {
-        const options = await getAvailableOptions();
+        const options = await getAvailableOptions(vendorId);
         setAvailableProducts(options.availableProducts);
       } catch (error) {
         console.error('상품 리스트 업데이트 실패:', error);
@@ -154,8 +154,12 @@ const ContractInfo = ({ userData, setUserData }) => {
         value={userData.contractDTO.contractName}
         onChange={handleInputChange}
         maxLength={20}
-        isValid={!userData.contractDTO.contractName || validateField('contractName', userData.contractDTO.contractName)}
+        isValid={
+          !userData.contractDTO.contractName ||
+          validateField('contractName', userData.contractDTO.contractName)
+        }
         errorMsg='올바른 계약명을 입력해주세요.'
+        disabled={!!contractId}
       />
 
       <SelectField
@@ -164,6 +168,7 @@ const ContractInfo = ({ userData, setUserData }) => {
         options={productOptions}
         value={userData.contractDTO.selectedProduct}
         onChange={handleProductChange}
+        disabled={!!contractId}
       />
 
       {userData.contractDTO.items.map((item, index) => (
@@ -193,6 +198,7 @@ const ContractInfo = ({ userData, setUserData }) => {
             handleChangeValue={e => handleDateChange(e, 'startDate')}
             placeholder='시작 날짜'
             width='100%'
+            disabled={!!contractId}
           />
           <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
           <InputCalendar
@@ -201,6 +207,7 @@ const ContractInfo = ({ userData, setUserData }) => {
             handleChangeValue={e => handleDateChange(e, 'endDate')}
             placeholder='종료 날짜'
             width='100%'
+            disabled={!!contractId}
           />
         </div>
       </div>
@@ -210,6 +217,7 @@ const ContractInfo = ({ userData, setUserData }) => {
         required
         options={[...Array(31)].map((_, i) => ({ value: i + 1, label: `${i + 1}일` }))}
         value={userData.contractDTO.contractDay}
+        disabled={!!contractId}
         onChange={e => {
           const value = parseInt(e.target.value);
           setUserData({

@@ -14,6 +14,7 @@ import MemberInfoUpdate from '@/pages/vendor/member/MemberInfoUpdatePage';
 import ContractIndex from '@/pages/vendor/contract/ContractIndex';
 import ContractList from '@/pages/vendor/contract/ContractListPage';
 import ContractDetail from '@/pages/vendor/contract/ContractDetailPage';
+import ContractRegister from '@/pages/vendor/contract/ContractRegisterPage';
 import ContractUpdatePage from '@/pages/vendor/contract/ContractUpdatePage';
 import BillingIndex from '@/pages/vendor/billing/BillingIndex';
 import BillingList from '@/pages/vendor/billing/BillingListPage';
@@ -85,6 +86,12 @@ const vendorRoute = () => {
           name: '계약 상세 정보',
           menu: false,
           element: <ContractDetail />,
+        },
+        {
+          path: 'register',
+          name: '계약 등록',
+          menu: false,
+          element: <ContractRegister />,
         },
         {
           path: 'update/:contractId/:memberId',
