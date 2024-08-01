@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,8 +52,8 @@ public class V2BillingService {
 	private final V2BillingRepository billingRepository;
 	private final V2BillingProductRepository billingProductRepository;
 	private final V2ContractRepository contractRepository;
-	// private final KafkaMessagingService kafkaMessagingService;
-	// private final KafkaPaymentService kafkaPaymentService;
+	private final KafkaMessagingService kafkaMessagingService;
+	private final KafkaPaymentService kafkaPaymentService;
 
 
 	private final PaymentService paymentService;
@@ -258,10 +257,10 @@ public class V2BillingService {
 
 		switch (sendMethod) {
 			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
-				// kafkaMessagingService.produceMessaging(smsMessageDto);
+				kafkaMessagingService.produceMessaging(smsMessageDto);
 			}
 			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
-				// kafkaMessagingService.produceMessaging(emailMessageDto);
+				kafkaMessagingService.produceMessaging(emailMessageDto);
 			}
 		}
 	}
@@ -306,12 +305,12 @@ public class V2BillingService {
 			case CARD -> {
 				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfoRes(payment);
 				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(), cardMethodRes.getCardNumber());
-				// kafkaPaymentService.producePayment(cardPaymentDto);
+				kafkaPaymentService.producePayment(cardPaymentDto);
 			}
 			case CMS -> {
 				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfoRes(payment);
 				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(), cmsMethodRes.getAccountNumber());
-				// kafkaPaymentService.producePayment(accountPaymentDto);
+				kafkaPaymentService.producePayment(accountPaymentDto);
 			}
 
 		}

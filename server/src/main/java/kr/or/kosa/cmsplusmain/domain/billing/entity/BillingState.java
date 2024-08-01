@@ -1,9 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.proxy.LazyInitializer;
-
 import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusException;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -16,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * 청구의 여러 동작들의 수행 가능 여부를 판단
+ * 동작이 불가하다면 그 이유를 프론트에 리턴시키기 위함
  * */
 @RequiredArgsConstructor
 @Getter

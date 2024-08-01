@@ -1,6 +1,8 @@
 package kr.or.kosa.cmsplusmain.config;
 
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentResultDto;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,10 +14,9 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import java.util.HashMap;
-import java.util.Map;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentResultDto;
 
-// @Configuration
+@Configuration
 public class KafkaConsumerConfig {
 
     @Value("${kafkaServer.ip}")
