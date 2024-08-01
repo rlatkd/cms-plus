@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepositor
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
@@ -57,7 +59,7 @@ public class SimpleConsentService {
     private final ContractCustomRepository contractCustomRepository;
     private final PaymentService paymentService;
     private final ContractService contractService;
-    // private final KafkaMessagingService kafkaMessagingService;
+    private final KafkaMessagingService kafkaMessagingService;
 
     private static final String SIMPCONSENT_MESSAGE_FORMAT =
             """
@@ -66,6 +68,9 @@ public class SimpleConsentService {
             - URL: %s
            
             """.trim();
+
+    @Value("${host.front}")
+    private String FRONT_HOST;
 
     @Transactional
     public MemberDetail processSimpleConsent(Long vendorId, SimpleConsentMemberDTO memberDTO,
@@ -99,7 +104,6 @@ public class SimpleConsentService {
             throw new MemberNotFoundException("본인의 계약에만 전송 가능합니다.");
         }
 
-
         Contract contract = contractCustomRepository.findContractDetailById(contractId);
         Member member = contract.getMember();
         Payment payment = contract.getPayment();
@@ -109,7 +113,9 @@ public class SimpleConsentService {
                 "[%s]는 간편동의가 불가능합니다".formatted(payment.getPaymentType().getTitle()));
         }
 
-        String url = "https://localhost:8080/member/simpconsent?" + "contract=" + contractId + "&vendor=" + vendorId;
+        String url = "%s/member/simpconsent?contract=%d&vendor=%d".formatted(
+            FRONT_HOST, contractId, vendorId
+        );
         log.info("{} 간편동의 요청 링크가 발송됨", url);
 
         String text = SIMPCONSENT_MESSAGE_FORMAT.formatted(member.getName(), url).trim();
@@ -117,8 +123,7 @@ public class SimpleConsentService {
 
         MessageDto messageDto = new SmsMessageDto(text, phone);
 
-        // kafkaMessagingService.produceMessaging(messageDto);
-
+        kafkaMessagingService.produceMessaging(messageDto);
     }
 
     public SimpConsentInfoRes getSimpleConsentInfo(Long vendorId, Long contractId) {
