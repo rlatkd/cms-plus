@@ -22,12 +22,13 @@ public enum ErrorCode {
 	EMAIL_DUPLICATION(400, "M001", "이메일이 중복되었습니다"),
 	LOGIN_INPUT_INVALID(400, "M002", "로그인 입력이 유효하지 않습니다"),
 	MEMBER_NOT_FOUND(404, "M003", "회원을 찾을 수 없습니다"),
+	MEMBER_PHONE_DUPLICATION(400, "M004", "회원의 핸드폰 번호가 중복되었습니다"),
 
 	// Vendor
-	VENDOR_NOT_FOUND(404, "V001", "판매자를 찾을 수 없습니다"),
-	VENDOR_USERNAME_DUPLICATION(400, "V002", "판매자 사용자명이 중복되었습니다"),
-	VENDOR_PHONE_DUPLICATION(400, "V003", "판매자 핸드폰 번호가 중복되었습니다"),
-	VENDOR_EMAIL_DUPLICATION(400, "V004", "판매자 이메일이 중복되었습니다"),
+	VENDOR_NOT_FOUND(404, "V001", "고객을 찾을 수 없습니다"),
+	VENDOR_USERNAME_DUPLICATION(400, "V002", "사용자명이 중복되었습니다"),
+	VENDOR_PHONE_DUPLICATION(400, "V003", "핸드폰 번호가 중복되었습니다"),
+	VENDOR_EMAIL_DUPLICATION(400, "V004", "이메일이 중복되었습니다"),
 
 	// Billing
 	BILLING_NOT_FOUND(404, "B001", "청구를 찾을 수 없습니다"),
