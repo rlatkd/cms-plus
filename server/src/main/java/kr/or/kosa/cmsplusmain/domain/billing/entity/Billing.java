@@ -176,7 +176,7 @@ public class Billing extends BaseEntity {
 		if (this.billingDate.equals(billingDate)) {
 			return;
 		}
-		if (LocalDate.now().isAfter(this.billingDate)) {
+		if (billingDate.isBefore(LocalDate.now())) {
 			throw new InvalidUpdateBillingException("청구 결제일은 이미 지난 날짜로 설정될 수 없습니다");
 		}
 		this.billingDate = billingDate;
