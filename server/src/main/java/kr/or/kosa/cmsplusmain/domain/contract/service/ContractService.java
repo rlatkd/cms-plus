@@ -24,6 +24,8 @@ import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractDetailRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
+import kr.or.kosa.cmsplusmain.domain.contract.exception.InvalidContractStatusException;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
@@ -135,8 +137,13 @@ public class ContractService {
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorId);
 
-		// 계약 이름 수정
 		Contract contract = contractRepository.findById(contractId).orElseThrow();
+
+		if (contract.getContractStatus() != ContractStatus.ENABLED) {
+			throw new InvalidContractStatusException("진행 중인 계약만 수정 가능합니다");
+		}
+
+		// 계약 이름 수정
 		contract.setContractName(contractUpdateReq.getContractName());
 
 		// 신규 계약상품
