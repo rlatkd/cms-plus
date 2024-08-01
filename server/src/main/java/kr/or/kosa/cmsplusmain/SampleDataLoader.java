@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
@@ -73,7 +74,7 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-		generateSampleData(vendor, 500, 50000, 50000, 50000);
+		generateSampleData(vendor, 500, 5000, 5000, 5000);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
