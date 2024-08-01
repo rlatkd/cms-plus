@@ -19,7 +19,6 @@ const Header = () => {
 
   // <----- 시간 로컬 스토리지에 저장 ----->
   useEffect(() => {
-    console.log('시작??');
     localStorage.setItem('time', JSON.stringify(time));
   }, [time]);
 
@@ -43,7 +42,6 @@ const Header = () => {
       localStorage.setItem('access_token', res.data.accessToken);
       console.log('!----로그인 연장----!'); // 삭제예정
       setTime(3600);
-      console.log('time : ', time);
     } catch (err) {
       console.error('axiosExtendLogin => ', err.response);
     }

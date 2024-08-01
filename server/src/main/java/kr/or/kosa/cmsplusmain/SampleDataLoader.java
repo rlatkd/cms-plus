@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
@@ -63,7 +64,7 @@ public class SampleDataLoader {
 	private final List<BillingStatus> allBillingStatus = Arrays.stream(BillingStatus.values()).toList();
 	private final List<BillingType> allBillingType = Arrays.stream(BillingType.values()).toList();
 
-	// @PostConstruct
+//	 @PostConstruct
 	public void init() {
 		Vendor vendor = vendorRepository.save(
 			createVendorWithDefaultProduct(
@@ -73,7 +74,8 @@ public class SampleDataLoader {
 				"01012341234")
 		);
 
-		generateSampleData(vendor, 500, 50000, 50000, 50000);
+		 generateSampleData(vendor, 500, 2000, 5000, 10000);
+
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {

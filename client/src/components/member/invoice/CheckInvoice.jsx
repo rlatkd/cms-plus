@@ -3,13 +3,12 @@ import { useInvoiceStore } from '@/stores/useInvoiceStore';
 
 const CheckInvoice = () => {
   const invoiceInfo = useInvoiceStore(state => state.invoiceInfo);
-  console.log(invoiceInfo);
 
   return (
     <div>
       <div className='w-full text-left'>
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
-          회원님의
+          {invoiceInfo.member.name}님의
           <br />
           청구서를 확인해주세요.
         </h3>

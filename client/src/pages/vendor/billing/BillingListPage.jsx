@@ -43,7 +43,7 @@ const BillingListPage = () => {
   const onAlert = useAlert();
   const navigate = useNavigate();
 
-  // <--------청구 목록 조회-------->
+  // <----- 청구 목록 조회 ----->
   const axiosBillingList = useCallback(
     async (
       searchParams = {},
@@ -60,6 +60,10 @@ const BillingListPage = () => {
           size: 10,
         });
         const transformdData = transformBillingListItem(res.data.content);
+        console.log('!---- 청구 목록 조회 성공 ----!'); // 삭제예정
+
+        console.log(res);
+
         setBillingList(transformdData);
         setBillingListCount(res.data.totalCount);
         setTotalPages(res.data.totalPage || 1);

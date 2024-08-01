@@ -40,7 +40,7 @@ public class BillingController {
 		billingService.createBilling(vendorId, billingCreateReq);
 	}
 
-	/*
+	/**
 	* 청구서 발송
 	* */
 	@GetMapping("send-invoice/{billingId}")
@@ -48,7 +48,7 @@ public class BillingController {
 		billingService.sendInvoice(vendorId, billingId);
 	}
 
-	/*
+	/**
 	 * 청구서 발송 취소
 	 * */
 	@GetMapping("invoice/cancel/{billingId}")
@@ -56,7 +56,7 @@ public class BillingController {
 		billingService.cancelInvoice(vendorId, billingId);
 	}
 
-	/*
+	/**
 	* 청구 실시간 결제
 	* */
 	@GetMapping("payment/{billingId}")
@@ -64,7 +64,7 @@ public class BillingController {
 		billingService.payRealTimeBilling(vendorId, billingId);
 	}
 
-	/*
+	/**
 	* 청구 결제 취소
 	* */
 	@GetMapping("payment/{billingId}/cancel")
