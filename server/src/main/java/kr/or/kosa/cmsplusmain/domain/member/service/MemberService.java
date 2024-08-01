@@ -34,6 +34,7 @@ import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.member.exception.EmailDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
@@ -172,6 +173,18 @@ public class MemberService {
 
         // 회원의 기본 정보 수정
         Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
+
+        String newPhone = member.getPhone().equals(memberUpdateReq.getMemberPhone()) ?
+            null : memberUpdateReq.getMemberPhone();
+        String newEmail = member.getEmail().equals(memberUpdateReq.getMemberEmail()) ?
+            null : memberUpdateReq.getMemberEmail();
+
+        if (!memberCustomRepository.hasNotDuplicatedPhoneAndEmail(newPhone, newEmail)) {
+            log.info(newPhone + " " + newEmail);
+            log.error(member.getPhone() + " " + member.getEmail());
+            throw new EmailDuplicationException("핸드폰 번호 혹은 이메일이 중복되었습니다");
+        }
+
         member.setName(memberUpdateReq.getMemberName());
         member.setPhone(memberUpdateReq.getMemberPhone());
         member.setEnrollDate(memberUpdateReq.getMemberEnrollDate());
@@ -317,7 +330,7 @@ public class MemberService {
      * */
     private String validateError(Member member, Validator validator) {
         Set<ConstraintViolation<Member>> validate = validator.validate(member);
-        boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
+        boolean canSave = memberCustomRepository.hasNotDuplicatedPhoneAndEmail(member.getPhone(), member.getEmail());
 
         // dto validate 변경 -> 메시지 커스텀
         String validation = validate.stream()

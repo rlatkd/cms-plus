@@ -4,6 +4,7 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.product.dto.*;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
+import kr.or.kosa.cmsplusmain.domain.product.exception.DeleteProductException;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.product.repository.ProductRepository;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
@@ -93,11 +94,15 @@ public class ProductService {
 
     /*
      * 상품 삭제
+     * 삭제 조건은 현재 진행중인 계약이 없는 상품만 삭제가 가능하다.
      * */
-    //TODO 삭제 조건은 현재 진행중인 계약이 없는 상품만 삭제가 가능하다.
     @Transactional
     public void deleteProduct(Long vendorId,Long productId) {
         validateProductUser(productId, vendorId);
+        int inProgressContractCount = productCustomRepository.getContractNumber(productId);
+        if (inProgressContractCount > 0) {
+            throw new DeleteProductException("진행중인 계약이 존재하는 상품은 삭제가 불가능합니다");
+        }
         Product product = productRepository.findById(productId).orElseThrow(IllegalStateException::new);
         product.delete();
     }

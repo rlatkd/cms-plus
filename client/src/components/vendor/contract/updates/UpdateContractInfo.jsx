@@ -32,6 +32,13 @@ const UpdateContractInfo = ({ formType }) => {
       onAlert({ msg: '계약정보가 수정되었습니다!', type: 'success' });
     } catch (err) {
       console.error('axiosUpdateContractDetail => ', err);
+      onAlert({
+        msg: '계약 수정에 실패하였습니다.',
+        type: 'error',
+        title: '계약 수정 실패',
+        err: err,
+      });
+      navigate(`/vendor/contracts/detail/${contractId}`);
     }
   };
 

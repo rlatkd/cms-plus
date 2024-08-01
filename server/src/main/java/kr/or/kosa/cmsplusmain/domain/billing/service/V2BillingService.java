@@ -155,7 +155,7 @@ public class V2BillingService {
 
 		// 삭제될 청구상품 ID
 		// 삭제 상태 수정을 bulk update 사용해 업데이트 쿼리 횟수 감소 목적
-		List<Long> toRemoveIds = new ArrayList<>();
+		List<BillingProduct> toRemoves = new ArrayList<>();
 
 		// 수정될 청구상품 수정
 		for (BillingProduct oldBillingProduct : oldBillingProducts) {
@@ -173,7 +173,7 @@ public class V2BillingService {
 
 			// 신규 상품 목록에 없는 기존 상품은 삭제한다.
 			if (updatedNewBillingProduct == null) {
-				toRemoveIds.add(oldBillingProduct.getId());
+				toRemoves.add(oldBillingProduct);
 			} else {
 				newBillingProducts.remove(updatedNewBillingProduct);
 			}
@@ -181,9 +181,10 @@ public class V2BillingService {
 
 		// 새롭게 추가되는 청구상품 저장
 		newBillingProducts.forEach(billing::addBillingProduct);
+		// 삭제된 상품
+		toRemoves.forEach(billing::removeBillingProduct);
 
-		// 없어진 청구상품 삭제
-		billingProductRepository.deleteAllById(toRemoveIds);
+		billing.calculateBillingPriceAndProductCnt();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.contract.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,8 @@ import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
+import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractCreateReq;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.request.ContractProductReq;
@@ -21,6 +24,8 @@ import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractDetailRes;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.response.ContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractProduct;
+import kr.or.kosa.cmsplusmain.domain.contract.entity.ContractStatus;
+import kr.or.kosa.cmsplusmain.domain.contract.exception.InvalidContractStatusException;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
@@ -132,8 +137,13 @@ public class ContractService {
 		// 고객의 계약 여부 확인
 		validateContractUser(contractId, vendorId);
 
-		// 계약 이름 수정
 		Contract contract = contractRepository.findById(contractId).orElseThrow();
+
+		if (contract.getContractStatus() != ContractStatus.ENABLED) {
+			throw new InvalidContractStatusException("진행 중인 계약만 수정 가능합니다");
+		}
+
+		// 계약 이름 수정
 		contract.setContractName(contractUpdateReq.getContractName());
 
 		// 신규 계약상품
@@ -170,24 +180,46 @@ public class ContractService {
 			.toList();
 	}
 
-	/*
-	* 기존 계약상품과 신규 계약상품 비교해서
-	* 새롭게 추가되거나 삭제된 것만 수정 반영
-	* */
-	private void updateContractProducts(Contract contract, List<ContractProduct> newContractProducts) {
-		// 기존 계약상품
+	/**
+	 * 기존 청구상품과 신규 청구상품 비교해서
+	 * 새롭게 추가되거나 삭제된 것 그리고 수정된것 반영
+	 * */
+	private void updateContractProducts(Contract contract, List<ContractProduct> mNewContractProducts) {
 		Set<ContractProduct> oldContractProducts = contract.getContractProducts();
+		List<ContractProduct> newContractProducts = new ArrayList<>(mNewContractProducts);
+
+		// 삭제될 계약상품 ID
+		// 삭제 상태 수정을 bulk update 사용해 업데이트 쿼리 횟수 감소 목적
+		List<ContractProduct> toRemoves = new ArrayList<>();
+
+		// 수정될 계약상품 수정
+		for (ContractProduct oldContractProduct : oldContractProducts) {
+
+			// 수정된 계약상품은 리스트에서 삭제해서 insert 되지 않도록 한다.
+			ContractProduct updatedNewContractProduct = null;
+
+			for (ContractProduct newContractProduct : newContractProducts) {
+				if (newContractProduct.equals(oldContractProduct)) {
+					oldContractProduct.update(newContractProduct.getPrice(), newContractProduct.getQuantity());
+					updatedNewContractProduct = newContractProduct;
+					break;
+				}
+			}
+
+			// 신규 상품 목록에 없는 기존 상품은 삭제한다.
+			if (updatedNewContractProduct == null) {
+				toRemoves.add(oldContractProduct);
+			} else {
+				newContractProducts.remove(updatedNewContractProduct);
+			}
+		}
 
 		// 새롭게 추가되는 계약상품 저장
-		newContractProducts.stream()
-			.filter(ncp -> !oldContractProducts.contains(ncp))
-			.forEach(contract::addContractProduct);
+		newContractProducts.forEach(contract::addContractProduct);
+		// 삭제된 상품
+		toRemoves.forEach(contract::removeContractProduct);
 
-		// 없어진 계약상품 삭제
-		oldContractProducts.stream()
-			.filter(ocp -> !newContractProducts.contains(ocp))
-			.toList()
-			.forEach(contract::removeContractProduct);
+		contract.calculateContractPriceAndProductCnt();
 	}
 
 	/*

@@ -3,7 +3,6 @@ package kr.or.kosa.cmsplusmain.domain.billing.dto.response;
 import com.querydsl.core.annotations.QueryProjection;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -15,7 +14,6 @@ public class BillingProductRes {
 	private final Integer price;				// 청구상품 가격
 	private final Integer quantity;				// 청구상품 수량
 
-	@Builder
 	@QueryProjection
 	public BillingProductRes(Long billingProductId, Long billingId, Long productId, String name, Integer price,
 		Integer quantity) {
@@ -28,13 +26,13 @@ public class BillingProductRes {
 	}
 
 	public static BillingProductRes fromEntity(BillingProduct billingProduct) {
-		return BillingProductRes.builder()
-			.billingId(billingProduct.getBilling().getId())
-			.billingProductId(billingProduct.getId())
-			.productId(billingProduct.getProduct().getId())
-			.name(billingProduct.getName())
-			.price(billingProduct.getPrice())
-			.quantity(billingProduct.getQuantity())
-			.build();
+		return new BillingProductRes(
+			billingProduct.getId(),
+			billingProduct.getBilling().getId(),
+			billingProduct.getProduct().getId(),
+			billingProduct.getName(),
+			billingProduct.getPrice(),
+			billingProduct.getQuantity()
+		);
 	}
 }

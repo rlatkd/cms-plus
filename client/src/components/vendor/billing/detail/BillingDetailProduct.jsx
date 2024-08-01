@@ -25,6 +25,7 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
     }));
     if (newBillingProducts.length > 10) {
       alert('청구는 최대 10 개의 상품을 지녀야합니다.');
+      return;
     }
     setLocalBillingProducts(newBillingProducts);
     onChange(newBillingProducts);
@@ -50,11 +51,11 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
   };
 
   const handleInputChange = (idx, field, value) => {
-    if (field === 'price' && value && value.length >= 8) {
-      alert('상품 가격은 최대 100만원입니다.');
+    if (field === 'price' && value && value.length >= 7) {
+      alert('상품 가격은 최대 99만원입니다.');
       return;
     } else if (field === 'quantity' && value && value.length >= 2) {
-      alert('상품 수량은 최대 10개입니다.');
+      alert('상품 수량은 최대 9개입니다.');
       return;
     }
     const numericValue = value.replace(/\D/g, '') || '';
@@ -72,7 +73,7 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
         required
         classInput='text-center p-4 w-1/12 focus:border-mint focus:outline-none 
                     focus:ring-mint focus:ring-1 rounded-lg'
-        value={value.toLocaleString()}
+        value={value}
         onChange={e => handleInputChange(idx, field, e.target.value)}
         autoComplete='off'
         maxLength={field === 'price' ? 8 : 3}

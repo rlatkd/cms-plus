@@ -53,7 +53,7 @@ const ContractDetailPage = () => {
     try {
       setLoading(true);
       const res = await getContractDetail(contractId);
-      console.log('!----계약 상세 조회 성공----!');
+      console.log('!----계약 상세 조회 성공----!', res);
       setContractData(res.data);
       setLoading(false);
     } catch (err) {
