@@ -4,6 +4,7 @@ import { createProduct, deleteProduct, updateProduct } from '@/apis/product';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import useAlert from '@/hooks/useAlert';
 import useConfirm from '@/hooks/useConfirm';
+import TextArea from '@/components/common/inputs/TextArea';
 
 const ProductModal = ({
   icon,
@@ -131,10 +132,11 @@ const ProductModal = ({
       <div className='flex flex-col justify-between gap-1.5'>
         <div className='mb-4 flex gap-4'>
           <div className='w-1/2'>
-            <label className='block mb-2 font-semibold text-text_grey'>상품명</label>
             <InputWeb
+              label='상품명'
               id='productName'
               type='text'
+              maxLength={15}
               placeholder='상품명을 입력해주세요.'
               value={productName}
               readOnly={modalTitle === '상품 상세 정보'}
@@ -151,20 +153,20 @@ const ProductModal = ({
           <div className='w-1/2' />
         </div>
         <div className='mb-4 flex gap-4'>
+          <InputWeb
+            label='금액(원)'
+            id='productPrice'
+            type='text'
+            placeholder='금액을 입력해주세요.'
+            maxLength={6}
+            value={productPrice}
+            onChange={e => setProductPrice(e.target.value.replace(/\D/g, ''))}
+            classContainer='w-1/2'
+            classInput='mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
+          />
           <div className='w-1/2'>
-            <label className='block mb-2 font-semibold text-text_grey'>금액(원)</label>
             <InputWeb
-              id='productPrice'
-              type='text'
-              placeholder='금액을 입력해주세요.'
-              value={productPrice}
-              onChange={e => setProductPrice(e.target.value)}
-              classInput='mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm placeholder:text-sm focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint sm:text-sm'
-            />
-          </div>
-          <div className='w-1/2'>
-            <label className='block mb-2 font-semibold text-text_grey'>계약수(건)</label>
-            <InputWeb
+              label='계약수(건)'
               id='contractNumber'
               type='text'
               placeholder={modalTitle === '상품 상세 정보' ? productDetailData.contractNumber : ''}
@@ -177,8 +179,8 @@ const ProductModal = ({
           </div>
         </div>
         <div className='mb-4'>
-          <label className='block mb-2 font-semibold text-text_grey'>비고</label>
-          <textarea
+          <TextArea
+            label='비고'
             placeholder={
               modalTitle === '상품 상세 정보'
                 ? productDetailData.productMemo

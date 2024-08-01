@@ -43,14 +43,6 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 	 * */
 	public List<BillingListItemRes> searchBillings(Long vendorId, BillingSearchReq search, PageReq pageReq) {
 
-		// 검색어를 프론트에 표시할 상품 이름에 표시하기 위한 서브쿼리
-		// Querydsl 에서는 서브쿼리에 limit 조건이 반영 안되므로 min 사용
-		JPQLQuery<String> firstProductNameSubQuery = from(billingProduct)
-			.select(billingProduct.name.min())
-			.where(
-				billingProduct.billing.eq(billing),
-				productNameContains(search.getProductName()));
-
 		JPAQuery<BillingListItemRes> query = searchQuery(vendorId, search)
 			.select(new QBillingListItemRes(
 				billing.id,
@@ -60,7 +52,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 				billing.billingStatus,
 				payment.paymentType,
 				billing.billingDate,
-				firstProductNameSubQuery,
+				firstProductNameSubQuery(search.getProductName()),
 				billing.billingProductCnt
 			))
 			.orderBy(buildOrderSpecifier(pageReq));
@@ -94,6 +86,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 				billingPriceLoe(search.getBillingPrice()),				// 청구금액 이하
 				paymentTypeEq(search.getPaymentType()),					// 결제방식 일치
 				billingDateEq(search.getBillingDate()),					// 결제일 일치
+				firstProductNameSubQuery(search.getProductName()).isNotNull(),	// 상품명 포함
 				contractIdEq(search.getContractId())					// 계약 ID 일치 (계약 상세 청구목록)
 			);
 	}
@@ -174,6 +167,16 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 		);
 	}
 
+	private JPAQuery<String> firstProductNameSubQuery(String productName) {
+		// 검색어를 프론트에 표시할 상품 이름에 표시하기 위한 서브쿼리
+		// Querydsl 에서는 서브쿼리에 limit 조건이 반영 안되므로 min 사용
+		return from(billingProduct)
+				.select(billingProduct.name.min())
+				.where(
+					billingProduct.billing.eq(billing),
+					productNameContains(productName));
+	}
+
 	private OrderSpecifier<?> buildOrderSpecifier(PageReq pageReq) {
 		if (pageReq == null || !StringUtils.hasText(pageReq.getOrderBy())) {
 			return billing.createdDateTime.desc();
@@ -182,7 +185,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 		String orderBy = pageReq.getOrderBy();
 
 		if (orderBy.equals("billingPrice")) {
-			NumberExpression<Long> expression = billingProduct.price.longValue().multiply(billingProduct.quantity).sum();
+			NumberExpression<Long> expression = billing.billingPrice;
 			return pageReq.isAsc() ? expression.asc() : expression.desc();
 		}
 

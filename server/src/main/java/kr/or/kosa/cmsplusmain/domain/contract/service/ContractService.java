@@ -109,8 +109,8 @@ public class ContractService {
 
 		// 결제방식 및 수단에 따른 dto 생성
 		Payment payment = contract.getPayment();
-		PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfo(payment);
-		PaymentMethodInfoRes paymentMethodInfoRes = paymentService.getPaymentMethodInfo(payment);
+		PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfoRes(payment);
+		PaymentMethodInfoRes paymentMethodInfoRes = paymentService.getPaymentMethodInfoRes(payment);
 
 		// 계약의 청구 개수 및 총액
 		Long[] totalCntAndPrice = billingCustomRepository.findBillingCntAndPriceByContract(contractId);

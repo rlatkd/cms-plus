@@ -15,10 +15,9 @@ const TableRow = ({
     if ('contractPrice billingPrice productPrice'.includes(field)) {
       return text;
     }
-    const searchTerm =
-      field === 'contractProducts' || field === 'billingProducts'
-        ? searchConditions['productName']
-        : searchConditions[field];
+
+    field = field === 'contractProducts' || field === 'billingProducts' ? 'productName' : field;
+    let searchTerm = searchConditions[field];
     if (!searchTerm) return text;
 
     let regex;
@@ -27,6 +26,9 @@ const TableRow = ({
       const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const pattern = escapedSearchTerm.split('').join('[-]?');
       regex = new RegExp(`(${pattern})`, 'gi');
+    } else if (field === 'productName') {
+      text = text.split('+')[0];
+      regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     } else {
       regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     }

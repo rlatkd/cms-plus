@@ -159,15 +159,6 @@ public class Billing extends BaseEntity {
 	}
 
 	/**
-	 * 청구금액 | 전체 청구 상품의 수량 * 가격
-	 * */
-	public long getBillingPrice() {
-		return billingProducts.stream()
-			.mapToLong(BillingProduct::getBillingProductPrice)
-			.sum();
-	}
-
-	/**
 	 * 청구서명
 	 * @return "YYYY년 MM월 청구서" (결제일 기준)
 	 * */

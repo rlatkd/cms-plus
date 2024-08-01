@@ -18,7 +18,7 @@ export const initialSearch = [
   { key: 'memberName', type: 'text', value: '', width: 'w-2/12' },
   { key: 'memberPhone', type: 'text', value: '', width: 'w-2/12' },
   { key: 'productName', type: 'text', value: '', width: 'w-2/12' },
-  { key: 'billingPrice', type: 'num', value: '', width: 'w-2/12', lower: true },
+  { key: 'billingPrice', type: 'number', value: '', width: 'w-2/12', lower: true },
   { key: 'billingDate', type: 'calendar', value: '', width: 'w-2/12' },
   {
     key: 'paymentType',

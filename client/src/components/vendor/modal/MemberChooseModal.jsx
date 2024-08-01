@@ -46,7 +46,7 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
       },
       memberMemo: member.memo,
     });
-    navigate('/vendor/members/register');
+    navigate('/vendor/contracts/register');
   };
 
   const fetchMemberList = async (page = 1) => {

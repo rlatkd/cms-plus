@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.payment.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import kr.or.kosa.cmsplusmain.util.HibernateUtils;
 import kr.or.kosa.cmsplusmain.util.RandomNumberGenerator;
 import kr.or.kosa.cmsplusmain.domain.contract.entity.Contract;
 import kr.or.kosa.cmsplusmain.domain.contract.exception.ContractNotFoundException;
@@ -44,23 +45,14 @@ public class PaymentService {
 	private final ContractCustomRepository contractCustomRepository;
 	private final PaymentCustomRepository paymentCustomRepository;
 
-	public PaymentTypeInfoRes getPaymentTypeInfo(Payment payment) {
-		PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
-
-		// proxy 객체인 경우 자식 클래스로 캐스팅이 안된다.
-		// 프록시를 자식 객체로써 받아온다.
-		if (!Hibernate.isInitialized(paymentTypeInfo)) {
-			LazyInitializer lazyInitializer = HibernateProxy.extractLazyInitializer(paymentTypeInfo);
-			if (lazyInitializer != null) {
-				paymentTypeInfo = (PaymentTypeInfo) lazyInitializer.getImplementation();
-			} else {
-				throw new IllegalStateException("Provided payment type is not initialized");
-			}
+	public PaymentTypeInfoRes getPaymentTypeInfoRes(Payment payment) {
+		PaymentTypeInfo paymentTypeInfo = HibernateUtils.getImplements(payment.getPaymentTypeInfo(), PaymentTypeInfo.class);
+		if (paymentTypeInfo == null) {
+			return null;
 		}
 
 		PaymentType paymentType = paymentTypeInfo.getPaymentType();
-
-		PaymentTypeInfoRes paymentTypeInfoRes = switch (paymentType) {
+		return switch (paymentType) {
 			case VIRTUAL -> {
 				VirtualAccountPaymentType virtualAccountPaymentType = (VirtualAccountPaymentType) paymentTypeInfo;
 				yield VirtualAccountTypeRes.builder()
@@ -85,31 +77,20 @@ public class PaymentService {
 					.build();
 			}
 		};
-
-		return paymentTypeInfoRes;
 	}
 
-	public PaymentMethodInfoRes getPaymentMethodInfo(Payment payment) {
-		PaymentMethodInfo paymentMethodInfo = payment.getPaymentMethodInfo();
+
+
+	public PaymentMethodInfoRes getPaymentMethodInfoRes(Payment payment) {
+		PaymentMethodInfo paymentMethodInfo = HibernateUtils.getImplements(payment.getPaymentMethodInfo(), PaymentMethodInfo.class);
 
 		// 결제수단은 자동결제방식의 경우에만 존재한다.
 		if (paymentMethodInfo == null) {
 			return null;
 		}
 
-		// proxy 객체인 경우 자식 클래스로 캐스팅이 안된다.
-		// 프록시를 자식 객체로써 받아온다.
-		if (!Hibernate.isInitialized(paymentMethodInfo)) {
-			LazyInitializer lazyInitializer = HibernateProxy.extractLazyInitializer(paymentMethodInfo);
-			if (lazyInitializer != null) {
-				paymentMethodInfo = (PaymentMethodInfo) lazyInitializer.getImplementation();
-			} else {
-				throw new IllegalStateException("Provided payment method is not initialized");
-			}
-		}
-
 		PaymentMethod paymentMethod = paymentMethodInfo.getPaymentMethod();
-		PaymentMethodInfoRes paymentMethodInfoRes = switch (paymentMethod) {
+		return switch (paymentMethod) {
 			case CARD -> {
 				CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) paymentMethodInfo;
 				yield CardMethodRes.builder()
@@ -132,8 +113,6 @@ public class PaymentService {
 			}
 			case ACCOUNT -> null;
 		};
-
-		return paymentMethodInfoRes;
 	}
 
 	/*

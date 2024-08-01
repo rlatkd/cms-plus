@@ -94,6 +94,7 @@ public class ProductService {
     /*
      * 상품 삭제
      * */
+    //TODO 삭제 조건은 현재 진행중인 계약이 없는 상품만 삭제가 가능하다.
     @Transactional
     public void deleteProduct(Long vendorId,Long productId) {
         validateProductUser(productId, vendorId);
