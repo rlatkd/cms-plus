@@ -13,18 +13,22 @@ import PreviousButton from '@/components/common/buttons/StatusPreButton';
 import { useStatusStore } from '@/stores/useStatusStore';
 import { useUserDataStore } from '@/stores/useUserDataStore';
 import useStatusStepper from '@/hooks/useStatusStepper';
-import { sendSimpleConsentData } from '@/apis/simpleConsent';
+import {
+  getContractInfo,
+  sendSimpleConsentData,
+  sendSimpleConsentSignImage,
+} from '@/apis/simpleConsent';
 import { validateField } from '@/utils/validators';
 import { useLocation } from 'react-router-dom';
+import bank from '@/utils/bank/bankCode';
 
 const SimpConsentPage = () => {
   const start = 0;
   const end = 6;
   const { status, setStatus, reset } = useStatusStore();
-  const { userData, setUserData } = useUserDataStore();
+  const { userData, setUserData, resetUserData, setUserAllData } = useUserDataStore();
   const [isCardVerified, setIsCardVerified] = useState(false);
   const isFirstRender = useRef(true); // 최초 렌더링 여부 확인
-
   const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
     'simpconsent',
     start,
@@ -33,8 +37,8 @@ const SimpConsentPage = () => {
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const contractId = searchParams.get('contractId');
-  const vendorId = searchParams.get('vendorId');
+  const contractId = searchParams.get('contract');
+  const vendorId = searchParams.get('vendor');
 
   const handleCardVerificationComplete = verified => {
     setIsCardVerified(verified);
@@ -128,7 +132,8 @@ const SimpConsentPage = () => {
       else if (!validateField('birth', accountOwnerBirth)) invalidFields.push('생년월일');
 
       if (!accountNumber) missingFields.push('계좌번호');
-      else if (!validateField('accountNumber', accountNumber)) invalidFields.push('계좌번호');
+      else if (!contractId && !validateField('accountNumber', accountNumber))
+        invalidFields.push('계좌번호');
     }
 
     return { missingFields, invalidFields };
@@ -187,8 +192,13 @@ const SimpConsentPage = () => {
       try {
         setStatus(5); // 로딩
         const preparedData = prepareData(userData);
-        await sendSimpleConsentData(vendorId, preparedData);
+        if (contractId) {
+          await axiosSendSimpleConsentSignImage();
+        } else {
+          await sendSimpleConsentData(vendorId, preparedData);
+        }
         setStatus(6); // 성공
+        resetUserData();
       } catch (error) {
         console.error('API request failed', error);
         setStatus(4); // 서명페이지로 다시 보내기
@@ -198,6 +208,74 @@ const SimpConsentPage = () => {
       reset();
     } else {
       originalHandleClickNext();
+    }
+  };
+
+  // <----- 기존 계약 서명이미지 업데이트 ----->
+  const axiosSendSimpleConsentSignImage = async () => {
+    try {
+      const data = {
+        contractId: contractId,
+        signImgUrl: userData.contractDTO.signatureUrl,
+      };
+      const res = await sendSimpleConsentSignImage(vendorId, data);
+      console.log('!----기존 계약 서명이미지 업데이트 성공----!'); // 삭제예정
+      console.log('계약 서명이미지', res);
+    } catch (err) {
+      console.error('axiosSendSimpleConsentSignImage => ', err.response);
+    }
+  };
+
+  // <----- 기존 계약 데이터 조회 API ----->
+  const axiosContractInfo = async () => {
+    try {
+      const res = await getContractInfo(vendorId, contractId);
+      console.log(res);
+      console.log('!----기존 계약 데이터 조회 API----!'); // 삭제예정
+
+      const contractProducts = res.contractProducts.map(product => ({
+        productId: product.productId,
+        productName: product.name,
+        price: product.price,
+        quantity: product.quantity,
+      }));
+
+      const formattedData = {
+        memberDTO: {
+          name: res.member.name,
+          phone: res.member.phone,
+          homePhone: res.member.homePhone,
+          email: res.member.email,
+          zipcode: res.member.address.zipcode,
+          address: res.member.address.address,
+          addressDetail: res.member.address.addressDetail,
+        },
+        paymentDTO: {
+          paymentMethod: res.paymentMethodInfo.paymentMethod.code,
+          cardNumber: res.paymentMethodInfo.cardNumber,
+          expiryDate: res.paymentMethodInfo.expiryDate,
+          cardHolder: res.paymentMethodInfo.cardOwner,
+          cardOwnerBirth: res.paymentMethodInfo.cardOwnerBirth,
+          bank: bank[res.paymentMethodInfo.bank.code],
+          accountHolder: res.paymentMethodInfo.accountOwner,
+          accountOwnerBirth: res.paymentMethodInfo.accountOwnerBirth,
+          accountNumber: res.paymentMethodInfo.accountNumber,
+        },
+        contractDTO: {
+          selectedProduct: '',
+          items: contractProducts,
+          contractName: res.contract.contractName,
+          startDate: res.contract.contractStartDate,
+          endDate: res.contract.contractEndDate,
+          contractDay: res.contract.contractDay,
+          totalPrice: res.contract.contractPrice,
+          signatureUrl: res.paymentTypeInfo.signImgUrl,
+        },
+      };
+      console.log(formattedData);
+      setUserAllData(formattedData);
+    } catch (err) {
+      console.error('axiosContractInfo => ', err.response);
     }
   };
 
@@ -216,14 +294,16 @@ const SimpConsentPage = () => {
 
   // <----- 페이지 렌더링 시 초기화 ----->
   useEffect(() => {
+    // 최초 렌더링 판단
+    isFirstRender.current = false;
     if (!isFirstRender.current) {
       reset();
     }
-  }, []);
 
-  // <----- 최초 렌더링 판단 ----->
-  useEffect(() => {
-    isFirstRender.current = false;
+    // contractId 존재시 계약 데이터 조회
+    if (contractId) {
+      axiosContractInfo();
+    }
   }, []);
 
   return (

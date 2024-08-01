@@ -63,6 +63,13 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
     value: method.code,
   }));
 
+  useEffect(() => {
+    if (contractId) {
+      setIsVerified(true);
+      handleInputChange('isVerified', true);
+    }
+  }, []);
+
   return (
     <>
       <div className='w-full text-left'>
@@ -79,6 +86,7 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
         selectedOption={userData.paymentDTO.paymentMethod}
         onChange={handlePaymentMethodChange}
         required={true}
+        disabled={!!contractId}
       />
       {userData.paymentDTO.paymentMethod === 'CARD' && (
         <PaymentCard
@@ -86,6 +94,7 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
           onInputChange={handleInputChange}
           onVerificationComplete={handleVerificationComplete}
           isVerified={isVerified}
+          contractId={contractId}
         />
       )}
       {userData.paymentDTO.paymentMethod === 'CMS' && (
@@ -94,6 +103,7 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
           onInputChange={handleInputChange}
           onVerificationComplete={handleVerificationComplete}
           isVerified={isVerified}
+          contractId={contractId}
         />
       )}
     </>

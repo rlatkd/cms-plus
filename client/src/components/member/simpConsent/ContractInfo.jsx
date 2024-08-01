@@ -168,6 +168,7 @@ const ContractInfo = ({ userData, setUserData, vendorId, contractId }) => {
         options={productOptions}
         value={userData.contractDTO.selectedProduct}
         onChange={handleProductChange}
+        disabled={!!contractId}
       />
 
       {userData.contractDTO.items.map((item, index) => (
@@ -197,6 +198,7 @@ const ContractInfo = ({ userData, setUserData, vendorId, contractId }) => {
             handleChangeValue={e => handleDateChange(e, 'startDate')}
             placeholder='시작 날짜'
             width='100%'
+            disabled={!!contractId}
           />
           <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
           <InputCalendar
@@ -205,6 +207,7 @@ const ContractInfo = ({ userData, setUserData, vendorId, contractId }) => {
             handleChangeValue={e => handleDateChange(e, 'endDate')}
             placeholder='종료 날짜'
             width='100%'
+            disabled={!!contractId}
           />
         </div>
       </div>
@@ -214,6 +217,7 @@ const ContractInfo = ({ userData, setUserData, vendorId, contractId }) => {
         required
         options={[...Array(31)].map((_, i) => ({ value: i + 1, label: `${i + 1}일` }))}
         value={userData.contractDTO.contractDay}
+        disabled={!!contractId}
         onChange={e => {
           const value = parseInt(e.target.value);
           setUserData({

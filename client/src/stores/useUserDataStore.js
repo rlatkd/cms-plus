@@ -52,6 +52,25 @@ export const useUserDataStore = create((set, get) => ({
       return { userData: newUserData };
     }),
 
+  // <------ 객체를 한번에 Set ------>
+  setUserAllData: data =>
+    set({
+      userData: data,
+    }),
+
+  // <------ memberDTO 데이터 set ------>
+  setMemberField: (field, value) =>
+    set(state => ({
+      userData: {
+        ...state.userData,
+        memberDTO: {
+          ...state.userData.memberDTO,
+          [field]: value,
+        },
+      },
+    })),
+
+  // <------ 데이터 reset ------>
   resetUserData: () =>
     set(() => ({
       userData: {

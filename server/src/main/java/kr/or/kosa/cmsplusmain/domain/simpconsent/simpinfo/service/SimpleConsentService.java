@@ -109,7 +109,7 @@ public class SimpleConsentService {
                 "[%s]는 간편동의가 불가능합니다".formatted(payment.getPaymentType().getTitle()));
         }
 
-        String url = "https://localhost:8080/member/simpconsent?" + "contractId=" + contractId + "&vendorId=" + vendorId;
+        String url = "https://localhost:8080/member/simpconsent?" + "contract=" + contractId + "&vendor=" + vendorId;
         log.info("{} 간편동의 요청 링크가 발송됨", url);
 
         String text = SIMPCONSENT_MESSAGE_FORMAT.formatted(member.getName(), url).trim();

@@ -90,7 +90,7 @@ const BasicInfo = ({ userData, setUserData, contractId }) => {
           errorMsg='올바른 이메일 번호를 입력해주세요.'
           disabled={!!contractId}
         />
-        <AddressInput userData={userData} setUserData={setUserData} disabled={!!contractId} />
+        <AddressInput disabled={!!contractId} />
       </form>
     </div>
   );
