@@ -17,7 +17,7 @@ const MemberInfoUpdatePage = () => {
     try {
       await updateMemberBaic(memberId.id, basicInfo);
       console.log('!----기본정보 수정 성공----!'); // 삭제예정
-      await navigate(`/vendor/members/detail/${memberId.id}`);
+      navigate(`/vendor/members/detail/${memberId.id}`);
       onAlert({
         msg: '회원정보가 수정되었습니다!',
         type: 'success',
@@ -25,6 +25,12 @@ const MemberInfoUpdatePage = () => {
       });
     } catch (err) {
       console.error('axiosUpdateMemberBasic => ', err.response);
+      onAlert({
+        msg: '회원 수정에 실패했습니다.',
+        type: 'error',
+        title: '수정 실패',
+        err: err,
+      });
     }
   };
 
