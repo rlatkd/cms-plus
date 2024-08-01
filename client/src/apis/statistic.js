@@ -1,7 +1,8 @@
 import { privateAxios } from '.';
+import { notebookAxios } from './notebooks';
 
 export const getStatisticList = async (searchParams = {}) => {
-    const res = await privateAxios.get('/api/v1/statistics/member-contracts', {
+    const res = await privateAxios.get('/v1/statistics/member-contracts', {
       params: {
         ...searchParams,
       },
@@ -9,11 +10,12 @@ export const getStatisticList = async (searchParams = {}) => {
     return res;
   };
 
-// export const getStatisticList = async (searchParams = {}) => {
-//     const res = await privateAxios.get('/api/v1/statistics/member-contracts', {
-//       params: {
-//         ...searchParams,
-//       },
-//     });
-//     return res;
-//   };
+  export const getRenewalProbability = async (memberData) => {
+    try {
+      const res = await notebookAxios.post('/notebook/member.ipynb', memberData);
+      return res.data;
+    } catch (err) {
+      console.error('Error fetching renewal probability:', err);
+      throw err;
+    }
+  };

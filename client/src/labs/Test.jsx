@@ -7,39 +7,39 @@ const Test = () => {
   // msg : 원하는 메세지
   // type : 4가지(default, width, success, error), "" = defalut
   // title : alert제목 , "" = 효성 CMS#
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async (msg, type, title, err = null) => {
-    if (err != null) {
-      const data = err.response.data;
-      const fieldErrors = data.errors;
+  // const { alert: alertComp } = useContext(AlertContext);
+  // const onAlert = async (msg, type, title, err = null) => {
+  //   if (err != null) {
+  //     const data = err.response.data;
+  //     const fieldErrors = data.errors;
 
-      msg = data.messeage;
-      if (fieldErrors && fieldErrors.length > 0) {
-        msg = fieldErrors.join('\n');
-      }
-    }
+  //     msg = data.messeage;
+  //     if (fieldErrors && fieldErrors.length > 0) {
+  //       msg = fieldErrors.join('\n');
+  //     }
+  //   }
 
-    const result = await alertComp(msg, type, title);
-  };
+  //   const result = await alertComp(msg, type, title);
+  // };
 
-  console.log("infra test v0731-2");
+  // console.log("infra test v0731-2");
 
   // type:
   // msg : 원하는 메세지
   // type : 2가지(default, warning), "" = defalut
   // title : alert제목 , "" = 효성 CMS#
-  const { confirm: confrimComp } = useContext(ConfirmContext);
-  const onConfirm = async (msg, type, title) => {
-    const result = await confrimComp(msg, type, title);
-    console.log(result);
-  };
+  // const { confirm: confrimComp } = useContext(ConfirmContext);
+  // const onConfirm = async (msg, type, title) => {
+  //   const result = await confrimComp(msg, type, title);
+  //   console.log(result);
+  // };
 
-  const [isChecked, setIsChecked] = useState(false);
+  // const [isChecked, setIsChecked] = useState(false);
 
-  const handleCheckboxChange = () => {
-    console.log('???', isChecked);
-    setIsChecked(!isChecked);
-  };
+  // const handleCheckboxChange = () => {
+  //   console.log('???', isChecked);
+  //   setIsChecked(!isChecked);
+  // };
 
   return (
     <div className='w-full'>
