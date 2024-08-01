@@ -7,7 +7,7 @@ const BillingDetailEditButtons = ({ onSave, onCancel }) => {
     font-700 rounded-md border cursor-pointer
     ${
       isCancel
-        ? 'text-negative border-negative hover:bg-negative hover:text-white'
+        ? 'text-red-500 border-red-500 hover:bg-red-50'
         : 'text-white bg-mint hover:bg-mint_hover'
     }
   `;
