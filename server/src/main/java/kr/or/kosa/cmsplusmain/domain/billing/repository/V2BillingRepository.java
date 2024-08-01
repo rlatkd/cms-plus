@@ -182,7 +182,7 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 		String orderBy = pageReq.getOrderBy();
 
 		if (orderBy.equals("billingPrice")) {
-			NumberExpression<Long> expression = billingProduct.price.longValue().multiply(billingProduct.quantity).sum();
+			NumberExpression<Long> expression = billing.billingPrice;
 			return pageReq.isAsc() ? expression.asc() : expression.desc();
 		}
 
