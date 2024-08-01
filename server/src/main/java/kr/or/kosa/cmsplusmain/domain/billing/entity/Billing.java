@@ -118,8 +118,9 @@ public class Billing extends BaseEntity {
 	/**
 	 * 청구 상품만 수정하는 경우 호출 안되므로 청구 상품 변경 메서드에서
 	 * 메서드 호출 필수
+	 * 목록 조회 성능 개선을 위한 미리 계산
 	 * */
-	@PrePersist @PreUpdate
+	@PrePersist
 	public void calculateBillingPriceAndProductCnt() {
 		this.billingPrice = billingProducts.stream()
 			.mapToLong(BillingProduct::getBillingProductPrice)
