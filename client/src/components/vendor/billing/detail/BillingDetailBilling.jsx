@@ -7,6 +7,7 @@ import TextArea from '@/components/common/inputs/TextArea';
 import dayjs from 'dayjs';
 import { formatDate } from '@/utils/format/formatDate';
 import { formatId } from '@/utils/format/formatId';
+import InputCalendar from '@/components/common/inputs/InputCalendar';
 
 const BillingDetailBilling = ({
   billingData,
@@ -15,31 +16,27 @@ const BillingDetailBilling = ({
   onInvoiceMessageChange,
   onBillingDateChange,
 }) => {
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
   const formatDateTime = dateTime => {
+    if (!dayjs(dateTime).isValid()) {
+      return null;
+    }
     return dayjs(dateTime).format('YYYY-MM-DD HH:mm:ss');
   };
 
   const makeStatusText = billingData => {
     if (!billingData) return;
     const { billingStatus, createdDateTime, invoiceSendDateTime, paidDateTime } = billingData;
-    switch (billingStatus.code) {
+    switch (billingStatus?.code) {
       case 'CREATED':
-        return `${billingStatus.title} (${formatDateTime(createdDateTime)})`;
+        return `${billingStatus?.title} (${formatDateTime(createdDateTime)})`;
       case 'WAITING_PAYMENT':
       case 'NON_PAID':
-        return `${billingStatus.title} (청구서 발송: ${formatDateTime(invoiceSendDateTime) || '미발송'})`;
+        return `${billingStatus?.title} (청구서 발송: ${formatDateTime(invoiceSendDateTime) || '미발송'})`;
       case 'PAID':
-        return `${billingStatus.title} (결제: ${formatDateTime(paidDateTime)})`;
+        return `${billingStatus?.title} (결제: ${formatDateTime(paidDateTime)})`;
       default:
         return '-';
     }
-  };
-
-  const handleDateChange = date => {
-    onBillingDateChange(formatDate(date));
-    setIsCalendarOpen(false);
   };
 
   return (
@@ -84,32 +81,16 @@ const BillingDetailBilling = ({
           type='text'
           disabled={true}
         />
-        <div className='relative flex items-center'>
-          <DatePicker
-            selectedDate={new Date(billingReq.billingDate)}
-            onDateChange={handleDateChange}
-            isOpen={isCalendarOpen}
-            onToggle={() => setIsCalendarOpen(!isCalendarOpen)}
-          />
-          <InputWeb
-            id='billingDate'
-            label='결제일'
-            value={billingReq.billingDate}
-            type='text'
-            disabled={!editable}
-            readOnly={true}
-            onChange={e => onBillingDateChange(e.target.value)}
-            classInput='w-full'
-            classContainer='w-full'
-          />
-          {editable && (
-            <div
-              className='cursor-pointer absolute right-3 top-11'
-              onClick={() => setIsCalendarOpen(!isCalendarOpen)}>
-              <FontAwesomeIcon icon={faCalendar} className='h-5 w-5 text-gray-400' />
-            </div>
-          )}
-        </div>
+        <InputCalendar
+          id='billingDate'
+          label='결제일'
+          value={billingReq.billingDate}
+          handleChangeValue={e => onBillingDateChange(e.target.value)}
+          placeholder='결제일'
+          width='100%'
+          height='53px'
+          disabled={!editable}
+        />
       </div>
 
       <TextArea

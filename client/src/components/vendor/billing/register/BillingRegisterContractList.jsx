@@ -32,10 +32,25 @@ const ContractList = ({
   setPageGroup,
 }) => {
   const [selectedContractId, setSelectedContractId] = useState(null);
+  const [mSearchTerm, setMSearchTerm] = useState('');
 
   const onSelected = contract => {
     setSelectedContractId(contract.contractId);
     handleSelectContract(contract);
+  };
+
+  const handleSelectChange = event => {
+    setMSearchTerm('');
+    setSearchType(event.target.value);
+  };
+
+  const handleInputChange = e => {
+    setSearchTerm(e.target.value);
+    setMSearchTerm(e.target.value);
+
+    if (searchType === 'contractDay' || searchType === 'contractPrice') {
+      e.target.value = e.target.value.replace(/\D/g, '');
+    }
   };
 
   return (
@@ -49,7 +64,7 @@ const ContractList = ({
           classSelect='py-4 rounded-lg'
           value={searchType}
           options={typeOtions}
-          onChange={e => setSearchType(e.target.value)}
+          onChange={handleSelectChange}
         />
         <InputWeb
           id='searchTerm'
@@ -57,8 +72,8 @@ const ContractList = ({
           label=''
           classContainer='w-full'
           placeholder={typePlaceholers[searchType]}
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          value={mSearchTerm}
+          onChange={handleInputChange}
         />
       </div>
       <table className='w-full mb-3'>
