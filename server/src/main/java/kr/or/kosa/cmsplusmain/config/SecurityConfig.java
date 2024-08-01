@@ -71,6 +71,8 @@ public class SecurityConfig {
 				.requestMatchers("/api/v1/simple-consent").permitAll()
 				.requestMatchers("/api/v1/simple-consent/card/verify").permitAll()
 				.requestMatchers("/api/v1/simple-consent/sign").permitAll()
+				.requestMatchers("/infra-test").permitAll()
+				.requestMatchers("/actuator/prometheus").permitAll()
 				.requestMatchers("/error").permitAll()
 				.requestMatchers("/vendor").hasRole("VENDOR")
 				.requestMatchers("/member").hasRole("MEMBER")
