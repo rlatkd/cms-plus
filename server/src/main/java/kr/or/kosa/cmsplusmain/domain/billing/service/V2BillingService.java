@@ -297,12 +297,12 @@ public class V2BillingService {
 
 		switch (method) {
 			case CARD -> {
-				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfo(payment);
+				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfoRes(payment);
 				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(), cardMethodRes.getCardNumber());
 				// kafkaPaymentService.producePayment(cardPaymentDto);
 			}
 			case CMS -> {
-				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfo(payment);
+				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfoRes(payment);
 				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(), cmsMethodRes.getAccountNumber());
 				// kafkaPaymentService.producePayment(accountPaymentDto);
 			}

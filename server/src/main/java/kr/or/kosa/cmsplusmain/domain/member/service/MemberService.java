@@ -320,7 +320,7 @@ public class MemberService {
         boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
 
         String validation = validate.stream()
-            .map(ConstraintViolation::getMessageTemplate)
+            .map(ConstraintViolation::getMessage)
             .collect(Collectors.joining("\n"));
 
         if (!validate.isEmpty()) {
