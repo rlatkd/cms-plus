@@ -7,5 +7,6 @@ RUN        gradle clean build --no-daemon
 FROM       openjdk:17-jdk-slim
 WORKDIR    /server
 COPY       --from=build /home/gradle/project/build/libs/*.jar app.jar
+ENV        TZ=Asia/Seoul
 ENV        SPRING_PROFILES_ACTIVE=prod
 ENTRYPOINT [ "java", "-jar", "app.jar" ]
