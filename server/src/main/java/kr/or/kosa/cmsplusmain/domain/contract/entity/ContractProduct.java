@@ -69,6 +69,14 @@ public class ContractProduct extends BaseEntity {
 	}
 
 	/**
+	 * 계약상품 수정
+	 * */
+	public void update(int price, int quantity) {
+		this.price = price;
+		this.quantity = quantity;
+	}
+
+	/**
 	* 계약 상품 계산된 금액
 	* */
 	public long getContractProductPrice() {
@@ -77,7 +85,8 @@ public class ContractProduct extends BaseEntity {
 
 	/**
 	 * 계약상품 동일성 비교
-	 * 기반이된 상품, 계약상품 가격, 계약상품 수량
+	 * 기반이된 상품
+	 * 동일 상품 1개만 가질 수 있다.
 	 * */
 	@Override
 	public boolean equals(Object obj) {
@@ -85,8 +94,11 @@ public class ContractProduct extends BaseEntity {
 			return false;
 		}
 
-		return (this.product.getId().equals(other.product.getId()))
-			&& (this.price == other.price)
-			&& (this.quantity == other.quantity);
+		return (this.product.getId().equals(other.product.getId()));
+	}
+
+	@Override
+	public int hashCode() {
+		return product.getId().hashCode();
 	}
 }

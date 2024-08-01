@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
+import kr.or.kosa.cmsplusmain.domain.billing.validator.BillingDateReq;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,6 +19,7 @@ public class BillingCreateReq {
 	private BillingType billingType;					// 청구타입 (정기, 추가)
 
 	@NotNull(message = "청구 결제일이 필요합니다")
+	@BillingDateReq
 	private LocalDate billingDate;						// 청구 결제일
 
 	@NotNull(message = "계약 정보가 필요합니다")
