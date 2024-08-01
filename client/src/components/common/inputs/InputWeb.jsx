@@ -75,7 +75,7 @@ const InputWeb = ({
         />
 
         {/* 유효성검사 */}
-        {value && !isValid && (
+        {(value || value !== 0) && !isValid && (
           <p className='absolute text-negative text-[13px] ml-2 -bottom-6'>{errorMsg}</p>
         )}
 

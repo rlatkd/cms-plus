@@ -21,9 +21,11 @@ const SelectField = ({
 
       <div className='relative'>
         <select
-          className={`${classSelect} ${classSelect.includes('rounded-lg') ? 'rounded-lg' : 'rounded-md '}  
-          w-full appearance-none border border-ipt_border bg-white p-2 text-sm 
-          focus:border-mint focus:outline-none focus:ring-mint focus:ring-1`}
+          className={`${classSelect} 
+                    ${props.disabled ? 'bg-ipt_disa ' : 'bg-white'}
+                    ${classSelect.includes('rounded-lg') ? 'rounded-lg' : 'rounded-md '}  
+                    w-full appearance-none border border-ipt_border  p-2 text-sm 
+                    focus:border-mint focus:outline-none focus:ring-mint focus:ring-1`}
           style={{
             WebkitAppearance: 'none',
             MozAppearance: 'none',

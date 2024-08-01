@@ -205,7 +205,7 @@ const ContractListPage = () => {
               imgSrc={file}
               color='mint'
               buttonText='신규 회원 계약 등록'
-              onClick={() => navigate('/vendor/members/register')}
+              onClick={() => navigate('/vendor/contracts/register')}
             />
             <MoveButton
               imgSrc={file}

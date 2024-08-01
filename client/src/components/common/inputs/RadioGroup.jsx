@@ -8,6 +8,7 @@ const RadioGroup = ({
   selectedOption,
   onChange,
   required = false,
+  disabled,
 }) => {
   return (
     <div className={`${classContainer} mb-4`}>
@@ -30,9 +31,12 @@ const RadioGroup = ({
                 checked={selectedOption === option.value}
                 onChange={() => onChange(option.value)}
                 className='sr-only'
+                disabled={disabled}
               />
               <div
-                className={`mr-2 flex h-4 w-4 items-center justify-center rounded-full border bg-white ${selectedOption === option.value ? 'border-teal-400' : 'border-gray-300'}`}>
+                className={`mr-2 flex h-4 w-4 items-center justify-center rounded-full border 
+                          ${disabled ? 'bg-ipt_disa ' : 'bg-white'}
+                          ${selectedOption === option.value ? 'border-teal-400' : 'border-gray-300'}`}>
                 {selectedOption === option.value && (
                   <div className='h-2 w-2 rounded-full bg-teal-400' />
                 )}

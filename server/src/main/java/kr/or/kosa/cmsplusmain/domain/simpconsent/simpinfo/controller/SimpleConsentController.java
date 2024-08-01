@@ -28,8 +28,11 @@ public class SimpleConsentController {
 
     private final SimpleConsentService simpleConsentService;
 
-    @PostMapping
-    public ResponseEntity<MemberDetail> processSimpleConsent(@VendorId Long vendorId , @RequestBody SimpleConsentRequestDTO simpleConsentRequestDTO) {
+    /**
+     * 고객 간편동의 (회원, 비회원) 등록
+     * */
+    @PostMapping("/{vendorId}")
+    public ResponseEntity<MemberDetail> processSimpleConsent(@PathVariable Long vendorId , @RequestBody SimpleConsentRequestDTO simpleConsentRequestDTO) {
 //        Long vendorId = 1L;
         //String vendorName = userDetails.getName();
 
@@ -51,7 +54,7 @@ public class SimpleConsentController {
         return simpleConsentService.getSimpleConsentInfo(vendorId, contractId);
     }
 
-    @PostMapping("/{vendorId}")
+    @PostMapping("/sign-image/{vendorId}")
     public void uploadSignUrl(@PathVariable Long vendorId, @RequestBody SimpConsentSignReq simpConsentSignReq) {
         simpleConsentService.setSigned(vendorId, simpConsentSignReq);
     }
