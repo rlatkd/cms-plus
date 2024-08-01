@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class InvoiceMessageValidator implements ConstraintValidator<InvoiceMessage, String> {
-	private static final int MAX_MESSAGE_LENGTH = 2000;
+	public static final int MAX_MESSAGE_LENGTH = 2000;
 
 	@Override
 	public boolean isValid(String homePhone, ConstraintValidatorContext context) {

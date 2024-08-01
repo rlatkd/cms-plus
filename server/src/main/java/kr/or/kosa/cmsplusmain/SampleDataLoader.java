@@ -271,7 +271,7 @@ public class SampleDataLoader {
 	public PaymentTypeInfo generatePaymentTypeInfo(PaymentType paymentType) {
 		return switch (paymentType) {
 			case AUTO -> AutoPaymentType.builder()
-				.consentImgUrl("blob:http://example.com/consent" + random.nextInt(1000) + ".jpg")
+				.consentImgUrl(random.nextBoolean() ? ("blob:http://example.com/consent" + random.nextInt(1000) + ".jpg") : null)
 				.simpleConsentReqDateTime(LocalDateTime.now().minusDays(random.nextInt(30)))
 				.build();
 			case BUYER -> BuyerPaymentType.builder()
