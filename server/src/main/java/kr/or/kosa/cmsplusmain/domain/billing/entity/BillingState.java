@@ -1,8 +1,16 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
+
 import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusException;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.AutoPaymentType;
+import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentTypeInfo;
 import kr.or.kosa.cmsplusmain.util.FormatUtil;
+import kr.or.kosa.cmsplusmain.util.HibernateUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -80,10 +88,25 @@ public class BillingState {
 						"이미 결제된 청구입니다");
 				}
 				Payment payment = billing.getContract().getPayment();
+
 				if (!payment.canPayRealtime()) {
 					return new BillingState(PAY_REALTIME, false,
 						"현재 설정된 결제방식으로는 실시간 결제가 불가능합니다");
 				}
+
+				// 간편동의 여부
+				PaymentTypeInfo paymentTypeInfo = payment.getPaymentTypeInfo();
+				AutoPaymentType autoPaymentType = HibernateUtils.getImplements(paymentTypeInfo, AutoPaymentType.class);
+				if (autoPaymentType == null) {
+					return new BillingState(PAY_REALTIME, false,
+						"현재 설정된 결제방식으로는 실시간 결제가 불가능합니다");
+				}
+
+				if (autoPaymentType.getConsentStatus() != ConsentStatus.ACCEPT) {
+					return new BillingState(PAY_REALTIME, false,
+						"간편동의가 필요합니다.");
+				}
+
 				return new BillingState(PAY_REALTIME, true);
 			}
 		},

@@ -139,8 +139,8 @@ public class SimpleConsentService {
             .map(ContractProductRes::fromEntity)
             .toList();
         MemberDto memberDto = MemberDto.fromEntity(member);
-        PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfo(payment);
-        PaymentMethodInfoRes paymentMethodInfoRes = paymentService.getPaymentMethodInfo(payment);
+        PaymentTypeInfoRes paymentTypeInfoRes = paymentService.getPaymentTypeInfoRes(payment);
+        PaymentMethodInfoRes paymentMethodInfoRes = paymentService.getPaymentMethodInfoRes(payment);
 
         return SimpConsentInfoRes.builder()
             .contract(contractDto)
