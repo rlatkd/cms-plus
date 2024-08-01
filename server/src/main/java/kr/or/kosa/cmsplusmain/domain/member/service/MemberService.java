@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +26,6 @@ import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductReposito
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
@@ -150,6 +143,14 @@ public class MemberService {
         Long contractId = contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
 
         return contractId;
+    }
+
+    @Transactional
+    public void createMemberBasic(Long vendorId, MemberBasicCreateReq memberBasicCreateReq) {
+        // 회원 정보를 DB에 저장한다.
+        Member member = memberBasicCreateReq.toEntity(vendorId);
+
+        member = memberRepository.save(member);
     }
 
     /**
@@ -342,4 +343,5 @@ public class MemberService {
             throw new MemberNotFoundException("회원이 존재하지 않습니다");
         }
     }
+
 }

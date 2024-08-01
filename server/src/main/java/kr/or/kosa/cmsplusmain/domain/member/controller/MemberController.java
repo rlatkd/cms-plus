@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.LogExecutionTime;
+import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,14 +24,6 @@ import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.response.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.excel.service.ExcelHandler;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
@@ -92,6 +85,15 @@ public class MemberController {
     public Long createMember(@VendorId Long vendorId, @RequestBody @Valid MemberCreateReq memberCreateReq) {
         return memberService.createMember(vendorId, memberCreateReq);
     }
+
+    /**
+     * 회원 등록 - 기본 정보
+     */
+    @PostMapping("/members/basic")
+    public void createMemberBaisc(@VendorId Long vendorId, @RequestBody @Valid MemberBasicCreateReq memberBasicCreateReq) {
+        return memberService.createMemberBasic(vendorId, memberBasicCreateReq);
+    }
+
 
     /**
      * 회원 수정 - 기본 정보
@@ -158,4 +160,6 @@ public class MemberController {
         Long vendorId = 1L;
         return memberService.uploadMembersByExcel(vendorId, memberExcelList);
     }
+
+
 }
