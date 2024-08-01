@@ -2,6 +2,155 @@ import AlertContext from '@/utils/dialog/alert/AlertContext';
 import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
 import { useContext, useState } from 'react';
 
+const LoginPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    // 여기에 실제 로그인 로직을 구현합니다.
+    await new Promise(resolve => setTimeout(resolve, 2000)); // 로그인 시뮬레이션
+    setIsLoading(false);
+  };
+
+  return (
+    <div className='min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
+      <div className='sm:mx-auto sm:w-full sm:max-w-md'>
+        <h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>Hyosung CMS#</h2>
+        <p className='mt-2 text-center text-sm text-gray-600'>
+          수납 및 자금 관리 통합 비즈니스 솔루션
+        </p>
+      </div>
+
+      <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
+        <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
+          <form className='space-y-6'>
+            <div>
+              <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
+                아이디
+              </label>
+              <div className='mt-1'>
+                <input
+                  id='email'
+                  name='email'
+                  type='email'
+                  required
+                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#4FD1C5] focus:border-[#4FD1C5] sm:text-sm'
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor='password' className='block text-sm font-medium text-gray-700'>
+                비밀번호
+              </label>
+              <div className='mt-1'>
+                <input
+                  id='password'
+                  name='password'
+                  type='password'
+                  required
+                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#4FD1C5] focus:border-[#4FD1C5] sm:text-sm'
+                />
+              </div>
+            </div>
+
+            <div>
+              <LoginButton isLoading={isLoading} onClick={handleLogin} />
+            </div>
+          </form>
+
+          <div className='mt-6'>
+            <div className='relative'>
+              <div className='absolute inset-0 flex items-center'>
+                <div className='w-full border-t border-gray-300' />
+              </div>
+              <div className='relative flex justify-center text-sm'>
+                <span className='px-2 bg-white text-gray-500'>
+                  아직 회원이 아니신가요?{' '}
+                  <a href='#' className='font-medium text-[#4FD1C5] hover:text-[#45b7ac]'>
+                    회원가입
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* {isLoading && <OverlaySpinner />} */}
+    </div>
+  );
+};
+
+const OverlaySpinner = () => {
+  return (
+    <div className='fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50'>
+      <div className='flex flex-col items-center  relative p-8 bg-white rounded-lg shadow-xl'>
+        <svg
+          className='animate-spin h-12 w-12  text-[#4FD1C5]'
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'>
+          <circle
+            className='opacity-25'
+            cx='12'
+            cy='12'
+            r='10'
+            stroke='currentColor'
+            strokeWidth='4'
+          />
+          <path
+            className='opacity-75 '
+            fill='currentColor'
+            d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+          />{' '}
+        </svg>
+        <p className='mt-4 text-[#4FD1C5] font-semibold'>로그인 중입니다...</p>
+      </div>
+    </div>
+  );
+};
+
+const LoginButton = ({ isLoading, onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      disabled={isLoading}
+      className={`w-full py-3 rounded-md transition duration-300 ${
+        isLoading
+          ? 'bg-[#4FD1C5] text-white cursor-not-allowed'
+          : 'bg-[#4FD1C5] text-white hover:bg-[#45b7ac]'
+      }`}>
+      {isLoading ? (
+        <div className='flex items-center justify-center'>
+          <svg
+            className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'>
+            <circle
+              className='opacity-25'
+              cx='12'
+              cy='12'
+              r='10'
+              stroke='currentColor'
+              strokeWidth='4'
+            />
+            <path
+              className='opacity-75'
+              fill='currentColor'
+              d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+            />
+          </svg>
+          로그인 중...
+        </div>
+      ) : (
+        '로그인'
+      )}
+    </button>
+  );
+};
+
 const Test = () => {
   // msg : 원하는 메세지
   // type : 4가지(default, width, success, error), "" = defalut
@@ -21,7 +170,7 @@ const Test = () => {
     const result = await alertComp(msg, type, title);
   };
 
-  console.log("infra test v0801-1");
+  console.log('infra test v0801-1');
 
   // type:
   // msg : 원하는 메세지
@@ -164,6 +313,7 @@ const Test = () => {
           <path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' />
         </svg>
       </label>
+      <LoginPage />
     </div>
   );
 };
