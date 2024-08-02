@@ -193,7 +193,7 @@ const Test = () => {
 
   return (
     <div className='w-full'>
-      {/* <div style={{ display: 'flex', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', marginBottom: '20px' }}>
         <button
           style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}>
           카드결제버튼
@@ -207,7 +207,7 @@ const Test = () => {
           가상계좌결제버튼
         </button>
       </div>
-      <div style={{ display: 'flex' }}>
+      {/* <div style={{ display: 'flex' }}>
         <button
           style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}
           onClick={() => onAlert('회원정보가 수정되었습니다!', 'default')}>
@@ -238,7 +238,7 @@ const Test = () => {
           onClick={() => onConfirm('회원정보가 수정하시겠습니까?', 'warning', '회원정보 수정')}>
           confirmWarning
         </button>
-      </div>
+      </div> */}
 
       <div className='flex flex-col items-center justify-center p-12 bg-white rounded-lg'>
         <div className='mb-8'>
@@ -255,7 +255,7 @@ const Test = () => {
         </button>
       </div>
 
-      <div className='flex items-center justify-center h-14 bg-gray-100'>
+      {/* <div className='flex items-center justify-center h-14 bg-gray-100'>
         <div className='flex items-center'>
           <input
             id='custom-checkbox'
@@ -285,7 +285,7 @@ const Test = () => {
             <span className='ml-2 text-gray-700'>Custom Checkbox</span>
           </label>
         </div>
-      </div>
+      </div> */}
 
       <label className='flex cursor-pointer gap-2'>
         <svg
@@ -314,8 +314,7 @@ const Test = () => {
           strokeLinejoin='round'>
           <path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' />
         </svg>
-      </label> */}
-        <Statistic/>
+        <Statistic />
       </label>
       <LoginPage />
       <DashboardChart />
@@ -324,7 +323,6 @@ const Test = () => {
       <LoadingSpinner size='xxl' text='잠시만 기다려주세요...' />
       <LoadingSpinner size='xxxl' text='잠시만 기다려주세요...' />
     </div>
-   
   );
 };
 
