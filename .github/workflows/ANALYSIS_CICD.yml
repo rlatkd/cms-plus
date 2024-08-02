@@ -7,63 +7,41 @@ on:
     paths:
       - 'server-analysis/**'
 
-env:
-  AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: t3-back-analysisecr
-  ECS_CLUSTER: t3-back-ecscluster
-  ECS_CONTAINER: t3-back-analysiscontainer
-  ECS_SERVICE: t3-back-ecscluster/t3-back-analysisservice
-  ECS_TASK_DEFINITION: task-definition-analysis.json
-
-permissions:
-  contents: read
-
 jobs:
   ci-cd:
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
 
-    - name: AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in Docker Hub
+      uses: docker/login-action@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}    
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Replace AWS ID
+    - name: Build and push
       run: |
-        sed -i "s/{AWS_ACCOUNT_ID}/${{ secrets.AWS_ACCOUNT_ID }}/g" ${{ env.ECS_TASK_DEFINITION }}
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest ./server-analysis
+        docker push ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
 
-    - name: Login ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build and Push Docker Image
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: latest
-      run: |
-        docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server-analysis
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-    - name: Update ECS Task Definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
+    - name: Deploy EC2
+      uses: appleboy/ssh-action@master
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.ECS_CONTAINER }}
-        image: ${{ steps.build-image.outputs.image }}
+        host: ${{ secrets.BATCH_EC2_HOST }}
+        username: ${{ secrets.BATCH_EC2_USER }}
+        key: ${{ secrets.T3_KEYPAIR_PEM }}
+        port: 22
+        script: |
+          sudo docker image pull ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
+          
+          if [ $(sudo docker ps -q -f name=server-analysis) ]; then
+            sudo docker stop server-analysis
+            sudo docker rm server-analysis
+          fi
 
-    - name: Deploy to ECS
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
+          sudo docker run -d -p 80:8888 --name server-analysis ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
