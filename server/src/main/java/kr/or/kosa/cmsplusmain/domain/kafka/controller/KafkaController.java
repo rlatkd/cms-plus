@@ -26,6 +26,7 @@ public class KafkaController {
 
     @PostMapping("/messaging/sms")
     public void sendSms(@RequestBody SmsMessageDto smsMessageDto) {
+        log.error("넘어간다 {}");
         kafkaMessagingService.produceMessaging(smsMessageDto);
     }
 
