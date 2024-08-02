@@ -42,7 +42,13 @@ jobs:
         key: ${{ secrets.T3_KEYPAIR_PEM }}
         port: 22
         script: |
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
-          sudo docker stop server-analysis || true
-          sudo docker rm server-analysis || true
+          sudo docker image pull ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
+          
+          # Stop and remove the existing container if it is running
+          if [ $(sudo docker ps -q -f name=server-analysis) ]; then
+            sudo docker stop server-analysis
+            sudo docker rm server-analysis
+          fi
+
+          # Run the new container
           sudo docker run -d -p 80:8888 --name server-analysis ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
