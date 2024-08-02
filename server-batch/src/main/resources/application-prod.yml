@@ -4,8 +4,3 @@ spring:
     url: ${RDS_URL}
     username: ${RDS_USERNAME}
     password: ${RDS_PASSWORD}
-
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: 6379
