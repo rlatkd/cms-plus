@@ -181,8 +181,9 @@
 }
 
 .fc .fc-toolbar-title {
-  font-size: 1.25em;
-  color: #2d3748;
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #344767;
 }
 
 /* Hide default button text */

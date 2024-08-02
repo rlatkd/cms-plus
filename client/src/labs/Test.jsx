@@ -1,6 +1,7 @@
+import LoadingSpinner from '@/components/common/loadings/LoadingSpinner';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -314,8 +315,99 @@ const Test = () => {
         </svg>
       </label>
       <LoginPage />
+      <DashboardChart />
+      <LoadingSpinner size='lg' text='잠시만 기다려주세요...' />
+      <LoadingSpinner size='xl' text='잠시만 기다려주세요...' />
+      <LoadingSpinner size='xxl' text='잠시만 기다려주세요...' />
+      <LoadingSpinner size='xxxl' text='잠시만 기다려주세요...' />
     </div>
   );
 };
 
 export default Test;
+
+const DashboardLoadingSpinner = ({ size = 'md' }) => {
+  const sizeClasses = {
+    sm: 'w-8 h-8',
+    md: 'w-12 h-12',
+    lg: 'w-16 h-16',
+  };
+
+  return (
+    <div className='flex justify-center items-center'>
+      <div className={`${sizeClasses[size]} relative`}>
+        <div className='absolute top-0 left-0 w-full h-full border-4 border-mint opacity-30 rounded-full animate-ping' />
+        <div className='absolute top-0 left-0 w-full h-full border-4 border-mint border-t-transparent rounded-full animate-spin' />
+      </div>
+    </div>
+  );
+};
+
+const DashboardState = ({ isLoading, isEmpty, emptyMessage = '데이터가 없습니다.', icon }) => {
+  if (isLoading) {
+    return (
+      <div className='flex flex-col items-center justify-center h-64 bg-white rounded-xl shadow-dash-board p-6'>
+        <DashboardLoadingSpinner size='lg' />
+        <p className='mt-4 text-text_grey font-700'>로딩 중...</p>
+      </div>
+    );
+  }
+
+  if (isEmpty) {
+    return (
+      <div className='flex flex-col items-center justify-center h-64 bg-white rounded-xl shadow-dash-board p-6'>
+        {icon ? (
+          icon
+        ) : (
+          <svg
+            className='w-16 h-16 text-mint'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+            xmlns='http://www.w3.org/2000/svg'>
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+            />
+          </svg>
+        )}
+        <p className='mt-4 text-text_grey font-700'>{emptyMessage}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+const DashboardChart = () => {
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // 데이터를 가져오는 로직
+    // setData(fetchedData);
+    // setIsLoading(false);
+  }, []);
+
+  if (isLoading || data.length === 0) {
+    return (
+      <div className='dashboard-card'>
+        <h2 className='text-xl font-700 text-text_black mb-4'>차트 제목</h2>
+        <DashboardState
+          isLoading={isLoading}
+          isEmpty={!isLoading && data.length === 0}
+          emptyMessage='표시할 데이터가 없습니다.'
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className='dashboard-card'>
+      <h2 className='text-xl font-700 text-text_black mb-4'>차트 제목</h2>
+      {/* 실제 차트 렌더링 */}
+    </div>
+  );
+};

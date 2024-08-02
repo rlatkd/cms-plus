@@ -4,8 +4,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import formatNumber from '@/utils/format/formatNumber';
 import { STATUS_COLORS } from '@/pages/vendor/DashBoardPage';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const getEventPriorityStatus = statusCounts => {
   if (statusCounts.NON_PAID > 0) return 'NON_PAID';
@@ -110,7 +108,7 @@ const DashBoardCalendar = ({ events, onEventClick, calendarRef, onNext, onPrev }
   };
 
   return (
-    <div className='bg-white rounded-xl shadow-md p-6 relative' ref={calendarElRef}>
+    <div className='bg-white rounded-xl p-6 relative' ref={calendarElRef}>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView='dayGridMonth'

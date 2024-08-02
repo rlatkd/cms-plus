@@ -75,11 +75,16 @@ const LoginForm = () => {
       const resCheckUsername = await getCheckUsername(data.username);
       const isChecked = resCheckUsername.data;
       if (isChecked) {
-        onAlert({ msg: '비밀번호가 올바르지 않습니다.', type: 'error', title: '로그인 오류' });
+        await onAlert({
+          msg: '비밀번호가 올바르지 않습니다.',
+          type: 'error',
+          title: '로그인 오류',
+        });
+        setIsLoading(false);
         return;
       }
-
-      onAlert({ msg: '존재하지 않는 아이디입니다.', type: 'error', title: '로그인 오류' });
+      await onAlert({ msg: '존재하지 않는 아이디입니다.', type: 'error', title: '로그인 오류' });
+      setIsLoading(false);
       console.error('axiosJoin => ', err.response);
     }
   };

@@ -1,8 +1,6 @@
 import BasicInfoForm from '@/components/common/memberForm/BasicInfoForm';
 import ProgressBar from '@/components/common/ProgressBar';
 import useAlert from '@/hooks/useAlert';
-import useStatusStepper from '@/hooks/useStatusStepper';
-import { useStatusStore } from '@/stores/useStatusStore';
 import { useNavigate } from 'react-router-dom';
 import close from '@/assets/close.svg';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
@@ -10,10 +8,6 @@ import { postCreateMemberBasic } from '@/apis/member';
 import { useEffect } from 'react';
 
 const MemberRegisterPage = () => {
-  const start = 0;
-  const end = 0;
-  const { status, reset } = useStatusStore();
-  const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const navigate = useNavigate();
   const onAlert = useAlert();
 
@@ -38,10 +32,8 @@ const MemberRegisterPage = () => {
 
   // <----- 페이지 입장과 이탈 시 reset ----->
   useEffect(() => {
-    reset();
     return () => {
       resetBasicInfo();
-      reset();
     };
   }, []);
 

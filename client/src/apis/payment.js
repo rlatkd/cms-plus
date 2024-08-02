@@ -15,8 +15,8 @@ export const requestAccountPayment = async paymentData => {
 
 // 가상계좌 결제
 export const requestVirtualAccountPayment = async paymentData => {
+  console.log('????', paymentData);
   const res = await publicAxios.post('/v1/kafka/payment/virtual-account', paymentData);
-  console.log('????', res);
   return res;
 };
 

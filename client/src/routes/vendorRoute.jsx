@@ -4,6 +4,7 @@ import Home from '@/assets/Home';
 import File from '@/assets/File';
 import Card from '@/assets/Card';
 import Item from '@/assets/Item';
+import Static from '@/assets/Static';
 import Setting from '@/assets/Setting';
 import DashBoard from '@/pages/vendor/DashBoardPage';
 import MemberIndex from '@/pages/vendor/member/MemberIndex';
@@ -24,6 +25,7 @@ import ProductList from '@/pages/vendor/product/ProductListPage';
 import SettingIndex from '@/pages/vendor/setting/SettingIndex';
 import SettingSimpConsent from '@/pages/vendor/setting/SettingSimpConsentPage';
 import BillingRegisterPage from '@/pages/vendor/billing/BillingRegisterPage';
+import StatisticPage from '@/pages/vendor/statistic/StatisticPage';
 
 const vendorRoute = () => {
   return [
@@ -140,6 +142,12 @@ const vendorRoute = () => {
           element: <ProductList />,
         },
       ],
+    },
+    {
+      path: 'statistics',
+      name: '통계',
+      icon: <Static fill='#7B809A' />,
+      element: <StatisticPage />,
     },
     {
       path: 'setting',
