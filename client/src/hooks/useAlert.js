@@ -2,11 +2,11 @@ import { useContext } from 'react';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 
 const fieldToName = {
-  billingType: '청구타입',
-  memberEmail: '이메일은',
-  memberPhone: '핸드폰 번호는',
-  memberName: '회원 이름은',
-  memberEnrollDate: '등록일은',
+  billingType: '청구타입 : ',
+  memberEmail: '이메일 : ',
+  memberPhone: '핸드폰 번호 : ',
+  memberName: '회원 이름 : ',
+  memberEnrollDate: '등록일 : ',
 };
 
 // msg : 원하는 메세지

@@ -146,6 +146,10 @@ public class MemberService {
         return contractId;
     }
 
+
+    /**
+     * 회원 기본정보 등록 - 이메일, 전화번호 중복 확인
+     * */
     @Transactional
     public void createMemberBasic(Long vendorId, MemberBasicCreateReq memberBasicCreateReq) {
         // 회원 정보를 DB에 저장한다.
@@ -157,9 +161,17 @@ public class MemberService {
     }
 
     /**
-     * 회원 등록 - 이메일, 전화번호 중복 확인
+     * 회원 등록 여부 체크 - 휴대전화, 이메일
      * */
+    public MemberCheckRes isExistMember(Long vendorId, String phone, String email) {
+        boolean isExistPhone = memberCustomRepository.idExistMemberByPhone(vendorId, phone);
+        boolean isExistEmail = memberCustomRepository.idExistMemberByEmail(vendorId, email);
 
+        return MemberCheckRes.builder()
+                .isPhoneExist(isExistPhone)
+                .isEmailExist(isExistEmail)
+                .build();
+    }
 
 
     /**
@@ -358,5 +370,4 @@ public class MemberService {
             throw new MemberNotFoundException("회원이 존재하지 않습니다");
         }
     }
-
 }

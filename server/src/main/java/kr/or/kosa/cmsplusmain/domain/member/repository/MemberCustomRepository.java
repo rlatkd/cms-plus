@@ -108,7 +108,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         return (res != null) ? res.intValue() : 0;
     }
 
-    /*
+    /**
      * 전체 회원 수
      * */
     public int countAllMemberByVendor(Long vendorId, MemberSearchReq memberSearch) {
@@ -140,7 +140,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         return (res != null) ? res.intValue() : 0;
     }
 
-    /*
+    /**
     * 회원 상세 조회 : 기본정보
     * */
     public Optional<Member> findMemberDetailById(Long vendorId, Long memberId){
@@ -155,8 +155,8 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
             .fetchOne());
     }
 
-    /*
-     * 회원 존재 여부 판단
+    /**
+     * 회원 존재 여부 판단 번호
      * */
     @Deprecated
     public boolean idExistMemberByPhone(Long vendorId, String phone) {
@@ -173,7 +173,26 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         return fetchOne != null;
     }
 
-    /*
+    /**
+     * 회원 존재 여부 판단 이메일
+     * */
+    @Deprecated
+    public boolean idExistMemberByEmail(Long vendorId, String email) {
+        Integer fetchOne = jpaQueryFactory
+                .selectOne()
+                .from(member)
+                .where(
+                        member.vendor.id.eq(vendorId),
+                        member.email.eq(email),
+                        memberNotDel()
+                )
+                .fetchFirst();
+
+        return fetchOne != null;
+    }
+
+
+    /**
     * 회원 존재 여부 판단 번호와 이메일
     * */
     public boolean canSaveMember(String phone, String email) {
@@ -211,7 +230,7 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
                 .fetchOne());
     }
 
-    /*
+    /**
      * 회원 존재 여부 판단 - by 회원 Id
      */
     public boolean isExistMemberById(Long memberId, Long vendorId) {

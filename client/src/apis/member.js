@@ -12,6 +12,17 @@ export const postCreateMemberBasic = async memberData => {
   return res;
 };
 
+// 회원 등록 여부 체크
+export const getMemberCheck = async (phone, email) => {
+  const res = await privateAxios.get('/v1/vendor/management/members/check', {
+    params: {
+      phone: phone,
+      email: email,
+    },
+  });
+  return res;
+};
+
 // 회원 목록 조회
 export const getMemberList = async (searchParams = {}) => {
   const res = await privateAxios.get('/v1/vendor/management/members', {
