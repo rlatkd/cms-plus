@@ -123,7 +123,7 @@ public class SimpleConsentService {
 
         MessageDto messageDto = new SmsMessageDto(text, phone);
 
-        kafkaMessagingService.produceMessaging(messageDto);
+        // kafkaMessagingService.produceMessaging(messageDto);
     }
 
     public SimpConsentInfoRes getSimpleConsentInfo(Long vendorId, Long contractId) {

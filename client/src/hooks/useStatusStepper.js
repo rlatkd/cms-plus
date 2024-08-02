@@ -29,9 +29,15 @@ const useStatusStepper = (type, start, end) => {
       navigate(-1);
       return;
     }
-    // 카드, 계좌 3p -> 2p, 2p -> 1p
-    if ((type === CASES.CARD || type === CASES.ACCOUNT) && (status === 2 || status === 3)) {
-      navigate(-1);
+    // 카드, 계좌 2p -> 1p
+    if ((type === CASES.CARD || type === CASES.ACCOUNT) && status === 2) {
+      navigate(`/member/invoice/${invoiceInfo.billingId}`);
+      return;
+    }
+
+    // 카드, 계좌 3p -> 2p
+    if ((type === CASES.CARD || type === CASES.ACCOUNT) && status === 3) {
+      navigate(`/member/invoice/${invoiceInfo.billingId}/payment`);
       return;
     }
   };
@@ -64,11 +70,8 @@ const useStatusStepper = (type, start, end) => {
       increment();
     }
     if (status === end && type !== CASES.MEMBERREGISTER) {
+      console.log('이건데??');
       reset();
-      // // 삭제 예정
-      // if (type !== 'simpconsent') {
-      //   navigate('/member/invoice/3');
-      // }
     }
 
     switch (type) {
