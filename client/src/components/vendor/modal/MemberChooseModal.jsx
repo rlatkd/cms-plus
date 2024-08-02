@@ -3,6 +3,7 @@ import BaseModal from '@/components/common/BaseModal';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import PagiNation from '@/components/common/PagiNation';
 import SelectField from '@/components/common/selects/SelectField';
+import useDebounce from '@/hooks/useDebounce';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import { formatId } from '@/utils/format/formatId';
 import { formatPhone } from '@/utils/format/formatPhone';
@@ -10,14 +11,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const typeOtions = [
-  { value: 'memberId', label: '회원번호' },
   { value: 'memberName', label: '회원이름' },
+  { value: 'memberId', label: '회원번호' },
   { value: 'memberPhone', label: '휴대전화' },
 ];
 
 const typePlaceholers = {
+  memberName: '회원이름 입력',
   memberId: '회원번호 입력',
-  memberName: '회원명 입력',
   memberPhone: '휴대전화 입력',
 };
 
@@ -64,6 +65,15 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
     }
   };
 
+  // <----- 디바운스 커스텀훅 ----->
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  // <----- 검색 카테고리 변경 ----->
+  const handleChangeSelectField = e => {
+    setSearchTerm('');
+    setSearchType(e.target.value);
+  };
+
   useEffect(() => {
     fetchMemberList(currentPage);
   }, [currentPage]);
@@ -72,7 +82,7 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
     fetchMemberList();
     setCurrentPage(1);
     setPageGroup(0);
-  }, [searchTerm]);
+  }, [debouncedSearchTerm]);
 
   return (
     <BaseModal
@@ -90,7 +100,7 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
             classSelect='py-3 rounded-lg'
             value={searchType}
             options={typeOtions}
-            onChange={e => setSearchType(e.target.value)}
+            onChange={e => handleChangeSelectField(e)}
           />
           <InputWeb
             id='searchTerm'
@@ -111,13 +121,13 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
               <th className='w-4/12 py-2 pl-8 text-left text-text_black font-800 '>회원등록일</th>
             </tr>
           </thead>
-          <tbody className='flex flex-col justify-between h-full text-sm '>
+          <tbody className='flex flex-col h-full text-sm '>
             {memberList &&
               memberList.map(member => (
                 <tr
                   key={member.id}
                   onClick={() => handleSelectMember(member)}
-                  className='flex items-center h-full border-b border-ipt_border cursor-pointer hover:bg-ipt_disa'>
+                  className='flex items-center py-3 border-b border-ipt_border cursor-pointer hover:bg-ipt_disa'>
                   <td className='w-3/12 pl-6 text-left text-text_black'>{formatId(member.id)}</td>
                   <td className='w-2/12 pl-6 text-left text-text_black'>{member.name}</td>
                   <td className='w-4/12 pl-8 text-left text-text_black'>
