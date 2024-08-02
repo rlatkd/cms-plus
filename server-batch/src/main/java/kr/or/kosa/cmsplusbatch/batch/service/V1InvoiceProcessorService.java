@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 public class V1InvoiceProcessorService implements ItemProcessor<Billing, Billing> {
@@ -47,8 +49,9 @@ public class V1InvoiceProcessorService implements ItemProcessor<Billing, Billing
 
     @Transactional
     public void sendInvoice(Billing billing) {
-        billing.setInvoiceSent();
-//        log.error("청구서 발송 완료: {}", billing.getId());
+//        billing.setInvoiceSent();
+        LocalDateTime currentTime = LocalDateTime.now();
+        log.error("청구서 발송 완료: {}, 현재시간: {}", billing.getId(),  currentTime);
 //        String text = createInvoiceMessage(billing);
 //        String phoneNumber = billing.getContract().getMember().getPhone();
 //        MessageDto messageDto = new SmsMessageDto(text, phoneNumber);
