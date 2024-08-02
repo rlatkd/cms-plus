@@ -3,6 +3,7 @@ import { ProductSelectField2 } from '@/components/common/selects/ProductSelectFi
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import InputWeb from '@/components/common/inputs/InputWeb';
+import Remove from '@/assets/Remove';
 
 const BillingDetailProduct = ({ billingProducts, products, editable, onChange, billingId }) => {
   const [localBillingProducts, setLocalBillingProducts] = useState(billingProducts);
@@ -143,11 +144,8 @@ const BillingDetailProduct = ({ billingProducts, products, editable, onChange, b
                 <td className='p-2'>{(product.price * product.quantity).toLocaleString()}원</td>
                 {editable && (
                   <td className='p-2'>
-                    <button
-                      type='button'
-                      onClick={() => handleRemove(product.productId)}
-                      className='text-red-500 hover:text-red-700'>
-                      <FontAwesomeIcon icon={faTrash} />
+                    <button className='flex justify-center '>
+                      <Remove onClick={() => handleRemove(product.productId)} />
                     </button>
                   </td>
                 )}

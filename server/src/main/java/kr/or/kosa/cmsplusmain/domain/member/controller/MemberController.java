@@ -1,19 +1,12 @@
 package kr.or.kosa.cmsplusmain.domain.member.controller;
 
-import java.time.Instant;
 import java.util.List;
 
 import kr.or.kosa.cmsplusmain.LogExecutionTime;
+import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
@@ -23,18 +16,9 @@ import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import kr.or.kosa.cmsplusmain.domain.contract.dto.response.MemberContractListItemRes;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.excel.service.ExcelHandler;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.service.MemberService;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.payment.service.PaymentService;
-import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -94,6 +78,43 @@ public class MemberController {
     }
 
     /**
+     * 회원 등록 - 기본 정보
+     */
+    @PostMapping("/members/basic")
+    public void createMemberBasic(@VendorId Long vendorId, @RequestBody @Valid MemberBasicCreateReq memberBasicCreateReq) {
+        memberService.createMemberBasic(vendorId, memberBasicCreateReq);
+    }
+
+    /**
+     * 회원 등록 여부 체크 - 휴대전화, 이메일
+     */
+    @GetMapping("/members/check")
+    public MemberCheckRes isExistMember(@VendorId Long vendorId, @RequestParam String phone, @RequestParam String email) {
+        return memberService.isExistMember(vendorId, phone, email);
+    }
+
+    /**
+     * 회원 엑셀 -> json 변환
+     * */
+    @LogExecutionTime("회원 엑셀 -> json 변환 v1")
+    @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public List<MemberExcelDto> conventMembersByExcel(MultipartFile file) {
+        return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
+    }
+
+    /**
+     * 회원 대량 등록
+     *
+     * 실패 목록 리턴
+     * */
+    @LogExecutionTime("회원 대량 등록 v1")
+    @PostMapping(value = "/upload")
+    public List<ExcelErrorRes<MemberExcelDto>> saveMembersByExcel(@RequestBody List<MemberExcelDto> memberExcelList) {
+        Long vendorId = 1L;
+        return memberService.uploadMembersByExcel(vendorId, memberExcelList);
+    }
+
+    /**
      * 회원 수정 - 기본 정보
      * */
     @LogExecutionTime("회원 수정 - 기본 정보 v1")
@@ -138,24 +159,4 @@ public class MemberController {
         return memberService.countAllInProgressBillingByMember(vendorId, memberId);
     }
 
-    /**
-     * 회원 엑셀 -> json 변환
-     * */
-    @LogExecutionTime("회원 엑셀 -> json 변환 v1")
-    @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public List<MemberExcelDto> conventMembersByExcel(MultipartFile file) {
-        return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
-    }
-
-    /**
-    * 회원 대량 등록
-    *
-    * 실패 목록 리턴
-    * */
-    @LogExecutionTime("회원 대량 등록 v1")
-    @PostMapping(value = "/upload")
-    public List<ExcelErrorRes<MemberExcelDto>> saveMembersByExcel(@RequestBody List<MemberExcelDto> memberExcelList) {
-        Long vendorId = 1L;
-        return memberService.uploadMembersByExcel(vendorId, memberExcelList);
-    }
 }

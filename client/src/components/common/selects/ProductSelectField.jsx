@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Checkbox from '@/components/common/inputs/CheckBox';
+import useDebounce from '@/hooks/useDebounce';
 
 export const ProductSelectField2 = ({
   label,
@@ -12,9 +13,13 @@ export const ProductSelectField2 = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const dropdownRef = useRef(null);
+
+  // <----- 디바운스 커스텀훅 ----->
+  const debouncedSearchTerm = useDebounce(searchTerm.toLowerCase(), 300);
 
   const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    option.label.toLowerCase().includes(debouncedSearchTerm)
   );
 
   const toggleOption = option => {
@@ -27,8 +32,21 @@ export const ProductSelectField2 = ({
     onChange(newSelectedOptions);
   };
 
+  const handleClickOutside = event => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className={`relative`}>
+    <div className={`relative`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`text-grey border border-ipt_border w-full focus:ring-1 focus:outline-none focus:ring-mint focus:border-mint_hover font-medium rounded-lg text-base px-5 py-2.5 text-center inline-flex items-center justify-between ${disabled && 'bg-[#f1f1f1]'}`}

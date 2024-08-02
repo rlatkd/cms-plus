@@ -15,7 +15,7 @@ import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaPaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
+// @RestController
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1/kafka")

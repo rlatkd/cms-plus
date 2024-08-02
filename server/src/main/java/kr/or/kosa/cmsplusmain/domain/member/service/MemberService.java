@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +26,8 @@ import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractProductReposito
 import kr.or.kosa.cmsplusmain.domain.contract.repository.ContractRepository;
 import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberBillingUpdateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberCreateReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDetail;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberExcelDto;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberListItemRes;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberSearchReq;
-import kr.or.kosa.cmsplusmain.domain.member.dto.MemberUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.member.exception.MemberDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.member.exception.EmailDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
@@ -153,10 +147,32 @@ public class MemberService {
         return contractId;
     }
 
-    /**
-     * 회원 등록 - 이메일, 전화번호 중복 확인
-     * */
 
+    /**
+     * 회원 기본정보 등록 - 이메일, 전화번호 중복 확인
+     * */
+    @Transactional
+    public void createMemberBasic(Long vendorId, MemberBasicCreateReq memberBasicCreateReq) {
+        // 회원 정보를 DB에 저장한다.
+        Member member = memberBasicCreateReq.toEntity(vendorId);
+        if (!memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail())) {
+            throw new MemberDuplicationException("핸드폰 번호 혹은 이메일이 중복되었습니다");
+        }
+        memberRepository.save(member);
+    }
+
+    /**
+     * 회원 등록 여부 체크 - 휴대전화, 이메일
+     * */
+    public MemberCheckRes isExistMember(Long vendorId, String phone, String email) {
+        boolean isExistPhone = memberCustomRepository.idExistMemberByPhone(vendorId, phone);
+        boolean isExistEmail = memberCustomRepository.idExistMemberByEmail(vendorId, email);
+
+        return MemberCheckRes.builder()
+                .isPhoneExist(isExistPhone)
+                .isEmailExist(isExistEmail)
+                .build();
+    }
 
 
     /**
@@ -179,10 +195,10 @@ public class MemberService {
         String newEmail = member.getEmail().equals(memberUpdateReq.getMemberEmail()) ?
             null : memberUpdateReq.getMemberEmail();
 
-        if (!memberCustomRepository.hasNotDuplicatedPhoneAndEmail(newPhone, newEmail)) {
+        if (!memberCustomRepository.canSaveMember(newPhone, newEmail)) {
             log.info(newPhone + " " + newEmail);
             log.error(member.getPhone() + " " + member.getEmail());
-            throw new EmailDuplicationException("핸드폰 번호 혹은 이메일이 중복되었습니다");
+            throw new MemberDuplicationException("핸드폰 번호 혹은 이메일이 중복되었습니다");
         }
 
         member.setName(memberUpdateReq.getMemberName());

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Checkbox from '@/components/common/inputs/CheckBox';
 import Arrow from '@/assets/Arrow';
 import useDebounce from '@/hooks/useDebounce';
+import User from '@/assets/User';
 
 const ProductSelectFieldcopy = ({
   label,
@@ -60,11 +61,11 @@ const ProductSelectFieldcopy = ({
         className={`${classButton} text-text_grey border border-ipt_border focus:ring-1 focus:outline-none focus:ring-mint focus:border-mint_hover font-400 rounded-lg text-sm p-4 text-center flex items-center justify-between`}
         type='button'>
         {placeholder}
-        <Arrow fill='#C7CCD0' />
+        <Arrow fill='#C7CCD0' tabIndex='-1' />
       </button>
 
       {isOpen && (
-        <div className='z-10 absolute mt-1 bg-white rounded-lg shadow w-80 p-3'>
+        <div className='z-10 absolute mt-1 bg-white rounded-lg shadow w-full p-3'>
           <div>
             <input
               type='text'

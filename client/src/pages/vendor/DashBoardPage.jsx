@@ -23,18 +23,18 @@ export const STATUS_COLORS = {
 };
 
 const StatItem = ({ icon, title, value, subStat }) => (
-  <div className='bg-white rounded-xl shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg'>
+  <div className='bg-white rounded-xl shadow-dash-sub p-6 transition duration-300 ease-in-out hover:shadow-md cursor-default'>
     <div className='flex items-center mb-4'>
       <FontAwesomeIcon icon={icon} className='text-mint text-2xl mr-4' />
-      <h3 className='text-sm font-medium text-gray-600'>{title}</h3>
+      <h3 className='text-sm font-700 text-text_black'>{title}</h3>
     </div>
-    <p className='text-2xl font-bold text-gray-800 mb-2'>{value}</p>
-    <div className='text-xs text-gray-500'>{subStat}</div>
+    <p className='text-2xl font-700 text-text_black mb-2'>{value}</p>
+    <div className='text-xs font-400 text-text_grey'>{subStat}</div>
   </div>
 );
 
 const Stats = React.memo(({ statInfo }) => (
-  <div className='mb-10 grid grid-cols-1 md:grid-cols-4 gap-6'>
+  <div className='mb-6 grid grid-cols-1 md:grid-cols-4 gap-6'>
     <StatItem
       icon={faUsers}
       title='회원 현황'
@@ -151,24 +151,24 @@ const DashBoardPage = () => {
   );
 
   return (
-    <div className='min-h-screen py-8 bg-gray-50 border border-red-400'>
-      <div className='container mx-auto px-4'>
+    <div className='pb-10'>
+      <div className='container mx-auto'>
         {statInfo && <Stats statInfo={statInfo} />}
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8'>
           <div className='lg:col-span-3'>
-            <div className='bg-white rounded-xl shadow-md p-6 transition duration-300 ease-in-out hover:shadow-lg'>
+            <div className='bg-white rounded-xl shadow-dash-sub p-4 transition duration-300 ease-in-out hover:shadow-md '>
               {memoizedCalendar}
             </div>
           </div>
-          <div className='bg-white rounded-xl shadow-md transition duration-300 ease-in-out hover:shadow-lg'>
+          <div className='bg-white rounded-xl shadow-dash-sub transition duration-300 ease-in-out hover:shadow-md'>
             <BillingSummary billingInfo={billingInfo} month={date.getMonth() + 1} />
           </div>
         </div>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-          <div className='bg-white rounded-xl shadow-md transition duration-300 ease-in-out hover:shadow-lg'>
+          <div className='bg-white rounded-xl shadow-dash-sub transition duration-300 ease-in-out hover:shadow-md'>
             <TopMembers topFive={topFive.topFiveMemberRes} />
           </div>
-          <div className='bg-white rounded-xl shadow-md transition duration-300 ease-in-out hover:shadow-lg'>
+          <div className='bg-white rounded-xl shadow-dash-sub transition duration-300 ease-in-out hover:shadow-md'>
             <RecentContracts contracts={topFive.recentFiveContracts} />
           </div>
         </div>

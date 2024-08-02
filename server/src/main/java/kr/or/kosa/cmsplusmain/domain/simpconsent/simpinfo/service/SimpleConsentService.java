@@ -59,7 +59,7 @@ public class SimpleConsentService {
     private final ContractCustomRepository contractCustomRepository;
     private final PaymentService paymentService;
     private final ContractService contractService;
-    private final KafkaMessagingService kafkaMessagingService;
+    // private final KafkaMessagingService kafkaMessagingService;
 
     private static final String SIMPCONSENT_MESSAGE_FORMAT =
             """

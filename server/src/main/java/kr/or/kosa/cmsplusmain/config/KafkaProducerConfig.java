@@ -16,7 +16,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentDto;
 
-@Configuration
+// @Configuration
 public class KafkaProducerConfig {
 
     @Value("${kafkaServer.ip}")

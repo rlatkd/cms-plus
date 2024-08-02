@@ -5,6 +5,10 @@ import kr.or.kosa.cmsplusmain.domain.base.error.exception.BusinessException;
 
 public class EmailDuplicationException extends BusinessException {
 	public EmailDuplicationException(String message) {
-		super(message, ErrorCode.EMAIL_DUPLICATION);
+		super(message, ErrorCode.MEMBER_EMAIL_DUPLICATION);
+	}
+
+	public EmailDuplicationException() {
+		super(ErrorCode.MEMBER_EMAIL_DUPLICATION);
 	}
 }

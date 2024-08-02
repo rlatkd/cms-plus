@@ -40,11 +40,14 @@ const PagiNation = ({
         {/* 이전 버튼 */}
         <button
           key='prev'
-          className={`${buttonBaseStyle} h-8 ${pageGroup === 0 && 'invisible'} `}
+          className={`${buttonBaseStyle} h-8 `}
           onClick={handlePrevPageGroup}
           disabled={pageGroup === 0}>
-          <Arrow rotation={'90'} />
-          <span className='mx-1  hover:border-b border-text_black '>이전</span>
+          <Arrow rotation={'90'} fill={pageGroup === 0 ? '#C7CCD0' : '#344767'} />
+          <span
+            className={`${pageGroup === 0 ? 'text-ipt_border' : 'hover:border-b text-text_black'}  mx-1 `}>
+            이전
+          </span>
         </button>
 
         {/* 1,2,3,4,5 버튼 영역 */}
@@ -65,11 +68,14 @@ const PagiNation = ({
         {/* 다음 버튼 */}
         <button
           key='next'
-          className={`${buttonBaseStyle} h-8 ${endPage >= totalPages && 'invisible'} `}
+          className={`${buttonBaseStyle} h-8`}
           onClick={handleNextPageGroup}
           disabled={endPage >= totalPages}>
-          <span className='mx-1 hover:border-b border-text_black '>다음</span>
-          <Arrow rotation={'270'} />
+          <span
+            className={`${endPage >= totalPages ? 'text-ipt_border' : 'hover:border-b text-text_black'}  mx-1 `}>
+            다음
+          </span>
+          <Arrow rotation={'270'} fill={endPage >= totalPages ? '#C7CCD0' : '#344767'} />
         </button>
       </div>
     </div>
