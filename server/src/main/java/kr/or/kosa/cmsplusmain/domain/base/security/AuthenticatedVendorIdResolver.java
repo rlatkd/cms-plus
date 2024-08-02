@@ -2,17 +2,19 @@ package kr.or.kosa.cmsplusmain.domain.base.security;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
-import org.springframework.messaging.Message;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import kr.or.kosa.cmsplusmain.domain.vendor.dto.VendorUserDetailsDto;
 
+/**
+ * VendorId를 jwt 토큰에서 가져온다.
+ * */
 public class AuthenticatedVendorIdResolver implements HandlerMethodArgumentResolver {
 
 	@Override

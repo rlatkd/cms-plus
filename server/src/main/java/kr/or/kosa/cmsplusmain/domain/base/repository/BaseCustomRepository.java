@@ -33,7 +33,7 @@ import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import lombok.RequiredArgsConstructor;
 
 /**
- * @deprecated 대신 NewBaseRepository 사용
+ * @deprecated 대신 V2BaseRepository 사용
  * */
 @Deprecated
 @Repository

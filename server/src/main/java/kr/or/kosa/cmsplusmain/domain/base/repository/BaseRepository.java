@@ -13,7 +13,7 @@ import jakarta.annotation.Nonnull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 
 /**
- * @deprecated 대신 NewBaseRepository 사용
+ * @deprecated 대신 V2BaseRepository 사용
  * */
 @Deprecated
 @NoRepositoryBean

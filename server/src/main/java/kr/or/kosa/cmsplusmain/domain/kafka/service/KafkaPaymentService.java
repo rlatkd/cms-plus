@@ -1,5 +1,14 @@
 package kr.or.kosa.cmsplusmain.domain.kafka.service;
 
+import java.util.List;
+
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.repository.BillingRepository;
@@ -9,13 +18,6 @@ import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentResultDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 // @Service
 @Slf4j

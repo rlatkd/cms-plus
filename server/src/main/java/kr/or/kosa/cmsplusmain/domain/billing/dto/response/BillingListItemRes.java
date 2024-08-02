@@ -7,7 +7,6 @@ import com.querydsl.core.annotations.QueryProjection;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class BillingListItemRes {
@@ -18,8 +17,7 @@ public class BillingListItemRes {
 	private final BillingStatus billingStatus;
 	private final PaymentType paymentType;
 	private final LocalDate billingDate;
-	@Setter
-	private String firstProductName;
+	private final String firstProductName;
 	private final Integer totalProductCount;
 
 	@QueryProjection

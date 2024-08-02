@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,11 +15,11 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.or.kosa.cmsplusmain.util.RandomNumberGenerator;
 import kr.or.kosa.cmsplusmain.domain.kafka.MessageSendMethod;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.EmailMessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
 import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.SmsMessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.service.KafkaMessagingService;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
@@ -45,6 +44,7 @@ import kr.or.kosa.cmsplusmain.domain.vendor.exception.VendorUsernameDuplicationE
 import kr.or.kosa.cmsplusmain.domain.vendor.jwt.JWTUtil;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.vendor.repository.VendorRepository;
+import kr.or.kosa.cmsplusmain.util.RandomNumberGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

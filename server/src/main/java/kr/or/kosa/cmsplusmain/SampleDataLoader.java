@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -74,6 +75,9 @@ public class SampleDataLoader {
 				"정현우",
 				"gusehd502@naver.com",
 				"01026963279",
+				"테스트고객",
+				"testvendor@fms.com",
+				"01012341234",
 				"Qwer123!")
 		);
 

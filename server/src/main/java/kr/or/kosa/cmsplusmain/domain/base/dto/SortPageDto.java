@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @deprecated 대신 base.dto에 PageReq, PageRes 사용
+ * */
 @Deprecated
 public class SortPageDto {
 

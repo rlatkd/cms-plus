@@ -4,11 +4,11 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.member.dto.MemberDto;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.type.PaymentTypeInfoRes;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@Builder
+@RequiredArgsConstructor
 public class InvoiceRes {
     private final Long billingId;
     private final String billingStatus;
@@ -19,14 +19,9 @@ public class InvoiceRes {
     private final PaymentTypeInfoRes paymentType;
 
     public static InvoiceRes fromEntity(Billing billing, Member member, PaymentTypeInfoRes paymentType) {
-        return InvoiceRes.builder()
-                .billingId(billing.getId())
-                .billingStatus(billing.getBillingStatus().getTitle())
-                .member(MemberDto.fromEntity(member))
-                .invoiceName(billing.getInvoiceName())
-                .invoiceMessage(billing.getInvoiceMessage())
-                .billingPrice(billing.getBillingPrice())
-                .paymentType(paymentType)
-                .build();
+        return new InvoiceRes(
+            billing.getId(), billing.getBillingStatus().getTitle(), MemberDto.fromEntity(member),
+            billing.getInvoiceName(), billing.getInvoiceMessage(), billing.getBillingPrice(),
+            paymentType);
     }
 }

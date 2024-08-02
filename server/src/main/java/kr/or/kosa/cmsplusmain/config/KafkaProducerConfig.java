@@ -1,7 +1,8 @@
 package kr.or.kosa.cmsplusmain.config;
 
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
-import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentDto;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +13,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import java.util.HashMap;
-import java.util.Map;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.messaging.MessageDto;
+import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentDto;
 
 // @Configuration
 public class KafkaProducerConfig {

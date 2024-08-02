@@ -13,7 +13,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class BillingCreateReq {
 	@NotNull(message = "청구타입이 필요합니다")
 	private BillingType billingType;					// 청구타입 (정기, 추가)

@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
+@Setter	// requestParam 으로 사용을 위한 setter
 public class BillingSearchReq {
 
 	/****** 검색 가능 항목 *******/

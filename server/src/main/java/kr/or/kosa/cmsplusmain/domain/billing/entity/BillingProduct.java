@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.product.entity.Product;
@@ -25,7 +24,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "billing_product")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -49,6 +47,8 @@ public class BillingProduct extends BaseEntity {
 	private Product product;
 
 	// 청구상품의 이름 수정불가
+	// 조인횟수 감소를 위한 반정규화로
+	// 상품 이름 삭제 불가
 	@Comment("청구상품의 이름")
 	@Column(name = "billing_product_name", nullable = false, updatable = false)
 	@ProductName @NotNull
@@ -57,12 +57,12 @@ public class BillingProduct extends BaseEntity {
 	@Comment("청구상품의 가격")
 	@Column(name = "billing_product_price", nullable = false)
 	@ProductPrice
-	private int price;
+	private Integer price;
 
 	@Comment("청구상품의 수량")
 	@Column(name = "billing_product_quantity", nullable = false)
 	@ProductQuantity
-	private int quantity;
+	private Integer quantity;
 
 	/**
 	 * 청구상품 수정

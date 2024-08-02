@@ -28,6 +28,7 @@ import kr.or.kosa.cmsplusmain.domain.contract.service.ContractService;
 import kr.or.kosa.cmsplusmain.domain.excel.dto.ExcelErrorRes;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberDuplicationException;
+import kr.or.kosa.cmsplusmain.domain.member.exception.EmailDuplicationException;
 import kr.or.kosa.cmsplusmain.domain.member.exception.MemberNotFoundException;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberCustomRepository;
 import kr.or.kosa.cmsplusmain.domain.member.repository.MemberRepository;
@@ -345,7 +346,7 @@ public class MemberService {
      * */
     private String validateError(Member member, Validator validator) {
         Set<ConstraintViolation<Member>> validate = validator.validate(member);
-        boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
+        boolean canSave = memberCustomRepository.hasNotDuplicatedPhoneAndEmail(member.getPhone(), member.getEmail());
 
         // dto validate 변경 -> 메시지 커스텀
         String validation = validate.stream()
