@@ -1,4 +1,4 @@
-package kr.or.kosa.cmsplusmain.domain.statics.dto.query;
+package kr.or.kosa.cmsplusmain.domain.dashboard.dto.query;
 
 import java.time.LocalDate;
 
@@ -8,14 +8,14 @@ import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
 import lombok.Getter;
 
 @Getter
-public class MonthBillingQueryRes {
+public class DayBillingQueryRes {
 	private final LocalDate billingDate;
 	private final BillingStatus billingStatus;
 	private final int billingCount;
 	private final long billingPrice;
 
 	@QueryProjection
-	public MonthBillingQueryRes(LocalDate billingDate, BillingStatus billingStatus, int billingCount,
+	public DayBillingQueryRes(LocalDate billingDate, BillingStatus billingStatus, int billingCount,
 		long billingPrice) {
 		this.billingDate = billingDate;
 		this.billingStatus = billingStatus;

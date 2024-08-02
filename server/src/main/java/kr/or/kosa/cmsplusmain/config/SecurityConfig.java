@@ -77,6 +77,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/v1/kafka/payment/virtual-account").permitAll()
 				.requestMatchers("/infra-test").permitAll()
 				.requestMatchers("/actuator/prometheus").permitAll()
+				.requestMatchers("/api/v1/kafka/messaging/sms").permitAll()
 				.requestMatchers("/error").permitAll()
 				.requestMatchers("/vendor").hasRole("VENDOR")
 				.requestMatchers("/member").hasRole("MEMBER")
