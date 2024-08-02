@@ -39,7 +39,7 @@ class MemberData(BaseModel):
 # 루트 경로
 @app.get("/")
 async def read_root():
-    return {"infra-test": "0802-3"}
+    return {"infra-test": "0802-4"}
 
 # 노트북 실행 (GET 메서드)
 @app.get("/notebook/{filepath:path}")
