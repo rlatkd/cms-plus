@@ -1,17 +1,14 @@
-package kr.or.kosa.cmsplusmain.domain.statics.controller;
-
-import java.util.List;
+package kr.or.kosa.cmsplusmain.domain.dashboard.controller;
 
 import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import kr.or.kosa.cmsplusmain.domain.statics.dto.TopFiveMemberRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.MonthBillingInfoRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.StatInfoRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.TopInfoRes;
-import kr.or.kosa.cmsplusmain.domain.statics.service.StatService;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.MonthBillingInfoRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.StatInfoRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.TopInfoRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.service.StatService;
 import lombok.RequiredArgsConstructor;
 
 @RestController

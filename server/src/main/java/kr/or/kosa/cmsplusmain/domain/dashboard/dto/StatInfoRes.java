@@ -1,8 +1,5 @@
-package kr.or.kosa.cmsplusmain.domain.statics.dto;
+package kr.or.kosa.cmsplusmain.domain.dashboard.dto;
 
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.BillingStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.ContractStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.MemberStatQueryRes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

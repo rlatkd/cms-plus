@@ -1,8 +1,7 @@
-package kr.or.kosa.cmsplusmain.domain.statics.service;
+package kr.or.kosa.cmsplusmain.domain.dashboard.service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,20 +10,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingStatus;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.DayBillingRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.RecentFiveContractRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.StatInfoRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.TopFiveMemberRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.TopInfoRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.BillingStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.ContractStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.DayBillingQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.MemberStatQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.MonthBillingInfoRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.MonthBillingQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.RecentFiveContractQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.dto.query.TopFiveMemberQueryRes;
-import kr.or.kosa.cmsplusmain.domain.statics.repository.StatRepository;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.DayBillingRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.RecentFiveContractRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.StatInfoRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.TopFiveMemberRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.TopInfoRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.query.BillingStatQueryRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.query.ContractStatQueryRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.query.DayBillingQueryRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.query.MemberStatQueryRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.MonthBillingInfoRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.query.RecentFiveContractQueryRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.dto.query.TopFiveMemberQueryRes;
+import kr.or.kosa.cmsplusmain.domain.dashboard.repository.StatRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
