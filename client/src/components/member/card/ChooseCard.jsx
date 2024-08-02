@@ -21,6 +21,10 @@ const ChooseCard = () => {
     setSelectedCard(card);
   };
 
+  if (!invoiceInfo) {
+    return;
+  }
+
   return (
     <>
       <h3 className='mb-8 text-base font-semibold text-gray-700'>

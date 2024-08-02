@@ -6,9 +6,13 @@ import send from '@/assets/send.svg';
 // 전화번호 포맷팅 함수 import
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 import { sendSimpleConsentUrl } from '@/apis/simpleConsent';
+import { useVendorInfoStore } from '@/stores/useVendorInfoStore';
 
 const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
-  const [url, setUrl] = useState('www.cms.site');
+  const { vendorInfo } = useVendorInfoStore();
+  const [url, setUrl] = useState(
+    `https://www.hyosungcmsplus.site/member/simpconsent?vendor=${vendorInfo.vendorId}`
+  );
   const [phoneNumber, setPhoneNumber] = useState('');
   const qrRef = useRef(null);
 

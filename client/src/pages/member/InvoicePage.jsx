@@ -21,7 +21,7 @@ const InvoicePage = () => {
   const { handleClickPrevious, handleClickNext } = useStatusStepper(paymentType, start, end);
 
   // <----- incvoiceInfo 정보 가져오기 ----->
-  const fetchInvoiceInfo = async billingId => {
+  const axiosInvoiceInfo = async billingId => {
     try {
       const res = await getBillingInfo(billingId);
       setInvoiceInfo(res.data);
@@ -34,15 +34,17 @@ const InvoicePage = () => {
 
   const componentMap = {
     0: Main, // 시작화면
-    1: () => <CheckInvoice />, // 청구서 확인
+    1: CheckInvoice, // 청구서 확인
   };
 
-  const Content = componentMap[status] || (() => 'error');
+  const Content = componentMap[status] || (() => '');
 
   // <----- 페이지 렌더링 시 초기화 ----->
   useEffect(() => {
-    fetchInvoiceInfo(invoiceId);
-    reset();
+    axiosInvoiceInfo(invoiceId);
+    if (status >= 2) {
+      reset();
+    }
   }, []);
 
   return (

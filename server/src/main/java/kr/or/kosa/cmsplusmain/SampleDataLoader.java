@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -66,7 +67,7 @@ public class SampleDataLoader {
 	private final List<BillingStatus> allBillingStatus = Arrays.stream(BillingStatus.values()).toList();
 	private final List<BillingType> allBillingType = Arrays.stream(BillingType.values()).toList();
 
-	// @PostConstruct
+//	 @PostConstruct
 	public void init() {
 		Vendor vendor = vendorRepository.save(
 			createVendorWithDefaultProduct(
@@ -77,7 +78,7 @@ public class SampleDataLoader {
 				"Qwer123!")
 		);
 
-		generateSampleData(vendor, 100, 500, 500, 500);
+		generateSampleData(vendor, 500, 50000, 50000, 50000);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
