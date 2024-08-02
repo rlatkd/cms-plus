@@ -166,7 +166,7 @@ const FindVendoPasswordModal = ({
               errorMsg='올바른 형식 아닙니다.'
               time={time}
               setTime={setTime}
-              maxLength={11}
+              maxLength={13}
             />
           ) : (
             <InputWeb

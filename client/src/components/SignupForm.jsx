@@ -231,7 +231,7 @@ const SignupForm = () => {
             value={formatPhone(vendorFormData.phone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            maxLength={11}
+            maxLength={13}
             isValid={validateField('phone', vendorFormData.phone)}
             errorMsg='올바른 형식 아닙니다.'
           />
@@ -263,7 +263,7 @@ const SignupForm = () => {
             value={formatPhone(vendorFormData.homePhone)}
             onChange={handleChangeValue}
             onKeyDown={handleKeyDown}
-            maxLength={10}
+            maxLength={12}
             isValid={validateField('homePhone', vendorFormData.homePhone)}
             errorMsg='올바른 형식 아닙니다.'
           />

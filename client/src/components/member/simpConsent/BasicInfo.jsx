@@ -56,7 +56,7 @@ const BasicInfo = ({ userData, setUserData, contractId }) => {
           placeholder='최대 11자리'
           value={formatPhone(userData.memberDTO.phone) || ''}
           onChange={handleChange}
-          maxLength={11}
+          maxLength={13}
           tabIndex={0}
           isValid={!userData.memberDTO.phone || validateField('phone', userData.memberDTO.phone)}
           errorMsg='올바른 휴대전화 번호를 입력해주세요.'
@@ -69,7 +69,7 @@ const BasicInfo = ({ userData, setUserData, contractId }) => {
           placeholder='최대 10자리'
           value={formatPhone(userData.memberDTO.homePhone) || ''}
           onChange={handleChange}
-          maxLength={10}
+          maxLength={12}
           isValid={
             userData.memberDTO.homePhone === '' ||
             validateField('homePhone', userData.memberDTO.homePhone)
