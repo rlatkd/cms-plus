@@ -8,7 +8,7 @@ const Success = ({ content }) => {
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
           회원님의
           <br />
-          {content || '자동결제 등록이 완료되었습니다!'}
+          {content}
         </h3>
       </div>
 

@@ -290,7 +290,7 @@ const SimpConsentPage = () => {
     3: PaymentInfo,
     4: Signature,
     5: Loading,
-    6: Success,
+    6: () => <Success content="자동결제 등록이 완료되었습니다!" />,
   };
 
   const Content = componentMap[status] || (() => 'error');
