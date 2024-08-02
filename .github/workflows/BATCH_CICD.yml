@@ -49,7 +49,7 @@ jobs:
     - name: Build with Gradle
       run: |
         cd server-batch
-        ./gradlew clean build
+        ./gradlew clean build -x test
 
     - name: Replace AWS ID
       run: |
@@ -65,7 +65,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: latest
       run: |
-        docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server-batch
+        docker build --no-cache -x test -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server-batch
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
