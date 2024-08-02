@@ -34,7 +34,7 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
 
   const handleVerificationComplete = useCallback(
     verified => {
-      console.log('카드/계좌 인증 완료:', verified);
+      console.log('카드/계좌 인증:', verified);
       setIsVerified(verified);
       // 부모 컴포넌트의 userData도 업데이트
       setUserData(prevData => ({

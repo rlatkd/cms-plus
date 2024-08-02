@@ -6,7 +6,7 @@ import { getAvailableOptions } from '@/apis/simpleConsent';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
 
-const ContractInfo = ({ userData, setUserData, vendorId, contractId }) => {
+const ContractInfo = ({ userData, setUserData, vendorId, contractId, isExistingContract }) => {
   const [availableProducts, setAvailableProducts] = useState([]);
 
   useEffect(() => {
@@ -177,6 +177,7 @@ const ContractInfo = ({ userData, setUserData, vendorId, contractId }) => {
           item={item}
           onUpdateQuantity={change => updateQuantity(index, change)}
           onRemove={() => removeItem(index)}
+          isExisting={isExistingContract}
         />
       ))}
 

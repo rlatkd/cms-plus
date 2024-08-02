@@ -51,8 +51,11 @@ const AddressInput = ({ disabled }) => {
         />
         <button
           onClick={handleAddressSearch}
-          className='rounded-md ml-1 bg-gray-200 px-4 h-10 flex items-center justify-center'
-          type='button'>
+          className={`rounded-md ml-1 px-4 h-10 flex items-center justify-center ${
+            disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 cursor-pointer'
+          }`}
+          type='button'
+          disabled={disabled}>
           🔍
         </button>
       </div>
