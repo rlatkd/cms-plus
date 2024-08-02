@@ -195,6 +195,7 @@ const ContractInfo = ({ userData, setUserData, vendorId, contractId, isExistingC
         <div className='flex w-full items-center'>
           <InputCalendar
             id='startDate'
+            readOnly={true}
             value={userData.contractDTO.startDate}
             handleChangeValue={e => handleDateChange(e, 'startDate')}
             placeholder='시작 날짜'
@@ -204,6 +205,7 @@ const ContractInfo = ({ userData, setUserData, vendorId, contractId, isExistingC
           <span className='mx-2 flex-shrink-0 text-gray-500'>~</span>
           <InputCalendar
             id='endDate'
+            readOnly={true}
             value={userData.contractDTO.endDate}
             handleChangeValue={e => handleDateChange(e, 'endDate')}
             placeholder='종료 날짜'

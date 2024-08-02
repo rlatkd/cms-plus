@@ -1,4 +1,4 @@
-const Loading = ({ content }) => {
+const Loading = () => {
   return (
     <div className='flex h-screen flex-col items-center justify-between bg-white p-3'>
       <div className='w-full text-left'>

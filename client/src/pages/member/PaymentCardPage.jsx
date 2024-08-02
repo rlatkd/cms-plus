@@ -18,7 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const PaymentCardPage = () => {
   const start = 0;
   const end = 6;
-  const { status, reset } = useStatusStore();
+  const { status, reset, setStatus } = useStatusStore();
   const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
     'card',
     start,
@@ -122,7 +122,7 @@ const PaymentCardPage = () => {
     3: ChooseCard, //카드사 선택
     4: CardInfo, //카드정보 입력
     5: () => <Loading content={'결제중...'} />, //결제중
-    6: Success, //입금완료
+    6: () => <Success content="결제가 완료되었습니다!" />, //입금완료
   };
 
   const Content = componentMap[status] || (() => 'error');
@@ -156,6 +156,17 @@ const PaymentCardPage = () => {
     }
   }, []);
 
+  // <----- 로딩 타임아웃 설정 ----->
+  useEffect(() => {
+    if (status === 5) {
+      const timer = setTimeout(() => {
+        setStatus(6);
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, setStatus]);
+
   return (
     <>
       <Content
@@ -165,8 +176,12 @@ const PaymentCardPage = () => {
         setIsVerified={setIsVerified}
       />
       <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
-        <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
-        <NextButton onClick={handleClickNext} type={'card'} status={status} end={end} />
+        {status != 5 && status != 6 && (
+          <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
+        )}
+        {status != 5 && status != 6 && (
+          <NextButton onClick={handleClickNext} type={'card'} status={status} end={end} />
+        )}
       </div>
     </>
   );

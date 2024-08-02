@@ -62,7 +62,14 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
 
       const result = await verifyCard(cardData);
       setVerificationResult(result);
-      setIsVerified(true);
+      if(result){
+        setIsVerified(result);
+      }else{
+        setIsVerified(result);
+        alert('카드 인증에 실패했습니다.' )
+      }
+      
+      
       console.log('Card verification result:', result);
     } catch (error) {
       console.error('Card verification failed:', error);
@@ -88,9 +95,9 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
             name='cardCompany'
             type='text'
             required
-            placeholder={selectedCard}
+            value={selectedCard}
             disabled
-            className='disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none'
+            className='text-slate-500 disabled:border-slate-200 disabled:shadow-none'
           />
           <Input
             label='카드번호'

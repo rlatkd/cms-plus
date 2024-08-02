@@ -1,6 +1,6 @@
 import successImage from '@/assets/success.svg';
 
-const Success = () => {
+const Success = ({ content }) => {
   return (
     <div className='flex h-screen flex-col items-center justify-between bg-white p-3'>
       <div className='w-full text-left'>
@@ -8,7 +8,7 @@ const Success = () => {
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
           회원님의
           <br />
-          자동결제 등록이 완료되었습니다!
+          {content || '자동결제 등록이 완료되었습니다!'}
         </h3>
       </div>
 
