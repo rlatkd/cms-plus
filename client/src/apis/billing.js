@@ -1,4 +1,4 @@
-import { privateAxios } from '.';
+import { privateAxios, publicAxios } from '.';
 
 // 청구 생성
 export const createBilling = async billingReq => {
@@ -75,6 +75,6 @@ export const updateMemberBilling = async (memberId, billingData) => {
 
 // 모바일 - 청구서 정보 조회
 export const getBillingInfo = async billingId => {
-  const res = await privateAxios.get(`/v1/vendor/billing/invoice/${billingId}`);
+  const res = await publicAxios.get(`/v1/vendor/billing/invoice/${billingId}`);
   return res;
 };

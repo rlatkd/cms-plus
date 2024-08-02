@@ -61,16 +61,6 @@ export const UploadFileAxios = axios.create({
 //   },
 // });
 
-// 테스트
-export const testAxios = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Access-Control-Allow-Origin': `${BASE_URL}`,
-    'Content-Type': 'application/json',
-    // Authorization: `Bearer ${TOKEN}`,
-    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-  },
-});
 // <=====================================================>
 
 // <----- 응답 인터셉터 설정 ----->
@@ -125,11 +115,11 @@ privateAxios.interceptors.response.use(
     return response;
   },
   async err => {
-    console.log('access_token 만료');
     const { config } = err;
     const originRequest = config;
     if (err.response && err.response.status === 401) {
       try {
+        console.log('access_token 만료');
         const response = await postRefreshToken();
         const newAccessToken = response.data.accessToken;
 
