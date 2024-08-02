@@ -67,11 +67,14 @@ public class SampleDataLoader {
 	private final List<BillingStatus> allBillingStatus = Arrays.stream(BillingStatus.values()).toList();
 	private final List<BillingType> allBillingType = Arrays.stream(BillingType.values()).toList();
 
-//	 @PostConstruct
+	@PostConstruct
 	public void init() {
 		Vendor vendor = vendorRepository.save(
 			createVendorWithDefaultProduct(
 				"vendor1",
+				"정현우",
+				"gusehd502@naver.com",
+				"01026963279",
 				"테스트고객",
 				"testvendor@fms.com",
 				"01012341234",

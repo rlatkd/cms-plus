@@ -8,20 +8,21 @@ import kr.or.kosa.cmsplusmain.domain.base.validator.Memo;
 import kr.or.kosa.cmsplusmain.domain.base.validator.PersonName;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Phone;
 import kr.or.kosa.cmsplusmain.domain.member.entity.Address;
+import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
+import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
 import lombok.Getter;
 
 import java.time.LocalDate;
 
 @Getter
-public class MemberUpdateReq {
-
+public class MemberBasicCreateReq {
     @NotBlank
     @PersonName
-    private String memberName ; // 회원 이름
+    private String memberName; // 회원 이름
 
     @NotBlank
     @Phone
-    String memberPhone ; // 회원 휴대전화 번호
+    private String memberPhone; // 회원 휴대전화 번호
 
     @NotNull
     private LocalDate memberEnrollDate; // 회원 등록 날짜
@@ -37,5 +38,19 @@ public class MemberUpdateReq {
 
     @Memo
     private String memberMemo; // 회원 메모
+
+    public Member toEntity(Long vendorId) {
+        return Member.builder()
+                .vendor(Vendor.of(vendorId))
+                .name(memberName)
+                .phone(memberPhone)
+                .email(memberEmail)
+                .homePhone(memberHomePhone)
+                .address(memberAddress)
+                .memo(memberMemo)
+                .enrollDate(memberEnrollDate)
+                .build();
+
+    }
 
 }

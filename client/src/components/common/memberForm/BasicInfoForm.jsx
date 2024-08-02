@@ -4,10 +4,16 @@ import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
+import { disableFutureDates } from '@/utils/format/formatCalender';
+import { useLocation } from 'react-router-dom';
+import { getMemberCheck } from '@/apis/member';
 
 // formType : CREATE, UPDATE, DETAIL
 const BasicInfoForm = ({ formType, memberData }) => {
   const { basicInfo, setBasicInfoItem, setAddressInfoItem } = useMemberBasicStore();
+  const location = useLocation();
+  const { state } = location;
+  const type = state?.type;
 
   // <------ 인풋 필드 입력값 변경 ------>
   const handleChangeValue = e => {
@@ -36,11 +42,15 @@ const BasicInfoForm = ({ formType, memberData }) => {
     e.key === ' ' && e.preventDefault();
   };
 
-  // <------ formType : DETAIL일 경우 입력창 비활성화 ------>
-  const isDisabled = formType === 'DETAIL';
-
   // <------ 데이터 소스 선택 ------>
   const dataSource = formType === 'DETAIL' ? memberData : basicInfo;
+
+  // <------ formType : DETAIL일 경우 입력창 비활성화 ------>
+  // <------ 기존 회원 계약일 경우 입력창 비활성화 ------>
+  let isDisabled = false;
+  if (formType === 'DETAIL' || (formType === 'CREATE' && type === 'old')) {
+    isDisabled = true;
+  }
 
   return (
     <div className='flex flex-col pt-5 px-2 desktop:flex-row desktop:h-[calc(100%-100px)] extra_desktop:h-[520px]'>
@@ -71,7 +81,7 @@ const BasicInfoForm = ({ formType, memberData }) => {
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
-          maxLength={11}
+          maxLength={13}
           isValid={validateField('phone', dataSource.memberPhone)}
           errorMsg='올바른 형식 아닙니다.'
         />
@@ -85,6 +95,7 @@ const BasicInfoForm = ({ formType, memberData }) => {
           width='100%'
           classContainer='w-full'
           disabled={isDisabled}
+          disabledDate={disableFutureDates}
           value={dataSource.memberEnrollDate}
           handleChangeValue={handleChangeValue}
         />
@@ -98,7 +109,7 @@ const BasicInfoForm = ({ formType, memberData }) => {
           disabled={isDisabled}
           onChange={handleChangeValue}
           onKeyDown={handleKeyDown}
-          maxLength={10}
+          maxLength={12}
           isValid={validateField('homePhone', dataSource.memberHomePhone)}
           errorMsg='올바른 형식 아닙니다.'
         />

@@ -101,8 +101,8 @@ const SettingSimpConsentPage = () => {
 
   return (
     <div className='primary-dashboard relative h-full w-full'>
-      <div className='mx-2 my-8 flex h-[90%] flex-col'>
-        <h2 className='mb-8 text-xl font-bold'>간편서명동의 설정</h2>
+      <div className='mx-2 my-4 flex h-[90%] flex-col'>
+        <h2 className='mb-8 text-xl font-700 text-text_black'>간편서명동의 설정</h2>
 
         <div className='flex flex-grow flex-col justify-between'>
           <div>

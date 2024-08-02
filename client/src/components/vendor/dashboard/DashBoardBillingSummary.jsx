@@ -2,12 +2,12 @@ import { STATUS_COLORS } from '@/pages/vendor/DashBoardPage';
 import formatNumber from '@/utils/format/formatNumber';
 
 const BillingSummary = ({ billingInfo, month }) => (
-  <div className='bg-white rounded-xl shadow-md p-6'>
-    <div className='flex justify-between items-center mb-6 border-b pb-2'>
-      <h2 className='text-xl font-bold text-gray-800'>{month}월 청구 현황</h2>
-      <p className='text-sm font-medium text-gray-600'>
-        총{' '}
-        <span className='font-bold text-indigo-600'>
+  <div className='bg-white rounded-xl p-6'>
+    <div className='flex justify-between items-center mb-6 border-b border-ipt_border pb-4'>
+      <h2 className='text-xl font-700 text-text_black'>{month}월 청구 현황</h2>
+      <p className='text-sm font-700 text-text_black'>
+        총
+        <span className='font-800 text-indigo-600'>
           {formatNumber(billingInfo.totalBillingAmount)}건
         </span>
       </p>

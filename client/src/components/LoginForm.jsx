@@ -10,6 +10,7 @@ import user from '@/assets/user.svg';
 import password from '@/assets/password.svg';
 import { useVendorInfoStore } from '@/stores/useVendorInfoStore';
 import useAlert from '@/hooks/useAlert';
+import Spinner from './common/loadings/Spinner';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const LoginForm = () => {
     username: '',
     password: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
   const [time, setTime] = useState(0);
   const onAlert = useAlert();
 
@@ -59,6 +61,7 @@ const LoginForm = () => {
         return;
       }
 
+      setIsLoading(true);
       const resLogin = await postLogin(data);
       console.log('!----로그인 성공----!'); // 삭제예정
       const { accessToken, ...vendorInfo } = resLogin.data;
@@ -66,16 +69,22 @@ const LoginForm = () => {
       localStorage.setItem('time', JSON.stringify(3600));
       setVendorInfo(vendorInfo);
       navigate('/vendor/dashboard');
+      setIsLoading(false);
     } catch (err) {
       // 아이디 존재 여부
       const resCheckUsername = await getCheckUsername(data.username);
       const isChecked = resCheckUsername.data;
       if (isChecked) {
-        onAlert({ msg: '비밀번호가 올바르지 않습니다.', type: 'error', title: '로그인 오류' });
+        await onAlert({
+          msg: '비밀번호가 올바르지 않습니다.',
+          type: 'error',
+          title: '로그인 오류',
+        });
+        setIsLoading(false);
         return;
       }
-
-      onAlert({ msg: '존재하지 않는 아이디입니다.', type: 'error', title: '로그인 오류' });
+      await onAlert({ msg: '존재하지 않는 아이디입니다.', type: 'error', title: '로그인 오류' });
+      setIsLoading(false);
       console.error('axiosJoin => ', err.response);
     }
   };
@@ -141,7 +150,14 @@ const LoginForm = () => {
         <button
           className={`font-700 px-4 py-3 text-white rounded-lg transition-all duration-200
                     bg-mint hover:bg-mint_hover`}>
-          로그인
+          {isLoading ? (
+            <div className='flex items-center justify-center'>
+              <Spinner />
+              <p>로그인 중...</p>
+            </div>
+          ) : (
+            <p>로그인</p>
+          )}
         </button>
         <div className='border border-ipt_disa w-full' />
         <div className='w-full flex justify-center text-xs'>

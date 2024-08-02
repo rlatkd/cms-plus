@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingType;
 import kr.or.kosa.cmsplusmain.domain.billing.validator.BillingDateReq;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter

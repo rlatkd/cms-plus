@@ -1,6 +1,6 @@
 import MemberChooseModal from '@/components/vendor/modal/MemberChooseModal';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Table from '@/components/common/tables/Table.jsx';
 import { getContractList } from '@/apis/contract.js';
 import PagiNation from '@/components/common/PagiNation';
@@ -13,13 +13,14 @@ import File from '@/assets/File';
 import { formatPhone } from '@/utils/format/formatPhone';
 import useDebounce from '@/hooks/useDebounce';
 import { cols, initialSearch, selectOptions } from '@/utils/tableElements/contractElement';
-import { formatProducts, formatProductsForList } from '@/utils/format/formatProducts';
+import { formatProductsForList } from '@/utils/format/formatProducts';
 import ReqSimpConsentErrorModal from '@/components/vendor/modal/ReqSimpConsentErrorModal';
 import { sendReqSimpConsent } from '@/apis/simpleConsent';
 
 const ContractListPage = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록
   const [contractListCount, setContractListCount] = useState(); // 계약 목록 전체 수
+  const [filteredListCount, setFilteredListCount] = useState(); // 필터링 된 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
@@ -59,7 +60,10 @@ const ContractListPage = () => {
         });
         const transformdData = transformContractListItem(res.data.content);
         setContractList(transformdData);
-        setContractListCount(res.data.totalCount);
+        setFilteredListCount(res.data.totalCount);
+        if (Object.keys(searchParams).length === 0) {
+          setContractListCount(res.data.totalCount);
+        }
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err);
@@ -183,7 +187,9 @@ const ContractListPage = () => {
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <File fill='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 {contractListCount}건</p>
+          <p className='text-text_black font-700 mr-5'>
+            {filteredListCount} / {contractListCount}건
+          </p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}
@@ -205,7 +211,7 @@ const ContractListPage = () => {
               imgSrc={file}
               color='mint'
               buttonText='신규 회원 계약 등록'
-              onClick={() => navigate('/vendor/contracts/register')}
+              onClick={() => navigate('/vendor/contracts/register', { state: { type: 'new' } })}
             />
             <MoveButton
               imgSrc={file}

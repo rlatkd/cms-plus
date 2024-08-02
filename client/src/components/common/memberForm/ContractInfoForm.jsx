@@ -84,7 +84,7 @@ const ContractInfoForm = ({ formType }) => {
   // <----- 상품 총 합계 계산 ----->
   const calcContractPrice = mContractProducts => {
     return mContractProducts.reduce((sum, cp) => {
-      return sum + cp.price * cp.quantity;
+      return sum + (cp.price || 0) * (cp.quantity || 0);
     }, 0);
   };
 
@@ -110,16 +110,18 @@ const ContractInfoForm = ({ formType }) => {
   return (
     <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>
       <div className='flex justify-between items-end mb-6'>
-        <ProductSelectFieldcopy
-          label='상품추가'
-          placeholder='상품을 선택해주세요.'
-          required={true}
-          options={options}
-          onChange={handleProductChange}
-          selectedOptions={contractInfo.contractProducts}
-          classContainer='w-1/4 mr-8'
-          classButton='w-full py-[14px]'
-        />
+        <div className='w-1/4 mr-8'>
+          <ProductSelectFieldcopy
+            label='상품추가'
+            placeholder='상품을 선택해주세요.'
+            required={true}
+            options={options}
+            onChange={handleProductChange}
+            selectedOptions={contractInfo.contractProducts}
+            classContainer='w-full'
+            classButton='w-full py-[14px]'
+          />
+        </div>
         <InputWeb
           id='contractName'
           label='계약정보명'
@@ -135,7 +137,7 @@ const ContractInfoForm = ({ formType }) => {
           errorMsg='올바른 형식 아닙니다.'
         />
         <div className='flex items-center text-lg font-800 text-text_black ml-auto bg-background border border-ipt_border rounded-lg px-5 py-3 mr-2'>
-          <p className='mr-2'>합계:</p>
+          <p className='mr-2'>총 합계:</p>
           <p className='text-right  '>{`${calcContractPrice(contractInfo.contractProducts).toLocaleString()}원`}</p>
         </div>
       </div>
@@ -155,11 +157,11 @@ const ContractInfoForm = ({ formType }) => {
             <p className='w-1/5 text-center'>{product.name}</p>
             <InputWeb
               id='price'
-              placeholder='상품금액'
+              placeholder='가격'
               type='text'
               classContainer='w-2/12 '
               classInput='text-center py-2'
-              value={product.price.toLocaleString()}
+              value={product.price === 0 ? '' : product.price.toLocaleString()}
               onChange={e => handleChangeValue(e, idx)}
               maxLength={7}
             />
@@ -169,12 +171,12 @@ const ContractInfoForm = ({ formType }) => {
               type='text'
               classContainer='w-1/12'
               classInput='text-center py-2'
-              value={product.quantity.toLocaleString()}
+              value={product.quantity === 0 ? '' : product.quantity.toLocaleString()}
               onChange={e => handleChangeValue(e, idx)}
-              maxLength={2}
+              maxLength={1}
             />
             <p className='w-1/5 text-center'>
-              {`${(product.price * product.quantity).toLocaleString()} 원`}
+              {`${((product.price || 0) * (product.quantity || 0)).toLocaleString()} 원`}
             </p>
             <button className='w-1/5 flex justify-center '>
               <Remove onClick={() => handleRemoveProduct(product)} />

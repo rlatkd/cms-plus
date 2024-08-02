@@ -8,6 +8,7 @@ import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import dayjs from 'dayjs';
+import { disabledEndDate, disabledStartDate } from '@/utils/format/formatCalender';
 
 const PaymentType = [
   { label: '자동결제', value: 'AUTO' },
@@ -34,16 +35,6 @@ const PaymentInfoForm = ({ formType }) => {
       setContractInfoItem({ contractEndDate: '' });
     }
     setContractInfoItem({ [id]: value });
-  };
-
-  // <----- 오늘 날짜 이전을 비활성화 ----->
-  const disabledStartDate = current => {
-    return current && current < dayjs().startOf('day');
-  };
-
-  // <----- 선택된 시작일 이후 날짜만 활성화 ----->
-  const disabledEndDate = current => {
-    return current && current <= dayjs(contractInfo.contractStartDate).startOf('day');
   };
 
   const renderPaymentTypeForm = () => {
@@ -114,7 +105,7 @@ const PaymentInfoForm = ({ formType }) => {
             readOnly
             disabled={isDisabled}
             value={contractInfo.contractEndDate}
-            disabledDate={disabledEndDate}
+            disabledDate={current => disabledEndDate(current, contractInfo.contractStartDate)}
             handleChangeValue={handleChangeContractInfo}
           />
         </div>

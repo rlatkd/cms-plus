@@ -46,7 +46,8 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
       },
       memberMemo: member.memo,
     });
-    navigate('/vendor/contracts/register');
+    setIsShowModal(false);
+    navigate('/vendor/contracts/register', { state: { type: 'old' } });
   };
 
   const fetchMemberList = async (page = 1) => {
@@ -81,13 +82,12 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
       icon={icon}
       height={'h-640'}
       width={'w-640'}>
-      <div className='w-full h-full p-2'>
-        <div className='flex justify-between w-full my-2 '>
+      <div className='relative w-full h-full p-1'>
+        <div className='flex justify-between w-full mt-1 mb-1'>
           <SelectField
-            label=''
-            classContainer='mr-5 w-1/3 h-full'
+            classContainer='mr-3 w-1/3 h-full'
             classLabel='text-15 text-text_black font-700'
-            classSelect='py-4 rounded-lg'
+            classSelect='py-3 rounded-lg'
             value={searchType}
             options={typeOtions}
             onChange={e => setSearchType(e.target.value)}
@@ -95,51 +95,49 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
           <InputWeb
             id='searchTerm'
             type='text'
-            label=''
             classContainer='w-full'
+            classInput='py-3'
             placeholder={typePlaceholers[searchType]}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
-        <table className='w-full mb-3'>
+        <table className='w-full h-[415px] mb-3'>
           <thead>
-            <tr className='bg-table_col'>
-              <th className='p-2 text-left text-text_black'>회원번호</th>
-              <th className='p-2 text-left text-text_black'>회원이름</th>
-              <th className='p-2 text-left text-text_black'>휴대전화</th>
-              <th className='p-2 text-left text-text_black'>회원등록일</th>
+            <tr className='flex  bg-table_col shadow-column'>
+              <th className='w-3/12 py-2 pl-6 text-left text-text_black font-800 '>회원번호</th>
+              <th className='w-2/12 py-2 pl-6 text-left text-text_black font-800 '>회원이름</th>
+              <th className='w-4/12 py-2 pl-8 text-left text-text_black font-800 '>휴대전화</th>
+              <th className='w-4/12 py-2 pl-8 text-left text-text_black font-800 '>회원등록일</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className='flex flex-col justify-between h-full text-sm '>
             {memberList &&
               memberList.map(member => (
                 <tr
                   key={member.id}
                   onClick={() => handleSelectMember(member)}
-                  className='cursor-pointer hover:bg-gray-100'>
-                  <td className='border-b border-ipt_border p-2 text-text_black'>
-                    {formatId(member.id)}
-                  </td>
-                  <td className='border-b border-ipt_border p-2 text-text_black'>{member.name}</td>
-                  <td className='border-b border-ipt_border p-2 text-text_black'>
+                  className='flex items-center h-full border-b border-ipt_border cursor-pointer hover:bg-ipt_disa'>
+                  <td className='w-3/12 pl-6 text-left text-text_black'>{formatId(member.id)}</td>
+                  <td className='w-2/12 pl-6 text-left text-text_black'>{member.name}</td>
+                  <td className='w-4/12 pl-8 text-left text-text_black'>
                     {formatPhone(member.phone)}
                   </td>
-                  <td className='border-b border-ipt_border p-2 text-text_black'>
-                    {member.enrollDate}
-                  </td>
+                  <td className='w-4/12 pl-8 text-left text-text_black'>{member.enrollDate}</td>
                 </tr>
               ))}
           </tbody>
         </table>
-        <PagiNation
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalPages={totalPages}
-          pageGroup={pageGroup}
-          setPageGroup={setPageGroup}
-          buttonCount={5}
-        />
+        <div className='absolute -bottom-4 w-full '>
+          <PagiNation
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            pageGroup={pageGroup}
+            setPageGroup={setPageGroup}
+            buttonCount={5}
+          />
+        </div>
       </div>
     </BaseModal>
   );

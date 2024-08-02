@@ -38,9 +38,8 @@ public class V2MemberRepository extends V2BaseRepository<Member, Long> {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
+
     public List<MemberListItemRes> searchAllMemberByVendor(Long vendorId, MemberSearchReq memberSearch, PageReq pageable) {
-
-
         // 계약 금액 합계와 계약 건수를 계산하는 서브쿼리
         NumberExpression<Integer> contractPriceSum = new CaseBuilder()
                 .when(contract.isNotNull().and(contract.member.eq(member)))

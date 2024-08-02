@@ -19,7 +19,7 @@ import kr.or.kosa.cmsplusmain.domain.kafka.dto.payment.PaymentResultDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+// @Service
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaPaymentService {

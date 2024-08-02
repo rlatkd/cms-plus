@@ -16,6 +16,7 @@ import item from '@/assets/item.svg';
 const ProductListPage = () => {
   const [productList, setProductList] = useState([]); // 상품 목록
   const [productListListCount, setProductListListCount] = useState(); // 상품 목록 전체 수
+  const [filteredListCount, setFilteredListCount] = useState(); // 필터링 된 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 상품 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
   const [productDetailData, setProductDetailData] = useState(null); // 상품 상세 정보
@@ -58,7 +59,10 @@ const ProductListPage = () => {
 
         console.log(transformdData);
         setProductList(transformdData);
-        setProductListListCount(res.data.totalCount);
+        setFilteredListCount(res.data.totalCount);
+        if (Object.keys(searchParams).length === 0) {
+          setProductListListCount(res.data.totalCount);
+        }
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosProductList => ', err);
@@ -167,7 +171,9 @@ const ProductListPage = () => {
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <Item fill='#4FD1C5' stroke='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 {productListListCount}건</p>
+          <p className='text-text_black font-700 mr-5'>
+            {filteredListCount} / {productListListCount}건
+          </p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}

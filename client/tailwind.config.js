@@ -7,7 +7,6 @@ export default {
     extend: {
       colors: {
         mint: '#4FD1C5', // 메인컬러
-        mintt: '#4FD1C5', // 메인컬러
         mint_hover: '#51B1A8', // 메인컬러 호버
         background: '#F8F9FA', // 배경컬러
         text_black: '#344767', // 텍스트 메인컬러

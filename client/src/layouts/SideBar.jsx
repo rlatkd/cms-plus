@@ -31,7 +31,7 @@ const SideBar = () => {
               <NavLink
                 to={route.path}
                 className={({ isActive }) =>
-                  ` ${isActive && ' bg-white shadow-sidebars'} flex  rounded-xl cursor-pointer mb-2 px-3 py-2`
+                  ` ${isActive && ' bg-white shadow-sidebars'} flex rounded-xl cursor-pointer mb-2 px-3 py-2`
                 }>
                 {({ isActive }) => (
                   <div className='flex h-full w-full items-center justify-between'>

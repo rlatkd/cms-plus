@@ -17,6 +17,7 @@ import user from '@/assets/user.svg';
 const MemberListPage = () => {
   const [memberList, setMemberList] = useState([]); // 회원 목록
   const [memberListCount, setMemberListCount] = useState(); // 회원 목록 전체 수
+  const [filteredListCount, setFilteredListCount] = useState(); // 필터링 된 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
@@ -51,9 +52,11 @@ const MemberListPage = () => {
         });
         const transformdData = transformMemberListItem(res.data.content);
         console.log('!---- 회원 목록 조회 성공 ----!'); // 삭제예정
-
         setMemberList(transformdData);
-        setMemberListCount(res.data.totalCount);
+        setFilteredListCount(res.data.totalCount);
+        if (Object.keys(searchParams).length === 0) {
+          setMemberListCount(res.data.totalCount);
+        }
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err.response);
@@ -137,7 +140,9 @@ const MemberListPage = () => {
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <User fill='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 {memberListCount}건</p>
+          <p className='text-text_black font-700 mr-5'>
+            {filteredListCount} / {memberListCount} 건
+          </p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}

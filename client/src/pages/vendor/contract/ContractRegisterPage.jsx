@@ -1,4 +1,4 @@
-import { postCreateMember } from '@/apis/member';
+import { getMemberCheck, postCreateMember } from '@/apis/member';
 import NextButton from '@/components/common/buttons/StatusNextButton';
 import PreviousButton from '@/components/common/buttons/StatusPreButton';
 import ProgressBar from '@/components/common/ProgressBar';
@@ -13,20 +13,30 @@ import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import { useStatusStore } from '@/stores/useStatusStore';
 import { formatCardYearForStorage } from '@/utils/format/formatCard';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import close from '@/assets/close.svg';
 import { sendReqSimpConsent } from '@/apis/simpleConsent';
 import useAlert from '@/hooks/useAlert';
 import { validateField } from '@/utils/validators';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import useConfirm from '@/hooks/useConfirm';
+import { formatPhone } from '@/utils/format/formatPhone';
+import MemberChooseModal from '@/components/vendor/modal/MemberChooseModal';
+import user from '@/assets/user.svg';
 
 const ContractRegisterPage = () => {
   const start = 0;
-  const end = 4;
+  const end = 3;
   const { status, reset, setStatus } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
+  const [isShowModal, setIsShowModal] = useState(false);
   const navigate = useNavigate();
   const onAlert = useAlert();
+  const onConfirm = useConfirm();
+
+  const location = useLocation();
+  const { state } = location;
+  const type = state?.type;
 
   // <------ 회원등록 입력 데이터 ------>
   const { basicInfo, resetBasicInfo } = useMemberBasicStore();
@@ -84,7 +94,46 @@ const ContractRegisterPage = () => {
         onAlert({ msg: '회원정보가 등록되었습니다!', type: 'success' });
       }
     } catch (err) {
+      onAlert({ err });
       console.error('axiosCreateMember => ', err.response);
+    }
+  };
+
+  // <----- 회원 등록 여부 체크 ----->
+  const axiosMemberCheck = async () => {
+    try {
+      if (status === 0 && type === 'new') {
+        // validation 체크
+        if (!validateBasicInfo()) return;
+        setStatus(-1);
+        const res = await getMemberCheck(basicInfo.memberPhone, basicInfo.memberEmail);
+        console.log('!---- 회원 등록 여부 체크 성공----!'); // 삭제예정
+
+        let message = '';
+        const { phoneExist, emailExist } = res.data;
+        if (phoneExist) {
+          message = `"${formatPhone(basicInfo.memberPhone)}" 번호로 이미 회원이 존재합니다. 기존회원 계약을 진행하시겠습니까?`;
+        } else if (emailExist) {
+          message = `"${basicInfo.memberEmail}" 이메일로 이미 회원이 존재합니다. 기존회원 계약을 진행하시겠습니까?`;
+        } else {
+          setStatus(1);
+        }
+
+        if (message) {
+          const isExtendRegister = await onConfirm({
+            msg: message,
+            type: 'warning',
+            title: '입력 정보 오류',
+          });
+
+          if (isExtendRegister) {
+            setIsShowModal(true);
+            // navigate('/vendor/contracts', { state: { type: 'old' } });
+          }
+        }
+      }
+    } catch (err) {
+      console.error('axiosMemberCheck => ', err.response);
     }
   };
 
@@ -249,6 +298,7 @@ const ContractRegisterPage = () => {
 
   // <----- 페이지 이탈 시 Status reset ----->
   useEffect(() => {
+    reset();
     return () => {
       reset();
       resetBasicInfo();
@@ -272,7 +322,7 @@ const ContractRegisterPage = () => {
           src={close}
           alt='back'
           className='absolute right-6 top-6 cursor-pointer w-4 h-4'
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/vendor/contracts')}
         />
       </div>
       <div className='primary-dashboard flex flex-col relative h-[1000px] large_desktop:h-[80%] '>
@@ -291,6 +341,7 @@ const ContractRegisterPage = () => {
           <NextButton
             onClick={() => {
               axiosCreateMember();
+              axiosMemberCheck();
               handleClickNext();
             }}
             status={status}
@@ -298,6 +349,12 @@ const ContractRegisterPage = () => {
             end={end}
           />
         </div>
+        <MemberChooseModal
+          isShowModal={isShowModal}
+          icon={user}
+          setIsShowModal={setIsShowModal}
+          modalTitle={'회원선택'}
+        />
       </div>
     </>
   );
