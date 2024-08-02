@@ -59,7 +59,7 @@ public class SimpleConsentService {
     private final ContractCustomRepository contractCustomRepository;
     private final PaymentService paymentService;
     private final ContractService contractService;
-    // private final KafkaMessagingService kafkaMessagingService;
+    private final KafkaMessagingService kafkaMessagingService;
 
     private static final String SIMPCONSENT_MESSAGE_FORMAT =
             """
@@ -123,7 +123,7 @@ public class SimpleConsentService {
 
         MessageDto messageDto = new SmsMessageDto(text, phone);
 
-        // kafkaMessagingService.produceMessaging(messageDto);
+        kafkaMessagingService.produceMessaging(messageDto);
     }
 
     public SimpConsentInfoRes getSimpleConsentInfo(Long vendorId, Long contractId) {

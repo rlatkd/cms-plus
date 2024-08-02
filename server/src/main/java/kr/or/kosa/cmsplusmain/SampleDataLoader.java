@@ -75,9 +75,6 @@ public class SampleDataLoader {
 				"정현우",
 				"gusehd502@naver.com",
 				"01026963279",
-				"테스트고객",
-				"testvendor@fms.com",
-				"01012341234",
 				"Qwer123!")
 		);
 

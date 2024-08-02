@@ -346,7 +346,7 @@ public class MemberService {
      * */
     private String validateError(Member member, Validator validator) {
         Set<ConstraintViolation<Member>> validate = validator.validate(member);
-        boolean canSave = memberCustomRepository.hasNotDuplicatedPhoneAndEmail(member.getPhone(), member.getEmail());
+        boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
 
         // dto validate 변경 -> 메시지 커스텀
         String validation = validate.stream()

@@ -59,7 +59,7 @@ public class VendorService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RedisTemplate<String, String> redisTemplate;
- 	// private final KafkaMessagingService kafkaMessagingService;
+ 	private final KafkaMessagingService kafkaMessagingService;
 
 	@Transactional
 	public void join(SignupReq signupReq) {
@@ -305,7 +305,7 @@ public class VendorService {
 			messageDto = new EmailMessageDto(messageText, numberReq.getMethodInfo());
 			System.out.println("[이메일메세지]" + messageDto.toString());
 		}
-		// kafkaMessagingService.produceMessaging(messageDto);
+		kafkaMessagingService.produceMessaging(messageDto);
 
 		// Redis에서 저장된 값 확인
 		String storedValue = redisTemplate.opsForValue().get(key);
