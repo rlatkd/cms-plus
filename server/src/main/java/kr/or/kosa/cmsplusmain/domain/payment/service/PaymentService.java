@@ -222,7 +222,7 @@ public class PaymentService {
 		else if(paymentTypeInfoReq instanceof VirtualAccountTypeReq virtualAccountTypeReq){
 
 			// 가상계좌 14자리 랜덤으로 생성
-			String accountNumber = RandomNumberGenerator.generateRandomNumber(14);
+			String accountNumber = RandomNumberGenerator.generateRandomNumber(14, PaymentType.VIRTUAL);
 
 			// 가상계좌 DB에 저장
 			VirtualAccountPaymentType virtualAccountPaymentType =  virtualAccountTypeReq.toEntity(accountNumber);

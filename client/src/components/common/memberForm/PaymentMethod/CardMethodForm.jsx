@@ -1,11 +1,6 @@
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
-import {
-  formatCardMonthForDisplay,
-  formatCardNumber,
-  formatCardYearForDisplay,
-  unformatCardNumber,
-} from '@/utils/format/formatCard';
+import { formatCardNumber, unformatCardNumber } from '@/utils/format/formatCard';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import FileUpload from '../../inputs/FileUpload';
 import { verifyCard } from '@/apis/validation';
@@ -28,10 +23,6 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
     if (id === 'cardNumber') {
       const unformattedNumber = unformatCardNumber(value);
       setPaymentMethodInfoReq_Card({ [id]: unformattedNumber });
-    } else if (id === 'cardYear') {
-      setPaymentMethodInfoReq_Card({ [id]: formatCardYearForDisplay(value) });
-    } else if (id === 'cardMonth') {
-      setPaymentMethodInfoReq_Card({ [id]: formatCardMonthForDisplay(value) });
     } else {
       setPaymentMethodInfoReq_Card({ [id]: value });
     }
@@ -108,6 +99,7 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
               classInput='py-3'
               value={paymentMethodInfoReq_Card.cardMonth}
               onChange={handleChangeInput}
+              maxLength={2}
               isValid={validateField('cardMonth', paymentMethodInfoReq_Card.cardMonth)}
               errorMsg='1월 ~ 12월'
             />
@@ -119,6 +111,9 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
               classInput='py-3 '
               value={paymentMethodInfoReq_Card.cardYear}
               onChange={handleChangeInput}
+              maxLength={2}
+              isValid={validateField('cardYear', paymentMethodInfoReq_Card.cardYear)}
+              errorMsg='지난 년도입니다.'
             />
           </div>
           {/* TODO */}
