@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-analysistask:1",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:891376922202:task-definition/t3-back-analysistask:3",
     "containerDefinitions": [
         {
             "name": "t3-back-analysiscontainer",
@@ -37,7 +37,7 @@
     "taskRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::891376922202:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 1,
+    "revision": 3,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -83,7 +83,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-08-02T08:57:48.708Z",
+    "registeredAt": "2024-08-02T09:29:28.980Z",
     "registeredBy": "arn:aws:iam::891376922202:user/fms-kosa-tema3",
     "tags": []
 }
