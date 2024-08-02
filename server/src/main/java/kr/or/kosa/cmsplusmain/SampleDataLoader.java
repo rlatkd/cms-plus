@@ -78,7 +78,7 @@ public class SampleDataLoader {
 				"Qwer123!")
 		);
 
-		generateSampleData(vendor, 500, 50000, 50000, 50000);
+		generateSampleData(vendor, 100, 500, 500, 500);
 	}
 
 	public void generateSampleData(Vendor vendor, int productCnt, int memberCnt, int contractCnt, int billingCnt) {
