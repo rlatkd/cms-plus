@@ -46,9 +46,11 @@ public class PaymentService {
 	private final PaymentCustomRepository paymentCustomRepository;
 
 	public PaymentTypeInfoRes getPaymentTypeInfoRes(Payment payment) {
+		System.out.println(payment.getPaymentTypeInfo());
 		PaymentTypeInfo paymentTypeInfo = HibernateUtils.getImplements(payment.getPaymentTypeInfo(), PaymentTypeInfo.class);
 		if (paymentTypeInfo == null) {
-			return null;
+			throw new IllegalStateException("결제방식은 무조건 존재");
+			// return null;
 		}
 
 		PaymentType paymentType = paymentTypeInfo.getPaymentType();

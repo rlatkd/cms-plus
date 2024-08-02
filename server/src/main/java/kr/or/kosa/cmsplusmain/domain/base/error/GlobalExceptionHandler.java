@@ -81,22 +81,16 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
-	 * 비즈니스 예외처리 | 정의된 메시지 필수
+	 * 비즈니스 예외처리 | 사전 정의된 메시지 필수
 	 * */
 	@ExceptionHandler(BusinessException.class)
 	protected ResponseEntity<ErrorRes> handleBusinessException(final BusinessException e) {
-		log.error("my-business-exception", e);
-		e.printStackTrace();
-		System.out.println("my-business-exception");
 		final ErrorRes response = ErrorRes.of(e);
 		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 	}
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorRes> handleException(Exception e) {
-		log.error("my-unknown", e);
-		e.printStackTrace();
-		System.out.println("my-unknown" + e.getMessage());
 		final ErrorRes response = ErrorRes.of(ErrorCode.INTERNAL_SERVER_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}

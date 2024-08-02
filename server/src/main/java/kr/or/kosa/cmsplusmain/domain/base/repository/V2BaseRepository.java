@@ -32,8 +32,7 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 	private JpaEntityInformation<E, ID> entityInformation;	// lazy loading
 
 	/**
-	 * 저장 혹은 수정 시 사용
-	 * 수정은 transactional readonly false 사용해서 save 호출없이 가능
+	 * 엔티티 신규 저장 및 수정
 	 * */
 	@Transactional
 	public E save(E entity) {
@@ -43,6 +42,15 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 		}
 
 		return em.merge(entity);
+	}
+
+	/**
+	 * 일반적으로 transaction (readOnly=false)로 jpa dirty-check 로 하는 것을 권장
+	 * 다 수 엔티티 수정으로 bulkUpdate가 필요한 경우에 사용
+	 * 수정시각(BaseEntity.modifiedDateTime) 자동 반영 안되므로 필히 수정시각도 설정할것
+	 * */
+	protected final JPAUpdateClause update(EntityPath<? extends BaseEntity> entity) {
+		return queryFactory.update(entity);
 	}
 
 	/**
@@ -69,16 +77,18 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 		return withNotDel(queryFactory.select(expr), notDelEntities);
 	}
 
-	protected final JPAUpdateClause update(EntityPath<? extends BaseEntity> entity) {
-		return queryFactory.update(entity);
-	}
-
+	/**
+	 * 페이지네이션 적용
+	 * */
 	protected final <T> JPAQuery<T> applyPaging(JPAQuery<T> query, PageReq pageReq) {
 		return query
 			.offset(pageReq.getPage())
 			.limit(pageReq.getSize());
 	}
 
+	/**
+	 * 소프트 삭제 여부
+	 * */
 	protected final BooleanExpression isNotDeleted(Expression<? extends BaseEntity> entity) {
 		try {
 			BooleanPath deletedPath = (BooleanPath) entity.getClass().getField("deleted").get(entity);

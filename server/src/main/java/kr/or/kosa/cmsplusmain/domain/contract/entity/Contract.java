@@ -127,8 +127,7 @@ public class Contract extends BaseEntity {
 	private List<Billing> billings = new ArrayList<>();
 
 	@PrePersist
-	@PreUpdate
-	private void calculateContractPriceAndProductCnt() {
+	public void calculateContractPriceAndProductCnt() {
 		this.contractPrice = contractProducts.stream()
 			.mapToLong(ContractProduct::getContractProductPrice)
 			.sum();

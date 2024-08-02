@@ -1,5 +1,6 @@
 package kr.or.kosa.cmsplusmain.domain.billing.dto.response;
 
+import java.util.Collections;
 import java.util.Map;
 
 import kr.or.kosa.cmsplusmain.domain.billing.dto.BillingDto;
@@ -11,11 +12,11 @@ import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.method.PaymentMethod;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.type.PaymentType;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@Builder
+@RequiredArgsConstructor
 public class BillingDetailRes {
 
 	private final MemberDto member;
@@ -32,27 +33,29 @@ public class BillingDetailRes {
 		final Member mMember = contract.getMember();
 		final Payment mPayment = contract.getPayment();
 
-		return BillingDetailRes.builder()
-			.member(MemberDto.fromEntity(mMember))
-			.billing(BillingDto.fromEntity(mBilling))
-			.contractId(contract.getId())
-			.paymentType(mPayment.getPaymentType())
-			.paymentMethod(mPayment.getPaymentMethod())
-			.build();
+		return new BillingDetailRes(
+			MemberDto.fromEntity(mMember),
+			BillingDto.fromEntity(mBilling),
+			contract.getId(),
+			mPayment.getPaymentType(),
+			mPayment.getPaymentMethod(),
+			Collections.emptyMap());
 	}
 
+	/**
+	 * 청구의 여러 동작 별 가능 여부와 불가능하다면 그 이유를 담아서 보내주기 위한 생성자
+	 * */
 	public static BillingDetailRes fromEntity(Billing mBilling, Map<BillingState.Field, BillingState> fieldToState) {
 		final Contract contract = mBilling.getContract();
 		final Member mMember = contract.getMember();
 		final Payment mPayment = contract.getPayment();
 
-		return BillingDetailRes.builder()
-			.member(MemberDto.fromEntity(mMember))
-			.billing(BillingDto.fromEntity(mBilling))
-			.contractId(contract.getId())
-			.paymentType(mPayment.getPaymentType())
-			.paymentMethod(mPayment.getPaymentMethod())
-			.fieldToState(fieldToState)
-			.build();
+		return new BillingDetailRes(
+			MemberDto.fromEntity(mMember),
+			BillingDto.fromEntity(mBilling),
+			contract.getId(),
+			mPayment.getPaymentType(),
+			mPayment.getPaymentMethod(),
+			fieldToState);
 	}
 }

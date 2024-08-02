@@ -110,7 +110,7 @@ public class Member extends BaseEntity {
 
 	@Comment("계약금액")
 	@Column(name = "member_contract_price", nullable = false)
-	private Long contractPrice;
+	private long contractPrice;
 
 	@Comment("계약수")
 	@Column(name = "member_contract_count", nullable = false)

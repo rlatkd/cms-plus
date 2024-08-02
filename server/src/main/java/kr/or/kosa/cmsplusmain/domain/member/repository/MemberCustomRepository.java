@@ -176,7 +176,9 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
     /*
     * 회원 존재 여부 판단 번호와 이메일
     * */
-    public boolean canSaveMember(String phone, String email) {
+    public boolean hasNotDuplicatedPhoneAndEmail(String phone, String email) {
+        if (phone == null && email == null) return true;
+
         Integer res = jpaQueryFactory
             .selectOne()
             .from(member)
@@ -232,8 +234,8 @@ public class MemberCustomRepository extends BaseCustomRepository<Member> {
         String sql = "INSERT INTO member (deleted, member_auto_billing, member_auto_invoice_send, " +
             "member_enroll_date, created_datetime, modified_datetime, vendor_id, member_home_phone, member_phone, " +
             "member_name, member_email, member_memo, zipcode, address, address_detail, " +
-            "member_invoice_send_method, member_status) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "member_invoice_send_method, member_status, member_contract_price, member_contract_count) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
