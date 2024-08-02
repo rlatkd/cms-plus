@@ -37,7 +37,7 @@ const PaymentVirtualPage = () => {
   const componentMap = {
     2: CheckVirtual, // 가상계좌 정보
     3: () => <Loading content={'결제중...'} />, // 결제로딩 대충 로딩하다가 success로 가도록 해야됨. 결제결과는 문자로 날라감
-    4: Success, // 입금완료
+    4: () => <Success content="결제가 완료되었습니다!" />, // 입금완료
   };
   const Content = componentMap[status] || (() => 'error');
 
@@ -61,12 +61,26 @@ const PaymentVirtualPage = () => {
     }
   }, []);
 
+  // <----- 로딩 타임아웃 설정 ----->
+  useEffect(() => {
+    if (status === 3) {
+      const timer = setTimeout(() => {
+        setStatus(4);
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, setStatus]);
+
   return (
     <>
       <Content invoiceInfo={invoiceInfo} />
       <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
-        <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
-        <NextButton
+        {status != 3 && status != 4 && (
+          <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
+        )}
+        {status != 3 && status != 4 && (
+          <NextButton
           onClick={handleClickNext}
           type={'invoice'}
           status={status}
@@ -75,6 +89,7 @@ const PaymentVirtualPage = () => {
           // 가상계좌에서 마지막 결제 완료 루트 하나 줄어들면 위에꺼 지우고 아래꺼 적용
           // onVirtualPayment={axiosVirtualAccountPayment}
         />
+        )}
       </div>
     </>
   );

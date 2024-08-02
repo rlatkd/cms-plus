@@ -17,7 +17,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const PaymentAccountPage = () => {
   const start = 0;
   const end = 6;
-  const { status, reset } = useStatusStore();
+  const { status, reset, setStatus} = useStatusStore();
   const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
     'account',
     start,
@@ -117,7 +117,7 @@ const PaymentAccountPage = () => {
     3: () => <ChooseBank billingInfo={invoiceInfo} />, //은행선택
     4: AccountInfo, // 계좌정보 입력
     5: () => <Loading content={'결제중...'} />, // 결제로딩 대충 로딩하다가 success로 가도록 해야됨. 결제결과는 문자로 날라감
-    6: Success, // 입금완료
+    6: () => <Success content="결제가 완료되었습니다!" />, // 입금완료
   };
 
   const Content = componentMap[status] || (() => 'error');
@@ -151,6 +151,17 @@ const PaymentAccountPage = () => {
       navigate(`/member/invoice/${invoiceId}`);
     }
   }, []);
+
+  // <----- 로딩 타임아웃 설정 ----->
+  useEffect(() => {
+    if (status === 5) {
+      const timer = setTimeout(() => {
+        setStatus(6);
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, setStatus]);
 
   return (
     <>

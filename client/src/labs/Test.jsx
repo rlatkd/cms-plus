@@ -1,6 +1,7 @@
 import LoadingSpinner from '@/components/common/loadings/LoadingSpinner';
 import AlertContext from '@/utils/dialog/alert/AlertContext';
 import ConfirmContext from '@/utils/dialog/confirm/ConfirmContext';
+import Statistic from '@/components/common/statistics/Statistics';
 import { useContext, useEffect, useState } from 'react';
 
 const LoginPage = () => {
@@ -156,20 +157,20 @@ const Test = () => {
   // msg : 원하는 메세지
   // type : 4가지(default, width, success, error), "" = defalut
   // title : alert제목 , "" = 효성 CMS#
-  const { alert: alertComp } = useContext(AlertContext);
-  const onAlert = async (msg, type, title, err = null) => {
-    if (err != null) {
-      const data = err.response.data;
-      const fieldErrors = data.errors;
+  // const { alert: alertComp } = useContext(AlertContext);
+  // const onAlert = async (msg, type, title, err = null) => {
+  //   if (err != null) {
+  //     const data = err.response.data;
+  //     const fieldErrors = data.errors;
 
-      msg = data.messeage;
-      if (fieldErrors && fieldErrors.length > 0) {
-        msg = fieldErrors.join('\n');
-      }
-    }
+  //     msg = data.messeage;
+  //     if (fieldErrors && fieldErrors.length > 0) {
+  //       msg = fieldErrors.join('\n');
+  //     }
+  //   }
 
-    const result = await alertComp(msg, type, title);
-  };
+  //   const result = await alertComp(msg, type, title);
+  // };
 
   console.log('infra test v0801-1');
 
@@ -177,22 +178,22 @@ const Test = () => {
   // msg : 원하는 메세지
   // type : 2가지(default, warning), "" = defalut
   // title : alert제목 , "" = 효성 CMS#
-  const { confirm: confrimComp } = useContext(ConfirmContext);
-  const onConfirm = async (msg, type, title) => {
-    const result = await confrimComp(msg, type, title);
-    console.log(result);
-  };
+  // const { confirm: confrimComp } = useContext(ConfirmContext);
+  // const onConfirm = async (msg, type, title) => {
+  //   const result = await confrimComp(msg, type, title);
+  //   console.log(result);
+  // };
 
-  const [isChecked, setIsChecked] = useState(false);
+  // const [isChecked, setIsChecked] = useState(false);
 
-  const handleCheckboxChange = () => {
-    console.log('???', isChecked);
-    setIsChecked(!isChecked);
-  };
+  // const handleCheckboxChange = () => {
+  //   console.log('???', isChecked);
+  //   setIsChecked(!isChecked);
+  // };
 
   return (
-    <div>
-      <div style={{ display: 'flex', marginBottom: '20px' }}>
+    <div className='w-full'>
+      {/* <div style={{ display: 'flex', marginBottom: '20px' }}>
         <button
           style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}>
           카드결제버튼
@@ -313,6 +314,8 @@ const Test = () => {
           strokeLinejoin='round'>
           <path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' />
         </svg>
+      </label> */}
+        <Statistic/>
       </label>
       <LoginPage />
       <DashboardChart />
@@ -321,6 +324,7 @@ const Test = () => {
       <LoadingSpinner size='xxl' text='잠시만 기다려주세요...' />
       <LoadingSpinner size='xxxl' text='잠시만 기다려주세요...' />
     </div>
+   
   );
 };
 

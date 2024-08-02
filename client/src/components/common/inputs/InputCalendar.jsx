@@ -54,6 +54,7 @@ const InputCalendar = ({
     }
 
     .ant-picker-input > input {
+      pointer-events: none;
       padding-left: 5px !important; 
       font-size: ${type === 'search' ? '13px' : '14px'} !important; 
       color: ${disabled ? '#000000' : 'inherit'} !important; // Text color change
@@ -136,6 +137,7 @@ const InputCalendar = ({
                 }}
                 disabled={disabled}
                 readOnly={readOnly}
+                inputReadOnly={true} 
                 style={customStyles.datePicker}
                 placeholder={placeholder}
                 {...props}
