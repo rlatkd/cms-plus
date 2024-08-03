@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { ProductSelectField2 } from '@/components/common/selects/ProductSelectField';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import SelectField from '@/components/common/selects/SelectField';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import InputWeb from '@/components/common/inputs/InputWeb';
@@ -61,7 +59,7 @@ const BillingForm = ({
         type='text'
         placeholder={`${field === 'price' ? '가격' : '수량'}`}
         required
-        classInput='text-center p-4 w-1/12 focus:border-mint focus:outline-none 
+        classInput='text-center py-3 w-1/12 focus:border-mint focus:outline-none 
                     focus:ring-mint focus:ring-1 rounded-lg'
         value={value.toLocaleString()}
         onChange={e => handleInputChange(idx, field, e.target.value)}
@@ -76,7 +74,7 @@ const BillingForm = ({
       <div className='space-y-4 mb-4'>
         <div className='flex space-x-4'>
           <div className='w-full'>
-            <div className='flex mb-4 border-b border-ipt_border justify-between'>
+            <div className='flex ml-1 mb-2 border-b border-ipt_border justify-between'>
               <SelectField
                 label='청구타입'
                 classContainer='mr-5 w-1/2'
@@ -103,7 +101,7 @@ const BillingForm = ({
           </div>
         </div>
         <div className='flex justify-between mb-5'>
-          <div className='w-2/6 flex-row mb-3'>
+          <div className='w-2/6 ml-1  flex-row'>
             <label className={`block text-text_black text-15 font-700 mb-2 ml-2`}>상품 추가</label>
             <ProductSelectField2
               label='상품을 선택하세요'
@@ -128,36 +126,45 @@ const BillingForm = ({
               }}
             />
           </div>
-          <div className='flex items-end'>
-            <p className='font-bold text-lg'>합계:</p>
-            <p className='text-right font-bold text-lg border-none'>{`${calcBillingPrice(billingData.products).toLocaleString()}원`}</p>
+          <div className='flex items-end text-lg font-800 text-text_black'>
+            <p className=''>
+              총 합계 : {`${calcBillingPrice(billingData.products).toLocaleString()}원`}
+            </p>
           </div>
         </div>
       </div>
-      <div className='flex-1 overflow-auto '>
-        <table className='w-full relative'>
-          <thead>
-            <tr className='bg-gray-100 sticky top-0 z-10'>
-              <th className='p-2 text-left'>상품명</th>
-              <th className='p-2 text-left'>상품금액</th>
-              <th className='p-2 text-left'>수량</th>
-              <th className='p-2 text-left'>금액</th>
-              <th className='p-2 text-left' />
+      <div className='relative h-[440px] overflow-y-scroll'>
+        <table className='w-full'>
+          <thead className='sticky top-0 z-10'>
+            <tr className='flex bg-table_col shadow-column'>
+              <th className='w-2/12 py-2 text-center text-text_black font-800'>상품명</th>
+              <th className='w-3/12 py-2 text-center text-text_black font-800'>상품금액</th>
+              <th className='w-2/12 py-2 text-center text-text_black font-800'>수량</th>
+              <th className='w-3/12 py-2 text-center text-text_black font-800'>금액</th>
+              <th className='w-2/12 py-2 text-center text-text_black font-800'>삭제</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className='text-sm'>
             {billingData.products.map((product, idx) => (
-              <tr key={product.productId} className='border-b -z-20'>
-                <td className='p-2'>{product.name}</td>
-                <td className='p-2' onClick={() => handleEditClick(idx, 'price')}>
+              <tr
+                key={product.productId}
+                className='flex items-center border-b border-ipt_border py-2 -z-20'>
+                <td className='w-2/12 text-center text-text_black'>{product.name}</td>
+                <td
+                  className='w-3/12 px-3 text-center  text-text_black'
+                  onClick={() => handleEditClick(idx, 'price')}>
                   {renderEditableField(product, idx, 'price')}
                 </td>
-                <td className='p-2' onClick={() => handleEditClick(idx, 'quantity')}>
+                <td
+                  className='w-2/12 px-3 text-center  text-text_black'
+                  onClick={() => handleEditClick(idx, 'quantity')}>
                   {renderEditableField(product, idx, 'quantity')}
                 </td>
-                <td className='p-2'>{(product.price * product.quantity).toLocaleString()}원</td>
-                <td className='p-2'>
-                  <button className='flex justify-center '>
+                <td className='w-3/12 text-center text-text_black'>
+                  {(product.price * product.quantity).toLocaleString()}원
+                </td>
+                <td className='w-2/12 text-center text-text_black '>
+                  <button>
                     <Remove onClick={() => handleProductRemove(product.productId)} />
                   </button>
                 </td>

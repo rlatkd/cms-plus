@@ -3,6 +3,7 @@ import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { formatProducts, formatProductsForList } from '@/utils/format/formatProducts';
 import { useState } from 'react';
+import useDebounce from '@/hooks/useDebounce';
 
 const typeOtions = [
   { value: 'memberName', label: '회원명' },
@@ -54,14 +55,14 @@ const ContractList = ({
   };
 
   return (
-    <div className='w-2/5 p-6'>
-      <h2 className='text-2xl font-semibold mb-4 text-text_black'>계약 목록</h2>
-      <div className='flex justify-between w-full my-2 '>
+    <div className='relative w-2/5 pr-5 border-r border-ipt_border'>
+      <h2 className='text-text_black text-xl font-800'>계약 목록</h2>
+      <div className='flex justify-between w-full mt-5 mb-2 '>
         <SelectField
           label=''
-          classContainer='mr-5 w-1/3 h-full'
+          classContainer='mr-3 w-1/3 h-full'
           classLabel='text-15 text-text_black font-700'
-          classSelect='py-4 rounded-lg'
+          classSelect='py-3 rounded-lg'
           value={searchType}
           options={typeOtions}
           onChange={handleSelectChange}
@@ -69,8 +70,8 @@ const ContractList = ({
         <InputWeb
           id='searchTerm'
           type='text'
-          label=''
           classContainer='w-full'
+          classInput='py-3'
           placeholder={typePlaceholers[searchType]}
           value={mSearchTerm}
           onChange={handleInputChange}
@@ -78,41 +79,40 @@ const ContractList = ({
       </div>
       <table className='w-full mb-3'>
         <thead>
-          <tr className='bg-table_col'>
-            <th className='p-2 text-left text-text_black'>회원명</th>
-            <th className='p-2 text-left text-text_black'>약정일</th>
-            <th className='p-2 text-left text-text_black'>상품</th>
-            <th className='p-2 text-left text-text_black'>계약금액</th>
+          <tr className='flex bg-table_col shadow-column'>
+            <th className='w-3/12 py-2 text-center text-text_black font-800 '>회원명</th>
+            <th className='w-2/12 py-2 text-center text-text_black font-800 '>약정일</th>
+            <th className='w-4/12 py-2 text-center text-text_black font-800 '>상품</th>
+            <th className='w-3/12 py-2 text-center text-text_black font-800 '>계약금액</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className='flex flex-col h-full text-sm '>
           {contractList.map(contract => (
             <tr
               key={contract.contractId}
               onClick={() => onSelected(contract)}
-              className={`cursor-pointer  ${
-                selectedContractId === contract.contractId ? 'bg-blue-100' : 'hover:bg-gray-100'
-              }`}>
-              <td className='border-b border-ipt_border p-2 text-text_black'>
-                {contract.memberName}
-              </td>
-              <td className='border-b border-ipt_border p-2 text-text_black'>{`${contract.contractDay}일`}</td>
-              <td className='border-b border-ipt_border p-2 text-text_black'>
+              className={`flex items-center py-3 border-b border-ipt_border cursor-pointer  
+                ${selectedContractId === contract.contractId ? 'bg-blue-100' : 'hover:bg-ipt_disa'}`}>
+              <td className='w-3/12 text-center text-text_black'>{contract.memberName}</td>
+              <td className='w-2/12 text-center text-text_black'>{`${contract.contractDay}일`}</td>
+              <td className='w-4/12 text-center text-text_black'>
                 {formatProductsForList(contract.firstProductName, contract.totalProductCount)}
               </td>
-              <td className='border-b border-ipt_border p-2 text-text_black'>{`${contract.contractPrice.toLocaleString()}원`}</td>
+              <td className='w-3/12 text-center text-text_black'>{`${contract.contractPrice.toLocaleString()}원`}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <PagiNation
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        pageGroup={pageGroup}
-        setPageGroup={setPageGroup}
-        buttonCount={5}
-      />
+      <div className='absolute bottom-0 w-full '>
+        <PagiNation
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          pageGroup={pageGroup}
+          setPageGroup={setPageGroup}
+          buttonCount={5}
+        />
+      </div>
     </div>
   );
 };

@@ -27,6 +27,6 @@ export const updatePaymentDetail = async (contractId, data) => {
 
 // 은행정보 불러오기
 export const getBanks = async () => {
-  const res = await privateAxios.get(`/v1/payment/banks`);
+  const res = await publicAxios.get(`/v1/payment/banks`);
   return res;
 };

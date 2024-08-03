@@ -114,7 +114,7 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
         </div>
         <table className='w-full h-[415px] mb-3'>
           <thead>
-            <tr className='flex  bg-table_col shadow-column'>
+            <tr className='flex bg-table_col shadow-column'>
               <th className='w-3/12 py-2 pl-6 text-left text-text_black font-800 '>회원번호</th>
               <th className='w-2/12 py-2 pl-6 text-left text-text_black font-800 '>회원이름</th>
               <th className='w-4/12 py-2 pl-8 text-left text-text_black font-800 '>휴대전화</th>
