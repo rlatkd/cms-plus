@@ -3,7 +3,7 @@ const Loading = () => {
     <div className='flex h-screen flex-col items-center justify-between bg-white p-3'>
       <div className='w-full text-left'>
         <h1 className='mb-4 text-2xl font-bold text-teal-400'>Hyosung CMS+</h1>
-        <h3 className='mb-8 text-base font-semibold text-gray-700'>결제 로딩중</h3>
+        <h3 className='mb-8 text-base font-semibold text-gray-700'>로딩중</h3>
       </div>
 
       <div className='flex flex-grow items-center justify-center'>
