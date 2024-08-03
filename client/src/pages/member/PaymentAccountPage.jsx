@@ -171,10 +171,12 @@ const PaymentAccountPage = () => {
         isVerified={isVerified}
         setIsVerified={setIsVerified}
       />
+      {status != 5 && status != 6 &&(
       <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
         <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
         <NextButton onClick={handleClickNext} type={'account'} status={status} end={end} />
       </div>
+      )}
     </>
   );
 };
