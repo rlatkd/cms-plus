@@ -290,7 +290,7 @@ const SimpConsentPage = () => {
     3: PaymentInfo,
     4: Signature,
     5: Loading,
-    6: Success,
+    6: () => <Success content="자동결제 등록이 완료되었습니다!" />,
   };
 
   const Content = componentMap[status] || (() => 'error');
@@ -320,10 +320,11 @@ const SimpConsentPage = () => {
         contractId={contractId}
         content={'등록중...'}
         isExistingContract={!!contractId}
+        name={contractId ? userData.memberDTO.name : '회원'}
 
       />
       <div className='h-28' />
-      {status !== 5 && ( // Loading 페이지가 아닐 때만 버튼 렌더링
+      {status !== 5 && status !== 6 &&( 
         <div className='fixed bottom-0 left-0 w-full'>
           <div className='absolute inset-0 bg-white opacity-100 blur' />
           <div className='relative flex h-24 w-full justify-between p-6 font-bold z-50'>

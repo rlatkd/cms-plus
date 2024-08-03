@@ -1,7 +1,9 @@
+import Statistic from '@/components/common/statistics/Statistics';
+
 const StatisticPage = () => {
   return (
-    <div className='table-dashboard flex flex-col h-1500 extra_desktop:h-full '>
-      여기에 컴포넌트 이식
+    <div className='primary-dashboard flex flex-col h-full w-full '>
+      <Statistic />
     </div>
   );
 };
