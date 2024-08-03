@@ -126,7 +126,6 @@ const ContractListPage = () => {
 
   // <--------간편동의 버튼 클릭 핸들러-------->
   const handleClickSimpConsent = async () => {
-    console.log(selectedContracts);
     if (!selectedContracts || selectedContracts.length === 0) {
       onAlert({ msg: '선택된 계약이 없습니다.', type: 'error', title: '요청 실패' });
       return;

@@ -220,8 +220,11 @@ const ContractRegisterPage = () => {
   // <----- 유효성 검사 : ContractInfo ----->
   const validateContractInfo = () => {
     const isValidContractName = validateField('contractName', contractInfo.contractName);
+
     const isValidContractProducts =
-      contractInfo.contractProducts.length >= 1 && contractInfo.contractProducts.length <= 10;
+      contractInfo.contractProducts.length >= 1 &&
+      contractInfo.contractProducts.length <= 10 &&
+      contractInfo.contractProducts.every(product => product.quantity && product.quantity > 0);
 
     const isSuccess = isValidContractName && isValidContractProducts;
 
@@ -295,6 +298,20 @@ const ContractRegisterPage = () => {
     }
     return isSuccess;
   };
+
+  useEffect(() => {
+    const handleBeforeUnload = event => {
+      event.preventDefault();
+      event.returnValue = '';
+      reset();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [navigate]);
 
   // <----- 페이지 이탈 시 Status reset ----->
   useEffect(() => {

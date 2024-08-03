@@ -54,23 +54,38 @@ const ContractInfoForm = ({ formType }) => {
   const handleChangeValue = (e, index = null) => {
     const { id, value } = e.target;
 
+    // 계약명 입력
     if (id === 'contractName') {
       setContractInfoItem({ [id]: value });
-    } else if (index !== null) {
-      if (id === 'price' && value && value.length > 7) {
+      return;
+    }
+
+    // 상품정보 입력
+    if (index !== null) {
+      if (id === 'price' && value.length > 7) {
         onAlert({ msg: '상품 가격은 최대 99만원입니다.', type: 'success' });
         return;
-      } else if (id === 'quantity' && value && value.length >= 2) {
+      }
+
+      if (id === 'quantity' && value.length >= 2) {
         onAlert({ msg: '상품 수량은 최대 9개입니다.', type: 'success' });
         return;
       }
 
       const numericValue = value.replace(/\D/g, '');
-      const updatedSelectedProducts = contractInfo.contractProducts.map((product, idx) =>
-        idx === index
-          ? { ...product, [id]: numericValue === '' ? 0 : Number(numericValue) }
-          : product
-      );
+      const updatedSelectedProducts = contractInfo.contractProducts.map((product, idx) => {
+        if (idx !== index) return product;
+
+        let updatedValue = numericValue;
+
+        if (id === 'price') {
+          updatedValue = numericValue === '' ? 0 : Number(numericValue);
+        } else if (id === 'quantity') {
+          updatedValue = numericValue === '' ? '' : Number(numericValue);
+          if (updatedValue === 0) updatedValue = '';
+        }
+        return { ...product, [id]: updatedValue };
+      });
       setContractProducts(updatedSelectedProducts);
     }
   };
@@ -81,7 +96,6 @@ const ContractInfoForm = ({ formType }) => {
       const res = await getAllProductList();
       console.log('!----전체 상품 목록 조회----!'); // 삭제예정
       setProductList(res.data);
-      console.log(res.data);
       if (formType === 'CREATE') {
         addDefaultProduct(res.data[0]);
       }

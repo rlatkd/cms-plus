@@ -25,14 +25,14 @@ const ConDetailPaymentMethod = ({ contractData }) => {
           {PaymentComponent && <PaymentComponent contractData={contractData} />}
           <InputWeb
             id='simpConsentInfo'
-            label='간편동의여부'
+            label='동의여부'
             value={
               paymentTypeInfo.consentStatus?.title && paymentTypeInfo.simpleConsentReqDateTime
                 ? `${paymentTypeInfo.consentStatus.title} (${formatDateTime(paymentTypeInfo.simpleConsentReqDateTime)})`
                 : '정보 없음'
             }
             type='text'
-            classContainer='w-1/2'
+            classContainer='w-1/2 pr-3'
             disabled={true}
           />
         </>
@@ -44,7 +44,7 @@ const ConDetailPaymentMethod = ({ contractData }) => {
   const Content = componentMap[paymentType] ?? (() => null);
 
   return (
-    <div className='flex-col p-5'>
+    <div className='flex-col p-4'>
       <div className='flex flex-col justify-between flex-1'>
         <Content />
       </div>
