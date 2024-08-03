@@ -172,7 +172,7 @@ const Test = () => {
   //   const result = await alertComp(msg, type, title);
   // };
 
-  console.log('infra test v0801-3');
+  console.log('infra test v0803-1');
 
   // type:
   // msg : 원하는 메세지
