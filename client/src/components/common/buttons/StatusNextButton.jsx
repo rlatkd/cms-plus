@@ -10,10 +10,8 @@ const NextButton = ({ onClick, status, type = '', end, onPayment, onVirtualPayme
     }
   } else if (status === end) {
     buttonText = '확인';
-
-    if (type === 'memberRegister') {
-      buttonText = '저장';
-    }
+  } else if (status === end - 1 && type === 'memberRegister') {
+    buttonText = '저장';
   }
 
   const handlePayment = async () => {

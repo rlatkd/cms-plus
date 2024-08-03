@@ -71,7 +71,7 @@ const BillingListPage = () => {
         console.error('axiosMemberList => ', err);
       }
     },
-    [currentPage]
+    [currentPage, currentorder, currentorderBy]
   );
 
   // <--------데이터 변환-------->

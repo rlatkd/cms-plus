@@ -68,7 +68,7 @@ const ProductListPage = () => {
         console.error('axiosProductList => ', err);
       }
     },
-    [currentPage]
+    [currentPage, currentorder, currentorderBy]
   );
 
   // <--------데이터 변환-------->

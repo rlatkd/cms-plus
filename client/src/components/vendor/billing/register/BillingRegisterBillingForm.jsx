@@ -5,6 +5,9 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import SelectField from '@/components/common/selects/SelectField';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import InputWeb from '@/components/common/inputs/InputWeb';
+import Remove from '@/assets/Remove';
+import { disabledStartDate } from '@/utils/format/formatCalender';
+import useAlert from '@/hooks/useAlert';
 
 const typeOtions = [
   { value: '', label: '청구타입을 선택하세요' },
@@ -20,6 +23,8 @@ const BillingForm = ({
   handleProductRemove,
 }) => {
   const [editingState, setEditingState] = useState({});
+
+  const onAlert = useAlert();
 
   const handleDateChange = date => {
     handleBillingDataChange('billingDate', date);
@@ -37,10 +42,10 @@ const BillingForm = ({
 
   const handleInputChange = (idx, field, value) => {
     if (field === 'price' && value && value.length >= 7) {
-      alert('상품 가격은 최대 99만원입니다.');
+      onAlert({ msg: '상품 가격은 최대 99만원입니다.', type: 'success' });
       return;
     } else if (field === 'quantity' && value && value.length >= 2) {
-      alert('상품 수량은 최대 9개입니다.');
+      onAlert({ msg: '상품 수량은 최대 9개입니다.', type: 'success' });
       return;
     }
     const numericValue = value.replace(/\D/g, '');
@@ -89,6 +94,7 @@ const BillingForm = ({
                   width='100%'
                   readOnly
                   value={billingData.billingDate}
+                  disabledDate={disabledStartDate}
                   handleChangeValue={e => handleDateChange(e.target.value)}
                   classContainer='w-full'
                 />
@@ -128,7 +134,7 @@ const BillingForm = ({
           </div>
         </div>
       </div>
-      <div className='flex-1 overflow-auto'>
+      <div className='flex-1 overflow-auto '>
         <table className='w-full relative'>
           <thead>
             <tr className='bg-gray-100 sticky top-0 z-10'>
@@ -141,7 +147,7 @@ const BillingForm = ({
           </thead>
           <tbody>
             {billingData.products.map((product, idx) => (
-              <tr key={product.productId} className='border-b'>
+              <tr key={product.productId} className='border-b -z-20'>
                 <td className='p-2'>{product.name}</td>
                 <td className='p-2' onClick={() => handleEditClick(idx, 'price')}>
                   {renderEditableField(product, idx, 'price')}
@@ -151,11 +157,8 @@ const BillingForm = ({
                 </td>
                 <td className='p-2'>{(product.price * product.quantity).toLocaleString()}원</td>
                 <td className='p-2'>
-                  <button
-                    type='button'
-                    onClick={() => handleProductRemove(product.productId)}
-                    className='text-red-500 hover:text-red-700'>
-                    <FontAwesomeIcon icon={faTrash} />
+                  <button className='flex justify-center '>
+                    <Remove onClick={() => handleProductRemove(product.productId)} />
                   </button>
                 </td>
               </tr>

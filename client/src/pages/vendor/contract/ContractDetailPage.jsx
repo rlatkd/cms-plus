@@ -117,7 +117,7 @@ const ContractDetailPage = () => {
       if (data.paymentMethod.code === 'CMS') {
         setPaymentMethodInfoReq_Cms({
           bank: bankCode[data.bank.code],
-          accountNumber: data.accountNumber,
+          accountNumber: '',
           accountOwner: data.accountOwner,
           accountOwnerBirth: data.accountOwnerBirth,
         });
@@ -125,7 +125,7 @@ const ContractDetailPage = () => {
 
       if (data.paymentMethod.code === 'CARD') {
         setPaymentMethodInfoReq_Card({
-          cardNumber: data.cardNumber,
+          cardNumber: '',
           cardMonth: data.cardMonth,
           cardYear: formatCardYearForDisplay(data.cardYear),
           cardOwner: data.cardOwner,

@@ -1,6 +1,6 @@
 import MemberChooseModal from '@/components/vendor/modal/MemberChooseModal';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Table from '@/components/common/tables/Table.jsx';
 import { getContractList } from '@/apis/contract.js';
 import PagiNation from '@/components/common/PagiNation';
@@ -58,6 +58,7 @@ const ContractListPage = () => {
           page: page,
           size: 10,
         });
+
         const transformdData = transformContractListItem(res.data.content);
         setContractList(transformdData);
         setFilteredListCount(res.data.totalCount);
@@ -66,18 +67,15 @@ const ContractListPage = () => {
         }
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
-        console.error('axiosMemberList => ', err);
+        console.error('axiosContractList => ', err);
       }
     },
-    [currentPage]
+    [currentPage, currentorder, currentorderBy]
   );
 
   // <--------데이터 변환-------->
   const transformContractListItem = data => {
     return data.map(contract => {
-      // const { contractDay, contractPrice, contractProducts, contractStatus, memberPhone } =
-      //   contract;
-
       const {
         contractDay,
         contractPrice,

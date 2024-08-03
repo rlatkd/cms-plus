@@ -26,7 +26,7 @@ import user from '@/assets/user.svg';
 
 const ContractRegisterPage = () => {
   const start = 0;
-  const end = 3;
+  const end = 4;
   const { status, reset, setStatus } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const [isShowModal, setIsShowModal] = useState(false);
@@ -79,7 +79,6 @@ const ContractRegisterPage = () => {
           ...billingInfo, // 청구정보
         };
 
-        console.log(data);
         // validation 체크
         if (!validateBasicInfo()) return;
         if (!validateContractInfo()) return;
@@ -91,12 +90,11 @@ const ContractRegisterPage = () => {
         if (isSimpConsentCheck && !paymentMethod && paymentType === 'AUTO') {
           await axiosSendReqSimpConsent(res.data);
         }
-
-        await navigate('/vendor/members');
-        onAlert({ msg: '회원정보가 등록되었습니다!', type: 'success' });
+        await navigate('/vendor/contracts');
+        onAlert({ msg: '회원의 계약이 등록되었습니다!', type: 'success' });
       }
     } catch (err) {
-      onAlert({ err });
+      // onAlert({ err });
       console.error('axiosCreateMember => ', err.response);
     }
   };

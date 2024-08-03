@@ -120,12 +120,18 @@ const BillingRegisterPage = () => {
   };
 
   const handleBillingDataChange = (key, value) => {
+    if (billingData.products.length >= 10) {
+      onAlert({ msg: ' 청구는 최대 10 개의 상품을 지녀야합니다.', type: 'success' });
+      return;
+    }
     setBillingData(prev => ({ ...prev, [key]: value }));
   };
 
+  // TODO
+  // 현재 이 함수는 사용이 안되는것 같음
   const handleProductAdd = newProduct => {
     if (!newProduct) return;
-    if (billingData.products.length === 10) {
+    if (billingData.products.length > 10) {
       onAlert({ msg: ' 청구는 최대 10 개의 상품을 지녀야합니다.', type: 'success' });
     }
     setBillingData(prev => ({
@@ -146,7 +152,6 @@ const BillingRegisterPage = () => {
   const handleProductRemove = productId => {
     if (billingData.products.length < 2) {
       onAlert({ msg: ' 청구는 최소 한 개의 상품을 지녀야합니다.', type: 'success' });
-
       return;
     }
     setBillingData(prev => ({

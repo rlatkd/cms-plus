@@ -23,7 +23,6 @@ export const ProductSelectField2 = ({
   );
 
   const toggleOption = option => {
-    setIsOpen(false);
     const newSelectedOptions =
       selectedOptions.includes(option) ||
       selectedOptions.some(o => o.value.productId === option.value.productId)
@@ -70,7 +69,7 @@ export const ProductSelectField2 = ({
       </button>
 
       {isOpen && (
-        <div className='z-10 absolute mt-1 bg-white rounded-lg shadow w-full'>
+        <div className='z-10 absolute mt-1 bg-white rounded-lg shadow w-full z-20'>
           <div className='p-3'>
             <input
               type='text'

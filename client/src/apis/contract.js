@@ -7,6 +7,7 @@ export const getContractList = async (searchParams = {}) => {
   //     ...searchParams,
   //   },
   // });
+  console.log('계약 목록', searchParams);
   const res = await privateAxios.get('/v2/vendor/contract', {
     params: {
       ...searchParams,
