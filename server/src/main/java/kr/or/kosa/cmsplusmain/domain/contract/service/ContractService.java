@@ -52,7 +52,32 @@ public class ContractService {
 	private final PaymentService paymentService;
 	private final ContractProductRepository contractProductRepository;
 
-	/*
+
+	@Transactional
+	public Long createContract(Long vendorId, Member member, Payment payment, ContractCreateReq contractCreateReq) {
+		// 계약 정보를 DB에 저장한다.
+		Contract contract = contractCreateReq.toEntity(vendorId , member, payment);
+		contract = contractRepository.save(contract);
+
+		// 상품 ID -> 이름
+		List<Long> productIds = contractCreateReq.getContractProducts().stream()
+				.mapToLong(ContractProductReq::getProductId)
+				.boxed().toList();
+		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
+
+		List<ContractProduct> contractProducts = contractProductRepository.saveAll(contractCreateReq.toProductEntities(contract, productIdToName));
+		contractProducts.forEach(contract::addContractProduct);
+		contract.calculateContractPriceAndProductCnt();
+
+		// 계약 상품 정보를 DB에 저장한다.
+		member.getContracts().add(contract);
+		member.calcContractPriceAndCnt();
+		System.out.println("ERROR2: " + member.getContractPrice() + ", " + member.getContractCount() + ", " + contract.getContractPrice());
+
+		return contract.getId();
+	}
+
+	/**
 	 * 계약 목록 조회
 	 *
 	 * 총 발생 쿼리수: 3회
@@ -74,7 +99,7 @@ public class ContractService {
 		return new PageRes<>(totalContentCount, pageReq.getSize(), content);
 	}
 
-	/*
+	/**
 	 * 계약의 청구 목록
 	 *
 	 * 총 발생 쿼리수: 4회
@@ -98,7 +123,7 @@ public class ContractService {
 		);
 	}
 
-	/*
+	/**
 	 * 계약 상세
 	 *
 	 * 총 발생 쿼리수: 3회
@@ -125,7 +150,7 @@ public class ContractService {
 			totalCntAndPrice[0], totalCntAndPrice[1]);
 	}
 
-	/*
+	/**
 	* 계약 수정
 	*
 	* 총 발생 쿼리수: 3회
@@ -153,7 +178,7 @@ public class ContractService {
 		updateContractProducts(contract, newContractProducts);
 	}
 
-	/*
+	/**
 	 * 계약 상품 요청 -> 계약 상품 엔티티 변환 메서드
 	 *
 	 * 요청에서 상품의 ID를 받아서
@@ -222,7 +247,7 @@ public class ContractService {
 		contract.calculateContractPriceAndProductCnt();
 	}
 
-	/*
+	/**
 	* 계약 ID 존재여부
 	* 계약이 현재 로그인 고객의 계약인지 여부
 	* */
@@ -230,25 +255,5 @@ public class ContractService {
 		if (!contractCustomRepository.isExistContractByUsername(contractId, vendorId)) {
 			throw new EntityNotFoundException("계약 ID 없음(" + contractId + ")");
 		}
-	}
-
-
-	public Long createContract(Long vendorId, Member member, Payment payment, ContractCreateReq contractCreateReq) {
-		// 계약 정보를 DB에 저장한다.
-		Contract contract = contractCreateReq.toEntity(vendorId , member, payment);
-		contract = contractRepository.save(contract);
-
-		// 상품 ID -> 이름
-		List<Long> productIds = contractCreateReq.getContractProducts().stream()
-			.mapToLong(ContractProductReq::getProductId)
-			.boxed().toList();
-		Map<Long, String> productIdToName = productCustomRepository.findAllProductNamesById(productIds);
-
-		List<ContractProduct> contractProducts = contractCreateReq.toProductEntities(contract, productIdToName);
-
-		// 계약 상품 정보를 DB에 저장한다.
-		contractProductRepository.saveAll(contractProducts);
-
-		return contract.getId();
 	}
 }
