@@ -13,7 +13,7 @@ const ConDetailBilling = ({ contractData, updateAllInfo, children }) => {
   };
 
   return (
-    <div className='flex flex-col sub-dashboard pb-6  mb-5 h-640 w-full'>
+    <div className='flex flex-col sub-dashboard pb-2 mb-5 w-full '>
       <div className='flex justify-between items-center border-b border-ipt_border px-2 pt-1 pb-3'>
         <p className='text-text_black text-xl font-800'>청구정보</p>
         <button
