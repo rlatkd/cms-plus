@@ -2,11 +2,11 @@ import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
-import bankOptions from '@/utils/bank/bankOptions';
 import FileUpload from '../../inputs/FileUpload';
 import { verifyCMS } from '@/apis/validation';
 import { validateField } from '@/utils/validators';
 import useAlert from '@/hooks/useAlert';
+import { bankOptions } from '@/utils/bank/bank';
 
 const CmsMethodForm = ({ paymentMethod, formType }) => {
   const {

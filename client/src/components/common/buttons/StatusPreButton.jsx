@@ -1,5 +1,7 @@
 const PreviousButton = ({ onClick, status, start, type = '', end }) => {
-  if (status === start || status === end) {
+  if (status === start) {
+    return null;
+  } else if (status === end && type !== 'memberRegister') {
     return null;
   }
 
