@@ -86,6 +86,8 @@ public class SampleDataLoader {
 		List<Member> members = memberRepository.saveAll(createMembersForVendor(vendor, memberCnt));
 		List<Contract> contracts = contractRepository.saveAll(createContractsForMembers(members, products, contractCnt));
 		List<Billing> billings = billingRepository.saveAll(createBillingsForContracts(contracts, products, billingCnt));
+		members.forEach(Member::calcContractPriceAndCnt);
+		memberRepository.saveAll(members);
 	}
 
 	public List<Product> createProductsForVendor(Vendor vendor, int productCnt) {
@@ -203,6 +205,7 @@ public class SampleDataLoader {
 		for (int i = 0; i < count; i++) {
 			Member member = randomGenerator.getRandomInList(members);
 			Contract contract = createContract(member, i, products);
+			member.getContracts().add(contract);
 			createdContracts.add(contract);
 		}
 

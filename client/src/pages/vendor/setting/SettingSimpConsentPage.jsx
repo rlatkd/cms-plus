@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import SimpConsentQrUrlModal from '@/components/vendor/modal/SimpConsentQrUrlModal';
 import ProductSelectField from '@/components/common/selects/ProductSelectField';
 import Checkbox from '@/components/common/inputs/CheckBox';
-import useSimpleConsentStore from '@/stores/simpleConsentStore';
 import { getSimpleConsent, updateSimpleConsent } from '@/apis/simpleConsent';
 import { getAllProductList } from '@/apis/product';
 import useAlert from '@/hooks/useAlert';
+import useSimpleConsentStore from '@/stores/usesimpleConsentStore';
 
 const MAX_VISIBLE_PRODUCTS = 5;
 

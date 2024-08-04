@@ -76,7 +76,7 @@ public class BillingController {
 	/**
 	 * 청구목록 조회
 	 * */
-	@LogExecutionTime
+
 	@GetMapping
 	public PageRes<BillingListItemRes> searchBillings(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		return billingService.searchBillings(vendorId, search, pageReq);

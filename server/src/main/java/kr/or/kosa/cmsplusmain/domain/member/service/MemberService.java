@@ -70,9 +70,6 @@ public class MemberService {
                 .map(MemberListItemRes::fromEntity)
                 .toList();
 
-//        List<MemberListItemRes> memberListItemRes = v2MemberRepository
-//                .searchAllMemberByVendor(vendorId, memberSearch, pageable);
-
         return new PageRes<>(countMemberListItem, pageable.getSize(), memberListItemRes);
     }
 
@@ -143,6 +140,10 @@ public class MemberService {
 
         // 계약 정보를 DB에 저장한다.
         Long contractId = contractService.createContract(vendorId, member, payment, memberCreateReq.getContractCreateReq());
+
+        member.calcContractPriceAndCnt();
+
+        System.out.println("ERROR: " + member.getContractPrice());
 
         return contractId;
     }

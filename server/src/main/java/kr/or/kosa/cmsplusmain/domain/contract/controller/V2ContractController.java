@@ -29,7 +29,6 @@ public class V2ContractController {
 	/**
 	 * 계약 목록 조회
 	 * */
-	@LogExecutionTime("계약 목록 조회 V2")
 	@GetMapping
 	public PageRes<V2ContractListItemRes> searchContracts(@VendorId Long vendorId, ContractSearchReq contractSearchReq, PageReq pageReq) {
 		return contractService.searchContracts(vendorId, contractSearchReq, pageReq);
@@ -38,7 +37,6 @@ public class V2ContractController {
 	/**
 	 * 계약 목록 조회
 	 * */
-	@LogExecutionTime("계약 목록 조회 V2")
 	@GetMapping("/product/{contractId}")
 	public List<ContractProductRes> getContractProducts(@VendorId Long vendorId, @PathVariable Long contractId) {
 		return contractService.getContractProducts(vendorId, contractId);
@@ -47,7 +45,6 @@ public class V2ContractController {
 	/**
 	 * 계약 상세 조회 - 청구 목록
 	 * */
-	@LogExecutionTime("계약 상세 조회 - 청구 목록 V2")
 	@GetMapping("/{contractId}/billing")
 	public PageRes<BillingListItemRes> getBillingListByContract(@VendorId Long vendorId, @PathVariable Long contractId, PageReq pageReq) {
 		return contractService.getBillingsByContract(vendorId, contractId, pageReq);
@@ -56,7 +53,6 @@ public class V2ContractController {
 	/**
 	 * 계약 상세 조회 - 계약 상품 목록
 	 * */
-	@LogExecutionTime("계약 상세 조회 - 계약 상품 목록 V2")
 	@GetMapping("/{contractId}/product")
 	public List<ContractProductRes> getBillingListByContract(@VendorId Long vendorId, @PathVariable Long contractId) {
 		return contractService.getContractProducts(vendorId, contractId);
