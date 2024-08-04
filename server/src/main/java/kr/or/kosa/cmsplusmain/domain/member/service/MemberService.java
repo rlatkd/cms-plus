@@ -268,9 +268,9 @@ public class MemberService {
             Validator validator = factory.getValidator();
 
             memberList.forEach(dto -> {
-                    Member member = dto.toEntity(vendor);
-                    String errorMsg = validateError(member, validator);
+                    String errorMsg = validateError(dto, validator);
                     if (errorMsg == null) {
+                        Member member = dto.toEntity(vendor);
                         toSaves.add(member);
                     } else {
                         errors.add(ExcelErrorRes.<MemberExcelDto>builder()
@@ -344,9 +344,9 @@ public class MemberService {
     /**
      * 엑셀 한 row 마다 저장 불가 이유를 가져오고, 저장 불가 외에는 저장하기 위한 유효성 검사 선행
      * */
-    private String validateError(Member member, Validator validator) {
-        Set<ConstraintViolation<Member>> validate = validator.validate(member);
-        boolean canSave = memberCustomRepository.canSaveMember(member.getPhone(), member.getEmail());
+    private String validateError(MemberExcelDto member, Validator validator) {
+        Set<ConstraintViolation<MemberExcelDto>> validate = validator.validate(member);
+        boolean canSave = memberCustomRepository.canSaveMember(member.getMemberPhone(), member.getMemberEmail());
 
         // dto validate 변경 -> 메시지 커스텀
         String validation = validate.stream()

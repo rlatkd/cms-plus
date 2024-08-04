@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -22,6 +23,7 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
+import kr.or.kosa.cmsplusmain.domain.base.entity.BaseEntity;
 import kr.or.kosa.cmsplusmain.domain.base.repository.V2BaseRepository;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingSearchReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
@@ -34,6 +36,15 @@ public class V2BillingRepository extends V2BaseRepository<Billing, Long> {
 	public Billing findById(Long id) {
 		return selectFrom(billing)
 			.where(billing.id.eq(id))
+			.fetchOne();
+	}
+
+	public Billing findByIdIncludingDeleted(Long billingId) {
+		// 삭제 검사 조건을 놓지 않음
+		// 삭제된 청구도 같이 조회된다.
+		return selectWithDel(billing)
+			.from(billing)
+			.where(billing.id.eq(billingId))
 			.fetchOne();
 	}
 

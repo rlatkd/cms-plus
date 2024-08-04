@@ -13,8 +13,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 청구의 여러 동작들의 수행 가능 여부를 판단
- * 동작이 불가하다면 그 이유를 프론트에 리턴시키기 위함
+ * 청구의 여러 동작들의 수행 가능 여부를 판단 및 이유 리턴
+ * 요구사항 : 사용자에게 특정 행동의 실패 이유를 보여준다.
  * */
 @RequiredArgsConstructor
 @Getter

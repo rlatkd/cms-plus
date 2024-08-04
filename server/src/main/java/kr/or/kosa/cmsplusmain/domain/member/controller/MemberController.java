@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.member.controller;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.LogExecutionTime;
 import kr.or.kosa.cmsplusmain.domain.member.dto.*;
 import org.springframework.http.MediaType;
@@ -104,13 +105,12 @@ public class MemberController {
 
     /**
      * 회원 대량 등록
-     *
      * 실패 목록 리턴
      * */
     @LogExecutionTime("회원 대량 등록 v1")
     @PostMapping(value = "/upload")
-    public List<ExcelErrorRes<MemberExcelDto>> saveMembersByExcel(@RequestBody List<MemberExcelDto> memberExcelList) {
-        Long vendorId = 1L;
+    public List<ExcelErrorRes<MemberExcelDto>> saveMembersByExcel(@VendorId Long vendorId, @NotNull @RequestBody List<MemberExcelDto> memberExcelList) {
+        memberExcelList.forEach(MemberExcelDto::formatPhoneAndHomePhone);
         return memberService.uploadMembersByExcel(vendorId, memberExcelList);
     }
 

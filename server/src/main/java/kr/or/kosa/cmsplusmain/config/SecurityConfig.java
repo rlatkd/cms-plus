@@ -68,6 +68,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/v1/vendor/auth/request-number").permitAll()
 				.requestMatchers("/api/v1/vendor/simple-consent/available-options/{vendorId}").permitAll()
 				.requestMatchers("/api/v1/vendor/billing/invoice/{billingId}").permitAll()
+				.requestMatchers("/api/v2/vendor/billing/invoice/{billingId}").permitAll()
 				.requestMatchers("/api/v1/simple-consent/**").permitAll()
 				.requestMatchers("/api/v1/simple-consent").permitAll()
 				.requestMatchers("/api/v1/simple-consent/card/verify").permitAll()
