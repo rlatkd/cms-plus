@@ -26,7 +26,7 @@ import user from '@/assets/user.svg';
 
 const ContractRegisterPage = () => {
   const start = 0;
-  const end = 4;
+  const end = 3;
   const { status, reset, setStatus } = useStatusStore();
   const { handleClickPrevious, handleClickNext } = useStatusStepper('memberRegister', start, end);
   const [isShowModal, setIsShowModal] = useState(false);
@@ -70,7 +70,11 @@ const ContractRegisterPage = () => {
 
   // <----- 회원등록 API ----->
   const axiosCreateMember = async () => {
+    console.log('paymentMethod : ', paymentMethod);
+    console.log('paymentType : ', paymentType);
+    console.log('isSimpConsentCheck : ', isSimpConsentCheck);
     try {
+      console.log('1');
       if (status === 3) {
         const data = {
           ...basicInfo, // 기본정보
@@ -78,11 +82,15 @@ const ContractRegisterPage = () => {
           paymentCreateReq: transformPaymentInfo(), // 결제정보
           ...billingInfo, // 청구정보
         };
+        console.log('2');
+        console.log('data : ', data);
 
         // validation 체크
-        if (!validateBasicInfo()) return;
-        if (!validateContractInfo()) return;
-        if (!validatePaymentInfo(data.paymentCreateReq)) return;
+        // if (!validateBasicInfo()) return;
+        // if (!validateContractInfo()) return;
+        // if (!validatePaymentInfo(data.paymentCreateReq)) return;
+
+        console.log('3');
 
         const res = await postCreateMember(data);
         console.log('!----회원등록 성공----!'); // 삭제예정
@@ -96,6 +104,16 @@ const ContractRegisterPage = () => {
     } catch (err) {
       // onAlert({ err });
       console.error('axiosCreateMember => ', err.response);
+    }
+  };
+
+  // <----- 간편서명동의 링크 발송하기 ----->
+  const axiosSendReqSimpConsent = async contractId => {
+    try {
+      const res = await sendReqSimpConsent(contractId);
+      console.log('!----간편서명동의 링크 발송하기 성공----!'); // 삭제예정
+    } catch (err) {
+      console.error('axiosSendReqSimpConsent => ', err.response);
     }
   };
 
@@ -134,16 +152,6 @@ const ContractRegisterPage = () => {
       }
     } catch (err) {
       console.error('axiosMemberCheck => ', err.response);
-    }
-  };
-
-  // <----- 간편서명동의 링크 발송하기 ----->
-  const axiosSendReqSimpConsent = async contractId => {
-    try {
-      const res = await sendReqSimpConsent(contractId);
-      console.log('!----간편서명동의 링크 발송하기 성공----!'); // 삭제예정
-    } catch (err) {
-      console.error('axiosSendReqSimpConsent => ', err.response);
     }
   };
 
@@ -311,7 +319,7 @@ const ContractRegisterPage = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [navigate]);
+  }, []);
 
   // <----- 페이지 이탈 시 Status reset ----->
   useEffect(() => {

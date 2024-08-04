@@ -25,6 +25,7 @@ const BillingForm = ({
   const onAlert = useAlert();
 
   const handleDateChange = date => {
+    console.log('날짜 : ', date);
     handleBillingDataChange('billingDate', date);
   };
 
@@ -79,7 +80,7 @@ const BillingForm = ({
                 label='청구타입'
                 classContainer='mr-5 w-1/2'
                 classLabel='text-15 text-text_black font-700'
-                classSelect='py-3 p-4 rounded-lg'
+                classSelect='py-3 rounded-lg'
                 value={billingData.billingType}
                 options={typeOtions}
                 onChange={e => handleBillingDataChange('billingType', e.target.value)}
@@ -91,6 +92,7 @@ const BillingForm = ({
                   placeholder='년도-월-일'
                   width='100%'
                   readOnly
+                  classLabel='text-15'
                   value={billingData.billingDate}
                   disabledDate={disabledStartDate}
                   handleChangeValue={e => handleDateChange(e.target.value)}

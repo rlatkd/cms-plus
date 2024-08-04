@@ -153,7 +153,7 @@ const ContractListPage = () => {
         setIsShowSimpModal(true);
       } else {
         onAlert({
-          msg: `${selectedContracts.length}개의 청구 결제를 성공했습니다.`,
+          msg: `${selectedContracts.length}개의 간편 서명 동의 요청에 성공했습니다.`,
           type: 'success',
           title: '요청 성공',
         });

@@ -1,9 +1,8 @@
 import PagiNation from '@/components/common/PagiNation';
 import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
-import { formatProducts, formatProductsForList } from '@/utils/format/formatProducts';
+import { formatProductsForList } from '@/utils/format/formatProducts';
 import { useState } from 'react';
-import useDebounce from '@/hooks/useDebounce';
 
 const typeOtions = [
   { value: 'memberName', label: '회원명' },
@@ -22,7 +21,6 @@ const typePlaceholers = {
 const ContractList = ({
   searchType,
   setSearchType,
-  searchTerm,
   setSearchTerm,
   contractList,
   handleSelectContract,
@@ -42,24 +40,27 @@ const ContractList = ({
 
   const handleSelectChange = event => {
     setMSearchTerm('');
+    setSearchTerm('');
     setSearchType(event.target.value);
   };
 
   const handleInputChange = e => {
-    setSearchTerm(e.target.value);
-    setMSearchTerm(e.target.value);
+    let value = e.target.value;
 
     if (searchType === 'contractDay' || searchType === 'contractPrice') {
-      e.target.value = e.target.value.replace(/\D/g, '');
+      value = value.replace(/\D/g, '');
     }
+
+    setSearchTerm(value);
+    setMSearchTerm(value);
   };
 
   return (
-    <div className='relative w-2/5 pr-5 border-r border-ipt_border'>
-      <h2 className='text-text_black text-xl font-800'>계약 목록</h2>
-      <div className='flex justify-between w-full mt-5 mb-2 '>
+    <div className='flex flex-col relative w-2/5 pr-5 border-r border-ipt_border'>
+      <h2 className='text-text_black text-xl font-800 mb-6'>계약 목록</h2>
+      <div className='flex justify-between w-full mb-2'>
         <SelectField
-          label=''
+          label='카테고리'
           classContainer='mr-3 w-1/3 h-full'
           classLabel='text-15 text-text_black font-700'
           classSelect='py-3 rounded-lg'
@@ -68,16 +69,17 @@ const ContractList = ({
           onChange={handleSelectChange}
         />
         <InputWeb
+          label='검색어'
           id='searchTerm'
           type='text'
           classContainer='w-full'
-          classInput='py-3'
+          classInput='text-15 py-3'
           placeholder={typePlaceholers[searchType]}
           value={mSearchTerm}
           onChange={handleInputChange}
         />
       </div>
-      <table className='w-full mb-3'>
+      <table className='flex flex-col h-full w-full  mb-3'>
         <thead>
           <tr className='flex bg-table_col shadow-column'>
             <th className='w-3/12 py-2 text-center text-text_black font-800 '>회원명</th>
@@ -91,7 +93,7 @@ const ContractList = ({
             <tr
               key={contract.contractId}
               onClick={() => onSelected(contract)}
-              className={`flex items-center py-3 border-b border-ipt_border cursor-pointer  
+              className={`flex items-center h-[9%] border-b border-ipt_border cursor-pointer  
                 ${selectedContractId === contract.contractId ? 'bg-blue-100' : 'hover:bg-ipt_disa'}`}>
               <td className='w-3/12 text-center text-text_black'>{contract.memberName}</td>
               <td className='w-2/12 text-center text-text_black'>{`${contract.contractDay}일`}</td>

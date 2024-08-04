@@ -40,7 +40,7 @@ const BillingRegisterPage = () => {
     async (page = currentPage) => {
       try {
         const res = await getContractList({
-          [searchType]: searchTerm,
+          [searchType]: debouncedSearchTerm,
           page,
           size: 10,
         });
@@ -50,7 +50,7 @@ const BillingRegisterPage = () => {
         console.error('청구 생성 - 계약 목록 조회 실패', err);
       }
     },
-    [searchType, searchTerm, currentPage]
+    [searchType, debouncedSearchTerm, currentPage]
   );
 
   const fetchContractProducts = useCallback(async contractId => {
@@ -104,12 +104,11 @@ const BillingRegisterPage = () => {
       billingDate.setMonth(billingDate.getMonth() + 1);
     }
 
-    return billingDate.toISOString().split('T')[0];
+    return billingDate.toLocaleDateString('en-CA');
   };
 
   const handleSelectContract = async contract => {
     const contractProducts = await fetchContractProducts(contract.contractId);
-    console.log('contractProducts', contractProducts);
     setBillingData(prev => ({
       ...prev,
       contractId: contract.contractId,
@@ -193,8 +192,8 @@ const BillingRegisterPage = () => {
         />
 
         {/* 오른쪽: 청구 생성 정보 */}
-        <div className='w-3/5 pl-5 flex flex-col h-full overflow-hidden '>
-          <h2 className='text-text_black text-xl font-800 mb-4'>청구 생성 정보</h2>
+        <div className='w-3/5 pl-4 flex flex-col h-full overflow-hidden '>
+          <h2 className='ml-1  text-text_black text-xl font-800 mb-6'>청구 생성 정보</h2>
           {selectedContract ? (
             <div className='flex-1 overflow-hidden flex flex-col '>
               <BillingForm

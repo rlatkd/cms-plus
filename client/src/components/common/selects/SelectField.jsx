@@ -13,7 +13,7 @@ const SelectField = ({
     <div className={`${classContainer} mb-4`}>
       {label && (
         <label
-          className={`${classLabel} block text-sm font-400 text-slate-700 mb-2
+          className={`${classLabel} block text-15 font-400 text-slate-700 mb-2
                     ${required ? "after:ml-1 after:text-red-500 after:content-['*']" : ''}`}>
           {label}
         </label>

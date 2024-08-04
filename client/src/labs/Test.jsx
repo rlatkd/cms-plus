@@ -39,7 +39,7 @@ const Test = () => {
   // };
 
   return (
-    <div className='w-full'>
+    <div className='w-[1000px] border border-red-500'>
       <div style={{ display: 'flex', marginBottom: '20px' }}>
         <button
           style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}>
@@ -81,7 +81,7 @@ const Test = () => {
           confirm
         </button>
         <button
-          style={{ border: '1px solid black', height: 60, padding: '10px', marginRight: '5px' }}
+          style={{ border: '1px solid black', height: 60, padding: '10px', m@arginRight: '5px' }}
           onClick={() => onConfirm('회원정보가 수정하시겠습니까?', 'warning', '회원정보 수정')}>
           confirmWarning
         </button>
@@ -130,10 +130,10 @@ const Test = () => {
           <path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' />
         </svg>
       </label>
-      <LoadingSpinner size='lg' text='잠시만 기다려주세요...' />
-      <LoadingSpinner size='xl' text='잠시만 기다려주세요...' />
-      <LoadingSpinner size='xxl' text='잠시만 기다려주세요...' />
-      <LoadingSpinner size='xxxl' text='잠시만 기다려주세요...' />
+      {/* <LoadingSpinner size='lg' text='잠시만 기다려주세요...' /> */}
+      {/* <LoadingSpinner size='xl' text='잠시만 기다려주세요...' /> */}
+      {/* <LoadingSpinner size='xxl' text='잠시만 기다려주세요...' /> */}
+      {/* <LoadingSpinner size='xxxl' text='잠시만 기다려주세요...' /> */}
     </div>
   );
 };

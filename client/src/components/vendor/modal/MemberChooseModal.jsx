@@ -115,10 +115,10 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
         <table className='w-full h-[415px] mb-3'>
           <thead>
             <tr className='flex bg-table_col shadow-column'>
-              <th className='w-3/12 py-2 pl-6 text-left text-text_black font-800 '>회원번호</th>
-              <th className='w-2/12 py-2 pl-6 text-left text-text_black font-800 '>회원이름</th>
-              <th className='w-4/12 py-2 pl-8 text-left text-text_black font-800 '>휴대전화</th>
-              <th className='w-4/12 py-2 pl-8 text-left text-text_black font-800 '>회원등록일</th>
+              <th className='w-3/12 py-2 text-center text-text_black font-800 '>회원번호</th>
+              <th className='w-2/12 py-2 text-center text-text_black font-800 '>회원이름</th>
+              <th className='w-4/12 py-2 text-center text-text_black font-800 '>휴대전화</th>
+              <th className='w-4/12 py-2 text-center text-text_black font-800 '>회원등록일</th>
             </tr>
           </thead>
           <tbody className='flex flex-col h-full text-sm '>
@@ -127,13 +127,13 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
                 <tr
                   key={member.id}
                   onClick={() => handleSelectMember(member)}
-                  className='flex items-center py-3 border-b border-ipt_border cursor-pointer hover:bg-ipt_disa'>
-                  <td className='w-3/12 pl-6 text-left text-text_black'>{formatId(member.id)}</td>
-                  <td className='w-2/12 pl-6 text-left text-text_black'>{member.name}</td>
-                  <td className='w-4/12 pl-8 text-left text-text_black'>
+                  className='flex items-center h-[12.5%] border-b border-ipt_border cursor-pointer hover:bg-ipt_disa'>
+                  <td className='w-3/12 text-center text-text_black'>{formatId(member.id)}</td>
+                  <td className='w-2/12 text-center text-text_black'>{member.name}</td>
+                  <td className='w-4/12 text-center text-text_black'>
                     {formatPhone(member.phone)}
                   </td>
-                  <td className='w-4/12 pl-8 text-left text-text_black'>{member.enrollDate}</td>
+                  <td className='w-4/12 text-center text-text_black'>{member.enrollDate}</td>
                 </tr>
               ))}
           </tbody>

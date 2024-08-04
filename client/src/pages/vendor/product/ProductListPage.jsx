@@ -56,8 +56,7 @@ const ProductListPage = () => {
           size: 10,
         });
         const transformdData = transformProductListItem(res.data.content);
-
-        console.log(transformdData);
+        console.log('전체목록 : ', res.data.content);
         setProductList(transformdData);
         setFilteredListCount(res.data.totalCount);
         if (Object.keys(searchParams).length === 0) {
@@ -138,6 +137,7 @@ const ProductListPage = () => {
     setModalTitle('상품 상세 정보');
     try {
       const res = await getProductDetail(productId);
+      console.log('상품상세 : ', res.data);
       setProductDetailData(res.data);
       setIsShowModal(true);
     } catch (err) {
