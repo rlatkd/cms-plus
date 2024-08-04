@@ -4,7 +4,7 @@ import PaymentCMS from './PaymentCMS';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import { getAvailableOptions } from '@/apis/simpleConsent';
 
-const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
+const PaymentInfo = ({ userData, setUserData, vendorId, contractId, name }) => {
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
   const [isVerified, setIsVerified] = useState(false);
 
@@ -23,39 +23,39 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
 
   const handlePaymentMethodChange = useCallback(
     method => {
+      console.log('payment method change')
       setUserData({
         ...userData,
         paymentDTO: { ...userData.paymentDTO, paymentMethod: method },
       });
-      setIsVerified(false); // 결제 수단이 변경되면 인증 상태 초기화
     },
     [userData, setUserData]
   );
 
+  const handleInputChange = useCallback(
+    (name, value) => {
+        setUserData({
+          ...userData,
+          paymentDTO: { ...userData.paymentDTO, [name]: value },
+        });
+      },
+      [userData, setUserData]
+    );
+
   const handleVerificationComplete = useCallback(
     verified => {
-      console.log('카드/계좌 인증 완료:', verified);
-      setIsVerified(verified);
+      console.log('카드/계좌 인증:', verified);
+      
       // 부모 컴포넌트의 userData도 업데이트
       setUserData(prevData => ({
         ...prevData,
         paymentDTO: {
           ...prevData.paymentDTO,
-          isVerified: verified,
+          isVerified: true,
         },
       }));
     },
     [setUserData]
-  );
-
-  const handleInputChange = useCallback(
-    (name, value) => {
-      setUserData({
-        ...userData,
-        paymentDTO: { ...userData.paymentDTO, [name]: value },
-      });
-    },
-    [userData, setUserData]
   );
 
   const paymentOptions = availablePaymentMethods.map(method => ({
@@ -72,9 +72,9 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId }) => {
 
   return (
     <>
-      <div className='w-full text-left'>
+      <div className='w-full text-left p-1'>
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
-          회원님의
+          {name}님의
           <br />
           결제정보를 확인해주세요.
         </h3>

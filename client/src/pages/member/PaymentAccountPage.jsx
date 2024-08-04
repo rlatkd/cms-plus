@@ -10,23 +10,34 @@ import { useStatusStore } from '@/stores/useStatusStore';
 import useStatusStepper from '@/hooks/useStatusStepper';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { requestAccountPayment } from '@/apis/payment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { validateField } from '@/utils/validators';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const PaymentAccountPage = () => {
   const start = 0;
   const end = 6;
-  const status = useStatusStore(state => state.status);
-  const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper('account', start, end);
+  const { status, reset, setStatus} = useStatusStore();
+  const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
+    'account',
+    start,
+    end
+  );
   const [isVerified, setIsVerified] = useState(false);
-  const { invoiceInfo, selectedBank }  = useInvoiceStore();
+  const { invoiceInfo, selectedBank } = useInvoiceStore();
+
+  const [billingId, setBillingId] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const { invoiceId } = useParams();
+  const navigate = useNavigate();
 
   const validateSelectedBank = () => {
     const missingFields = [];
     if (!selectedBank) missingFields.push('은행 선택');
 
     return { missingFields };
-  }
+  };
 
   const validateBankInfo = () => {
     const { accountNumber, accountOwner, accountOwnerBirth } = accountInfo;
@@ -53,7 +64,7 @@ const PaymentAccountPage = () => {
     let selectedBankValidation;
     let bankInfoValidation;
 
-    switch(status){
+    switch (status) {
       case 3:
         selectedBankValidation = validateSelectedBank();
         missingFields = selectedBankValidation.missingFields;
@@ -64,7 +75,7 @@ const PaymentAccountPage = () => {
         missingFields = bankInfoValidation.missingFields;
         invalidFields = bankInfoValidation.invalidFields;
         break;
-      
+
       default:
         break;
     }
@@ -74,7 +85,7 @@ const PaymentAccountPage = () => {
       return;
     }
 
-    if (invalidFields.length > 0){
+    if (invalidFields.length > 0) {
       alert(`다음 필드의 형식이 올바르지 않습니다: ${invalidFields.join(', ')}`);
       return;
     }
@@ -96,8 +107,6 @@ const PaymentAccountPage = () => {
     }
   };
 
-
-
   const [accountInfo, setAccountInfo] = useState({
     accountNumber: '',
     accountOwner: '',
@@ -108,17 +117,16 @@ const PaymentAccountPage = () => {
     3: () => <ChooseBank billingInfo={invoiceInfo} />, //은행선택
     4: AccountInfo, // 계좌정보 입력
     5: () => <Loading content={'결제중...'} />, // 결제로딩 대충 로딩하다가 success로 가도록 해야됨. 결제결과는 문자로 날라감
-    6: Success, // 입금완료
+    6: () => <Success content="결제가 완료되었습니다!" />, // 입금완료
   };
 
   const Content = componentMap[status] || (() => 'error');
 
   const number = accountInfo.accountNumber; //계좌번호
   const method = 'ACCOUNT';
-  const phoneNumber = invoiceInfo.member.phone;
 
   const paymentData = {
-    billingId: invoiceInfo.billingId,
+    billingId: billingId,
     phoneNumber: phoneNumber,
     method: method,
     number: number,
@@ -126,7 +134,7 @@ const PaymentAccountPage = () => {
 
   const axiosAccountPayment = async () => {
     try {
-      console.log(paymentData)
+      console.log('?????', paymentData);
       const res = await requestAccountPayment(paymentData);
       console.log(res.data);
     } catch (err) {
@@ -134,19 +142,41 @@ const PaymentAccountPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (invoiceInfo) {
+      setBillingId(invoiceInfo.billingId);
+      setPhoneNumber(invoiceInfo.member.phone);
+    } else {
+      reset();
+      navigate(`/member/invoice/${invoiceId}`);
+    }
+  }, []);
+
+  // <----- 로딩 타임아웃 설정 ----->
+  useEffect(() => {
+    if (status === 5) {
+      const timer = setTimeout(() => {
+        setStatus(6);
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, setStatus]);
+
   return (
     <>
-      <Content accountInfo={accountInfo} setAccountInfo={setAccountInfo} isVerified={isVerified} 
-        setIsVerified={setIsVerified} />
+      <Content
+        accountInfo={accountInfo}
+        setAccountInfo={setAccountInfo}
+        isVerified={isVerified}
+        setIsVerified={setIsVerified}
+      />
+      {status != 5 && status != 6 &&(
       <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
         <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
-        <NextButton
-          onClick={handleClickNext}
-          type={'account'}
-          status={status}
-          end={end}
-        />
+        <NextButton onClick={handleClickNext} type={'account'} status={status} end={end} />
       </div>
+      )}
     </>
   );
 };

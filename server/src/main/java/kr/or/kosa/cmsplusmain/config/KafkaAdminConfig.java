@@ -11,6 +11,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
 
+import java.util.HashMap;
+import java.util.Map;
+
+
 @Configuration
 public class KafkaAdminConfig {
 
@@ -42,7 +46,7 @@ public class KafkaAdminConfig {
                 TopicBuilder.name(messagingTopic)
                         .partitions(3)
                         .replicas(3)
-                        .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(60000))
+                        .config(TopicConfig.RETENTION_MS_CONFIG, String.valueOf(60000))  // 메시지 보관 시간
                         .build(),
                 TopicBuilder.name(paymentTopic)
                         .partitions(3)

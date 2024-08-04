@@ -4,29 +4,44 @@ import { useEffect, useState } from 'react';
 import PreviousButton from '@/components/common/buttons/StatusPreButton';
 import NextButton from '@/components/common/buttons/StatusNextButton';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const PaymentChoosePage = () => {
   const start = 0;
   const end = 3;
-  const status = useStatusStore(state => state.status);
+  const { invoiceId } = useParams();
+  const { status, reset, setStatus } = useStatusStore();
   const [paymentType, setPaymentType] = useState('card');
   const { handleClickPrevious, handleClickNext } = useStatusStepper(paymentType, start, end);
+  const { invoiceInfo } = useInvoiceStore();
+  const navigate = useNavigate();
 
-  const invoiceInfo = useInvoiceStore(state => state.invoiceInfo);
+  const [availableMethods, setAvailableMethods] = useState([]);
+  const [isCardAvailable, setIsCardAvailable] = useState(false);
+  const [isAccountAvailable, setIsAccountAvailable] = useState(false);
 
-  //사용 가능한 결제 방법 확인
-  const availableMethods = invoiceInfo.paymentType.availableMethods || [];
-  const isCardAvailable = availableMethods.some(method => method.code === 'CARD');
-  const isAccountAvailable = availableMethods.some(method => method.code === 'ACCOUNT');
-
-  //사용 가능한 결제 방법이 하나만 있을 경우 자동선택
   useEffect(() => {
-    if (isCardAvailable && !isAccountAvailable) {
-      setPaymentType('card');
-    } else if (!isCardAvailable && isAccountAvailable) {
-      setPaymentType('account');
+    if (invoiceInfo) {
+      const methods = invoiceInfo.paymentType.availableMethods;
+      setAvailableMethods(methods);
+
+      //사용 가능한 결제 방법 확인
+      const cardAvail = methods.some(method => method.code === 'CARD');
+      const accountAvail = methods.some(method => method.code === 'ACCOUNT');
+
+      setIsCardAvailable(cardAvail);
+      setIsAccountAvailable(accountAvail);
+
+      if (cardAvail && !accountAvail) {
+        setPaymentType('card');
+      } else if (!cardAvail && accountAvail) {
+        setPaymentType('account');
+      }
+    } else {
+      reset();
+      navigate(`/member/invoice/${invoiceId}`);
     }
-  }, [isCardAvailable, isAccountAvailable]);
+  }, []);
 
   // 결제 방법이 카드와 계좌중에 하나만 있다면 카드, 계좌 중 없는 건 비활성화
   return (

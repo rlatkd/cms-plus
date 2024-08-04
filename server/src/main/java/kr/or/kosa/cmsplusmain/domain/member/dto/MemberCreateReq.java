@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import kr.or.kosa.cmsplusmain.domain.base.validator.HomePhone;
 import kr.or.kosa.cmsplusmain.domain.base.validator.Memo;
@@ -16,16 +17,18 @@ import kr.or.kosa.cmsplusmain.domain.member.entity.Member;
 import kr.or.kosa.cmsplusmain.domain.member.entity.MemberStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.dto.PaymentCreateReq;
 import kr.or.kosa.cmsplusmain.domain.vendor.entity.Vendor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class MemberCreateReq {
 
-    @NotNull
+    @NotBlank
     @PersonName
     private String memberName; // 회원 이름
 
-    @NotNull
+    @NotBlank
     @Phone
     private String memberPhone; // 회원 휴대전화 번호
 
@@ -35,7 +38,7 @@ public class MemberCreateReq {
     @HomePhone
     private String memberHomePhone; // 회원 유선전화 번호
 
-    @NotNull
+    @NotBlank
     @Email
     private String memberEmail; // 회원 이메일
 

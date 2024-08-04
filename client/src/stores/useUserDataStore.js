@@ -21,6 +21,7 @@ export const useUserDataStore = create((set, get) => ({
       accountHolder: '',
       accountOwnerBirth: '',
       accountNumber: '',
+      isVerified: true,
     },
     contractDTO: {
       selectedProduct: '',

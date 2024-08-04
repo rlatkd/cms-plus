@@ -40,7 +40,14 @@ const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified  }
 
       const result = await verifyCMS(accountData);
       setVerificationResult(result);
-      setIsVerified(true);
+
+      if(result){
+        setIsVerified(result);
+      }else{
+        setIsVerified(result);
+        alert('계좌 인증에 실패했습니다.' )
+      }
+
       console.log('Account verification result:', result);
     } catch (error) {
       console.error('Account verification failed:', error);
@@ -66,9 +73,9 @@ const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified  }
             name='bankNumber'
             type='text'
             required
-            placeholder={selectedBank}
+            value={selectedBank}
             disabled
-            className='disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none'
+            className='text-slate-500 disabled:border-slate-200 disabled:shadow-none'
           />
           <Input
             label='예금주명'

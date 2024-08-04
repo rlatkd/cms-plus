@@ -1,6 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.base.repository;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
@@ -74,7 +75,14 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 	 * */
 	@SafeVarargs
 	protected final <T> JPAQuery<T> selectWithNotDel(Expression<T> expr, EntityPath<? extends BaseEntity>... notDelEntities) {
+		if (notDelEntities == null || notDelEntities.length == 0) {
+			return queryFactory.select(expr);
+		}
 		return withNotDel(queryFactory.select(expr), notDelEntities);
+	}
+
+	protected final <T> JPAQuery<T> selectWithDel(Expression<T> expr) {
+		return queryFactory.select(expr);
 	}
 
 	/**
@@ -90,6 +98,7 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 	 * 소프트 삭제 여부
 	 * */
 	protected final BooleanExpression isNotDeleted(Expression<? extends BaseEntity> entity) {
+		if (entity == null) return null;
 		try {
 			BooleanPath deletedPath = (BooleanPath) entity.getClass().getField("deleted").get(entity);
 			return deletedPath.isFalse();
@@ -104,6 +113,7 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 			return query;
 		}
 		BooleanExpression notDelConditions = Arrays.stream(notDelEntities)
+			.filter(Objects::nonNull)
 			.map(this::isNotDeleted)
 			.reduce(BooleanExpression::and)
 			.orElse(null);

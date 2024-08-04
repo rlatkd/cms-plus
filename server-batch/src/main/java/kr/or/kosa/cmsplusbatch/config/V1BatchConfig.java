@@ -42,7 +42,7 @@ public class V1BatchConfig {
     @Bean
     public Step sendInvoiceStep() {
         return new StepBuilder("sendInvoiceStep", jobRepository)
-                .<Billing, Billing>chunk(1000, transactionManager)
+                .<Billing, Billing>chunk(100, transactionManager)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
@@ -61,7 +61,7 @@ public class V1BatchConfig {
         reader.setRepository(billingRepository);
         reader.setMethodName("findAllByBillingDateAndMemberInvoiceSendMethod");
         reader.setArguments(Arrays.asList(LocalDate.now()));
-        reader.setPageSize(1000);
+        reader.setPageSize(100);
         reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
         return reader;
     }

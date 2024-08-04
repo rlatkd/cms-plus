@@ -14,12 +14,12 @@ import { cols, initialSearch, selectOptions } from '@/utils/tableElements/billin
 import { formatPhone } from '@/utils/format/formatPhone';
 import { formatProductsForList } from '@/utils/format/formatProducts';
 import PayRealtimeErrorModal from '@/components/vendor/modal/PayRealtimeErrorModal';
-import ReqSimpConsentErrorModal from '@/components/vendor/modal/ReqSimpConsentErrorModal';
 import useAlert from '@/hooks/useAlert';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
   const [billingListCount, setBillingListCount] = useState(); // 청구 목록 전체 수
+  const [filteredListCount, setFilteredListCount] = useState(); // 필터링 된 목록 전체 수
   const [search, setSearch] = useState(initialSearch); // 검색 조건
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // 현재 검색 조건
 
@@ -43,7 +43,7 @@ const BillingListPage = () => {
   const onAlert = useAlert();
   const navigate = useNavigate();
 
-  // <--------청구 목록 조회-------->
+  // <----- 청구 목록 조회 ----->
   const axiosBillingList = useCallback(
     async (
       searchParams = {},
@@ -60,8 +60,12 @@ const BillingListPage = () => {
           size: 10,
         });
         const transformdData = transformBillingListItem(res.data.content);
+        console.log('!---- 청구 목록 조회 성공 ----!'); // 삭제예정
         setBillingList(transformdData);
-        setBillingListCount(res.data.totalCount);
+        setFilteredListCount(res.data.totalCount);
+        if (Object.keys(searchParams).length === 0) {
+          setBillingListCount(res.data.totalCount);
+        }
         setTotalPages(res.data.totalPage || 1);
       } catch (err) {
         console.error('axiosMemberList => ', err);
@@ -225,7 +229,10 @@ const BillingListPage = () => {
           <div className='bg-mint h-7 w-7 rounded-md ml-1 mr-3 flex items-center justify-center'>
             <Card fill='#ffffff' />
           </div>
-          <p className='text-text_black font-700 mr-5'>총 {billingListCount}건</p>
+          <p className='text-text_black font-700 mr-5'>
+            {' '}
+            {filteredListCount} / {billingListCount}건
+          </p>
           <SortSelect
             setCurrentOrder={setCurrentOrder}
             setCurrentOrderBy={setCurrentOrderBy}

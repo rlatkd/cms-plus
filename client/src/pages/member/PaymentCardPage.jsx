@@ -10,25 +10,34 @@ import useStatusStepper from '@/hooks/useStatusStepper';
 import { useStatusStore } from '@/stores/useStatusStore';
 import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { requestCardPayment } from '@/apis/payment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { validateField } from '@/utils/validators';
 import { unformatCardNumber } from '@/utils/format/formatCard';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const PaymentCardPage = () => {
   const start = 0;
   const end = 6;
-  const status = useStatusStore(state => state.status);
-  const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper('card', start, end);
-
+  const { status, reset, setStatus } = useStatusStore();
+  const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
+    'card',
+    start,
+    end
+  );
   const [isVerified, setIsVerified] = useState(false);
-  const { invoiceInfo, selectedCard }  = useInvoiceStore();
+  const { invoiceInfo, selectedCard } = useInvoiceStore();
+  const [billingId, setBillingId] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const { invoiceId } = useParams();
+  const navigate = useNavigate();
 
   const validateSelectedCard = () => {
     const missingFields = [];
     if (!selectedCard) missingFields.push('카드 선택');
 
     return { missingFields };
-  }
+  };
 
   const validateCardInfo = () => {
     const { cardNumber, expiryDate, cardOwner, cardOwnerBirth } = cardInfo;
@@ -38,7 +47,8 @@ const PaymentCardPage = () => {
     if (!isVerified) missingFields.push('카드 인증');
 
     if (!cardNumber) missingFields.push('카드번호');
-    else if (!validateField('cardNumber', unformatCardNumber(cardNumber))) invalidFields.push('카드번호');
+    else if (!validateField('cardNumber', unformatCardNumber(cardNumber)))
+      invalidFields.push('카드번호');
 
     if (!expiryDate) missingFields.push('유효기간');
     else if (!validateField('expiryDate', expiryDate)) invalidFields.push('유효기간');
@@ -58,7 +68,7 @@ const PaymentCardPage = () => {
     let selectedCardValidation;
     let cardInfoValidation;
 
-    switch(status){
+    switch (status) {
       case 3:
         selectedCardValidation = validateSelectedCard();
         missingFields = selectedCardValidation.missingFields;
@@ -69,7 +79,7 @@ const PaymentCardPage = () => {
         missingFields = cardInfoValidation.missingFields;
         invalidFields = cardInfoValidation.invalidFields;
         break;
-      
+
       default:
         break;
     }
@@ -79,7 +89,7 @@ const PaymentCardPage = () => {
       return;
     }
 
-    if (invalidFields.length > 0){
+    if (invalidFields.length > 0) {
       alert(`다음 필드의 형식이 올바르지 않습니다: ${invalidFields.join(', ')}`);
       return;
     }
@@ -101,7 +111,6 @@ const PaymentCardPage = () => {
     }
   };
 
-
   const [cardInfo, setCardInfo] = useState({
     cardNumber: '',
     expiryDate: '',
@@ -113,17 +122,16 @@ const PaymentCardPage = () => {
     3: ChooseCard, //카드사 선택
     4: CardInfo, //카드정보 입력
     5: () => <Loading content={'결제중...'} />, //결제중
-    6: Success, //입금완료
+    6: () => <Success content="결제가 완료되었습니다!" />, //입금완료
   };
 
   const Content = componentMap[status] || (() => 'error');
 
   const number = cardInfo.cardNumber; //카드번호
   const method = 'CARD';
-  const phoneNumber = invoiceInfo.member.phone;
 
   const paymentData = {
-    billingId: invoiceInfo.billingId,
+    billingId: billingId,
     phoneNumber: phoneNumber,
     method: method,
     number: number,
@@ -138,19 +146,41 @@ const PaymentCardPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (invoiceInfo) {
+      setBillingId(invoiceInfo.billingId);
+      setPhoneNumber(invoiceInfo.member.phone);
+    } else {
+      reset();
+      navigate(`/member/invoice/${invoiceId}`);
+    }
+  }, []);
+
+  // <----- 로딩 타임아웃 설정 ----->
+  useEffect(() => {
+    if (status === 5) {
+      const timer = setTimeout(() => {
+        setStatus(6);
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, setStatus]);
+
   return (
     <>
-      <Content cardInfo={cardInfo} setCardInfo={setCardInfo} isVerified={isVerified} 
-        setIsVerified={setIsVerified} />
+      <Content
+        cardInfo={cardInfo}
+        setCardInfo={setCardInfo}
+        isVerified={isVerified}
+        setIsVerified={setIsVerified}
+      />
+      {status != 5 && status != 6 &&(
       <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
-        <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
-        <NextButton
-          onClick={handleClickNext}
-          type={'card'}
-          status={status}
-          end={end}
-        />
+          <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
+          <NextButton onClick={handleClickNext} type={'card'} status={status} end={end} />
       </div>
+       )}
     </>
   );
 };

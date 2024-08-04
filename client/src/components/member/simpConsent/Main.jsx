@@ -1,12 +1,12 @@
 import cardImage from '@/assets/mobilelogo.svg';
 
-const main = () => {
+const main = ({name}) => {
   return (
     <div className='flex flex-col items-center justify-between h-screen bg-white p-3'>
       <div className='text-left w-full'>
         <h1 className='text-2xl font-extrabold text-teal-400 mb-4'>Hyosung CMS#</h1>
         <h3 className='font-semibold text-gray-700 text-base mb-8'>
-          아쿠르트에서 회원님께
+          아쿠르트에서 {name}님께
           <br />
           자동결제 등록을 요청하였습니다.
         </h3>
