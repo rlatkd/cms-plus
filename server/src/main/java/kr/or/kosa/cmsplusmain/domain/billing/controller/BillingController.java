@@ -2,6 +2,7 @@ package kr.or.kosa.cmsplusmain.domain.billing.controller;
 
 import java.util.List;
 
+import kr.or.kosa.cmsplusmain.LogExecutionTime;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,6 +76,7 @@ public class BillingController {
 	/**
 	 * 청구목록 조회
 	 * */
+	@LogExecutionTime
 	@GetMapping
 	public PageRes<BillingListItemRes> searchBillings(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
 		return billingService.searchBillings(vendorId, search, pageReq);
