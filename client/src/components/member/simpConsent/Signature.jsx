@@ -3,7 +3,7 @@ import InfoRow from '@/components/common/InfoRow';
 import SignatureCanvas from 'react-signature-canvas';
 import { uploadSignature } from '@/apis/signature';
 
-const Signature = ({ userData, setUserData }) => {
+const Signature = ({ userData, setUserData, name }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
@@ -122,7 +122,7 @@ const Signature = ({ userData, setUserData }) => {
     <div className='relative bg-white p-1'>
       <div className='w-full text-left'>
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
-          회원님의
+          {name}님의
           <br />
           정보를 확인하고 서명해주세요.
         </h3>

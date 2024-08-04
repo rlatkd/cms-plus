@@ -57,7 +57,6 @@ const Statistics = () => {
   }, []); // 빈 의존성 배열로 변경
 
   return (
-    <div className='primary-dashboard flex flex-col h-full w-full'>
       <div className='flex flex-1 overflow-hidden'>
         <StatisticList
           statisticList={statisticList}
@@ -103,7 +102,6 @@ const Statistics = () => {
           )}
         </div>
       </div>
-    </div>
   );
 };
 

@@ -3,7 +3,8 @@ import AddressInput from '@/components/common/inputs/AddressInput';
 import { validateField } from '@/utils/validators';
 import { formatPhone, removeDashes } from '@/utils/format/formatPhone';
 
-const BasicInfo = ({ userData, setUserData, contractId }) => {
+const BasicInfo = ({ userData, setUserData, contractId, name }) => {
+  
   const handleChange = e => {
     const { name, value } = e.target;
     let formattedValue = value;
@@ -27,7 +28,7 @@ const BasicInfo = ({ userData, setUserData, contractId }) => {
     <div className='flex flex-col bg-white p-1'>
       <div className='w-full text-left'>
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
-          회원님의
+          {name}님의
           <br />
           기본정보를 확인해주세요.
         </h3>

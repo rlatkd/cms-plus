@@ -28,6 +28,7 @@ services:
     environment:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
     volumes:
       - "~/zk-cluster/zk1/data:/data"
     networks:
@@ -43,6 +44,7 @@ services:
     environment:
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
     volumes:
       - "~/zk-cluster/zk2/data:/data"
     networks:
@@ -58,6 +60,7 @@ services:
     environment:
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
     volumes:
       - "~/zk-cluster/zk3/data:/data"
     networks:

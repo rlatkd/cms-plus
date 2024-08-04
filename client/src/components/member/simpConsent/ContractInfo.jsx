@@ -6,7 +6,7 @@ import { getAvailableOptions } from '@/apis/simpleConsent';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
 
-const ContractInfo = ({ userData, setUserData, vendorId, contractId, isExistingContract }) => {
+const ContractInfo = ({ userData, setUserData, vendorId, contractId, isExistingContract, name }) => {
   const [availableProducts, setAvailableProducts] = useState([]);
 
   useEffect(() => {
@@ -138,7 +138,7 @@ const ContractInfo = ({ userData, setUserData, vendorId, contractId, isExistingC
     <div className='flex flex-col bg-white p-1'>
       <div className='w-full text-left'>
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
-          회원님의
+          {name}님의
           <br />
           계약정보를 확인해주세요.
         </h3>

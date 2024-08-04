@@ -46,7 +46,6 @@ const PaymentCMS = ({
       if (name === 'accountOwnerBirth') {
         formattedValue = formatBirthDate(value);
       }
-
       onInputChange(name, formattedValue);
     },
     [onInputChange]
@@ -120,7 +119,7 @@ const PaymentCMS = ({
             : 'border-teal-400 bg-white text-teal-400 hover:bg-teal-50'
         }`}
         onClick={handleCMSVerification}
-        disabled={isVerified}>
+        disabled={isVerified || !paymentData.accountNumber}>
         {isVerified ? '인증 완료' : '계좌 인증하기'}
       </button>
     </div>

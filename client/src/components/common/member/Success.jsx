@@ -1,14 +1,24 @@
 import successImage from '@/assets/success.svg';
+import { useState, useEffect } from 'react';
 
-const Success = ({ content }) => {
+const Success = ({ userData, content, name: propName }) => {
+  const [name, setName] = useState('회원');
+
+  useEffect(() => {
+    if (userData && userData.memberDTO && userData.memberDTO.name) {
+      setName(userData.memberDTO.name);
+    }
+  }, [userData]);
+
+
   return (
     <div className='flex h-screen flex-col items-center justify-between bg-white p-3'>
       <div className='w-full text-left'>
         <h1 className='mb-4 text-2xl font-bold text-teal-400'>Hyosung CMS+</h1>
         <h3 className='mb-8 text-base font-semibold text-gray-700'>
-          회원님의
+          {name}님의
           <br />
-          {content || '자동결제 등록이 완료되었습니다!'}
+          {content}
         </h3>
       </div>
 
