@@ -33,7 +33,7 @@ public class ProductController {
     /**
      * 상품 목록 전체 조회 (검색 조건, 정렬 조건)
      * */
-    @LogExecutionTime
+
     @GetMapping
     public PageRes<ProductListItemRes> getProductListItem(@VendorId Long vendorId, ProductSearchReq search, PageReq pageable) { // 검색 및 필터링 조건DTO, 페이지네이션DTO
         return productService.searchProducts(vendorId, search, pageable);

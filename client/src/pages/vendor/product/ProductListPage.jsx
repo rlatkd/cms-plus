@@ -56,7 +56,6 @@ const ProductListPage = () => {
           size: 10,
         });
         const transformdData = transformProductListItem(res.data.content);
-        console.log('전체목록 : ', res.data.content);
         setProductList(transformdData);
         setFilteredListCount(res.data.totalCount);
         if (Object.keys(searchParams).length === 0) {

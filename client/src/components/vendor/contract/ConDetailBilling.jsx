@@ -23,7 +23,7 @@ const ConDetailBilling = ({ contractData, updateAllInfo, children }) => {
             setStatus(2);
           }}
           className='flex justify-between items-center px-4 py-2 ml-4 text-mint
-            font-700 rounded-md border border-mint cursor-pointer'>
+            font-700 rounded-md border border-mint cursor-pointer hover:bg-mint_hover_light'>
           <img src={edit} alt='edit' className='mr-2 ' />
           <p>청구수정</p>
         </button>

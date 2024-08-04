@@ -114,11 +114,14 @@ const ContractRegisterPage = () => {
     try {
       if (status === 0 && type === 'new') {
         // validation 체크
-        if (!validateBasicInfo()) return;
-        setStatus(-1);
+        if (!validateBasicInfo()) {
+          return;
+        }
+
+        setStatus(0);
         const res = await getMemberCheck(basicInfo.memberPhone, basicInfo.memberEmail);
         console.log('!---- 회원 등록 여부 체크 성공----!'); // 삭제예정
-
+        setStatus(0);
         let message = '';
         const { phoneExist, emailExist } = res.data;
         if (phoneExist) {
@@ -357,9 +360,9 @@ const ContractRegisterPage = () => {
           />
           <NextButton
             onClick={() => {
+              handleClickNext();
               axiosCreateMember();
               axiosMemberCheck();
-              handleClickNext();
             }}
             status={status}
             type={'memberRegister'}
