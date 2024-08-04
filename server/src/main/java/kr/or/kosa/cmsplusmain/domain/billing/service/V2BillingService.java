@@ -123,20 +123,16 @@ public class V2BillingService {
 	public InvoiceRes getInvoice(Long billingId) {
 		System.out.println("ERROR: invocie start");
 		Billing billing = billingRepository.findByIdIncludingDeleted(billingId);
-		System.out.println("ERROR: invocie found");
 
 
 		if (billing == null) {
-			System.out.println("billingId: " + billingId);
 			throw new BillingNotFoundException("해당하는 청구서가 존재하지 않습니다.");
 		}
-		System.out.println("invoice not null");
 		if (billing.isDeleted()) {
 			throw new BillingNotFoundException(
 				"삭제된 청구서입니다. (%s)".formatted(billing.getDeletedDateTime().toString())
 			);
 		}
-		System.out.println("invoice not deleted");
 
 		Contract contract = billing.getContract();
 		Payment payment = contract.getPayment();
