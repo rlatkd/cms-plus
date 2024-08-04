@@ -21,7 +21,7 @@ const LoadingSpinner = ({ size = 'md', text = '로딩 중...', shape = 'box' }) 
         <div className='flex justify-center items-center'>
           <div className={`${sizeClasses[size]} relative mb-2`}>
             <div className='absolute top-0 left-0 w-full h-full border-4 border-mint opacity-30 rounded-full animate-ping' />
-            <div className='absolute top-0 left-0 w-full h-full border-8 border-mint border-t-transparent rounded-full animate-spin' />
+            <div className='absolute top-0 left-0 w-full h-full border-4 border-mint border-t-transparent rounded-full animate-spin' />
           </div>
         </div>
         <p className='mt-4 text-text_grey font-700'>{text}</p>

@@ -98,7 +98,7 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => 
       height={'h-[90vh]'}
       width={'w-[95vw]'}
       close={true}>
-      <div className='bg-white rounded-lg w-full h-5/6 flex flex-col'>
+      <div className='bg-white rounded-lg w-full h-[92%] flex flex-col'>
         <div className='mb-6 flex items-center justify-between'>
           <div className='flex items-center flex-1'>
             <label

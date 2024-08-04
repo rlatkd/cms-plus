@@ -214,7 +214,7 @@ const BillingRegisterPage = () => {
       </div>
 
       {/* 하단 버튼 영역 */}
-      <div className='absolute -bottom-0 right-0 flex justify-end space-x-4 p-6 font-700 '>
+      <div className='absolute -bottom-2 -right-1 flex justify-end space-x-4 p-6 font-700 '>
         <button
           type='button'
           onClick={() => navigate('/vendor/billings')}

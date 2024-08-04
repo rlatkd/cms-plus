@@ -57,6 +57,8 @@ const ContractDetailPage = () => {
       setContractData(res.data);
       setLoading(false);
 
+      console.log('계약상세 : ', res.data);
+
       console.log(res.data);
     } catch (err) {
       console.log('effect');
