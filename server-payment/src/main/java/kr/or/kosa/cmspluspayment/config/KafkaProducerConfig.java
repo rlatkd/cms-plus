@@ -36,6 +36,8 @@
          props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "100000");
          props.put(ProducerConfig.BATCH_SIZE_CONFIG, "100000");
          props.put(ProducerConfig.LINGER_MS_CONFIG, "500");
+         props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+         props.put(ProducerConfig.RETRIES_CONFIG, "2000000000");
          return new DefaultKafkaProducerFactory<>(props);
      }
 

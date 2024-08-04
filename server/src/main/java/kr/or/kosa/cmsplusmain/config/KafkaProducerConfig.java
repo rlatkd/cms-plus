@@ -38,6 +38,8 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "100000"); // 메시지 전송 실패 시 재전송 대기시간
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, "100000"); // 문자열 기준 500건씩
         props.put(ProducerConfig.LINGER_MS_CONFIG, "500"); // 만약 배치사이즈(500건)이 안 들어왔으면 마냥 대기할 수 없음; 0.5초 후에 보냄
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true"); // 멱등성 설정
+        props.put(ProducerConfig.RETRIES_CONFIG, "2000000000"); // 멱등성 설정시 값이 0보다 커야함; default
         return new DefaultKafkaProducerFactory<>(props);
     }
 
@@ -57,6 +59,8 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "100000");
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, "100000");
         props.put(ProducerConfig.LINGER_MS_CONFIG, "500");
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+        props.put(ProducerConfig.RETRIES_CONFIG, "2000000000");
         return new DefaultKafkaProducerFactory<>(props);
     }
 

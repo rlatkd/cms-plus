@@ -42,16 +42,18 @@ cloud:
 kafkaServer:
   ip: ${KAFKASERVER_IP}
 
-kafkaGroup:
-  paymentResultGroup: ${PAYMENT_RESULT_GROUP}
-
 kafkaTopic:
   messagingTopic: ${MESSAGING_TOPIC}
   paymentTopic: ${PAYMENT_TOPIC}
 
+kafkaGroup:
+  paymentResultGroup: ${PAYMENT_RESULT_GROUP}
+
+kafkaClient:
+  paymentResultClient: ${PAYMENT_RESULT_CLIENT}
+
 host:
   front: https://www.hyosungcmsplus.site
-
 
 logging:
   level:
