@@ -1,5 +1,7 @@
 package kr.or.kosa.cmsplusmain.domain.billing.entity;
 
+import java.time.LocalDateTime;
+
 import kr.or.kosa.cmsplusmain.domain.billing.exception.InvalidBillingStatusException;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.ConsentStatus;
 import kr.or.kosa.cmsplusmain.domain.payment.entity.Payment;
@@ -43,12 +45,14 @@ public class BillingState {
 			@Override
 			public BillingState checkState(Billing billing) {
 				// TODO 청구 삭제 가능하도록 하고 링크를 받은 회원이 알 수 있도록
-				if (
-					billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT
-					|| billing.getBillingStatus() == BillingStatus.PAID) {
-					return new BillingState(DELETE, false,
-						"[%s] 상태에서는 청구 삭제가 불가능합니다".formatted(billing.getBillingStatus().getTitle()));
-				}
+				// 청구 삭제는 언제나 가능하다.
+
+				// if (
+				// 	billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT
+				// 	|| billing.getBillingStatus() == BillingStatus.PAID) {
+				// 	return new BillingState(DELETE, false,
+				// 		"[%s] 상태에서는 청구 삭제가 불가능합니다".formatted(billing.getBillingStatus().getTitle()));
+				// }
 				return new BillingState(DELETE, true);
 			}
 		},
@@ -123,8 +127,12 @@ public class BillingState {
 			@Override
 			public BillingState checkState(Billing billing) {
 				if (billing.getPaidDateTime() == null || billing.getBillingStatus() != BillingStatus.PAID) {
-					return new BillingState(PAY_REALTIME, false,
+					return new BillingState(CANCEL_PAYMENT, false,
 						"결제 내역이 없습니다");
+				}
+				if (LocalDateTime.now().isAfter(billing.getPaidDateTime().plusMonths(1))) {
+					return new BillingState(CANCEL_PAYMENT, false,
+						"한 달이상 지난 결제는 취소가 불가능합니다");
 				}
 				Payment payment = billing.getContract().getPayment();
 				if (!payment.canCancel()) {
