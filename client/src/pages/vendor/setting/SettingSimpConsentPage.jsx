@@ -5,7 +5,7 @@ import Checkbox from '@/components/common/inputs/CheckBox';
 import { getSimpleConsent, updateSimpleConsent } from '@/apis/simpleConsent';
 import { getAllProductList } from '@/apis/product';
 import useAlert from '@/hooks/useAlert';
-import useSimpleConsentStore from '@/stores/usesimpleConsentStore';
+import useSimpleConsentStore from '@/stores/useSimpleConsentStore';
 
 const MAX_VISIBLE_PRODUCTS = 5;
 
