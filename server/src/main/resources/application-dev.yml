@@ -14,3 +14,10 @@ spring:
 #  level:
 #    sql: debug
 #    org.hibernate.orm.jdbc.bind: trace
+
+#logging:
+#  level:
+#    kr:
+#      or:
+#        kosa:
+#          cmsplusmain: DEBUG

@@ -55,10 +55,3 @@ kafkaClient:
 
 host:
   front: https://www.hyosungcmsplus.site
-
-logging:
-  level:
-    kr:
-      or:
-        kosa:
-          cmsplusmain: DEBUG
