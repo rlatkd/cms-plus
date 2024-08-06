@@ -16,6 +16,6 @@ management:
       exposure:
         include: prometheus
 
-logging:
-  level:
-    sql: debug
+# logging:
+#   level:
+#     sql: debug
