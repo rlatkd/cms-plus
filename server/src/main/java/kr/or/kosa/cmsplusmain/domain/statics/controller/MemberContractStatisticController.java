@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -57,7 +59,7 @@ public class MemberContractStatisticController {
             .uri("/notebook/member.ipynb")
             .header("Content-Type", "application/json")
             .header("Access-Control-Allow-Origin", "*")
-            .body(Mono.just(jsonObject.toString()), JSONObject.class)
+            .body(BodyInserters.fromValue(jsonObject.toString()))
             .accept()
             .retrieve()
             .bodyToMono(MemberContractStatisticRes.class)
