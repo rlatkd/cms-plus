@@ -17,6 +17,7 @@ import { formatProductsForList } from '@/utils/format/formatProducts';
 import PayRealtimeErrorModal from '@/components/vendor/modal/PayRealtimeErrorModal';
 import useAlert from '@/hooks/useAlert';
 import LoadingSpinner from '@/components/common/loadings/LoadingSpinner';
+import useConfirm from '@/hooks/useConfirm';
 
 const BillingListPage = () => {
   const [billingList, setBillingList] = useState([]); // 청구 목록
@@ -46,6 +47,7 @@ const BillingListPage = () => {
   const [requestType, setRequestType] = useState('');
 
   const onAlert = useAlert();
+  const onConfirm = useConfirm();
   const navigate = useNavigate();
 
   // <----- 청구 목록 조회 ----->
@@ -138,6 +140,17 @@ const BillingListPage = () => {
       return;
     }
 
+    const confirmMessage = `${selectedBillings.length}건의 청구를 결제하시겠습니까?`;
+
+    const isSend = await onConfirm({
+      msg: confirmMessage,
+      title: '실시간 결제',
+    });
+
+    if (!isSend) {
+      return;
+    }
+
     // TODO loading
     setIsLoading(true);
     setRequestType('실시간 결제 요청중...');
@@ -176,6 +189,17 @@ const BillingListPage = () => {
   const handleInvoiceSend = async () => {
     if (!selectedBillings || selectedBillings.length === 0) {
       onAlert({ msg: '선택된 청구가 없습니다.', type: 'error' });
+      return;
+    }
+
+    const confirmMessage = `${selectedBillings.length}건의 청구서를 발송하시겠습니까?`;
+
+    const isSend = await onConfirm({
+      msg: confirmMessage,
+      title: '청구서 발송',
+    });
+
+    if (!isSend) {
       return;
     }
 
