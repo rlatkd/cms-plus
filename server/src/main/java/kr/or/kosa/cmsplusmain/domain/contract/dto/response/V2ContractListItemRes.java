@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Builder
 public class V2ContractListItemRes {
 
 	private final Long contractId;                                        // 계약 ID
