@@ -12,7 +12,7 @@ export const getStatisticList = async (searchParams = {}) => {
 
 export const getRenewalProbability = async memberData => {
   try {
-    const res = await privateAxios.post('/notebook/member.ipynb', memberData);
+    const res = await notebookAxios.post('/v1/statistics/notebook/member.ipynb', memberData);
     return res.data;
   } catch (err) {
     console.error('Error fetching renewal probability:', err);
