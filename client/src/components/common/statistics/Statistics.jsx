@@ -44,6 +44,8 @@ const Statistics = () => {
       };
 
       try {
+        console.log('request', memberData);
+
         const result = await getRenewalProbability(memberData);
         console.log('Full server response:', result);
         const probability =
@@ -52,11 +54,7 @@ const Statistics = () => {
       } catch (err) {
         console.error('갱신 확률 조회 실패', err);
         console.error('Error response:', err.response?.data);
-        onAlert({
-          msg: '갱신 확률을 불러오는데 실패했습니다.',
-          type: 'error',
-          title: '통계',
-        });
+        onAlert('갱신 확률을 불러오는데 실패했습니다.', 'error');
       } finally {
         setIsLoading(false);
       }

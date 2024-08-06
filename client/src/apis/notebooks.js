@@ -7,6 +7,7 @@ axios.defaults.withCredentials = true;
 export const notebookAxios = axios.create({
   baseURL: BASE_URL,
   headers: {
+    'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
   },
 });
