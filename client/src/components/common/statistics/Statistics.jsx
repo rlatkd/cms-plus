@@ -87,7 +87,7 @@ const Statistics = () => {
               <InfoRow label='계약기간' value={`${selectedContract.contractDuration}일`} />
               <InfoRow
                 label='총 계약금액'
-                value={`${selectedContract.totalContractAmount.toLocaleString()}원`}
+                value={`${selectedContract.totalContractAmount?.toLocaleString()}원`}
               />
             </div>
             <h3 className='text-2xl font-semibold mt-3 text-text_black'>갱신 확률</h3>
