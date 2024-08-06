@@ -6,6 +6,7 @@ import kr.or.kosa.cmsplusmain.domain.statics.dto.MemberContractStatisticDto;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.MemberContractStatisticRes;
 import kr.or.kosa.cmsplusmain.domain.statics.service.MemberContractStatisticService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 @RequestMapping("/api/v1/statistics")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberContractStatisticController {
 
     private final MemberContractStatisticService memberContractStatisticService;
@@ -47,10 +49,13 @@ public class MemberContractStatisticController {
 
         return client.post()
             .uri("/notebook/member.ipynb")
+            .header("Content-Type", "application/json")
+            .header("Access-Control-Allow-Origin", "*")
             .body(Mono.just(request), MemberContractStatisticDto.class)
             .accept()
             .retrieve()
             .bodyToMono(MemberContractStatisticRes.class)
+            .doOnError(Throwable::printStackTrace)
             .block();
     }
 }
