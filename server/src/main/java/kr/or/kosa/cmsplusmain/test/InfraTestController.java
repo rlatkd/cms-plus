@@ -14,7 +14,7 @@ public class InfraTestController {
 
     private final SampleDataLoader sampleDataLoader;
 
-    @PostConstruct
+    // @PostConstruct
     public void init() {
         sampleDataLoader.init();
     }
