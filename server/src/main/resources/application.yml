@@ -55,3 +55,4 @@ kafkaClient:
 
 host:
   front: https://www.hyosungcmsplus.site
+  analysis: http://3.34.16.146
