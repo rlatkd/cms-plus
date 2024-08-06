@@ -95,6 +95,7 @@ python.app=3=py312h80987f9_0
 python_abi=3.12=4_cp312
 pytz=2024.1=pypi_0
 pyzmq=26.1.0=py312hfa13136_0
+pymysql
 readline=8.2=h1a28f6b_0
 reproc=14.2.4=h313beb8_2
 reproc-cpp=14.2.4=h313beb8_2
