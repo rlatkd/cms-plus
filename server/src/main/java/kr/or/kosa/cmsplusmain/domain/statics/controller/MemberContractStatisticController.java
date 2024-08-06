@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,14 +45,20 @@ public class MemberContractStatisticController {
     }
 
     @PostMapping("/notebook/member.ipynb")
-    public MemberContractStatisticRes getContractPred(@RequestBody MemberContractStatisticDto request) {
+    public MemberContractStatisticRes getContractPred(@RequestBody MemberContractStatisticDto request) throws
+		JSONException {
         WebClient client = WebClient.create(ANALYSIS_URL);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("contract_duration", request.getContractDuration());
+        jsonObject.put("enroll_year", request.getEnrollYear());
+        jsonObject.put("payment_type", request.getPaymentType());
+        jsonObject.put("total_contract_amount", request.getTotalContractAmount());
 
         return client.post()
             .uri("/notebook/member.ipynb")
             .header("Content-Type", "application/json")
             .header("Access-Control-Allow-Origin", "*")
-            .body(Mono.just(request), MemberContractStatisticDto.class)
+            .body(Mono.just(jsonObject.toString()), JsonObject.class)
             .accept()
             .retrieve()
             .bodyToMono(MemberContractStatisticRes.class)
