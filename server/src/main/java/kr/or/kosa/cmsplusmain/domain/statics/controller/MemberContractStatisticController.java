@@ -1,6 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.statics.controller;
 
-import kotlinx.serialization.json.JsonObject;
 import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.MemberContractStatisticDto;
 import kr.or.kosa.cmsplusmain.domain.statics.dto.MemberContractStatisticRes;
@@ -58,7 +57,7 @@ public class MemberContractStatisticController {
             .uri("/notebook/member.ipynb")
             .header("Content-Type", "application/json")
             .header("Access-Control-Allow-Origin", "*")
-            .body(Mono.just(jsonObject.toString()), JsonObject.class)
+            .body(Mono.just(jsonObject.toString()), JSONObject.class)
             .accept()
             .retrieve()
             .bodyToMono(MemberContractStatisticRes.class)
