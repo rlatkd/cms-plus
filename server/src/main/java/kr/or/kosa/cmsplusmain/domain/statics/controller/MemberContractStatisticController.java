@@ -6,26 +6,19 @@ import kr.or.kosa.cmsplusmain.domain.statics.dto.MemberContractStatisticRes;
 import kr.or.kosa.cmsplusmain.domain.statics.service.MemberContractStatisticService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.BodyInserter;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.HashMap;
 import java.util.List;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/statistics")
@@ -46,20 +39,21 @@ public class MemberContractStatisticController {
     }
 
     @PostMapping("/notebook/member.ipynb")
-    public MemberContractStatisticRes getContractPred(@RequestBody MemberContractStatisticDto request) throws
-		JSONException {
+    public MemberContractStatisticRes getContractPred(@RequestBody MemberContractStatisticDto request) {
         WebClient client = WebClient.create(ANALYSIS_URL);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("contract_duration", request.getContractDuration());
-        jsonObject.put("enroll_year", request.getEnrollYear());
-        jsonObject.put("payment_type", request.getPaymentType());
-        jsonObject.put("total_contract_amount", request.getTotalContractAmount());
+        Map<String, Object> body = new HashMap<>();
+        body.put("contract_duration", request.getContract_duration());
+        body.put("enroll_year", request.getEnroll_year());
+        body.put("payment_type", request.getPayment_type());
+        body.put("total_contract_amount", request.getTotal_contract_amount());
+
+        log.info("req: {}", body.toString());
 
         return client.post()
             .uri("/notebook/member.ipynb")
             .header("Content-Type", "application/json")
             .header("Access-Control-Allow-Origin", "*")
-            .body(BodyInserters.fromValue(jsonObject.toString()))
+            .bodyValue(body)
             .accept()
             .retrieve()
             .bodyToMono(MemberContractStatisticRes.class)

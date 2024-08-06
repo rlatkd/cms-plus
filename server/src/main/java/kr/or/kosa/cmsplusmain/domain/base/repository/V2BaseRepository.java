@@ -48,7 +48,7 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 	/**
 	 * 일반적으로 transaction (readOnly=false)로 jpa dirty-check 로 하는 것을 권장
 	 * 다 수 엔티티 수정으로 bulkUpdate가 필요한 경우에 사용
-	 * 수정시각(BaseEntity.modifiedDateTime) 자동 반영 안되므로 필히 수정시각도 설정할것
+	 * 수정시각(BaseEntity.modifiedDateTime) 자동 반영 안되므로 수정시간 직접 설정 필요
 	 * */
 	protected final JPAUpdateClause update(EntityPath<? extends BaseEntity> entity) {
 		return queryFactory.update(entity);
@@ -69,9 +69,8 @@ public abstract class V2BaseRepository<E extends BaseEntity, ID> {
 
 	/**
 	 * 삭제(소프트 딜리트) 검사를 할 항목을 두번쨰 인자[배열]로 준다.
-	 * 예시.
-	 * 청구를 select 하고, [청구, 계약, 청구상품]을 삭제된 것은 빼고 보여준다.
-	 * => select(billing, billing, contract, billingProduct)
+	 * 청구를 select 하고, [청구, 계약, 청구상품]을 삭제된 것은 빼고 보여주고 싶다. => select(billing, billing, contract, billingProduct)
+	 * 삭제 여부를 검사할 엔티티는 조인 항목에 포함되어야 한다.
 	 * */
 	@SafeVarargs
 	protected final <T> JPAQuery<T> selectWithNotDel(Expression<T> expr, EntityPath<? extends BaseEntity>... notDelEntities) {
