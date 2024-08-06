@@ -107,7 +107,7 @@ public class BillingState {
 
 				if (autoPaymentType.getConsentStatus() != ConsentStatus.ACCEPT) {
 					return new BillingState(PAY_REALTIME, false,
-						"간편동의가 필요합니다.");
+						"동의가 필요합니다.");
 				}
 
 				return new BillingState(PAY_REALTIME, true);
