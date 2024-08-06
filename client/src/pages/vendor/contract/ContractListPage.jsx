@@ -19,6 +19,7 @@ import ReqSimpConsentErrorModal from '@/components/vendor/modal/ReqSimpConsentEr
 import { sendReqSimpConsent } from '@/apis/simpleConsent';
 import useAlert from '@/hooks/useAlert';
 import LoadingSpinner from '@/components/common/loadings/LoadingSpinner';
+import useConfirm from '@/hooks/useConfirm';
 
 const ContractListPage = () => {
   const [contractList, setContractList] = useState([]); // 계약 목록
@@ -45,6 +46,7 @@ const ContractListPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onAlert = useAlert();
+  const onConfirm = useConfirm();
   const navigate = useNavigate();
 
   // <--------계약 목록 조회-------->
@@ -128,6 +130,17 @@ const ContractListPage = () => {
   const handleClickSimpConsent = async () => {
     if (!selectedContracts || selectedContracts.length === 0) {
       onAlert({ msg: '선택된 계약이 없습니다.', type: 'error', title: '요청 실패' });
+      return;
+    }
+
+    const confirmMessage = `${selectedContracts.length}건의 간편동의를 요청하시겠습니까?`;
+
+    const isSend = await onConfirm({
+      msg: confirmMessage,
+      title: '간편동의 발송',
+    });
+
+    if (!isSend) {
       return;
     }
 
