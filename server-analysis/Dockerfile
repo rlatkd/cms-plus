@@ -20,4 +20,8 @@ RUN        apt-get update && apt-get install -y --no-install-recommends \
 RUN        pip3 install --upgrade pip 
 RUN        pip3 install pipenv
 RUN        pipenv install --skip-lock --system --dev
+
+# Add the command to install requirements.txt
+RUN        pip3 install -r requirements.txt
+
 CMD        uvicorn src.server:app --host 0.0.0.0 --port ${PORT}
