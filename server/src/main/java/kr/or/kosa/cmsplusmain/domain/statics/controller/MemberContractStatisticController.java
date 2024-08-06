@@ -31,7 +31,7 @@ public class MemberContractStatisticController {
 
     private final MemberContractStatisticService memberContractStatisticService;
 
-    @Value("host.analysis")
+    @Value("${host.analysis}")
     private String ANALYSIS_URL;
 
     @GetMapping("/member-contracts")
