@@ -76,7 +76,6 @@ const MemberExcelModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) => 
         return;
       }
 
-      alert();
       onAlert({ msg: '회원 정보가 모두 성공적으로 등록되었습니다.', type: 'success' });
       setData([]);
       setErrors([]);
