@@ -17,13 +17,13 @@ public class MemberContractStatisticDto {
     private Boolean renewed;
 
     @QueryProjection
-    public MemberContractStatisticDto(Long contractId, String memberName, LocalDate enrollDate, Integer contractDuration, Long totalContractAmount, PaymentType paymentType, Boolean renewed) {
+    public MemberContractStatisticDto(Long contractId, String memberName, Integer enrollYear, Integer contractDuration, Long totalContractAmount, PaymentType paymentType, Boolean renewed) {
         this.contractId = contractId;
         this.memberName = memberName;
-        this.enrollYear = enrollDate.getYear();
+        this.enrollYear = enrollYear;
         this.contractDuration = contractDuration;
         this.totalContractAmount = totalContractAmount;
-        this.paymentType = paymentType.getCode();
+        this.paymentType = paymentType != null ? paymentType.getCode() : null;
         this.renewed = renewed;
     }
 }
