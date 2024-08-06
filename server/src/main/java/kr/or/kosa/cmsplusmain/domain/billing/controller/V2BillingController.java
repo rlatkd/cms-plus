@@ -2,6 +2,8 @@ package kr.or.kosa.cmsplusmain.domain.billing.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,12 +23,15 @@ import kr.or.kosa.cmsplusmain.domain.billing.dto.request.BillingUpdateReq;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingDetailRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingListItemRes;
 import kr.or.kosa.cmsplusmain.domain.billing.dto.response.BillingProductRes;
+import kr.or.kosa.cmsplusmain.domain.billing.dto.response.InvoiceRes;
 import kr.or.kosa.cmsplusmain.domain.billing.service.V2BillingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v2/vendor/billing")
 @RequiredArgsConstructor
+@Slf4j
 public class V2BillingController {
 
 	private final V2BillingService billingService;
@@ -63,6 +68,14 @@ public class V2BillingController {
 		return billingService.getBillingProducts(vendorId, billingId);
 	}
 
+	/**
+	 * 청구서 조회
+	 * */
+	@GetMapping("/invoice/{billingId}")
+	public InvoiceRes getInvoice(@PathVariable Long billingId) {
+		log.info("invoice " + billingId);
+		return billingService.getInvoice(billingId);
+	}
 
 	/**
 	 * 청구 수정

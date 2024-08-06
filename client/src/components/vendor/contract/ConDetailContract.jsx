@@ -40,7 +40,7 @@ const ConDetailContract = ({ contractData, updateAllInfo }) => {
             총금액 : {contractPrice.toLocaleString()}원
           </p>
         </div>
-        <div className='mt-5'>
+        <div className='mt-5 overflow-y-auto scrollbar-custom'>
           {contractProducts.map((product, idx) => (
             <div
               key={idx}
