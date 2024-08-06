@@ -29,6 +29,10 @@ public class BillingState {
 		this.reason = null;
 	}
 
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
 	public enum Field {
 		UPDATE {
 			@Override
@@ -44,9 +48,7 @@ public class BillingState {
 		DELETE {
 			@Override
 			public BillingState checkState(Billing billing) {
-				// TODO 청구 삭제 가능하도록 하고 링크를 받은 회원이 알 수 있도록
 				// 청구 삭제는 언제나 가능하다.
-
 				// if (
 				// 	billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT
 				// 	|| billing.getBillingStatus() == BillingStatus.PAID) {
@@ -63,7 +65,8 @@ public class BillingState {
 					return new BillingState(SEND_INVOICE, false,
 						"[%s]상태에서는 청구서 발송이 불가능합니다".formatted(billing.getBillingStatus().getTitle()));
 				}
-				if (billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT && billing.getInvoiceSendDateTime() != null) {
+				if (billing.getBillingStatus() == BillingStatus.WAITING_PAYMENT
+					&& billing.getInvoiceSendDateTime() != null) {
 					return new BillingState(SEND_INVOICE, false,
 						"[%s]에 이미 청구서가 발송되었습니다".formatted(FormatUtil.formatDateTime(billing.getInvoiceSendDateTime())));
 				}
@@ -118,7 +121,7 @@ public class BillingState {
 			public BillingState checkState(Billing billing) {
 				if (billing.getBillingStatus() == BillingStatus.PAID) {
 					return new BillingState(PAY, false,
-							"이미 결제된 청구입니다");
+						"이미 결제된 청구입니다");
 				}
 				return new BillingState(PAY, true);
 			}
@@ -151,9 +154,5 @@ public class BillingState {
 				throw new InvalidBillingStatusException(state);
 			}
 		}
-	}
-
-	public boolean isEnabled() {
-		return isEnabled;
 	}
 }

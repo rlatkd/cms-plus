@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,7 +56,6 @@ public class V2BillingService {
 	private final V2ContractRepository contractRepository;
 	private final KafkaMessagingService kafkaMessagingService;
 	private final KafkaPaymentService kafkaPaymentService;
-
 
 	private final PaymentService paymentService;
 
@@ -123,7 +121,6 @@ public class V2BillingService {
 	public InvoiceRes getInvoice(Long billingId) {
 		System.out.println("ERROR: invocie start");
 		Billing billing = billingRepository.findByIdIncludingDeleted(billingId);
-
 
 		if (billing == null) {
 			throw new BillingNotFoundException("해당하는 청구서가 존재하지 않습니다.");
@@ -267,15 +264,15 @@ public class V2BillingService {
 		String url = FRONT_HOST_URL + "/member/invoice/" + billing.getId();
 		return
 			"""
-			%s님의 청구서가 도착했습니다.
-			
-			- 청구서명: %s
-			- 납부할금액: %s원
-			- 납부 기한: %s
-			
-			납부하기: %s
-			""".formatted(memberName, invoiceName, billingPrice, billingDate, url)
-			.trim();
+				%s님의 청구서가 도착했습니다.
+						\t
+				- 청구서명: %s
+				- 납부할금액: %s원
+				- 납부 기한: %s
+						\t
+				납부하기: %s
+			\t""".formatted(memberName, invoiceName, billingPrice, billingDate, url)
+				.trim();
 	}
 
 	/**
@@ -286,10 +283,12 @@ public class V2BillingService {
 		MessageSendMethod sendMethod = member.getInvoiceSendMethod();
 
 		switch (sendMethod) {
-			case SMS -> { SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
+			case SMS -> {
+				SmsMessageDto smsMessageDto = new SmsMessageDto(message, member.getPhone());
 				kafkaMessagingService.produceMessaging(smsMessageDto);
 			}
-			case EMAIL -> { EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
+			case EMAIL -> {
+				EmailMessageDto emailMessageDto = new EmailMessageDto(message, member.getEmail());
 				kafkaMessagingService.produceMessaging(emailMessageDto);
 			}
 		}
@@ -333,13 +332,15 @@ public class V2BillingService {
 
 		switch (method) {
 			case CARD -> {
-				CardMethodRes cardMethodRes = (CardMethodRes) paymentService.getPaymentMethodInfoRes(payment);
-				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(), cardMethodRes.getCardNumber());
+				CardMethodRes cardMethodRes = (CardMethodRes)paymentService.getPaymentMethodInfoRes(payment);
+				CardPaymentDto cardPaymentDto = new CardPaymentDto(billingId, member.getPhone(),
+					cardMethodRes.getCardNumber());
 				kafkaPaymentService.producePayment(cardPaymentDto);
 			}
 			case CMS -> {
-				CMSMethodRes cmsMethodRes = (CMSMethodRes) paymentService.getPaymentMethodInfoRes(payment);
-				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(), cmsMethodRes.getAccountNumber());
+				CMSMethodRes cmsMethodRes = (CMSMethodRes)paymentService.getPaymentMethodInfoRes(payment);
+				AccountPaymentDto accountPaymentDto = new AccountPaymentDto(billingId, member.getPhone(),
+					cmsMethodRes.getAccountNumber());
 				kafkaPaymentService.producePayment(accountPaymentDto);
 			}
 

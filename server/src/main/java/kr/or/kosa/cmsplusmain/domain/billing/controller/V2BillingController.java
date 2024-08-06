@@ -2,8 +2,6 @@ package kr.or.kosa.cmsplusmain.domain.billing.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +46,8 @@ public class V2BillingController {
 	 * 청구목록 조회
 	 * */
 	@GetMapping
-	public PageRes<BillingListItemRes> searchBillings(@VendorId Long vendorId, BillingSearchReq search, PageReq pageReq) {
+	public PageRes<BillingListItemRes> searchBillings(@VendorId Long vendorId, BillingSearchReq search,
+		PageReq pageReq) {
 		return billingService.searchBillings(vendorId, search, pageReq);
 	}
 
@@ -81,7 +80,8 @@ public class V2BillingController {
 	 * 청구 수정
 	 * */
 	@PutMapping("/{billingId}")
-	public void updateBilling(@VendorId Long vendorId, @PathVariable Long billingId, @RequestBody @Valid BillingUpdateReq billingUpdateReq) {
+	public void updateBilling(@VendorId Long vendorId, @PathVariable Long billingId,
+		@RequestBody @Valid BillingUpdateReq billingUpdateReq) {
 		billingService.updateBilling(vendorId, billingId, billingUpdateReq);
 	}
 

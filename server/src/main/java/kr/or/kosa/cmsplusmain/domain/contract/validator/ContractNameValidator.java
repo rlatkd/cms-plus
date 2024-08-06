@@ -1,7 +1,5 @@
 package kr.or.kosa.cmsplusmain.domain.contract.validator;
 
-import java.util.regex.Pattern;
-
 import org.springframework.util.StringUtils;
 
 import jakarta.validation.ConstraintValidator;
