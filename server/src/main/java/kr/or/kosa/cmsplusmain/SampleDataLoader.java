@@ -146,7 +146,7 @@ public class SampleDataLoader {
 
 			// 월을 먼저 선택하고, 그 다음 날짜를 선택
 			int month = random.nextInt(9) + 1;  // 1 ~ 9월 중 선택
-			int day = random.nextInt(15) + 9;
+			int day = random.nextInt(17) + 1;
 
 			LocalDate billingDate = LocalDate.of(2024, month, day);
 
