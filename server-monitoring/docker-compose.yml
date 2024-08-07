@@ -1,3 +1,6 @@
+# 기존에 설정했던 Kafka, ELK, Prometheus Grafana, Kafka모니터링 서비스 등은 배포 후
+# 테스트가 끝나서 배포환경으로 다 마이그레이션했습니다.
+
 version: '3.8'
 
 networks:
