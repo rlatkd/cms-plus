@@ -107,9 +107,7 @@ async def execute_notebook(filepath: str, member_data: MemberData = Body(...)):
 
     # 노트북 실행을 위한 글로벌 네임스페이스 설정
     global_dict = {
-        'member_data': member_data.dict(),
-        'train_and_save_model': train_and_save_model,
-        'load_model_and_predict': load_model_and_predict
+        'member_data': member_data.dict()
     }
     
     # 노트북 실행
