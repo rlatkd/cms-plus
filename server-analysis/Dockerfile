@@ -19,6 +19,7 @@ RUN        apt-get update && apt-get install -y --no-install-recommends \
            rm -rf /var/lib/apt/lists/*
 RUN        pip3 install --upgrade pip 
 RUN        pip3 install pipenv
+RUN        pip3 install --force-reinstall --no-deps nbconvert==6.0.7
 RUN        pipenv install --skip-lock --system --dev
 
 # Add the command to install requirements.txt
