@@ -37,10 +37,10 @@ const Statistics = () => {
       setSelectedContract(contract);
       setIsLoading(true);
       const memberData = {
-        enroll_year: contract.enrollYear,
-        contract_duration: contract.contractDuration,
-        total_contract_amount: contract.totalContractAmount,
-        payment_type: contract.paymentType,
+        enroll_year: contract.enroll_Year,
+        contract_duration: contract.contract_duration,
+        total_contract_amount: contract.total_contract_amount,
+        payment_type: contract.payment_type,
       };
 
       try {
