@@ -91,7 +91,7 @@ public class SampleDataLoader {
 		);
 
 		// 샘플 데이터 생성
-		generateSampleData(academy, 50, 100, 200, 200);
+		generateSampleData(academy, 50, 100, 200, 500);
 	}
 
 	/**

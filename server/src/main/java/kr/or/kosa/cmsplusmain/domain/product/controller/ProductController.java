@@ -2,7 +2,9 @@ package kr.or.kosa.cmsplusmain.domain.product.controller;
 
 import java.util.List;
 
+import jakarta.annotation.PostConstruct;
 import kr.or.kosa.cmsplusmain.LogExecutionTime;
+import kr.or.kosa.cmsplusmain.SampleDataLoader;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageReq;
 import kr.or.kosa.cmsplusmain.domain.base.dto.PageRes;
 import kr.or.kosa.cmsplusmain.domain.base.security.VendorId;
@@ -21,6 +23,13 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+
+    private final SampleDataLoader sampleDataLoader;
+
+    @PostConstruct
+    public void init() {
+        sampleDataLoader.init();
+    }
 
     /**
      * 상품 등록
