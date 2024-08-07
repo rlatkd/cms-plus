@@ -116,12 +116,16 @@ async def execute_notebook(filepath: str, member_data: MemberData = Body(...)):
 
     
     # execute_model 함수 찾기 및 실행
-    for cell in nb.cells:
-        if cell.cell_type == 'code':
-            if 'execute_model' in cell.source:
+    try:
+        for cell in nb.cells:
+            if cell.cell_type == 'code':
                 exec(cell.source, global_dict)
-                result = global_dict['execute_model'](member_data.dict())
-                return JSONResponse(content=result)
+                if 'execute_model' in cell.source:
+                    result = global_dict['execute_model'](member_data.dict())
+                    return JSONResponse(content=result)
+    except Exception as e:
+        # 예외가 발생하면 상세한 오류 메시지를 반환
+        return JSONResponse(content={"error": str(e)})
     
     # execute_model 함수를 찾지 못한 경우
     return JSONResponse(content={"error": "execute_model function not found in the notebook"})
