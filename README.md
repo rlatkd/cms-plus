@@ -5,6 +5,7 @@ https://www.hyosungcmsplus.site
 
 ### 디렉터리 구조
 
+```
 📁 cms
  ├──── 📁 .github
  │      ├──── 📁 ISSUE_TEMPLATE
@@ -112,6 +113,7 @@ https://www.hyosungcmsplus.site
  │      └──── 📄 docker-compose.yml
  ├──── 📁 server-payment
  └──── 📄 docker-compose.yml
+```
 
 - .github: 이슈 템플릿, 워크플로우 파일들
 - client: 리액트 앱
