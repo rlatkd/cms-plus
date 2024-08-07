@@ -74,7 +74,7 @@ async def get_members(filepath: str, page: int = Query(1, ge=1), page_size: int 
     global_dict = {'page': page, 'page_size': page_size}
     
     # 노트북 실행
-    ep.preprocess(nb, {'metadata': {'path': NOTEBOOKS_DIR}}, resources=global_dict)
+    ep.preprocess(nb, {'metadata': {'path': NOTEBOOKS_DIR}})
     
     # get_member_list 함수 찾기 및 실행
     for cell in nb.cells:
