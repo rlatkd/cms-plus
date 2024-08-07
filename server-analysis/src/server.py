@@ -35,7 +35,6 @@ class MemberData(BaseModel):
     total_contract_amount: int
     payment_type: str
 
-
 # 루트 경로
 @app.get("/")
 async def read_root():
@@ -99,12 +98,6 @@ async def execute_notebook(filepath: str, member_data: MemberData = Body(...)):
     # ExecutePreprocessor 설정
     ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
     
-    # # 노트북 실행을 위한 글로벌 네임스페이스 설정
-    # global_dict = {'member_data': member_data.dict()}
-    
-    # # 노트북 실행
-    # ep.preprocess(nb, resources=global_dict)
-
     # 노트북 실행을 위한 글로벌 네임스페이스 설정
     global_dict = {
         'member_data': member_data.dict()
@@ -112,8 +105,6 @@ async def execute_notebook(filepath: str, member_data: MemberData = Body(...)):
     
     # 노트북 실행
     ep.preprocess(nb, {'metadata': {'path': NOTEBOOKS_DIR}})
-
-
     
     # execute_model 함수 찾기 및 실행
     try:
@@ -124,8 +115,6 @@ async def execute_notebook(filepath: str, member_data: MemberData = Body(...)):
                     result = global_dict['execute_model'](member_data.dict())
                     return JSONResponse(content=result)
     except Exception as e:
-        # 예외가 발생하면 상세한 오류 메시지를 반환
         return JSONResponse(content={"error": str(e)})
     
-    # execute_model 함수를 찾지 못한 경우
     return JSONResponse(content={"error": "execute_model function not found in the notebook"})
