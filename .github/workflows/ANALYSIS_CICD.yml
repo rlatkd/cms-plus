@@ -26,7 +26,7 @@ jobs:
 
     - name: Build and push
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest ./server-analysis
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest -f ./server-analysis/Dockerfile.web ./server-analysis
         docker push ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
 
     - name: Deploy EC2
