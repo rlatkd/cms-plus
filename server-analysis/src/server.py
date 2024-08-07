@@ -99,11 +99,23 @@ async def execute_notebook(filepath: str, member_data: MemberData = Body(...)):
     # ExecutePreprocessor 설정
     ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
     
+    # # 노트북 실행을 위한 글로벌 네임스페이스 설정
+    # global_dict = {'member_data': member_data.dict()}
+    
+    # # 노트북 실행
+    # ep.preprocess(nb, resources=global_dict)
+
     # 노트북 실행을 위한 글로벌 네임스페이스 설정
-    global_dict = {'member_data': member_data.dict()}
+    global_dict = {
+        'member_data': member_data.dict(),
+        'train_and_save_model': train_and_save_model,
+        'load_model_and_predict': load_model_and_predict
+    }
     
     # 노트북 실행
-    ep.preprocess(nb, resources=global_dict)
+    ep.preprocess(nb, {'metadata': {'path': NOTEBOOKS_DIR}})
+
+
     
     # execute_model 함수 찾기 및 실행
     for cell in nb.cells:
