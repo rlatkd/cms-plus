@@ -44,4 +44,4 @@ jobs:
             sudo docker rm server-analysis
           fi
 
-          sudo docker run -d -p 80:8888 --name server-analysis ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
+          sudo docker run -d -p 80:8000 --name server-analysis ${{ secrets.DOCKER_USERNAME }}/server-analysis:latest
