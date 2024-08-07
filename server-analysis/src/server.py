@@ -22,7 +22,7 @@ app = FastAPI()
 # CORS 미들웨어 추가
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://www.hyosungcmsplus.site"],  # React 앱의 주소
+    allow_origins=["http://localhost:3000"],  # React 앱의 주소
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,10 +35,11 @@ class MemberData(BaseModel):
     total_contract_amount: int
     payment_type: str
 
+
 # 루트 경로
 @app.get("/")
 async def read_root():
-    return {"infra-test": "0807-4"}
+    return {"Hello": "World"}
 
 # 노트북 실행 (GET 메서드)
 @app.get("/notebook/{filepath:path}")
@@ -73,7 +74,7 @@ async def get_members(filepath: str, page: int = Query(1, ge=1), page_size: int 
     global_dict = {'page': page, 'page_size': page_size}
     
     # 노트북 실행
-    ep.preprocess(nb, {'metadata': {'path': NOTEBOOKS_DIR}})
+    ep.preprocess(nb, {'metadata': {'path': NOTEBOOKS_DIR}}, resources=global_dict)
     
     # get_member_list 함수 찾기 및 실행
     for cell in nb.cells:
@@ -99,22 +100,20 @@ async def execute_notebook(filepath: str, member_data: MemberData = Body(...)):
     ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
     
     # 노트북 실행을 위한 글로벌 네임스페이스 설정
-    global_dict = {
-        'member_data': member_data.dict()
-    }
+    global_dict = {'member_data': member_data.dict()}
     
     # 노트북 실행
-    ep.preprocess(nb, {'metadata': {'path': NOTEBOOKS_DIR}})
+    ep.preprocess(nb, resources=global_dict)
     
     # execute_model 함수 찾기 및 실행
-    try:
-        for cell in nb.cells:
-            if cell.cell_type == 'code':
+    for cell in nb.cells:
+        if cell.cell_type == 'code':
+            if 'execute_model' in cell.source:
                 exec(cell.source, global_dict)
-                if 'execute_model' in cell.source:
-                    result = global_dict['execute_model'](member_data.dict())
-                    return JSONResponse(content=result)
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)})
+                print('test33', member_data.dict())
+                result = global_dict['execute_model'](member_data.dict())
+                print(result)
+                return JSONResponse(content=result)
     
+    # execute_model 함수를 찾지 못한 경우
     return JSONResponse(content={"error": "execute_model function not found in the notebook"})
