@@ -81,7 +81,7 @@ public class SampleDataLoader {
 	private static final String[] SUBJECTS = {"수학", "영어", "과학", "국어", "사회", "코딩", "미술", "음악", "체육"};
 	private static final String[] LEVELS = {"초급", "중급", "고급", "심화", "기초"};
 	private static final String[] TYPES = {"특강", "정규반", "단과", "집중", "1:1", "그룹", "온라인"};
-	private static final String[] DURATIONS = {"단기", "장기"};
+	private static final String[] DURATIONS = {""};
 
 	@Transactional
 	public void init() {
@@ -96,7 +96,7 @@ public class SampleDataLoader {
 		);
 
 		// 샘플 데이터 생성
-		generateSampleData(academy, 50, 1000, 2000, 1000);
+		generateSampleData(academy, 50, 100, 200, 200);
 	}
 
 	/**
