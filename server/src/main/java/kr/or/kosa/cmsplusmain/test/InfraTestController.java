@@ -22,7 +22,7 @@ public class InfraTestController {
     @GetMapping("/infra-test")
     public String infraTest() {
         log.error("infraTest");
-        return "infra-test v0806-1";
+        return "infra-test v0807-1";
     }
 
 }
