@@ -10,7 +10,7 @@ const Statistics = () => {
   const [statisticList, setStatisticList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [selectedContract, setSelectedContract] = useState(null);
-  const [renewalProbability, setRenewalProbability] = useState(null);
+  const [new_member_renewal_probability, setRenewalProbability] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onAlert = useAlert();
@@ -83,11 +83,11 @@ const Statistics = () => {
           <div className='flex-1 overflow-hidden flex flex-col'>
             <div className='mb-4 space-y-2 border-b border-t py-3'>
               <InfoRow label='계약ID' value={selectedContract.contractId} />
-              <InfoRow label='가입연도' value={selectedContract.enrollYear} />
-              <InfoRow label='계약기간' value={`${selectedContract.contractDuration}일`} />
+              <InfoRow label='가입연도' value={selectedContract.enroll_year} />
+              <InfoRow label='계약기간' value={`${selectedContract.contract_duration}일`} />
               <InfoRow
                 label='총 계약금액'
-                value={`${selectedContract.totalContractAmount?.toLocaleString()}원`}
+                value={`${selectedContract?.total_contract_amount?.toLocaleString()}원`}
               />
             </div>
             <h3 className='text-2xl font-semibold mt-3 text-text_black'>갱신 확률</h3>
@@ -96,14 +96,18 @@ const Statistics = () => {
                 <LoadingSpinner />
               </SpinnerContainer>
             ) : (
-              renewalProbability !== null && (
+              new_member_renewal_probability !== null && (
                 <>
                   <ChartContainer>
-                    <DountChart color='#07f' percent={renewalProbability} size='150px' />
+                    <DountChart
+                      color='#07f'
+                      percent={new_member_renewal_probability}
+                      size='150px'
+                    />
                   </ChartContainer>
                   <p className='text-center text-xl text-gray-500 mt-4'>해당 계약 갱신 확률은 </p>
                   <p className='text-center text-xl text-blue-600 mt-2'>
-                    {Math.round(renewalProbability * 100)}%
+                    {Math.round(new_member_renewal_probability * 100)}%
                   </p>
                 </>
               )
