@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const StatisticList = ({
-  statisticList,
-  filteredList,
-  setFilteredList,
-  handleSelectContract,
-}) => {
+const StatisticList = ({ statisticList, filteredList, setFilteredList, handleSelectContract }) => {
   const [selectedContractId, setSelectedContractId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -15,7 +10,7 @@ const StatisticList = ({
   };
 
   useEffect(() => {
-    const filtered = statisticList.filter(contract => 
+    const filtered = statisticList.filter(contract =>
       String(contract.contractId).toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredList(filtered);
@@ -26,14 +21,14 @@ const StatisticList = ({
       <h2 className='text-2xl font-semibold mb-4 text-text_black'>계약 목록</h2>
       <div className='mb-4 flex'>
         <input
-          type="text"
+          type='text'
           className='flex-grow p-2 border rounded'
-          placeholder="계약 ID로 검색해주세요."
+          placeholder='계약 ID로 검색해주세요.'
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => setSearchTerm(e.target.value)}
         />
       </div>
-      <div className='overflow-auto' style={{maxHeight: 'calc(100vh - 250px)'}}>
+      <div className='overflow-auto' style={{ maxHeight: 'calc(100vh - 250px)' }}>
         <table className='w-full mb-3'>
           <thead>
             <tr className='bg-table_col'>
@@ -44,23 +39,25 @@ const StatisticList = ({
             </tr>
           </thead>
           <tbody>
-          {filteredList.map((contract, index) => (
-            <tr
-              key={`${contract.contractId}-${index}`}
-              onClick={() => onSelected(contract)}
-              className={`cursor-pointer  ${
-                selectedContractId === contract.contractId ? 'bg-blue-100' : 'hover:bg-gray-100'
-              }`}>
-              <td className='border-b border-ipt_border p-2 text-text_black'>
-                {contract.contractId}
-              </td>
-              <td className='border-b border-ipt_border p-2 text-text_black'>{contract.enrollYear}</td>
-              <td className='border-b border-ipt_border p-2 text-text_black'>
-                {`${contract.contractDuration}일`}
-              </td>
-              <td className='border-b border-ipt_border p-2 text-text_black'>{`${contract.totalContractAmount.toLocaleString()}원`}</td>
-            </tr>
-          ))}
+            {filteredList.map((contract, index) => (
+              <tr
+                key={`${contract.contractId}-${index}`}
+                onClick={() => onSelected(contract)}
+                className={`cursor-pointer  ${
+                  selectedContractId === contract.contractId ? 'bg-blue-100' : 'hover:bg-gray-100'
+                }`}>
+                <td className='border-b border-ipt_border p-2 text-text_black'>
+                  {contract.contractId}
+                </td>
+                <td className='border-b border-ipt_border p-2 text-text_black'>
+                  {contract.enroll_year}
+                </td>
+                <td className='border-b border-ipt_border p-2 text-text_black'>
+                  {`${contract.contract_duration}일`}
+                </td>
+                <td className='border-b border-ipt_border p-2 text-text_black'>{`${contract?.total_contract_amount?.toLocaleString() || 0}원`}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
