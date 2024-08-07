@@ -223,7 +223,8 @@ public class SampleDataLoader {
 		String phone = randomGenerator.generateRandomPhone();
 		String homePhone = randomGenerator.generateRandomHomePhone();
 		Address address = new Address(faker.address().zipCode(), faker.address().streetAddress(), faker.address().secondaryAddress());
-		LocalDate enrollDate = LocalDate.from(faker.timeAndDate().past().atZone(ZoneId.of("Asia/Seoul")));
+		List<Integer> years = List.of(2022, 2023, 2024);
+		LocalDate enrollDate = LocalDate.of(options.nextElement(years), random.nextInt(12) + 1, random.nextInt(26) + 1);
 
 		return Member.builder()
 			.vendor(academy)
