@@ -6,7 +6,6 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -16,15 +15,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import net.datafaker.Faker;
 import net.datafaker.providers.base.Options;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
-import jakarta.transaction.TransactionManager;
 import jakarta.transaction.Transactional;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.Billing;
 import kr.or.kosa.cmsplusmain.domain.billing.entity.BillingProduct;
@@ -186,7 +181,7 @@ public class SampleDataLoader {
 				.product(product)
 				.name(product.getName())
 				.price(product.getPrice())
-				.quantity(random.nextInt(9) + 1)
+				.quantity(1)
 				.build();
 			billingProducts.add(billingProduct);
 		}
@@ -335,7 +330,7 @@ public class SampleDataLoader {
 				.product(product)
 				.name(product.getName())
 				.price(product.getPrice())
-				.quantity(random.nextInt(9) + 1) // 1에서 9개의 수량
+				.quantity(1)
 				.build();
 
 			contract.addContractProduct(contractProduct);
@@ -478,7 +473,7 @@ public class SampleDataLoader {
 			.vendor(vendor)
 			.status(ProductStatus.ENABLED)
 			.name(idx == -1 ? "기본상품" : randomProductNames.get(idx % randomProductNames.size()))
-			.price(idx == -1 ? 0 : (int) Double.parseDouble(faker.commerce().price(10000, 1000000)))
+			.price(idx == -1 ? 0 : (int) Double.parseDouble(faker.commerce().price(10000, 300000)))
 			.memo(idx == -1 ? null : faker.book().title() + " 교재 사용")
 			.build();
 	}
