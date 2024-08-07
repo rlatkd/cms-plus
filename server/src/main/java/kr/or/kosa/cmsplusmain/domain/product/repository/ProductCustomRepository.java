@@ -66,7 +66,6 @@ public class ProductCustomRepository extends BaseCustomRepository<Product> {
     }
 
     // 고객의 상품 목록
-    // 프로젝션 대상이 2개이상이기 때문에 QueryProjection을 이용
     public List<ProductQueryDto> findProductListWithCondition(Long vendorId, ProductSearchReq search, PageReq pageable) {
         /*
          * 해당 고객의 모든 상품(삭제되지않은)을 가져오는데, 상품의 정보와 상품이 포함된 계약 갯수를 가져와야함
