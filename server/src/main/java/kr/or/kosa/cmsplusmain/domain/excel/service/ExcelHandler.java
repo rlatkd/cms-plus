@@ -3,9 +3,13 @@ package kr.or.kosa.cmsplusmain.domain.excel.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,9 +115,7 @@ public class ExcelHandler<T> {
 				if (fieldType == String.class) {
 					field.set(dataDTO, cell.getStringCellValue());
 				} else if (fieldType == LocalDate.class) {
-					DataFormatter dataFormatter = new DataFormatter();
-					String cellStringValue = dataFormatter.formatCellValue(cell);
-					field.set(dataDTO, LocalDate.parse(cellStringValue));
+					field.set(dataDTO, LocalDate.parse(cell.getStringCellValue()));
 				}
 			}
 			case NUMERIC -> {
@@ -124,9 +126,10 @@ public class ExcelHandler<T> {
 				} else if (fieldType == long.class || fieldType == Long.class) {
 					field.set(dataDTO, (long)cell.getNumericCellValue());
 				} else if (fieldType == LocalDate.class) {
-					DataFormatter dataFormatter = new DataFormatter();
-					String cellStringValue = dataFormatter.formatCellValue(cell);
-					field.set(dataDTO, LocalDate.parse(cellStringValue));
+					Date date = cell.getDateCellValue();
+					LocalDate localDate = date.toInstant()
+						.atZone(ZoneId.systemDefault()).toLocalDate();
+					field.set(dataDTO, localDate);
 				}
 			}
 			case BOOLEAN -> {
