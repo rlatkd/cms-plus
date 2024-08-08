@@ -27,7 +27,7 @@ const PaymentAccountPage = () => {
   const { invoiceInfo, selectedBank } = useInvoiceStore();
 
   const [billingId, setBillingId] = useState('');
-  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const { invoiceId } = useParams();
   const navigate = useNavigate();
@@ -127,7 +127,7 @@ const PaymentAccountPage = () => {
 
   const paymentData = {
     billingId: billingId,
-    email: email,
+    phoneNumber: phoneNumber,
     method: method,
     number: number,
   };
@@ -143,7 +143,7 @@ const PaymentAccountPage = () => {
   useEffect(() => {
     if (invoiceInfo) {
       setBillingId(invoiceInfo.billingId);
-      setEmail(invoiceInfo.member.email);
+      setPhoneNumber(invoiceInfo.member.phone);
     } else {
       reset();
       navigate(`/member/invoice/${invoiceId}`);

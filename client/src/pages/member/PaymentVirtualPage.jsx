@@ -46,11 +46,11 @@ const PaymentVirtualPage = () => {
     if (invoiceInfo) {
       const number = invoiceInfo.paymentType.accountNumber; //가상계좌번호
       const method = 'VIRTUAL';
-      const email = invoiceInfo.member.email;
+      const phoneNumber = invoiceInfo.member.phone;
 
       setPaymentData({
         billingId: invoiceInfo.billingId,
-        email: email,
+        phoneNumber: phoneNumber,
         method: method,
         number: number,
       });
