@@ -27,7 +27,7 @@ const PaymentCardPage = () => {
   const [isVerified, setIsVerified] = useState(false);
   const { invoiceInfo, selectedCard } = useInvoiceStore();
   const [billingId, setBillingId] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
 
   const { invoiceId } = useParams();
   const navigate = useNavigate();
@@ -132,7 +132,7 @@ const PaymentCardPage = () => {
 
   const paymentData = {
     billingId: billingId,
-    phoneNumber: phoneNumber,
+    email: email,
     method: method,
     number: number,
   };
@@ -149,7 +149,7 @@ const PaymentCardPage = () => {
   useEffect(() => {
     if (invoiceInfo) {
       setBillingId(invoiceInfo.billingId);
-      setPhoneNumber(invoiceInfo.member.phone);
+      setEmail(invoiceInfo.member.email);
     } else {
       reset();
       navigate(`/member/invoice/${invoiceId}`);
