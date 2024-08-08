@@ -65,6 +65,7 @@ public class V2ContractRepository extends V2BaseRepository<Contract, Long> {
 			.join(contract.payment, payment)
 			.where(
 				contractVendorIdEq(vendorId),                    // 고객의 계약
+				contractIdEq(search.getContractId()),			 // 계약의 ID
 				contractStatusEq(search.getContractStatus()),    // 계약 상태 일치
 				contractPriceLoe(search.getContractPrice()),    // 계약 금액 이하
 				contractDayEq(search.getContractDay()),            // 계약일 일치

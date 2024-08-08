@@ -12,6 +12,7 @@ public class ContractSearchReq {
 
 	/****** 검색 가능 항목 *******/
 
+	private Long contractId;
 	private String memberName;
 	private String memberPhone;
 	private Integer contractDay;

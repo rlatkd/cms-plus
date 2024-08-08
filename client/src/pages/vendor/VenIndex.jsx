@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import BaseLayout from '@/layouts/DashBaordBaseLayout';
+import BaseLayout from '@/layouts/DashBoardBaseLayout';
 
 const VenIndex = () => {
   return (

@@ -2,7 +2,8 @@ import PagiNation from '@/components/common/PagiNation';
 import SelectField from '@/components/common/selects/SelectField';
 import InputWeb from '@/components/common/inputs/InputWeb';
 import { formatProductsForList } from '@/utils/format/formatProducts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const typeOtions = [
   { value: 'memberName', label: '회원명' },
@@ -30,8 +31,9 @@ const ContractList = ({
   pageGroup,
   setPageGroup,
 }) => {
-  const [selectedContractId, setSelectedContractId] = useState(null);
+  const { contractId } = useParams();
   const [mSearchTerm, setMSearchTerm] = useState('');
+  const [selectedContractId, setSelectedContractId] = useState(contractId ? contractId : null);
 
   const onSelected = contract => {
     setSelectedContractId(contract.contractId);
