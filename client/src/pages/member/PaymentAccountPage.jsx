@@ -132,8 +132,6 @@ const PaymentAccountPage = () => {
     number: number,
   };
 
-  console.log(invoiceInfo);
-
   const axiosAccountPayment = async () => {
     try {
       console.log('?????', paymentData);
