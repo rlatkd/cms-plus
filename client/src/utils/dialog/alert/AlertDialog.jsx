@@ -8,7 +8,7 @@ import AlertError from './AlertError';
 const AlertDialog = ({ children }) => {
   const [state, setState] = useState();
 
-  const alert = (message, type = 'default', title = '효성 CMS#') => {
+  const alert = (message, type = 'default', title = '효성 CMS+') => {
     return new Promise(resolve => {
       setState({
         message: message !== undefined ? `${message}` : '',

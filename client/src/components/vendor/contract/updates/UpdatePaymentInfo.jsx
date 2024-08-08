@@ -4,12 +4,13 @@ import useAlert from '@/hooks/useAlert';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import { formatCardYearForStorage } from '@/utils/format/formatCard';
+import { validateField } from '@/utils/validators';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdatePaymentInfo = ({ formType }) => {
   const { ...payment } = useMemberPaymentStore(); // 결제정보 - 수정목적
   const { contractInfo } = useMemberContractStore();
-  const { contractId, memberId } = useParams();
+  const { contractId } = useParams();
   const onAlert = useAlert();
   const navigate = useNavigate();
 
@@ -38,20 +39,76 @@ const UpdatePaymentInfo = ({ formType }) => {
       }),
       contractDay: contractInfo.contractDay,
     };
-    console.log(paymentCreateReq);
     return paymentCreateReq;
   };
 
   // <------ 결제 정보 수정 API ------>
   const axiosUpdatePaymentDetail = async () => {
     try {
+      // if (!validatePaymentInfo()) return;
       const res = await updatePaymentDetail(contractId, transformPaymentInfo());
-      console.log('!----결제 정보 수정 성공----!', transformPaymentInfo()); // 삭제예정
-      await navigate(`/vendor/contracts/detail/${contractId}`);
+      console.log('!----결제 정보 수정 성공----!'); // 삭제예정
       onAlert({ msg: '결제정보가 수정되었습니다!', type: 'success', title: '결제정보수정' });
     } catch (err) {
+      onAlert({ err });
       console.error('axiosUpdatePaymentDetail => ', err.response);
     }
+  };
+
+  // <----- 유효성 검사 : PaymentInfo ----->
+  const validatePaymentInfo = data => {
+    const isValidContractDay = contractInfo.contractDay >= 1 && contractInfo.contractDay <= 31;
+    let isSuccess = isValidContractDay;
+
+    const paymentTypeInfoReq = data.paymentTypeInfoReq;
+    const paymentMethodInfoReq = data.paymentMethodInfoReq;
+
+    // 자동결제 선택한 경우
+    if (paymentTypeInfoReq.paymentType === 'AUTO') {
+      // Cms 선택한 경우
+      if (paymentMethodInfoReq && paymentMethodInfoReq.paymentMethod === 'CMS') {
+        const isValidBank = paymentMethodInfoReq.bank !== '';
+        const isValidAccountNumber = validateField(
+          'accountNumber',
+          paymentMethodInfoReq.accountNumber
+        );
+        const isValidAccountOwner = validateField('name', paymentMethodInfoReq.accountOwner);
+        const isValidAccountOwnerBirth = paymentMethodInfoReq.accountOwnerBirth !== '';
+
+        isSuccess =
+          isSuccess &&
+          isValidBank &&
+          isValidAccountNumber &&
+          isValidAccountOwner &&
+          isValidAccountOwnerBirth;
+      }
+      // Card 선택한 경우
+      else if (paymentMethodInfoReq && paymentMethodInfoReq.paymentMethod === 'CARD') {
+        const isValidCardNumber = validateField('cardNumber', paymentMethodInfoReq.cardNumber);
+        const isValidCardMonth = validateField('cardMonth', paymentMethodInfoReq.cardMonth);
+        const isValidCardYear = paymentMethodInfoReq.cardYear !== '';
+        const isValidCardOwner = validateField('name', paymentMethodInfoReq.cardOwner);
+        const isValidCardOwnerBirth = paymentMethodInfoReq.cardOwnerBirth !== '';
+
+        isSuccess =
+          isSuccess &&
+          isValidCardNumber &&
+          isValidCardMonth &&
+          isValidCardYear &&
+          isValidCardOwner &&
+          isValidCardOwnerBirth;
+      }
+    }
+    if (paymentTypeInfoReq.paymentType === 'VIRTUAL') {
+      const isValidBank = paymentTypeInfoReq.bank !== '';
+      const isValidAccountOwner = validateField('name', paymentTypeInfoReq.accountOwner);
+      isSuccess = isSuccess && isValidBank && isValidAccountOwner;
+    }
+
+    if (!isSuccess) {
+      onAlert({ msg: '결제정보가 잘못 입력되었습니다.', type: 'error', title: '입력 정보 오류' });
+    }
+    return isSuccess;
   };
 
   return (

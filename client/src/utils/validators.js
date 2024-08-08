@@ -21,9 +21,7 @@ export const isValidExpiryDate = expiryString => {
 
 // 카드 만료일 년도 검사
 const isCardYearValid = cardYear => {
-  console.log(cardYear);
   const currentYearLastTwoDigits = String(new Date().getFullYear()).substring(2);
-  console.log(parseInt(cardYear, 10) >= parseInt(currentYearLastTwoDigits, 10));
   return parseInt(cardYear, 10) >= parseInt(currentYearLastTwoDigits, 10);
 };
 

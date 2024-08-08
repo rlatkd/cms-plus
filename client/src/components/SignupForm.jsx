@@ -111,7 +111,7 @@ const SignupForm = () => {
 
   return (
     <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full flex flex-col justify-around items-center py-16'>
-      <p className='text-white font-900 text-3xl'>Hyosung CMS #</p>
+      <p className='text-white font-900 text-3xl'>Hyosung CMS +</p>
       <div className='text-white font-700 text-sm flex flex-col items-center '>
         <p>안녕하세요 효성CMS+입니다.</p>
         <p className='my-1'>아이디 만들기는 효성 FMS의 미리 계약된 고객만</p>

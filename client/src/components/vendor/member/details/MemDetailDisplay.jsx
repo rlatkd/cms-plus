@@ -3,7 +3,6 @@ import User from '@/assets/User';
 import wallet from '@/assets/wallet.svg';
 
 const MemDetailDisplay = ({ memberData }) => {
-  console.log(memberData);
   return (
     <div className='sub-dashboard mb-5 h-40 pb-6  w-full flex justify-around items-center '>
       <div className='flex items-center ml-24'>

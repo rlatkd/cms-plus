@@ -161,8 +161,17 @@ export const useMemberPaymentStore = create(set => ({
       },
     }),
 
+  // <----- 카드/계좌 인증여부 ----->
+  isVerified: false,
+
+  // boolean 값 변경
+  setIsVerified: data =>
+    set({
+      isVerified: data,
+    }),
+
   // <----- 간편성명동의 체크여부 ----->
-  isSimpConsentCheck: 'true',
+  isSimpConsentCheck: true,
 
   // boolean 값 변경
   setIsSimpConsentCheck: data =>

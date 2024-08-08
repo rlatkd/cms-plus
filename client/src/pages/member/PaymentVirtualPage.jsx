@@ -37,13 +37,12 @@ const PaymentVirtualPage = () => {
   const componentMap = {
     2: CheckVirtual, // 가상계좌 정보
     3: () => <Loading content={'결제중...'} />, // 결제로딩 대충 로딩하다가 success로 가도록 해야됨. 결제결과는 문자로 날라감
-    4: () => <Success content="결제가 완료되었습니다!" />, // 입금완료
+    4: () => <Success content='결제가 완료되었습니다!' />, // 입금완료
   };
   const Content = componentMap[status] || (() => 'error');
 
   // <----- URL로 이동시 첫 페이지로 이동 ----->
   useEffect(() => {
-    console.log(invoiceInfo);
     if (invoiceInfo) {
       const number = invoiceInfo.paymentType.accountNumber; //가상계좌번호
       const method = 'VIRTUAL';
@@ -81,14 +80,14 @@ const PaymentVirtualPage = () => {
         )}
         {status != 3 && status != 4 && (
           <NextButton
-          onClick={handleClickNext}
-          type={'invoice'}
-          status={status}
-          end={end}
-          onPayment={axiosVirtualAccountPayment}
-          // 가상계좌에서 마지막 결제 완료 루트 하나 줄어들면 위에꺼 지우고 아래꺼 적용
-          // onVirtualPayment={axiosVirtualAccountPayment}
-        />
+            onClick={handleClickNext}
+            type={'invoice'}
+            status={status}
+            end={end}
+            onPayment={axiosVirtualAccountPayment}
+            // 가상계좌에서 마지막 결제 완료 루트 하나 줄어들면 위에꺼 지우고 아래꺼 적용
+            // onVirtualPayment={axiosVirtualAccountPayment}
+          />
         )}
       </div>
     </>

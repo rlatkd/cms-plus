@@ -17,7 +17,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const PaymentAccountPage = () => {
   const start = 0;
   const end = 6;
-  const { status, reset, setStatus} = useStatusStore();
+  const { status, reset, setStatus } = useStatusStore();
   const { handleClickPrevious, handleClickNext: originalHandleClickNext } = useStatusStepper(
     'account',
     start,
@@ -117,7 +117,7 @@ const PaymentAccountPage = () => {
     3: () => <ChooseBank billingInfo={invoiceInfo} />, //은행선택
     4: AccountInfo, // 계좌정보 입력
     5: () => <Loading content={'결제중...'} />, // 결제로딩 대충 로딩하다가 success로 가도록 해야됨. 결제결과는 문자로 날라감
-    6: () => <Success content="결제가 완료되었습니다!" />, // 입금완료
+    6: () => <Success content='결제가 완료되었습니다!' />, // 입금완료
   };
 
   const Content = componentMap[status] || (() => 'error');
@@ -132,13 +132,9 @@ const PaymentAccountPage = () => {
     number: number,
   };
 
-  console.log(invoiceInfo);
-
   const axiosAccountPayment = async () => {
     try {
-      console.log('?????', paymentData);
       const res = await requestAccountPayment(paymentData);
-      console.log(res.data);
     } catch (err) {
       console.error('axiosAccountPayment => ', err.response);
     }
@@ -173,11 +169,11 @@ const PaymentAccountPage = () => {
         isVerified={isVerified}
         setIsVerified={setIsVerified}
       />
-      {status != 5 && status != 6 &&(
-      <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
-        <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
-        <NextButton onClick={handleClickNext} type={'account'} status={status} end={end} />
-      </div>
+      {status != 5 && status != 6 && (
+        <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
+          <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
+          <NextButton onClick={handleClickNext} type={'account'} status={status} end={end} />
+        </div>
       )}
     </>
   );

@@ -31,7 +31,6 @@ const ResetPasswordModal = ({ icon, isShowModal, findedId, setIsShowModal, modal
       const { newPasswordCheck, ...data } = passwordFormData;
       const res = await postResetPassword(data);
       console.log('!----비밀번호 찾기 요청 성공----!'); // 삭제예정
-      console.log(res);
       setIsShowModal(false);
       onAlert({ msg: '비밀번호 재설정이 완료되었습니다!', type: 'success' });
     } catch (err) {

@@ -22,7 +22,6 @@ const PaymentCard = ({ paymentData, onInputChange, isVerified, setIsVerified, co
 
       if (result === true) {
         setIsVerified(true);
-        console.log(isVerified, true);
         alert('카드 인증이 성공적으로 완료되었습니다.');
       } else {
         setIsVerified(false);

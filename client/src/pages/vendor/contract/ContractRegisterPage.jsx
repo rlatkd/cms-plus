@@ -51,6 +51,7 @@ const ContractRegisterPage = () => {
     paymentMethodInfoReq_Cms,
     paymentMethodInfoReq_Card,
     isSimpConsentCheck,
+    isVerified,
     ...paymentResetFunctions
   } = useMemberPaymentStore();
 
@@ -287,6 +288,11 @@ const ContractRegisterPage = () => {
           isValidCardYear &&
           isValidCardOwner &&
           isValidCardOwnerBirth;
+      }
+      if (!isVerified) {
+        setStatus(2);
+        onAlert({ msg: '카드/계좌 인증을 진행해주세요!', type: 'error', title: '입력 정보 오류' });
+        return;
       }
     }
     if (paymentTypeInfoReq.paymentType === 'VIRTUAL') {

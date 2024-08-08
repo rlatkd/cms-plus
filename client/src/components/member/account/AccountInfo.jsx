@@ -5,7 +5,7 @@ import { verifyCMS } from '@/apis/validation';
 import { formatBirthDate } from '@/utils/format/formatBirth';
 import { validateField } from '@/utils/validators';
 
-const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified  }) => {
+const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified }) => {
   const selectedBank = useInvoiceStore(state => state.selectedBank);
 
   const [isVerifying, setIsVerifying] = useState(false);
@@ -41,14 +41,12 @@ const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified  }
       const result = await verifyCMS(accountData);
       setVerificationResult(result);
 
-      if(result){
+      if (result) {
         setIsVerified(result);
-      }else{
+      } else {
         setIsVerified(result);
-        alert('계좌 인증에 실패했습니다.' )
+        alert('계좌 인증에 실패했습니다.');
       }
-
-      console.log('Account verification result:', result);
     } catch (error) {
       console.error('Account verification failed:', error);
       setVerificationResult({ error: '계좌 인증에 실패했습니다.' });
@@ -86,7 +84,9 @@ const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified  }
             value={accountInfo.accountOwner}
             onChange={handleInputChange}
             maxLength={20}
-            isValid={accountInfo.accountOwner === '' || validateField('name', accountInfo.accountOwner)}
+            isValid={
+              accountInfo.accountOwner === '' || validateField('name', accountInfo.accountOwner)
+            }
             errorMsg='올바른 예금주명을 입력해주세요.'
           />
           <Input
@@ -98,7 +98,10 @@ const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified  }
             value={accountInfo.accountNumber}
             onChange={handleInputChange}
             maxLength={14}
-            isValid={accountInfo.accountNumber === '' || validateField('accountNumber', accountInfo.accountNumber)}
+            isValid={
+              accountInfo.accountNumber === '' ||
+              validateField('accountNumber', accountInfo.accountNumber)
+            }
             errorMsg='올바른 계좌번호를 입력해주세요.'
           />
           <Input
@@ -110,7 +113,10 @@ const AccountInfo = ({ accountInfo, setAccountInfo, isVerified, setIsVerified  }
             value={accountInfo.accountOwnerBirth}
             onChange={handleInputChange}
             maxLength={10}
-            isValid={accountInfo.accountOwnerBirth === '' || validateField('birth', accountInfo.accountOwnerBirth)}
+            isValid={
+              accountInfo.accountOwnerBirth === '' ||
+              validateField('birth', accountInfo.accountOwnerBirth)
+            }
             errorMsg='올바른 생년월일을 입력해주세요.'
           />
           <button

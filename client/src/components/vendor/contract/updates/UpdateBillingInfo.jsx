@@ -2,8 +2,6 @@ import { updateMemberBilling } from '@/apis/billing';
 import BillingInfoForm from '@/components/common/memberForm/BillingInfoForm';
 import useAlert from '@/hooks/useAlert';
 import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
-import AlertContext from '@/utils/dialog/alert/AlertContext';
-import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateBillingInfo = ({ formType }) => {

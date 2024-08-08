@@ -58,7 +58,6 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
         page: page,
         size: 8,
       });
-      console.log(res.data.content);
       setMemberList(res.data.content);
       setTotalPages(res.data.totalPage || 1);
     } catch (err) {

@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import AutoTypeForm from '@/components/common/memberForm/PaymentType/AutoTypeForm';
 import BuyerTypeForm from '@/components/common/memberForm/PaymentType/BuyerTypeForm';
@@ -7,7 +6,6 @@ import SelectField from '@/components/common/selects/SelectField';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
 import { useMemberPaymentStore } from '@/stores/useMemberPaymentStore';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
-import dayjs from 'dayjs';
 import { disabledEndDate, disabledStartDate } from '@/utils/format/formatCalender';
 
 const PaymentType = [

@@ -2,13 +2,12 @@ import { updateContractDetail } from '@/apis/contract';
 import ContractInfoForm from '@/components/common/memberForm/ContractInfoForm';
 import useAlert from '@/hooks/useAlert';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
-import AlertContext from '@/utils/dialog/alert/AlertContext';
-import { useContext } from 'react';
+import { validateField } from '@/utils/validators';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateContractInfo = ({ formType }) => {
   const { contractInfo } = useMemberContractStore();
-  const { contractId, memberId } = useParams();
+  const { contractId } = useParams();
   const navigate = useNavigate();
   const onAlert = useAlert();
 
@@ -25,10 +24,12 @@ const UpdateContractInfo = ({ formType }) => {
   // <------ 계약 정보 수정 API ------>
   const axiosUpdateContractDetail = async () => {
     try {
+      // validation 체크
+      if (!validateContractInfo()) return;
+
       const trasformData = transformContractInfo(contractInfo);
       const res = await updateContractDetail(contractId, trasformData);
       console.log('!----계약 정보 수정 성공----!');
-      await navigate(`/vendor/contracts/detail/${contractId}`);
       onAlert({ msg: '계약정보가 수정되었습니다!', type: 'success' });
     } catch (err) {
       console.error('axiosUpdateContractDetail => ', err);
@@ -38,8 +39,24 @@ const UpdateContractInfo = ({ formType }) => {
         title: '계약 수정 실패',
         err: err,
       });
-      navigate(`/vendor/contracts/detail/${contractId}`);
     }
+  };
+
+  // <----- 유효성 검사 : ContractInfo ----->
+  const validateContractInfo = trasformData => {
+    const isValidContractName = validateField('contractName', contractInfo.contractName);
+
+    const isValidContractProducts =
+      contractInfo.contractProducts.length >= 1 &&
+      contractInfo.contractProducts.length <= 10 &&
+      contractInfo.contractProducts.every(product => product.quantity && product.quantity > 0);
+
+    const isSuccess = isValidContractName && isValidContractProducts;
+
+    if (!isSuccess) {
+      onAlert({ msg: '계약정보가 잘못 입력되었습니다.', type: 'error', title: '입력 정보 오류' });
+    }
+    return isSuccess;
   };
 
   return (

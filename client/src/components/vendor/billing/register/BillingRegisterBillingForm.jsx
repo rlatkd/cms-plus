@@ -25,7 +25,6 @@ const BillingForm = ({
   const onAlert = useAlert();
 
   const handleDateChange = date => {
-    console.log('날짜 : ', date);
     handleBillingDataChange('billingDate', date);
   };
 

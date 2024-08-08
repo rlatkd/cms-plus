@@ -16,10 +16,8 @@ const Statistics = () => {
   const onAlert = useAlert();
 
   const fetchStatisticList = useCallback(async () => {
-    console.log('Fetching statistic list...', new Date().toISOString());
     try {
       const res = await getStatisticList();
-      console.log('Fetched statistic list', res.data);
       setStatisticList(res.data);
       setFilteredList(res.data);
     } catch (err) {
@@ -44,10 +42,7 @@ const Statistics = () => {
       };
 
       try {
-        console.log('request', memberData);
-
         const result = await getRenewalProbability(memberData);
-        console.log('Full server response:', result);
         const probability =
           parseFloat(result.new_member_renewal_probability.replace('%', '')) / 100;
         setRenewalProbability(probability);
