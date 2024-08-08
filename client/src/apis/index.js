@@ -3,7 +3,6 @@ import { postRefreshToken } from './auth';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 axios.defaults.withCredentials = true;
-// const TOKEN = import.meta.env.VITE_TOKEN;
 
 export const publicAxios = axios.create({
   baseURL: BASE_URL,
@@ -39,44 +38,15 @@ export const UploadFileAxios = axios.create({
   },
 });
 
-// <=====================================================>
-
-// // 개발전용
-// export const privateAxios = axios.create({
-//   baseURL: BASE_URL,
-//   headers: {
-//     'Access-Control-Allow-Origin': `${BASE_URL}`,
-//     'Content-Type': 'application/json',
-//     Authorization: `Bearer ${TOKEN}`,
-//   },
-// });
-
-// // 개발전용
-// export const UploadFileAxios = axios.create({
-//   baseURL: BASE_URL,
-//   headers: {
-//     'Access-Control-Allow-Origin': `${BASE_URL}`,
-//     'Content-Type': 'multipart/form-data',
-//     Authorization: `Bearer ${TOKEN}`,
-//   },
-// });
-
-// <=====================================================>
-
 // <----- 응답 인터셉터 설정 ----->
 [publicAxios, publicUploadFileAxios, privateAxios].forEach(instance => {
   instance.interceptors.response.use(
     response => response,
     err => {
       if (err.response) {
-        // const data = err.response.data;
+        // const data = err.response.data;W
         // console.error(data);
         switch (err.response.status) {
-          // case 400:
-          //   alert(
-          //     `${(data.errors.length > 0 ? data.errors.join('\n') : data.message) || '잘못된 입력입니다.'}`
-          //   );
-          //   break;
           case 403:
             window.location.href = '/error/forbidden';
             break;

@@ -6,7 +6,6 @@ import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
 import { disableFutureDates } from '@/utils/format/formatCalender';
 import { useLocation } from 'react-router-dom';
-import { getMemberCheck } from '@/apis/member';
 
 // formType : CREATE, UPDATE, DETAIL
 const BasicInfoForm = ({ formType, memberData }) => {
@@ -130,7 +129,6 @@ const BasicInfoForm = ({ formType, memberData }) => {
         />
       </div>
       {/* TODO */}
-      {/* 주소 입력 받기 */}
       <div className='flex-1 desktop:ml-10'>
         <div className='flex items-end mb-5'>
           <InputWeb

@@ -122,7 +122,7 @@ const vendorRoute = () => {
           element: <BillingDetail />,
         },
         {
-          path: 'create',
+          path: 'create/:contractId?',
           name: '청구 생성',
           menu: false,
           element: <BillingRegisterPage />,

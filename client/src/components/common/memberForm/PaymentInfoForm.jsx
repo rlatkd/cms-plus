@@ -53,15 +53,6 @@ const PaymentInfoForm = ({ formType }) => {
   // <------ formType : UPDATE일 경우 계약일 비활성화 ------>
   const isDisabled = formType === 'UPDATE';
 
-  // <------ 필요성 여부 검토 필요 ------>
-  // useEffect(() => {
-  //   if (paymentType === 'AUTO') {
-  //     setPaymentMethod('CMS');
-  //   } else if (paymentType !== 'AUTO') {
-  //     setPaymentMethod('');
-  //   }
-  // }, [paymentType]);
-
   return (
     <div className='flex flex-col pt-5 px-2 h-[calc(100%-120px)] '>
       <div className='flex mb-4 border-b border-ipt_border '>
