@@ -51,9 +51,9 @@ const PaymentCard = ({ paymentData, onInputChange, isVerified, setIsVerified, co
         formattedValue = formattedValue.slice(0, -1);
       }
     } else if (name === 'cardNumber') {
-      formattedValue = formatCardNumber(value);
       storedValue = unformatCardNumber(value);
-      setFormattedCardNumber(formattedValue);
+      formattedValue = unformatCardNumber(value);
+      setFormattedCardNumber(formatCardNumber(value));
     }
 
     onInputChange(name, storedValue);

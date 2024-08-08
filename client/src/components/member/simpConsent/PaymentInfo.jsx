@@ -58,7 +58,6 @@ const PaymentInfo = ({
   useEffect(() => {
     if (contract.paymentMethodInfo) {
       setIsVerified(true);
-      handleInputChange('isVerified', true);
     }
   }, []);
 
