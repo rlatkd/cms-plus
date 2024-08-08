@@ -5,7 +5,7 @@ import backgroundImgSide from '@/assets/backgroundImgSide.png';
 const LoginPage = () => {
 
   // 테스트
-  console.log("테스트");
+  console.log("테스트123");
 
   return (
     <>
