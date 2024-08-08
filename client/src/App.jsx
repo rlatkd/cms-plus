@@ -4,6 +4,7 @@ import ConfirmDialog from '@/utils/dialog/confirm/ConfirmDialog';
 import AlertDialog from './utils/dialog/alert/AlertDialog';
 
 const App = () => {
+  
   return (
     <div className='flex h-dvh w-vw justify-center'>
       <AlertDialog>
