@@ -140,7 +140,7 @@ const BillingListPage = () => {
       return;
     }
 
-    const confirmMessage = `${selectedBillings.length}건의 청구를 결제하시겠습니까?`;
+    const confirmMessage = `"${selectedBillings.length}건" 의 청구를 결제하시겠습니까?`;
 
     const isSend = await onConfirm({
       msg: confirmMessage,
@@ -192,7 +192,7 @@ const BillingListPage = () => {
       return;
     }
 
-    const confirmMessage = `${selectedBillings.length}건의 청구서를 발송하시겠습니까?`;
+    const confirmMessage = `"${selectedBillings.length}건" 의 청구서를 발송하시겠습니까?`;
 
     const isSend = await onConfirm({
       msg: confirmMessage,
@@ -237,7 +237,6 @@ const BillingListPage = () => {
 
   // <--------청구 상세 조회 페이지 이동-------->
   const MoveBillingDetail = async billingId => {
-    console.log(billingId);
     navigate(`detail/${billingId}`);
   };
 

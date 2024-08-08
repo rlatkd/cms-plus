@@ -26,7 +26,6 @@ const ConDetailBillingList = () => {
         size: 8,
       });
       console.log('!----계약 상세 - 청구리스트 조회 성공----!'); // 삭제예정
-      console.log(res.data.content);
       const transformdData = transformBillingListItem(res.data.content);
       setBillingList(transformdData);
       setTotalCount(res.data.totalCount);

@@ -8,7 +8,6 @@ export const requestCardPayment = async paymentData => {
 
 // 납부자-계좌 결제
 export const requestAccountPayment = async paymentData => {
-  console.log(paymentData);
   const res = await publicAxios.post('/v1/kafka/payment/account', paymentData);
   return res;
 };

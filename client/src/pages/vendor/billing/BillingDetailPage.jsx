@@ -52,14 +52,12 @@ const BillingDetailPage = () => {
     setIsLoading(true);
     try {
       const res = await getBillingDetail(billingId);
-      console.log(billingData, res);
       setBillingData(res.data);
       setBillingReq(prevReq => ({
         ...prevReq,
         billingDate: res.data.billing.billingDate,
         invoiceMessage: res.data.billing.invoiceMessage,
       }));
-      console.log(res);
     } catch (err) {
       console.error('청구 상세 정보 조회 실패:', err);
     } finally {
@@ -107,7 +105,6 @@ const BillingDetailPage = () => {
   };
 
   const handleInvoiceMessageChange = message => {
-    console.log(message);
     setBillingReq(prev => ({ ...prev, invoiceMessage: message }));
   };
   const handleBillingDateChange = date => {
@@ -153,7 +150,6 @@ const BillingDetailPage = () => {
     }
     try {
       await deleteBilling(billingId);
-      console.log('delete');
       onAlert({ msg: '청구가 삭제되었습니다.', type: 'success', title: '청구 삭제성공' });
       navigate(-1);
     } catch (err) {

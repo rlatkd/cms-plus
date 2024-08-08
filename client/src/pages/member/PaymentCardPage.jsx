@@ -122,7 +122,7 @@ const PaymentCardPage = () => {
     3: ChooseCard, //카드사 선택
     4: CardInfo, //카드정보 입력
     5: () => <Loading content={'결제중...'} />, //결제중
-    6: () => <Success content="결제가 완료되었습니다!" />, //입금완료
+    6: () => <Success content='결제가 완료되었습니다!' />, //입금완료
   };
 
   const Content = componentMap[status] || (() => 'error');
@@ -140,7 +140,6 @@ const PaymentCardPage = () => {
   const axiosCardPayment = async () => {
     try {
       const res = await requestCardPayment(paymentData);
-      console.log(res.data);
     } catch (err) {
       console.error('axiosCardPayment => ', err.response);
     }
@@ -175,12 +174,12 @@ const PaymentCardPage = () => {
         isVerified={isVerified}
         setIsVerified={setIsVerified}
       />
-      {status != 5 && status != 6 &&(
-      <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
+      {status != 5 && status != 6 && (
+        <div className='absolute bottom-0 left-0 flex h-24 w-full justify-between p-6 font-bold'>
           <PreviousButton onClick={handleClickPrevious} status={status} start={start} end={end} />
           <NextButton onClick={handleClickNext} type={'card'} status={status} end={end} />
-      </div>
-       )}
+        </div>
+      )}
     </>
   );
 };

@@ -136,7 +136,6 @@ const ProductListPage = () => {
     setModalTitle('상품 상세 정보');
     try {
       const res = await getProductDetail(productId);
-      console.log('상품상세 : ', res.data);
       setProductDetailData(res.data);
       setIsShowModal(true);
     } catch (err) {

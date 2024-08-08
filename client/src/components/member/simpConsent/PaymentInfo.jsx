@@ -4,9 +4,17 @@ import PaymentCMS from './PaymentCMS';
 import RadioGroup from '@/components/common/inputs/RadioGroup';
 import { getAvailableOptions } from '@/apis/simpleConsent';
 
-const PaymentInfo = ({ userData, setUserData, vendorId, contractId, name }) => {
+const PaymentInfo = ({
+  userData,
+  setUserData,
+  vendorId,
+  contractId,
+  contract,
+  name,
+  isVerified,
+  setIsVerified,
+}) => {
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
-  const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
     const fetchAvailableOptions = async () => {
@@ -23,39 +31,23 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId, name }) => {
 
   const handlePaymentMethodChange = useCallback(
     method => {
-      console.log('payment method change')
       setUserData({
         ...userData,
         paymentDTO: { ...userData.paymentDTO, paymentMethod: method },
       });
+      setIsVerified(false);
     },
-    [userData, setUserData]
+    [userData, setUserData, setIsVerified]
   );
 
   const handleInputChange = useCallback(
     (name, value) => {
-        setUserData({
-          ...userData,
-          paymentDTO: { ...userData.paymentDTO, [name]: value },
-        });
-      },
-      [userData, setUserData]
-    );
-
-  const handleVerificationComplete = useCallback(
-    verified => {
-      console.log('카드/계좌 인증:', verified);
-      
-      // 부모 컴포넌트의 userData도 업데이트
-      setUserData(prevData => ({
-        ...prevData,
-        paymentDTO: {
-          ...prevData.paymentDTO,
-          isVerified: true,
-        },
-      }));
+      setUserData({
+        ...userData,
+        paymentDTO: { ...userData.paymentDTO, [name]: value },
+      });
     },
-    [setUserData]
+    [userData, setUserData]
   );
 
   const paymentOptions = availablePaymentMethods.map(method => ({
@@ -64,7 +56,7 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId, name }) => {
   }));
 
   useEffect(() => {
-    if (contractId) {
+    if (contract.paymentMethodInfo) {
       setIsVerified(true);
       handleInputChange('isVerified', true);
     }
@@ -86,24 +78,26 @@ const PaymentInfo = ({ userData, setUserData, vendorId, contractId, name }) => {
         selectedOption={userData.paymentDTO.paymentMethod}
         onChange={handlePaymentMethodChange}
         required={true}
-        disabled={!!contractId}
+        disabled={!!contract.paymentMethodInfo}
       />
       {userData.paymentDTO.paymentMethod === 'CARD' && (
         <PaymentCard
           paymentData={userData.paymentDTO}
           onInputChange={handleInputChange}
-          onVerificationComplete={handleVerificationComplete}
-          isVerified={isVerified}
           contractId={contractId}
+          contract={contract}
+          isVerified={isVerified}
+          setIsVerified={setIsVerified}
         />
       )}
       {userData.paymentDTO.paymentMethod === 'CMS' && (
         <PaymentCMS
           paymentData={userData.paymentDTO}
           onInputChange={handleInputChange}
-          onVerificationComplete={handleVerificationComplete}
-          isVerified={isVerified}
           contractId={contractId}
+          contract={contract}
+          isVerified={isVerified}
+          setIsVerified={setIsVerified}
         />
       )}
     </>

@@ -10,7 +10,6 @@ const SuccessFindIdModal = ({
   setVendorFormData,
 }) => {
   const handleMoveLogin = () => {
-    console.log(findedId);
     setVendorFormData(prev => ({ ...prev, username: findedId }));
     setIsShowModal(false);
   };

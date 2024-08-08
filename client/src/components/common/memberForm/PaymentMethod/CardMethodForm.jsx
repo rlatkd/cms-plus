@@ -6,6 +6,7 @@ import FileUpload from '../../inputs/FileUpload';
 import { verifyCard } from '@/apis/validation';
 import { validateField } from '@/utils/validators';
 import useAlert from '@/hooks/useAlert';
+import { useEffect } from 'react';
 
 const CardMethodForm = ({ paymentMethod, formType }) => {
   const {
@@ -13,12 +14,15 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
     setPaymentMethodInfoReq_Card,
     paymentTypeInfoReq_Auto,
     setPaymentTypeInfoReq_Auto,
+    isVerified,
+    setIsVerified,
   } = useMemberPaymentStore();
 
   const onAlert = useAlert();
 
   // <------ 인풋 필드 입력값 변경 ------>
   const handleChangeInput = e => {
+    setIsVerified(false);
     const { id, value } = e.target;
     if (id === 'cardNumber') {
       const unformattedNumber = unformatCardNumber(value);
@@ -43,6 +47,7 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
         ...paymentCardinfo,
       };
       const res = await verifyCard(transformPaymentCard);
+      setIsVerified(true);
       console.log('!---- Card 인증 ----!'); // 삭제예정
 
       if (res) {
@@ -67,6 +72,11 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
       console.error('axiosVerifyCard => ', err.response);
     }
   };
+
+  useEffect(() => {
+    if (formType === 'CREATE') setIsVerified(false);
+    if (formType === 'UPDATE') setIsVerified(true);
+  }, []);
 
   return (
     <>
@@ -161,9 +171,11 @@ const CardMethodForm = ({ paymentMethod, formType }) => {
             handleChangeValue={handleChangeInput}
           />
           <button
-            className='h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover ml-3'
+            className={`h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white ml-3
+                      ${!isVerified && 'transition-all duration-200 hover:bg-mint_hover '}`}
+            disabled={isVerified}
             onClick={axiosVerifyCard}>
-            카드 인증
+            {isVerified ? '인증완료' : '계좌번호 인증'}
           </button>
         </div>
       </div>
