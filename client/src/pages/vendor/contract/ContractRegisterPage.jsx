@@ -51,6 +51,7 @@ const ContractRegisterPage = () => {
     paymentMethodInfoReq_Cms,
     paymentMethodInfoReq_Card,
     isSimpConsentCheck,
+    isVerified,
     ...paymentResetFunctions
   } = useMemberPaymentStore();
 
@@ -78,7 +79,6 @@ const ContractRegisterPage = () => {
           paymentCreateReq: transformPaymentInfo(), // 결제정보
           ...billingInfo, // 청구정보
         };
-
         // validation 체크
         if (!validateBasicInfo()) return;
         if (!validateContractInfo()) return;
@@ -265,6 +265,16 @@ const ContractRegisterPage = () => {
         const isValidAccountOwner = validateField('name', paymentMethodInfoReq.accountOwner);
         const isValidAccountOwnerBirth = paymentMethodInfoReq.accountOwnerBirth !== '';
 
+        if (!isVerified) {
+          setStatus(2);
+          onAlert({
+            msg: '카드/계좌 인증을 진행해주세요!',
+            type: 'error',
+            title: '입력 정보 오류',
+          });
+          return;
+        }
+
         isSuccess =
           isSuccess &&
           isValidBank &&
@@ -287,6 +297,16 @@ const ContractRegisterPage = () => {
           isValidCardYear &&
           isValidCardOwner &&
           isValidCardOwnerBirth;
+
+        if (!isVerified) {
+          setStatus(2);
+          onAlert({
+            msg: '카드/계좌 인증을 진행해주세요!',
+            type: 'error',
+            title: '입력 정보 오류',
+          });
+          return;
+        }
       }
     }
     if (paymentTypeInfoReq.paymentType === 'VIRTUAL') {

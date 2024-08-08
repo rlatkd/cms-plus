@@ -6,7 +6,7 @@ import ConfirmWarning from './ConfirmWarning';
 const ConfirmDialog = ({ children }) => {
   const [state, setState] = useState();
 
-  const confirm = (message, type = 'default', title = '효성 CMS#') => {
+  const confirm = (message, type = 'default', title = '효성 CMS+') => {
     return new Promise(resolve => {
       setState({
         message: message !== undefined ? `${message}` : '',

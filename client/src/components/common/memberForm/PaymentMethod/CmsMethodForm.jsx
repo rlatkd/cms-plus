@@ -7,6 +7,7 @@ import { verifyCMS } from '@/apis/validation';
 import { validateField } from '@/utils/validators';
 import useAlert from '@/hooks/useAlert';
 import { bankOptions } from '@/utils/bank/bank';
+import { useEffect } from 'react';
 
 const CmsMethodForm = ({ paymentMethod, formType }) => {
   const {
@@ -14,16 +15,20 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
     setPaymentMethodInfoReq_Cms,
     paymentTypeInfoReq_Auto,
     setPaymentTypeInfoReq_Auto,
+    isVerified,
+    setIsVerified,
   } = useMemberPaymentStore();
 
   const onAlert = useAlert();
 
   // <----- 셀렉터 필드 은행명 변경 ----->
   const handleChangeSelect = e => {
+    setIsVerified(false);
     setPaymentMethodInfoReq_Cms({ bank: e.target.value });
   };
   // <----- 인풋 필드 입력값 변경 ----->
   const handleChangeInput = e => {
+    setIsVerified(false);
     const { id, value } = e.target;
     setPaymentMethodInfoReq_Cms({ [id]: value });
   };
@@ -49,6 +54,7 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
         ...paymentCmsinfo,
       };
       const res = await verifyCMS(transformPaymentCms);
+      setIsVerified(true);
       console.log('!----실시간 CMS 계좌인증 API----!'); // 삭제예정
 
       if (res) {
@@ -61,6 +67,11 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
       onAlert({ msg: '계좌인증에 실패하셨습니다.', type: 'error', title: '계좌 인증 오류' });
     }
   };
+
+  useEffect(() => {
+    if (formType === 'CREATE') setIsVerified(false);
+    if (formType === 'UPDATE') setIsVerified(true);
+  }, []);
 
   return (
     <>
@@ -135,9 +146,11 @@ const CmsMethodForm = ({ paymentMethod, formType }) => {
             errorMsg='올바른 형식 아닙니다.'
           />
           <button
-            className='h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white transition-all duration-200 hover:bg-mint_hover ml-3'
+            className={`h-[46px] w-1/4 bg-mint rounded-lg font-800 text-white ml-3
+                        ${!isVerified && 'transition-all duration-200 hover:bg-mint_hover '}`}
+            disabled={isVerified}
             onClick={axiosVerifyCMS}>
-            계좌번호 인증
+            {isVerified ? '인증완료' : '계좌번호 인증'}
           </button>
         </div>
       </div>

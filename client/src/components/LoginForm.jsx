@@ -116,7 +116,7 @@ const LoginForm = () => {
   return (
     <div className='absolute left-0 top-0 h-[100vh] mobile:h-full w-full mobile:w-[56vw] flex justify-center items-center'>
       <form onSubmit={handleSubmit} className=' w-480 h-640 flex flex-col justify-around p-16'>
-        <p className='text-mint font-900 text-3xl'>Hyosung CMS#</p>
+        <p className='text-mint font-900 text-3xl'>Hyosung CMS +</p>
         <p className='text-text_grey font-800 mb-3'>수납 및 자금 관리 통합 비즈니스 솔루션</p>
         <div>
           <InputWeb

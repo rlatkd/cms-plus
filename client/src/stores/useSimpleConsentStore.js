@@ -37,7 +37,6 @@ const useSimpleConsentStore = create(set => ({
         paymentMethods,
         productIds,
       });
-      console.log('Simple consent saved:', response.data);
       return response.data;
     } catch (error) {
       console.error('Failed to save simple consent:', error);

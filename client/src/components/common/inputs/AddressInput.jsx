@@ -20,7 +20,6 @@ const AddressInput = ({ disabled }) => {
   const handleAddressSearch = () => {
     new window.daum.Postcode({
       oncomplete: function (data) {
-        console.log('Selected address:', data);
         setMemberField('zipcode', data.zonecode);
         setMemberField('address', data.address);
         // 주소 정보를 useUserDataStore에도 저장

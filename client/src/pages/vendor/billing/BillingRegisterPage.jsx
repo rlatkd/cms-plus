@@ -177,7 +177,6 @@ const BillingRegisterPage = () => {
 
       navigate(-1);
     } catch (err) {
-      console.log(err);
       onAlert({ msg: ' 청구 생성에 실패했습니다..', type: 'error', err: err });
 
       console.error('axiosBillingCreate => ', err.response);

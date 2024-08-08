@@ -3,7 +3,6 @@ import successImage from '@/assets/success.svg';
 
 const PaymentAuto = () => {
   const invoiceInfo = useInvoiceStore(state => state.invoiceInfo);
-  console.log(invoiceInfo);
 
   if (!invoiceInfo) {
     return <div>로딩 중...</div>;

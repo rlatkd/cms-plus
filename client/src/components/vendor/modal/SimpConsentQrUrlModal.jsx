@@ -22,8 +22,6 @@ const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
     });
   };
 
-  console.log(phoneNumber.replaceAll('-', ''));
-
   const handleSendSimpleConsentUrl = async () => {
     const urlData = {
       text: `간편동의 URL입니다. \n${url}`,
@@ -32,7 +30,6 @@ const SimpConsentQrUrlModal = ({ isShowModal, setIsShowModal, modalTitle }) => {
     };
     try {
       const res = await sendSimpleConsentUrl(urlData);
-      console.log(res.data);
       alert('링크가 전송되었습니다.');
     } catch (err) {
       console.error('axiosSimpleConsentUrl => ', err.response);

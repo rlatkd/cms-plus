@@ -133,7 +133,7 @@ const ContractListPage = () => {
       return;
     }
 
-    const confirmMessage = `${selectedContracts.length}건의 간편동의를 요청하시겠습니까?`;
+    const confirmMessage = `"${selectedContracts.length}건" 의 간편동의를 요청하시겠습니까?`;
 
     const isSend = await onConfirm({
       msg: confirmMessage,

@@ -4,7 +4,7 @@ import { useInvoiceStore } from '@/stores/useInvoiceStore';
 import { verifyCard } from '@/apis/validation';
 import { validateField } from '@/utils/validators';
 import { formatCardNumber, unformatCardNumber } from '@/utils/format/formatCard';
-import { formatBirthDate } from '@/utils/format/formatBirth'; 
+import { formatBirthDate } from '@/utils/format/formatBirth';
 import { formatExpiryDate } from '@/utils/format/formatExpiryDate';
 
 const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
@@ -17,7 +17,7 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
     const { name, value } = e.target;
     let formattedValue = value;
     let prevLength;
-  
+
     switch (name) {
       case 'cardNumber':
         formattedValue = unformatCardNumber(value);
@@ -38,8 +38,6 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
       default:
         break;
     }
-
-    console.log(cardInfo)
 
     setCardInfo(prevState => ({
       ...prevState,
@@ -62,15 +60,12 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
 
       const result = await verifyCard(cardData);
       setVerificationResult(result);
-      if(result){
+      if (result) {
         setIsVerified(result);
-      }else{
+      } else {
         setIsVerified(result);
-        alert('카드 인증에 실패했습니다.' )
+        alert('카드 인증에 실패했습니다.');
       }
-      
-      
-      console.log('Card verification result:', result);
     } catch (error) {
       console.error('Card verification failed:', error);
       setVerificationResult({ error: '카드 인증에 실패했습니다.' });
@@ -104,11 +99,14 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
             name='cardNumber'
             type='text'
             required
-            placeholder="숫자만 입력해주세요"
+            placeholder='숫자만 입력해주세요'
             value={formatCardNumber(cardInfo.cardNumber)}
             onChange={handleInputChange}
             maxLength={19}
-            isValid={cardInfo.cardNumber === '' || validateField('cardNumber', unformatCardNumber(cardInfo.cardNumber))}
+            isValid={
+              cardInfo.cardNumber === '' ||
+              validateField('cardNumber', unformatCardNumber(cardInfo.cardNumber))
+            }
             errorMsg='올바른 카드번호를 입력해주세요.'
           />
           <Input
@@ -143,7 +141,9 @@ const CardInfo = ({ cardInfo, setCardInfo, isVerified, setIsVerified }) => {
             value={cardInfo.cardOwnerBirth}
             onChange={handleInputChange}
             maxLength={10}
-            isValid={cardInfo.cardOwnerBirth === '' || validateField('birth', cardInfo.cardOwnerBirth)}
+            isValid={
+              cardInfo.cardOwnerBirth === '' || validateField('birth', cardInfo.cardOwnerBirth)
+            }
             errorMsg='올바른 생년월일을 입력해주세요.'
           />
           <button
