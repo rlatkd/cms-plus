@@ -109,6 +109,8 @@ public class ExcelHandler<T> {
 			case STRING -> {
 				if (fieldType == String.class) {
 					field.set(dataDTO, cell.getStringCellValue());
+				} else if (fieldType == LocalDate.class) {
+					field.set(dataDTO, LocalDate.parse(cell.getStringCellValue()));
 				}
 			}
 			case NUMERIC -> {
