@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getContractList, getContractProducts } from '@/apis/contract';
 import { getAllProductList } from '@/apis/product';
 import useDebounce from '@/hooks/useDebounce';
@@ -24,6 +24,10 @@ const BillingRegisterPage = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const [products, setProducts] = useState([]); // 전체 상품 목록
+
+  const { contractId } = useParams();
+
+  const navigate = useNavigate();
 
   /**
    * 청구 생성 정보
@@ -50,7 +54,7 @@ const BillingRegisterPage = () => {
         console.error('청구 생성 - 계약 목록 조회 실패', err);
       }
     },
-    [searchType, debouncedSearchTerm, currentPage]
+    [debouncedSearchTerm, currentPage, contractId]
   );
 
   const fetchContractProducts = useCallback(async contractId => {
@@ -77,7 +81,16 @@ const BillingRegisterPage = () => {
   }, [fetchAllProducts]);
 
   useEffect(() => {
+    if (!contractId) return;
+    setSearchType('contractId');
+    setSearchTerm(contractId);
+  }, []);
+
+  useEffect(() => {
     fetchContractList();
+    if (searchType === 'contractId') {
+      setSearchType('memberName');
+    }
     setCurrentPage(1);
     setPageGroup(0);
   }, [debouncedSearchTerm]);
@@ -85,8 +98,6 @@ const BillingRegisterPage = () => {
   useEffect(() => {
     fetchContractList(currentPage);
   }, [currentPage, fetchContractList]);
-
-  const navigate = useNavigate();
 
   /**
    * 선택한 계약의 약정일을 기반으로 청구의 결제일을 계산한다.

@@ -8,8 +8,12 @@ const ConDetailBilling = ({ contractData, updateAllInfo, children }) => {
   const { setStatus } = useStatusStore();
   const navigate = useNavigate();
 
-  const handleButtonClick = () => {
+  const handleMoveContractUpdate = () => {
     navigate(`/vendor/contracts/update/${contractData.contractId}/${contractData.memberId}`);
+  };
+
+  const handleMoveBillingCreate = () => {
+    navigate(`/vendor/billings/create/${contractData.contractId}`);
   };
 
   return (
@@ -18,7 +22,7 @@ const ConDetailBilling = ({ contractData, updateAllInfo, children }) => {
         <p className='text-text_black text-xl font-800'>청구정보</p>
         <button
           onClick={() => {
-            handleButtonClick();
+            handleMoveContractUpdate();
             updateAllInfo();
             setStatus(2);
           }}
@@ -65,12 +69,23 @@ const ConDetailBilling = ({ contractData, updateAllInfo, children }) => {
           disabled={true}
         />
       </div>
-      <div className='flex-row justify-between items-center px-2 pt-1 pb-3 mx-5'>
-        <p className='text-text_black text-lg font-400 mb-2'>전체청구 / 합계금액</p>
-        <p className='text-text_black text-xl font-800'>
-          총 {contractData.totalBillingCount}건 / {contractData.totalBillingPrice?.toLocaleString()}
-          원
-        </p>
+      <div className='flex justify-between items-end px-2 pt-1 pb-3 mx-5'>
+        <div>
+          <p className='text-text_black text-lg font-400 mb-2'>전체청구 / 합계금액</p>
+          <p className='text-text_black text-xl font-800'>
+            총 {contractData.totalBillingCount}건 /{' '}
+            {contractData.totalBillingPrice?.toLocaleString()}원
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            handleMoveBillingCreate();
+          }}
+          className='flex justify-between items-center px-4 py-2 ml-4 text-mint
+            font-700 rounded-md border border-mint cursor-pointer hover:bg-mint_hover_light'>
+          <img src={edit} alt='edit' className='mr-2 ' />
+          <p>청구생성</p>
+        </button>
       </div>
       {children}
     </div>

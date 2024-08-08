@@ -24,9 +24,6 @@ const useAlert = () => {
       msg = data.message;
       type = 'error';
       if (fieldErrors && fieldErrors.length > 0) {
-        // msg = fieldErrors.map(
-        //   fieldError => `${fieldToName[fieldError.field] || ''} ${fieldError.reason}`
-        // );
         msg = `${fieldToName[fieldErrors[0].field] || ''} ${fieldErrors[0].reason}`;
       }
     }
