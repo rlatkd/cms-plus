@@ -13,6 +13,7 @@ import java.util.stream.StreamSupport;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -110,7 +111,9 @@ public class ExcelHandler<T> {
 				if (fieldType == String.class) {
 					field.set(dataDTO, cell.getStringCellValue());
 				} else if (fieldType == LocalDate.class) {
-					field.set(dataDTO, LocalDate.parse(cell.getStringCellValue()));
+					DataFormatter dataFormatter = new DataFormatter();
+					String cellStringValue = dataFormatter.formatCellValue(cell);
+					field.set(dataDTO, LocalDate.parse(cellStringValue));
 				}
 			}
 			case NUMERIC -> {
@@ -121,7 +124,9 @@ public class ExcelHandler<T> {
 				} else if (fieldType == long.class || fieldType == Long.class) {
 					field.set(dataDTO, (long)cell.getNumericCellValue());
 				} else if (fieldType == LocalDate.class) {
-					field.set(dataDTO, LocalDate.parse(cell.getStringCellValue()));
+					DataFormatter dataFormatter = new DataFormatter();
+					String cellStringValue = dataFormatter.formatCellValue(cell);
+					field.set(dataDTO, LocalDate.parse(cellStringValue));
 				}
 			}
 			case BOOLEAN -> {
