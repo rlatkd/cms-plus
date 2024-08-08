@@ -19,6 +19,7 @@ public class ExcelController {
 
 	private final ExcelHandler<MemberExcelDto> excelHandler = new ExcelHandler<>();
 
+	// 업로드
 	@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public List<MemberExcelDto> getMemberExcelResult(MultipartFile file) {
 		return excelHandler.handleExcelUpload(file, MemberExcelDto.class);
