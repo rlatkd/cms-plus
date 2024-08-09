@@ -6,7 +6,8 @@ import PaymentCard from '@/pages/member/PaymentCardPage'; // 납부자결제 (�
 import PaymentAccount from '@/pages/member/PaymentAccountPage'; // 납부자결제 (계좌)
 import PaymentVirtual from '@/pages/member/PaymentVirtualPage'; // 가상계좌결제
 import PaymentAuto from '@/pages/member/PaymentAutoPage'; //자동결제
-import Complete from '@/components/common/member/Complete';
+import Complete from '@/components/common/member/Complete'; // 완료된 청구페이지
+import NoRequestSimpConsent from '@/components/common/member/NoRequestSimpConsent'; // 올바르지않은 간편동의
 
 const memberRoute = () => {
   return [
@@ -17,6 +18,10 @@ const memberRoute = () => {
     {
       path: 'simpconsent',
       element: <SimpConsent />,
+    },
+    {
+      path: 'simpconsent/notrequest',
+      element: <NoRequestSimpConsent />,
     },
     {
       path: 'invoice/:invoiceId',

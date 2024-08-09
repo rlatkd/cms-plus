@@ -23,8 +23,8 @@ const CheckInvoice = () => {
         </div>
       </div>
       <div className='mb-4 space-y-2 border-b border-t py-3'>
-        <InfoRow label='업체명' value='메가스터디교육(주)' />
-        <InfoRow label='대표자' value='손성은' />
+        <InfoRow label='업체명' value='효성 아카데미(주)' />
+        <InfoRow label='대표자' value='김효성' />
         <InfoRow label='대표번호' value='1599-1010' />
       </div>
     </div>

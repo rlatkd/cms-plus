@@ -1,4 +1,5 @@
 import { updatePaymentDetail } from '@/apis/payment';
+import { sendReqSimpConsent } from '@/apis/simpleConsent';
 import PaymentInfoForm from '@/components/common/memberForm/PaymentInfoForm';
 import useAlert from '@/hooks/useAlert';
 import { useMemberContractStore } from '@/stores/useMemberContractStore';
@@ -27,16 +28,17 @@ const UpdatePaymentInfo = ({ formType }) => {
             return rest;
           })()),
       },
-      ...(payment.paymentType === 'AUTO' && {
-        paymentMethodInfoReq: {
-          paymentMethod: payment.paymentMethod,
-          ...(payment.paymentMethod === 'CMS' && payment.paymentMethodInfoReq_Cms),
-          ...(payment.paymentMethod === 'CARD' && {
-            ...payment.paymentMethodInfoReq_Card,
-            cardYear: formatCardYearForStorage(payment.paymentMethodInfoReq_Card.cardYear),
-          }),
-        },
-      }),
+      ...(payment.paymentType === 'AUTO' &&
+        payment.paymentMethod !== '' && {
+          paymentMethodInfoReq: {
+            paymentMethod: payment.paymentMethod,
+            ...(payment.paymentMethod === 'CMS' && payment.paymentMethodInfoReq_Cms),
+            ...(payment.paymentMethod === 'CARD' && {
+              ...payment.paymentMethodInfoReq_Card,
+              cardYear: formatCardYearForStorage(payment.paymentMethodInfoReq_Card.cardYear),
+            }),
+          },
+        }),
       contractDay: contractInfo.contractDay,
     };
     return paymentCreateReq;
@@ -48,10 +50,25 @@ const UpdatePaymentInfo = ({ formType }) => {
       // if (!validatePaymentInfo()) return;
       const res = await updatePaymentDetail(contractId, transformPaymentInfo());
       console.log('!----결제 정보 수정 성공----!'); // 삭제예정
+
+      if (payment.isSimpConsentCheck && !payment.paymentMethod && payment.paymentType === 'AUTO') {
+        await axiosSendReqSimpConsent(contractId);
+      }
+
       onAlert({ msg: '결제정보가 수정되었습니다!', type: 'success', title: '결제정보수정' });
     } catch (err) {
       onAlert({ err });
       console.error('axiosUpdatePaymentDetail => ', err.response);
+    }
+  };
+
+  // <----- 간편서명동의 링크 발송하기 ----->
+  const axiosSendReqSimpConsent = async contractId => {
+    try {
+      const res = await sendReqSimpConsent(contractId);
+      console.log('!----간편서명동의 링크 발송하기 성공----!'); // 삭제예정
+    } catch (err) {
+      console.error('axiosSendReqSimpConsent => ', err.response);
     }
   };
 

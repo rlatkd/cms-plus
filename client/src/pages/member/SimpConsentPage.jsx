@@ -19,7 +19,7 @@ import {
   sendSimpleConsentSignImage,
 } from '@/apis/simpleConsent';
 import { validateField } from '@/utils/validators';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { bankCode } from '@/utils/bank/bank';
 import { unformatCardNumber } from '@/utils/format/formatCard';
 
@@ -38,6 +38,7 @@ const SimpConsentPage = () => {
 
   const [contract, setContract] = useState('');
 
+  const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const contractId = searchParams.get('contract');
@@ -108,9 +109,11 @@ const SimpConsentPage = () => {
     if (paymentMethod === 'CARD') {
       if (!isVerified) missingFields.push('카드 인증');
 
-      if (!cardNumber) missingFields.push('카드번호');
-      else if (!validateField('cardNumber', unformatCardNumber(cardNumber))) {
-        invalidFields.push('카드번호');
+      if (!contract) {
+        if (!cardNumber) missingFields.push('카드번호');
+        else if (!validateField('cardNumber', unformatCardNumber(cardNumber))) {
+          invalidFields.push('카드번호');
+        }
       }
 
       if (!expiryDate) missingFields.push('유효기간');
@@ -140,7 +143,7 @@ const SimpConsentPage = () => {
   };
 
   const validateSignatureInfo = () => {
-    const { signatureUrl } = userData.contractDTO;
+    const { signatureUrl } = userData.paymentDTO;
     const missingFields = [];
 
     if (!signatureUrl) missingFields.push('서명');
@@ -192,10 +195,11 @@ const SimpConsentPage = () => {
       try {
         setStatus(5); // 로딩
         const preparedData = prepareData(userData);
+        console.log(preparedData);
         if (contractId) {
           await axiosSendSimpleConsentSignImage();
         } else {
-          await sendSimpleConsentData(vendorId, preparedData);
+          const res = await sendSimpleConsentData(vendorId, preparedData);
         }
         // 로딩페이지 타임아웃 설정하여 2.5초 후에 성공 상태로 변경
         setTimeout(() => {
@@ -219,7 +223,7 @@ const SimpConsentPage = () => {
     try {
       const data = {
         contractId: contractId,
-        signImgUrl: userData.contractDTO.signatureUrl,
+        signImgUrl: userData.paymentDTO.signatureUrl,
       };
       const res = await sendSimpleConsentSignImage(vendorId, data);
       console.log('!----기존 계약 서명이미지 업데이트 성공----!'); // 삭제예정
@@ -228,13 +232,14 @@ const SimpConsentPage = () => {
     }
   };
 
+  const formatMonth = month => (month < 10 ? `0${month}` : month.toString());
+
   // <----- 기존 계약 데이터 조회 API ----->
   const axiosContractInfo = async () => {
     try {
       const res = await getContractInfo(vendorId, contractId);
-      setContract(res);
       console.log('!----기존 계약 데이터 조회 API----!'); // 삭제예정
-
+      setContract(res);
       const contractProducts = res.contractProducts.map(product => ({
         productId: product.productId,
         productName: product.name,
@@ -242,6 +247,15 @@ const SimpConsentPage = () => {
         quantity: product.quantity,
       }));
 
+      console.log('카드번호', res.paymentMethodInfo?.cardNumber);
+      let expiryDate = '';
+      if (res.paymentMethodInfo?.paymentMethod?.code === 'CARD') {
+        expiryDate =
+          formatMonth(res.paymentMethodInfo?.cardMonth) +
+          '/' +
+          String(res.paymentMethodInfo?.cardYear).slice(2);
+      }
+      console.log(res);
       const formattedData = {
         memberDTO: {
           name: res.member?.name || '',
@@ -255,7 +269,7 @@ const SimpConsentPage = () => {
         paymentDTO: {
           paymentMethod: res.paymentMethodInfo?.paymentMethod?.code || '',
           cardNumber: res.paymentMethodInfo?.cardNumber || '',
-          expiryDate: res.paymentMethodInfo?.expiryDate || '',
+          expiryDate: expiryDate || '',
           cardHolder: res.paymentMethodInfo?.cardOwner || '',
           cardOwnerBirth: res.paymentMethodInfo?.cardOwnerBirth || '',
           bank: bankCode[res.paymentMethodInfo?.bank?.code] || '',
@@ -277,6 +291,7 @@ const SimpConsentPage = () => {
 
       setUserAllData(formattedData);
     } catch (err) {
+      navigate('/member/simpconsent/notrequest');
       console.error('axiosContractInfo => ', err.response);
     }
   };

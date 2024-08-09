@@ -3,6 +3,7 @@ import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
 import { formatPhone } from '@/utils/format/formatPhone';
 import RadioGroup from '@/components/common//inputs/RadioGroup';
 import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
+import { useLocation } from 'react-router-dom';
 
 const invoiceSendMethods = [
   { label: '휴대전화', value: 'SMS' },
@@ -21,10 +22,12 @@ const BillingInfoForm = ({ formType }) => {
   const { basicInfo } = useMemberBasicStore();
   const { billingInfo, setBillingInfoItem } = useMemberBillingStore();
 
+  const location = useLocation();
+  const stateType = location.state?.type;
+
   // <------ Radio 원하는 선택지 서택 ------>
   const handleChangeValue = (value, name) => {
     setBillingInfoItem({ [name]: value });
-    console.log(billingInfo);
   };
 
   return (
@@ -60,6 +63,7 @@ const BillingInfoForm = ({ formType }) => {
           selectedOption={billingInfo.invoiceSendMethod}
           onChange={value => handleChangeValue(value, 'invoiceSendMethod')}
           required={true}
+          disabled={stateType === 'old'}
           classLabel='ml-1 mb-3'
         />
       </div>

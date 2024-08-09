@@ -6,13 +6,21 @@ import { getAvailableOptions } from '@/apis/simpleConsent';
 import InputCalendar from '@/components/common/inputs/InputCalendar';
 import { validateField } from '@/utils/validators';
 
-const ContractInfo = ({ userData, setUserData, vendorId, contractId, isExistingContract, name }) => {
+const ContractInfo = ({
+  userData,
+  setUserData,
+  vendorId,
+  contractId,
+  isExistingContract,
+  name,
+}) => {
   const [availableProducts, setAvailableProducts] = useState([]);
 
   useEffect(() => {
     const fetchAvailableOptions = async () => {
       try {
         const options = await getAvailableOptions(vendorId);
+        console.log(options);
         setAvailableProducts(options.availableProducts);
       } catch (error) {
         console.error('상품 리스트 업데이트 실패:', error);

@@ -13,6 +13,8 @@ const ConDetailPaymentMethod = ({ contractData }) => {
       const paymentMethodInfo = contractData?.paymentMethodInfo ?? {};
       const paymentMethodCode = paymentMethodInfo?.paymentMethod?.code ?? '';
 
+      console.log('확인', contractData);
+
       let PaymentComponent = null;
       if (paymentMethodCode === 'CARD') {
         PaymentComponent = ConDetailPaymentCard;

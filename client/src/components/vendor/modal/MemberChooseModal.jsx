@@ -5,6 +5,7 @@ import PagiNation from '@/components/common/PagiNation';
 import SelectField from '@/components/common/selects/SelectField';
 import useDebounce from '@/hooks/useDebounce';
 import { useMemberBasicStore } from '@/stores/useMemberBasicStore';
+import { useMemberBillingStore } from '@/stores/useMemberBillingStore';
 import { formatId } from '@/utils/format/formatId';
 import { formatPhone } from '@/utils/format/formatPhone';
 import { useEffect, useState } from 'react';
@@ -30,6 +31,7 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
   const [currentPage, setCurrentPage] = useState(1);
   const [pageGroup, setPageGroup] = useState(0);
   const { setBasicInfo } = useMemberBasicStore();
+  const { setBillingInfoItem } = useMemberBillingStore();
 
   const navigate = useNavigate();
 
@@ -46,6 +48,11 @@ const MemberChooseModal = ({ icon, isShowModal, setIsShowModal, modalTitle }) =>
         zipcode: member.address.zipcode,
       },
       memberMemo: member.memo,
+    });
+    setBillingInfoItem({
+      invoiceSendMethod: member.invoiceSendMethod.code,
+      autoInvoiceSend: member.autoInvoiceSend,
+      autoBilling: member.autoBilling,
     });
     setIsShowModal(false);
     navigate('/vendor/contracts/register', { state: { type: 'old' } });

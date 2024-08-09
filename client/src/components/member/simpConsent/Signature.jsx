@@ -40,10 +40,9 @@ const Signature = ({ userData, setUserData, name }) => {
         const url = URL.createObjectURL(blob);
         setUserData({
           ...userData,
-          contractDTO: {
-            ...userData.contractDTO,
+          paymentDTO: {
+            ...userData.paymentDTO,
             signatureUrl: url,
-            signatureBlob: blob,
           },
         });
 
@@ -142,9 +141,9 @@ const Signature = ({ userData, setUserData, name }) => {
         <button
           onClick={openModal}
           className='flex h-32 w-full items-center justify-center rounded-md border border-mint text-gray-400'>
-          {userData.contractDTO.signatureUrl ? (
+          {userData.paymentDTO.signatureUrl ? (
             <img
-              src={userData.contractDTO.signatureUrl}
+              src={userData.paymentDTO.signatureUrl}
               alt='서명'
               className='h-full w-full object-contain'
             />

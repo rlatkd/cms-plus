@@ -7,7 +7,7 @@ import { formatBirthDate } from '@/utils/format/formatBirth';
 import { formatExpiryDate } from '@/utils/format/formatExpiryDate';
 
 const PaymentCard = ({ paymentData, onInputChange, isVerified, setIsVerified, contract }) => {
-  const [formattedCardNumber, setFormattedCardNumber] = useState('');
+  // const [formattedCardNumber, setFormattedCardNumber] = useState('');
 
   const handleCardVerification = async () => {
     try {
@@ -53,7 +53,7 @@ const PaymentCard = ({ paymentData, onInputChange, isVerified, setIsVerified, co
     } else if (name === 'cardNumber') {
       storedValue = unformatCardNumber(value);
       formattedValue = unformatCardNumber(value);
-      setFormattedCardNumber(formatCardNumber(value));
+      // setFormattedCardNumber(formatCardNumber(value));
     }
 
     onInputChange(name, storedValue);
@@ -61,7 +61,7 @@ const PaymentCard = ({ paymentData, onInputChange, isVerified, setIsVerified, co
   };
 
   const isDisabled =
-    !formattedCardNumber ||
+    !paymentData.cardNumber ||
     !paymentData.expiryDate ||
     !paymentData.cardHolder ||
     !paymentData.cardOwnerBirth;
@@ -75,10 +75,11 @@ const PaymentCard = ({ paymentData, onInputChange, isVerified, setIsVerified, co
           type='text'
           required
           placeholder='카드번호 16자리'
-          value={formattedCardNumber}
+          value={formatCardNumber(paymentData.cardNumber)}
           onChange={handleInputChange}
           maxLength={19}
           isValid={
+            !!contract ||
             paymentData.cardNumber === '' ||
             validateField('cardNumber', unformatCardNumber(paymentData.cardNumber))
           }
