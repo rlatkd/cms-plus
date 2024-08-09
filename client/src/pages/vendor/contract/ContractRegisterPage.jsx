@@ -79,6 +79,8 @@ const ContractRegisterPage = () => {
           paymentCreateReq: transformPaymentInfo(), // 결제정보
           ...billingInfo, // 청구정보
         };
+
+        console.log('회원 데이터', data);
         // validation 체크
         if (!validateBasicInfo()) return;
         if (!validateContractInfo()) return;

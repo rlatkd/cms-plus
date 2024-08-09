@@ -44,8 +44,8 @@ export const UploadFileAxios = axios.create({
     response => response,
     err => {
       if (err.response) {
-        // const data = err.response.data;W
-        // console.error(data);
+        console.log(err.response.status);
+
         switch (err.response.status) {
           case 403:
             window.location.href = '/error/forbidden';

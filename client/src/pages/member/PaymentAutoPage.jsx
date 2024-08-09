@@ -15,7 +15,7 @@ const PaymentAuto = () => {
   return (
     <div className='flex flex-col items-center justify-between h-screen bg-white p-3'>
       <div className='text-left w-full'>
-        <h1 className='text-2xl font-bold text-teal-400 mb-4'>Hyosung CMS+</h1>
+        <h1 className='text-2xl font-800 text-teal-400 mb-4'>Hyosung CMS+</h1>
         <h3 className='font-semibold text-gray-700 text-base mb-8'>
           아쿠르트에서 회원님께
           <br />

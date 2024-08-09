@@ -8,6 +8,9 @@ export const useMemberBillingStore = create(set => ({
     autoBilling: true,
   },
 
+  // <------ 객체를 한번에 Set ------>
+  setBillingInfo: data => set({ billingInfo: data }),
+
   // <------ 데이터 하나씩 Set ------>
   setBillingInfoItem: data =>
     set(state => ({
