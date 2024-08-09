@@ -1,6 +1,6 @@
 ## 시작하기
 
-1. 레포지토리 클론 
+1. 레포지토리 클론
 ```
    git clone [repo-url]
 ```
@@ -8,7 +8,7 @@
 ```
 docker-compose up -d
 ```
-3. 동작 테스트    
+3. 동작 테스트
 ```
     http://localhost:8080/api/vendor
 ```
