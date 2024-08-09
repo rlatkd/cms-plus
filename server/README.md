@@ -8,7 +8,7 @@
 ```
 docker-compose up -d
 ```
-3. 동작 테스트  
+3. 동작 테스트    
 ```
     http://localhost:8080/api/vendor
 ```
