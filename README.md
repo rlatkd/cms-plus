@@ -4,7 +4,7 @@ https://www.hyosungcmsplus.site
 
 ### Preview
 
-<img src = "https://github.com/rlatkd/cms-plus/blob/main/assets/view.png">
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view.png">
 
 
 ### 디렉터리 구조
