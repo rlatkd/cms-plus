@@ -10,7 +10,7 @@
 
 <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/system-architecture.png">
 
-###Infra Architecture
+## Infra Architecture
 
 <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/infra-architecture.png">
 
