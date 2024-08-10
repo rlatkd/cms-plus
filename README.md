@@ -14,6 +14,14 @@
 
 <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/infra-architecture.png">
 
+## Kafka Architecture
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/kafka-architecture.png">
+
+## Branch Strategy
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/branch-strategy.png">
+
 ## 디렉터리 구조
 
 ```
