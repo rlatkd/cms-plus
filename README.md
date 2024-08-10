@@ -8,7 +8,7 @@
 
 ## System Architecture
 
-<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/system-architecture.png">
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/system-architecture1.png">
 
 ## Infra Architecture
 
