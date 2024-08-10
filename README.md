@@ -6,6 +6,13 @@ https://www.hyosungcmsplus.site
 
 <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view.png">
 
+### System Architecture
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/system-architecture.png">
+
+### Infra Architecture
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/infra-architecture.png">
 
 ### 디렉터리 구조
 
