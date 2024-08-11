@@ -1,6 +1,6 @@
 ## Contribution
 
-<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/sanghun.png">
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/contribution.png">
 
 ## Service
 
