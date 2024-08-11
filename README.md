@@ -22,7 +22,21 @@
 
 <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/branch-strategy.png">
 
-## 디렉터리 구조
+## Monitoring
+
+### Elasticsearch Logstash Kibana
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/kibana.png">
+
+### Prometheus Grafana
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/grafana.png">
+
+### Kafka
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/kafka-monitoring.png">
+
+## Repository Structure
 
 ```
 📁 cms
