@@ -4,21 +4,15 @@
 
 ## Preview
 
-| 메인 | 회원 |
+| **메인** | **회원** |
 | :--: | :--: |
 | <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-dashboard.png" style="width: 450px;"> | <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-member.png" style="width: 450px;"> |
-| **로그인** | **POS 커스터마이징 - 카테고리 등록** |
-| <img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/login.gif" alt = "login gif" style="width: 450px;"> | <img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/categoryAdd.gif" alt = "categoryAd gif" style="width: 450px;"> |
-| **POS 커스터마이징 - 아이템 등록** | **POS 메인 - 주문 내역 조회** |
-| <img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/itemAdd.gif" alt = "itemAdd gif" style="width: 450px;"> | <img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/orderList.gif" alt = "orederList gif" style="width: 450px;"> |
-| **POS 메인 - 주문 신규 등록** | **POS 결제 - 현금** |
-| <img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/orderAdd.gif" alt = "orderAdd gif" style="width: 450px;"> | <img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/payCash.gif" alt = "payCash gif" style="width: 450px;"> |
-| **POS 결제 - 카드** | **대시보드** |
-| <img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/payCard.gif" alt = "payCard gif" style="width: 450px;"> |<img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/dashboardSales.gif" alt = "dashboardSales gif" style="width: 450px;">|
-| **AI 컨설팅** ||
-|<img src="https://github.com/ssg-salesync/.github/blob/main/assets/page/consulting.gif" alt = "consulting gif" style="width: 450px;">||
-
-<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-dashboard.png">
+| **계약** | **청구** |
+| <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-contract.png" style="width: 450px;"> | <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-billing.png" style="width: 450px;"> |
+| **상품** | **통계** |
+| <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-product.png" style="width: 450px;"> | <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-statistics.png" style="width: 450px;"> |
+| **설정** ||
+|<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-setting.png" style="width: 450px;">||
 
 ## System Architecture
 
