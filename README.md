@@ -36,6 +36,10 @@
 
 <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/kafka-monitoring.png">
 
+## Graph for Kafka Batch's Tuning
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/kafka-batch-tuning-graph.png">
+
 ## Repository Structure
 
 ```
