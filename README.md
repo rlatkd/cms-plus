@@ -2,10 +2,6 @@
 
 ### https://www.hyosungcmsplus.site
 
-## Contribution
-
-<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/contribution.png">
-
 ## Preview
 
 | **메인** | **회원** |
@@ -17,6 +13,10 @@
 | <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-product.png" style="width: 450px;"> | <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-statistics.png" style="width: 450px;"> |
 | **설정** ||
 |<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/view-setting.png" style="width: 450px;">||
+
+## Contribution
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/contribution.png">
 
 ## System Architecture
 
