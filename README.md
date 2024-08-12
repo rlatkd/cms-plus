@@ -30,6 +30,10 @@
 
 <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/kafka-architecture.png">
 
+## Monitoring Architecture
+
+<img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/monitoring-architecture.png">
+
 ## Branch Strategy
 
 <img src = "https://github.com/rlatkd/cms-plus/blob/dev/assets/branch-strategy.png">
